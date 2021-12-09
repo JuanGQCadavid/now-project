@@ -1,0 +1,111 @@
+
+
+Now db
+
+password rc-dLwLkDBWdaVS_aJZxQyOkLW9AAuyhiamCd1GeS5o
+username neo4j
+
+
+
+
+Cypher
+
+Match (m:Movie) where m.released > 2000 RETURN m limit 5
+Match (m:Movie) where m.released > 2005 RETURN count(m)
+
+Node -> It is a entity -> A row
+	 -> (m:Movies) m -> variables, Movies -> Entity
+
+Rellationship
+	-> Connects two entities
+	-> [w:WORKS_FOR] w -> Variable, WORKS_FOR -> relationship type
+	
+MATCH (p:Person)-[d:DIRECTED]-(m:Movie) where m.released > 2000 RETURN p,d,m
+
+Labels
+	1- Node types
+	2- Relationship types
+	 
+	-> :Person, :DIRECTED
+	
+MATCH (p:Person) RETURN p limit 20
+
+MATCH (n) RETURN n -> This will return all the db!!!
+
+Properties
+	-> Name, value pairs
+	-> Add atributes to nodes or relationships
+	
+	MATCH (m:Movie) return m.title, m.released
+	MATCH (p:Person) return p.name, p.born
+	
+
+CREATION!!!
+
+	Create (p:Person {name: 'Juan Gonzalo'}) Return p
+	CREATE (p:Person {name: "..", from: "..", ...})
+
+----------------------
+Cypher Guide
+
+
+MATCH (ee:Person) WHERE ee.name = 'Emil'
+CREATE (js:Person { name: 'Johan', from: 'Sweden', learn: 'surfing' }),
+(ir:Person { name: 'Ian', from: 'England', title: 'author' }),
+(rvb:Person { name: 'Rik', from: 'Belgium', pet: 'Orval' }),
+(ally:Person { name: 'Allison', from: 'California', hobby: 'surfing' }),
+(ee)-[:KNOWS {since: 2001}]->(js),(ee)-[:KNOWS {rating: 5}]->(ir),
+(js)-[:KNOWS]->(ir),(js)-[:KNOWS]->(rvb),
+(ir)-[:KNOWS]->(js),(ir)-[:KNOWS]->(ally),
+(rvb)-[:KNOWS]->(ally)
+
+MATCH (ee:Person)-[:KNOWS]-(friends)
+WHERE ee.name = 'Emil' RETURN ee, friends
+
+Constrains
+	While creating a constraein we are also acreatinf index on the properties!
+	CREATE CONSTRAINT ON (n:Person) ASSERT (n.name) IS UNIQUE
+	CREATE CONSTRAINT ON (n:Movie) ASSERT (n.title) IS UNIQUE 
+	
+	CALL db.schema.visualization
+
+	:schema
+	:help create-constraint-on
+
+Index
+	We could create an Index, this could improve the seach perfomance
+	
+
+MATCH (p:Person) RETURN p.name limit 10
+
+MATCH (cloudAtlas:Movie {title: "Cloud Atlas"})<-[:DIRECTED]-(directors) RETURN directors.name
+MATCH (directors)-[:DIRECTED]->(m:Movie) WHERE m.title = "Cloud Atlas" RETURN directors, m
+
+
+MATCH (Tom:Person {name:"Tom Hanks"})-[:ACTED_IN]->(m)<-[:ACTED_IN]-(coActors) RETURN DISTINCt coActors.name
+
+
+---------- Shortest path
+
+MATCH (bacon:Person {name:"Kevin Bacon"})-[*1..4]-(hollywood)
+RETURN DISTINCT hollywood
+
+MATCH p=shortestPath(
+(bacon:Person {name:"Kevin Bacon"})-[*]-(meg:Person {name:"Meg Ryan"})
+)
+RETURN p
+
+
+---------- RECOMENDATIONS
+	Extend Tom Hanks co-actors to find co-co-actors who have nоt worked with Tom Hanks.
+	
+MATCH (tom:Person {name:"Tom Hanks"})-[:ACTED_IN]->(m)<-[:ACTED_IN]-(coActors),
+    (coActors)-[:ACTED_IN]->(m2)<-[:ACTED_IN]-(cocoActors)
+  WHERE NOT (tom)-[:ACTED_IN]->()<-[:ACTED_IN]-(cocoActors) AND tom <> cocoActors
+  RETURN cocoActors.name AS Recommended, count(*) AS Strength ORDER BY Strength DESC
+  
+ Find someone who can introduce Tom Hanks to his potential co-actor, in this case Tom Cruise.
+  
+ MATCH (tom:Person {name:"Tom Hanks"})-[:ACTED_IN]->(m)<-[:ACTED_IN]-(coActors),
+  (coActors)-[:ACTED_IN]->(m2)<-[:ACTED_IN]-(cruise:Person {name:"Tom Cruise"})
+RETURN tom, m, coActors, m2, cruise
