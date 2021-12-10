@@ -1,0 +1,4 @@
+github.com/google/uuid v1.3.0 h1:t6JiXgmwXMjEs8VusXIJk2BXHsn+wx8BZdTaoZ5fu7I=
+github.com/google/uuid v1.3.0/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
+github.com/matiasvarela/errors v1.3.0 h1:NRmQrFKBhVVIXyACE3TQe2hcYNB1ccFmM7W0Dd0lMY8=
+github.com/matiasvarela/errors v1.3.0/go.mod h1:I6yiytbJ1ZHGMcldhomV1vufY6NahEfGzRlMtzLyqz0=
