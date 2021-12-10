@@ -1,9 +1,16 @@
 package spotsrv
 
 import (
+	"log"
+
 	"github.com/JuanGQCadavid/now-project/services/spots/internal/core/domain"
 	"github.com/JuanGQCadavid/now-project/services/spots/internal/core/ports"
+	"github.com/JuanGQCadavid/now-project/services/spots/pkg/apperrors"
 	"github.com/JuanGQCadavid/now-project/services/spots/pkg/uuidgen"
+)
+
+const (
+	INTERNAL_ERROR = "internal_error"
 )
 
 /*
@@ -11,21 +18,98 @@ import (
 	the methods that the interface defined.
 */
 type service struct {
-	spotRepository ports.SpotRepository
-	uuidGen        uuidgen.UUIDGen
+	spotRepository     ports.SpotRepository
+	locationRepository ports.LocationRepository
+	uuidGen            uuidgen.UUIDGen
 }
 
-func New(spotRepository ports.SpotRepository, uuidGen uuidgen.UUIDGen) *service {
+func New(spotRepository ports.SpotRepository, locationRepository ports.LocationRepository, uuidGen uuidgen.UUIDGen) *service {
 	return &service{
-		spotRepository: spotRepository,
-		uuidGen:        uuidGen,
+		spotRepository:     spotRepository,
+		locationRepository: locationRepository,
+		uuidGen:            uuidGen,
 	}
 }
 
-func (s service) Get(spotId string) (domain.Spot, error) {
-	return nil, nil
+func (s *service) Get(spotId string) (domain.Spot, error) {
+
+	return domain.Spot{}, nil
 }
 
-func (s service) GoOnline(spot domain.Spot) (domain.Spot, error) {
+/*
+	The user should not me online in more tha  two events
 
+	Procedure:
+		1. check if the user is already in a Online event		YES
+
+			YES -> Desvincalte it from it						YES
+
+		2. Generate UUID for the spot							YES
+
+		3. make the user Online in the repo						YES
+
+		4. Update the location tree.							YES
+
+	TODO -> Extract the tags from the description
+
+*/
+
+func (s *service) GoOnline(spot domain.Spot) (domain.Spot, error) {
+
+	//TODO -> Missing body validation
+
+	if returnedSpot, returnedError := s.GetSpotByUserId(spot.HostInfo.Id); returnedError == nil {
+		if err := s.EndSpot(returnedSpot.EventInfo.UUID); err != nil {
+			return domain.Spot{}, err
+		}
+	}
+
+	uuid := s.uuidGen.New()
+	spot.EventInfo.UUID = uuid
+
+	if returnedError := s.createEvent(spot); returnedError != nil {
+		return domain.Spot{}, returnedError
+	}
+
+	return spot, nil
+}
+
+func (s *service) createEvent(spot domain.Spot) error {
+
+	if returnedError := s.spotRepository.CreateOnline(spot); returnedError != nil {
+		return returnedError
+	}
+
+	if returnedError := s.locationRepository.AppendSpot(spot.EventInfo.UUID); returnedError != nil {
+		return returnedError
+	}
+	return nil
+
+}
+
+func (s *service) GetSpotByUserId(userId string) (domain.Spot, error) {
+	spot, returnedError := s.spotRepository.GetSpotByUserId(userId)
+
+	// TODO -> Improve this.
+	if returnedError != nil {
+		log.Println("Error on GetSpotByUserId: ", returnedError)
+		return domain.Spot{}, apperrors.Internal
+	}
+
+	return spot, nil
+}
+
+func (s *service) EndSpot(spotId string) error {
+
+	if returnedError := s.spotRepository.EndSpot(spotId); returnedError != nil {
+		log.Println("Error on EndSpot: ", returnedError)
+		return returnedError
+	}
+
+	if returnedError := s.locationRepository.RemoveSpot(spotId); returnedError != nil {
+		log.Println("Error on EndSpot: ", returnedError)
+		return returnedError
+	}
+
+	return nil
 }
