@@ -1,7 +1,8 @@
-package httpserver
+package main
 
 import (
 	"github.com/JuanGQCadavid/now-project/services/spots/internal/core/services/spotsrv"
+	"github.com/JuanGQCadavid/now-project/services/spots/internal/handlers/httphdl"
 	"github.com/JuanGQCadavid/now-project/services/spots/internal/repositories/menRepository"
 	"github.com/JuanGQCadavid/now-project/services/spots/pkg/uuidgen"
 	"github.com/gin-gonic/gin"
@@ -13,9 +14,11 @@ func main() {
 	uuid := uuidgen.New()
 
 	service := spotsrv.New(repoSpot, repoLocation, uuid)
+	httpHandler := httphdl.NewHTTPHandler(service)
 
 	router := gin.Default()
+	router.GET("/event/:id", httpHandler.GetEvent)
+	router.POST("/event/online", httpHandler.GoOnline)
 
-	router.GET("/")
-
+	router.Run(":8000")
 }

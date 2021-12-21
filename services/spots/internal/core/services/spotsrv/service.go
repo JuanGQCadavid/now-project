@@ -32,8 +32,7 @@ func New(spotRepository ports.SpotRepository, locationRepository ports.LocationR
 }
 
 func (s *service) Get(spotId string) (domain.Spot, error) {
-
-	return domain.Spot{}, nil
+	return s.spotRepository.Get(spotId)
 }
 
 /*
