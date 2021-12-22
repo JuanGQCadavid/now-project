@@ -26,6 +26,8 @@ func main() {
 	defer session.Close()
 	// WriteTransaction retries the operation in case of transient errors by
 	// invoking the anonymous function multiple times until it succeeds.
+	alice := "Alice"
+
 	records, err := session.WriteTransaction(
 		func(tx neo4j.Transaction) (interface{}, error) {
 			// To learn more about the Cypher syntax, see https://neo4j.com/docs/cypher-manual/current/
@@ -36,7 +38,7 @@ func main() {
 				MERGE (p1)-[:KNOWS]->(p2)
 				RETURN p1, p2`
 			result, err := tx.Run(createRelationshipBetweenPeopleQuery, map[string]interface{}{
-				"person1_name": "Alice",
+				"person1_name": alice,
 				"person2_name": "David",
 			})
 			if err != nil {
@@ -61,15 +63,16 @@ func main() {
 
 	// Now read the created persons. By using ReadTransaction method a connection
 	// to a read replica can be used which reduces load on writer nodes in cluster.
+	name := "Tom Hanks"
 	_, err = session.ReadTransaction(func(tx neo4j.Transaction) (interface{}, error) {
 		// Code within this function might be invoked more than once in case of
 		// transient errors.
 		readPersonByName := `
 			MATCH (p:Person)
 			WHERE p.name = $person_name
-			RETURN p.name AS name`
+			RETURN p`
 		result, err := tx.Run(readPersonByName, map[string]interface{}{
-			"person_name": "Alice",
+			"person_name": name,
 		})
 		if err != nil {
 			return nil, err
@@ -79,7 +82,7 @@ func main() {
 		// while a record could be retrieved, in case of error result.Err()
 		// will return the error.
 		for result.Next() {
-			fmt.Printf("Person name: '%s' \n", result.Record().Values[0].(string))
+			fmt.Printf("Person name: '%s' \n", result.Record().Values[0].(neo4j.Node).Props)
 		}
 		// Again, return any error back to driver to indicate rollback and
 		// retry in case of transient error.
