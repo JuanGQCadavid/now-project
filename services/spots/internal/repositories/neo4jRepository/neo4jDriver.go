@@ -19,7 +19,7 @@ func GetNeo4jRepoDriver() *Neo4jRepoDriver {
 		// Aura requires you to use "neo4j+s" protocol
 		// (You need to replace your connection details, username and password)
 		uri := "neo4j+s://b1679330.databases.neo4j.io"
-		auth := neo4j.BasicAuth("neo4j", "eKsL1TO0UVU2iblhGTi5fe5JYd6JVHNgDgmsADlZeb4", "")
+		auth := neo4j.BasicAuth("neo4j", "rc-dLwLkDBWdaVS_aJZxQyOkLW9AAuyhiamCd1GeS5o", "") //"eKsL1TO0UVU2iblhGTi5fe5JYd6JVHNgDgmsADlZeb4", "")
 		// You typically have one driver instance for the entire application. The
 		// driver maintains a pool of database connections to be used by the sessions.
 		// The driver is thread safe.

@@ -4,12 +4,13 @@ import (
 	"github.com/JuanGQCadavid/now-project/services/spots/internal/core/services/spotsrv"
 	"github.com/JuanGQCadavid/now-project/services/spots/internal/handlers/httphdl"
 	"github.com/JuanGQCadavid/now-project/services/spots/internal/repositories/menRepository"
+	"github.com/JuanGQCadavid/now-project/services/spots/internal/repositories/neo4jRepository"
 	"github.com/JuanGQCadavid/now-project/services/spots/pkg/uuidgen"
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
-	repoSpot := menRepository.New()
+	repoSpot := neo4jRepository.NewNeo4jSpotRepo() //menRepository.New()
 	repoLocation := menRepository.NewLocationRepository()
 	uuid := uuidgen.New()
 
