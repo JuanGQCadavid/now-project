@@ -1,3 +1,11 @@
+# How to create a cdk project
+
+ * Install npm.
+ * npm install -g aws-cdk
+ * npm install -g typescript
+ * cdk init app --language typescript
+
+
 # Welcome to your CDK TypeScript project!
 
 This is a blank project for TypeScript development with CDK.
