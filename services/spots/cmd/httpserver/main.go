@@ -18,8 +18,8 @@ func main() {
 	httpHandler := httphdl.NewHTTPHandler(service)
 
 	router := gin.Default()
-	router.GET("/event/:id", httpHandler.GetEvent)
-	router.POST("/event/online", httpHandler.GoOnline)
+	router.GET("/spot/:id", httpHandler.GetEvent)
+	router.POST("/spot/online", httpHandler.GoOnline)
 
 	router.Run(":8000")
 }
