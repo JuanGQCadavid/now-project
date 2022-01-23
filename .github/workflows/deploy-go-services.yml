@@ -30,4 +30,4 @@ jobs:
           aws-region: us-east-2
 
       - name: Deploy to Spot lambda
-        run: aws --version ;  aws lambda update-function-code --function-name SpotService --zip-file ${{ github.workspace }}/services/spots/main.zip
+        run: aws --version ;  aws lambda update-function-code --function-name SpotService --zip-file fileb://${{ github.workspace }}/services/spots/main.zip
