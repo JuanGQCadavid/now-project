@@ -36,7 +36,8 @@ export class InfraStack extends Stack {
     const spotLambda = new lambda.Function(this, 'spotLambda', {
       runtime : lambda.Runtime.GO_1_X,
       handler: 'main',
-      code: lambda.Code.fromAsset(path)
+      code: lambda.Code.fromAsset(path),
+      functionName: "SpotService"
     })
 
     addMethodToApiGateway(spotLambda, mainApiGateway, "spot")
