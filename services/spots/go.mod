@@ -4,6 +4,7 @@ go 1.17
 
 require (
 	github.com/adam-hanna/arrayOperations v0.2.6 // indirect
+	github.com/aws/aws-lambda-go v1.28.0 // indirect
 	github.com/cornelk/hashmap v1.0.1 // indirect
 	github.com/dchest/siphash v1.2.2 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
