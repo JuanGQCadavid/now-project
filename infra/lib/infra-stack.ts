@@ -15,9 +15,8 @@ export class InfraStack extends Stack {
       const lambdaIntegration = new apigateway.LambdaIntegration(lambdaToAdd, {
         proxy: true
       });
-
-      //method.addMethod('ANY', lambdaIntegration)
-
+      method.addMethod('ANY', lambdaIntegration)
+      
       proxyMethod.addMethod('GET', lambdaIntegration);
       proxyMethod.addMethod('POST', lambdaIntegration);
       proxyMethod.addMethod('PUT', lambdaIntegration);
