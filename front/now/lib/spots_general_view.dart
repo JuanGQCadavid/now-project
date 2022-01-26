@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:now/src/locations.dart' as locations;
 import 'spots_granular_view.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -60,20 +61,38 @@ class _MapBody extends StatefulWidget {
 
 class __MapBodyState extends State<_MapBody> {
   late GoogleMapController mapController;
+  final Map<String, Marker> _markers = {};
 
-  final LatLng _center = const LatLng(6.246408, -75.590666);
+  final LatLng _center = const LatLng(0, 0); //LatLng(6.246408, -75.590666);
 
-  void _onMapCreated(GoogleMapController controller) {
+  void _onMapCreated(GoogleMapController controller) async {
     mapController = controller;
+
+    final googleOficies = await locations.getGoogleOfficies();
+
+    setState(() {
+      _markers.clear();
+
+      for (final office in googleOficies.offices) {
+        final marker = Marker(
+          markerId: MarkerId(office.name),
+          position: LatLng(office.lat, office.lng),
+          infoWindow: InfoWindow(title: office.name, snippet: office.address),
+        );
+        _markers[office.name] = marker;
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return GoogleMap(
-        onMapCreated: _onMapCreated,
-        initialCameraPosition: CameraPosition(
-          target: _center,
-          zoom: 20.0,
-        ));
+      onMapCreated: _onMapCreated,
+      initialCameraPosition: CameraPosition(
+        target: _center,
+        zoom: 2, //20.0,
+      ),
+      markers: _markers.values.toSet(),
+    );
   }
 }
