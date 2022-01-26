@@ -69,12 +69,14 @@ class __MapBodyState extends State<_MapBody> {
     mapController = controller;
 
     final googleOficies = await locations.getGoogleOfficies();
+    final BitmapDescriptor pinLocation = await BitmapDescriptor.fromAssetImage(
+        ImageConfiguration(devicePixelRatio: 2.5), 'assets/custo_marker.png');
 
     setState(() {
       _markers.clear();
-
       for (final office in googleOficies.offices) {
         final marker = Marker(
+          icon: pinLocation,
           markerId: MarkerId(office.name),
           position: LatLng(office.lat, office.lng),
           infoWindow: InfoWindow(title: office.name, snippet: office.address),
