@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:now/directions_provider.dart';
+import 'package:now/temp/directions_provider.dart';
 import 'package:provider/provider.dart';
 
 class DeliveryScreen extends StatefulWidget {

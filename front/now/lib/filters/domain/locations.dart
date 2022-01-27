@@ -1,7 +1,4 @@
-import 'dart:convert';
-import 'package:http/http.dart' as http;
 import "package:json_annotation/json_annotation.dart";
-import 'package:flutter/services.dart' show rootBundle; // WHAT !?
 
 part 'locations.g.dart';
 
@@ -72,24 +69,4 @@ class Locations {
 
   final List<Office> offices;
   final List<Region> regions;
-}
-
-Future<Locations> getGoogleOfficies() async {
-  const googleLocationsURL = 'https://about.google/static/data/locations.json';
-
-  try {
-    final response = await http.get(Uri.parse(googleLocationsURL));
-
-    if (response.statusCode == 200) {
-      return Locations.fromJson(json.decode(response.body));
-    }
-  } catch (e) {
-    print(e);
-  }
-
-  return Locations.fromJson(
-    json.decode(
-      await rootBundle.loadString('assets/locations.json'),
-    ),
-  );
 }

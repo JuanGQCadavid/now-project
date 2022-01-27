@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:now/src/locations.dart' as locations;
+import 'package:now/filters/application/fetch_data.dart';
 import 'spots_granular_view.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -8,13 +8,7 @@ class SpotGeneralView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: const _PageScafold(),
-    );
+    return const _PageScafold();
   }
 }
 
@@ -68,7 +62,7 @@ class __MapBodyState extends State<_MapBody> {
   void _onMapCreated(GoogleMapController controller) async {
     mapController = controller;
 
-    final googleOficies = await locations.getGoogleOfficies();
+    final googleOficies = await getGoogleOfficies();
     final BitmapDescriptor pinLocation = await BitmapDescriptor.fromAssetImage(
         ImageConfiguration(devicePixelRatio: 2.5), 'assets/custo_marker.png');
 
