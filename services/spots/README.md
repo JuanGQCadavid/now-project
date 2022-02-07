@@ -1,7 +1,7 @@
 
 ## Golang commands
 
-go get <PACKATE>
+go get **package**
 
 ## To deploy on lambda
 
