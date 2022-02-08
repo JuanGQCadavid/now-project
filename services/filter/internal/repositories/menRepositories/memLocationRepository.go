@@ -17,7 +17,7 @@ func NewLocationRepo() *locationRepository {
 // This function returns all spots that are btw the rectangle that is formed
 // btw the to points ( point A and Point B), in this case the data is dummy data
 // which one was created at the instanciation of the struct
-func (repo *locationRepository) FetchSpotsIdsByArea(city string, pointA models.LatLng, pointB models.LatLng) (models.Locations, error) {
+func (repo *locationRepository) FetchSpotsIdsByArea(pointA models.LatLng, pointB models.LatLng) (models.Locations, error) {
 	// Procedure:
 	// 1. Iterate over the memory map
 	// 	- If the spot is btw the two points then added it to the repsonse

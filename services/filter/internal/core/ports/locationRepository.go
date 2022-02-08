@@ -5,5 +5,5 @@ import (
 )
 
 type LocationRepository interface {
-	FetchSpotsIdsByArea(city string, pointA models.LatLng, pointB models.LatLng) (models.Locations, error)
+	FetchSpotsIdsByArea(pointA models.LatLng, pointB models.LatLng) (models.Locations, error)
 }
