@@ -9,6 +9,7 @@ type locationRepository struct {
 func NewLocationRepo() *locationRepository {
 	// TODO -> Populate data with ramdon points btw an area
 	// Distributed points
+
 	return &locationRepository{
 		memory: map[string]byte{},
 	}
