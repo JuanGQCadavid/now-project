@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/JuanGQCadavid/now-project/services/filter/internal/core/models"
+	fakedata "github.com/JuanGQCadavid/now-project/services/filter/internal/repositories/fakeData"
 )
 
 func main() {
@@ -26,5 +27,15 @@ func main() {
 	}
 
 	fmt.Printf("%+v\n", example)
+
+	println("Testing random generator")
+
+	cp := models.LatLng{
+		Lat: 6.2409826,
+		Lng: -75.5862183,
+	}
+
+	gen := fakedata.NewDummyDataGenerator(10, cp, 0.05)
+	gen.GeneratePoints()
 
 }
