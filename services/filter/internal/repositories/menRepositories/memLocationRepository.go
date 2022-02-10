@@ -1,17 +1,18 @@
 package menrepositories
 
-import "github.com/JuanGQCadavid/now-project/services/filter/internal/core/models"
+import (
+	"math"
+
+	"github.com/JuanGQCadavid/now-project/services/filter/internal/core/models"
+)
 
 type locationRepository struct {
-	memory map[string]byte
+	memory []models.Spot
 }
 
-func NewLocationRepo() *locationRepository {
-	// TODO -> Populate data with ramdon points btw an area
-	// Distributed points
-
+func NewLocationRepo(data []models.Spot) *locationRepository {
 	return &locationRepository{
-		memory: map[string]byte{},
+		memory: data,
 	}
 }
 
@@ -26,5 +27,26 @@ func (repo *locationRepository) FetchSpotsIdsByArea(pointA models.LatLng, pointB
 	//	- If it is not then continue with the next one
 	// Return
 	//	Locations
-	return models.Locations{}, nil
+
+	var response = []models.Spot{}
+	pointALatFloat := float64(pointA.Lat)
+	pointBLatFloat := float64(pointB.Lat)
+
+	pointALngFloat := float64(pointA.Lng)
+	pointBLngFloat := float64(pointB.Lng)
+
+	for _, spot := range repo.memory {
+
+		spotLatFloat := float64(spot.LatLng.Lat)
+		spotLngFloat := float64(spot.LatLng.Lng)
+
+		if math.Min(pointALatFloat, pointBLatFloat) <= spotLatFloat && spotLatFloat <= math.Max(pointALatFloat, pointBLatFloat) {
+			if math.Min(pointALngFloat, pointBLngFloat) <= spotLngFloat && spotLngFloat <= math.Max(pointALngFloat, pointBLngFloat) {
+				response = append(response, spot)
+			}
+		}
+	}
+	return models.Locations{
+		Places: response,
+	}, nil
 }

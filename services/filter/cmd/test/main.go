@@ -1,41 +1,41 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
+	"time"
 
 	"github.com/JuanGQCadavid/now-project/services/filter/internal/core/models"
+	"github.com/JuanGQCadavid/now-project/services/filter/internal/core/services/filtersrv"
 	fakedata "github.com/JuanGQCadavid/now-project/services/filter/internal/repositories/fakeData"
+	menrepositories "github.com/JuanGQCadavid/now-project/services/filter/internal/repositories/menRepositories"
 )
 
 func main() {
-
-	spotType := models.Online
-
-	fmt.Println(spotType)
-
-	spot := models.Spot{
-		Id:        "DDE",
-		Type:      models.Online,
-		Emoji:     ":p",
-		StartTime: "i dont lnow",
-	}
-
-	fmt.Printf("%+v\n", spot)
-
-	example := models.Locations{
-		Places: []models.Spot{spot, spot},
-	}
-
-	fmt.Printf("%+v\n", example)
-
-	println("Testing random generator")
 
 	cp := models.LatLng{
 		Lat: 6.2409826,
 		Lng: -75.5862183,
 	}
 
-	gen := fakedata.NewDummyDataGenerator(10, cp, 0.05)
+	var maxItem int32 = 4
+	var r float32 = 0.05
+
+	gen := fakedata.NewDummyDataGenerator(maxItem, cp, r)
 	gen.GeneratePoints()
+
+	menLocationService := menrepositories.NewLocationRepo(gen.GetAllData())
+	menSpotService := menrepositories.NewMenSpotService(gen.GetAllData())
+
+	service := filtersrv.New(menLocationService, menSpotService)
+
+	locations := service.FilterByProximity(cp.Lat, cp.Lng, r)
+
+	println("RESULT  ***********************************************************")
+	marsh, _ := json.Marshal(locations)
+	fmt.Printf("%+v\n", string(marsh))
+
+	println("Size -> ", len(locations.Places))
+	println("Actual time -> ", time.Now().String())
 
 }

@@ -66,19 +66,19 @@ func (gen *DummyDataGenerator) GeneratePoints() {
 		// 2. Go through a For, split the elements into three families ( just iterate byt with a counter check it 1/3 for each one)
 		startsAt := time.Now()
 
-		if index >= len(gen.spots)/2 {
+		if index%2 == 0 {
 			delta := rand.Int63n(3) // Max 3 hours
 			println("Delta in hours ->", delta)
 
 			extraTime := time.Duration(delta) * time.Hour
 			println("Extra time added ->", extraTime)
 
-			startsAt = startsAt.Add(extraTime)
+			startsAt = startsAt.Add(3*time.Hour + extraTime)
 			println("final time -> ", startsAt.String())
 
 		}
 		// TODO -> with time.Unix we could get it in integer format.
-		spot.StartTime = startsAt.String()
+		spot.StartTime = startsAt.Format(time.RFC3339)
 
 		// 3. With a random number assign a emoji from the emojis list and a type for the event.
 		spot.Emoji = emojies[rand.Intn(len(emojies)-1)]

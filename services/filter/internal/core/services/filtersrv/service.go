@@ -91,22 +91,29 @@ func (srv *service) FilterByProximity(centralPointLat float32, centralPointLng f
 	var placesToReturn []string
 
 	for _, spot := range locations.Places {
-		startTime, err := time.Parse(time.Layout, spot.StartTime)
+		println("------------------")
+		startTime, err := time.Parse(time.RFC3339, spot.StartTime)
+		println("Time before parsed", spot.StartTime)
+		println("Time Parsed ->  ", startTime.String())
 
 		if err != nil {
 			// TODO -> Do something when it fails here.
 		}
 
 		nowTime := time.Now()
+		println("Time Now ->  ", nowTime.String())
 
 		// if it is > 0 then it was in the pass, if not it is on the future.
 		elapsedTime := nowTime.Sub(startTime)
+		println("Time elapsedTime ->  ", elapsedTime.String())
 
 		// The it was on the past
 		if elapsedTime < 0 && -elapsedTime > srv.maximunTimeWindow {
+			println("Boom chacalaca!!!!!!!!!!!!")
 			continue
 		}
 
+		println("finish")
 		placesToReturn = append(placesToReturn, spot.Id)
 
 	}
