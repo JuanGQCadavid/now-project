@@ -20,6 +20,7 @@ func main() {
 	router := gin.Default()
 	router.GET("/spot/:id", httpHandler.GetEvent)
 	router.POST("/spot/online", httpHandler.GoOnline)
+	router.POST("/spot/getSpots", httpHandler.GetEvents)
 
 	router.Run(":8000")
 }

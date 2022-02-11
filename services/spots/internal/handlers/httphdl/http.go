@@ -1,6 +1,8 @@
 package httphdl
 
 import (
+	"log"
+
 	"github.com/JuanGQCadavid/now-project/services/spots/internal/core/domain"
 	"github.com/JuanGQCadavid/now-project/services/spots/internal/core/ports"
 	"github.com/gin-gonic/gin"
@@ -26,6 +28,22 @@ func (hdl *HTTPHandler) GetEvent(context *gin.Context) {
 	}
 
 	context.JSON(200, event)
+}
+
+func (hdl *HTTPHandler) GetEvents(context *gin.Context) {
+
+	spotIds := SpotsIdsRequest{}
+	context.BindJSON(&spotIds)
+
+	log.Printf("%+v", spotIds)
+
+	multipleSpots, err := hdl.spotService.GetSpots(spotIds.SpotIds)
+	if err != nil {
+		context.AbortWithStatusJSON(500, gin.H{"message": err})
+		return
+	}
+
+	context.JSON(200, multipleSpots)
 }
 
 func (hdl *HTTPHandler) GoOnline(context *gin.Context) {
