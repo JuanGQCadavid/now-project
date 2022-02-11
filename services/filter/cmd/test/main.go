@@ -3,16 +3,41 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"os"
 	"time"
 
 	"github.com/JuanGQCadavid/now-project/services/filter/internal/core/models"
 	"github.com/JuanGQCadavid/now-project/services/filter/internal/core/services/filtersrv"
 	fakedata "github.com/JuanGQCadavid/now-project/services/filter/internal/repositories/fakeData"
+	locationrepositories "github.com/JuanGQCadavid/now-project/services/filter/internal/repositories/locationRepositories"
 	menrepositories "github.com/JuanGQCadavid/now-project/services/filter/internal/repositories/menRepositories"
 )
 
 func main() {
 
+	location := locationrepositories.NewLocationRepo()
+
+	a := models.LatLng{
+		Lat: 6.26174,
+		Lng: -75.60846,
+	}
+
+	b := models.LatLng{
+		Lat: 6.24706,
+		Lng: -75.5961,
+	}
+	places, err := location.FetchSpotsIdsByArea(a, b)
+
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Printf("%+v", places)
+
+	fmt.Println("db_password -> ", os.Getenv("db_password"))
+}
+
+func oldTest() {
 	cp := models.LatLng{
 		Lat: 6.2409826,
 		Lng: -75.5862183,
@@ -37,5 +62,4 @@ func main() {
 
 	println("Size -> ", len(locations.Places))
 	println("Actual time -> ", time.Now().String())
-
 }

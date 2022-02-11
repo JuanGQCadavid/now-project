@@ -25,7 +25,7 @@ func main() {
 		Lng: -75.5862183,
 	}
 
-	gen := fakedata.NewDummyDataGenerator(2000, cp, 0.05)
+	gen := fakedata.NewDummyDataGenerator(20, cp, 0.05)
 	gen.GeneratePoints()
 
 	csvFile, err := os.Create("./data.csv")
