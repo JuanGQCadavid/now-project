@@ -6,5 +6,6 @@ type SpotService interface {
 	Get(spotId string) (domain.Spot, error)
 	GoOnline(spot domain.Spot) (domain.Spot, error)
 	EndSpot(spotId string) error
+	GetSpots(spotIds []string) (domain.MultipleSpots, error)
 	//scheduledSpot()
 }

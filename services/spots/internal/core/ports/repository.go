@@ -7,4 +7,5 @@ type SpotRepository interface {
 	CreateOnline(spot domain.Spot) error
 	GetSpotByUserId(personId string) (domain.Spot, error)
 	EndSpot(spotId string) error
+	GetSpots(spotIds []string) (domain.MultipleSpots, error)
 }

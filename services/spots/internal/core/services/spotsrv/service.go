@@ -1,6 +1,7 @@
 package spotsrv
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/JuanGQCadavid/now-project/services/spots/internal/core/domain"
@@ -33,6 +34,12 @@ func New(spotRepository ports.SpotRepository, locationRepository ports.LocationR
 
 func (s *service) Get(spotId string) (domain.Spot, error) {
 	return s.spotRepository.Get(spotId)
+}
+
+func (s *service) GetSpots(spotIds []string) (domain.MultipleSpots, error) {
+	// TODO -> Should we check that all elements are not empy ?
+	log.Println("Service: GetSpots", fmt.Sprintf("%+v", spotIds))
+	return s.spotRepository.GetSpots(spotIds)
 }
 
 /*
