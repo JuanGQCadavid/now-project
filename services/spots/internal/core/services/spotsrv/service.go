@@ -61,7 +61,7 @@ func (s *service) GetSpots(spotIds []string) (domain.MultipleSpots, error) {
 */
 
 func (s *service) GoOnline(spot domain.Spot) (domain.Spot, error) {
-
+	log.Println("GoOnline -> ", fmt.Sprintf("%+v", spot))
 	//TODO -> Missing body validation
 
 	if returnedSpot, returnedError := s.GetSpotByUserId(spot.HostInfo.Id); returnedError == nil {
