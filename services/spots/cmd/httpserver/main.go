@@ -11,7 +11,7 @@ import (
 
 func main() {
 	repoSpot := neo4jRepository.NewNeo4jSpotRepo() //menRepository.New()
-	repoLocation := menRepository.NewLocationRepository()
+	repoLocation := menRepository.NewMenSpotActivityTopic()
 	uuid := uuidgen.New()
 
 	service := spotsrv.New(repoSpot, repoLocation, uuid)

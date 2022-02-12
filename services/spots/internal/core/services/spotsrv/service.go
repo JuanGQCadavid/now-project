@@ -20,11 +20,11 @@ const (
 */
 type service struct {
 	spotRepository     ports.SpotRepository
-	locationRepository ports.LocationRepository
+	locationRepository ports.SpotActivityTopic
 	uuidGen            uuidgen.UUIDGen
 }
 
-func New(spotRepository ports.SpotRepository, locationRepository ports.LocationRepository, uuidGen uuidgen.UUIDGen) *service {
+func New(spotRepository ports.SpotRepository, locationRepository ports.SpotActivityTopic, uuidGen uuidgen.UUIDGen) *service {
 	return &service{
 		spotRepository:     spotRepository,
 		locationRepository: locationRepository,

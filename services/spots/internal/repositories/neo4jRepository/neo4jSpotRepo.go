@@ -23,6 +23,7 @@ func NewNeo4jSpotRepo() *Neo4jSpotRepo {
 		event.eventType as event_type,
 		event.maximunCapacty as event_max_capacity,
 		event.UUID as event_UUID,
+		event.emoji as event_emoji,
 		place.name as place_name,
 		place.lon as place_lon,
 		place.mapProviderId as place_provider_id,
@@ -140,6 +141,7 @@ func (r Neo4jSpotRepo) getSpotDataFromResult(record *db.Record) domain.Spot {
 	event_type, _ := record.Get("event_type")
 	event_max_capacity, _ := record.Get("event_max_capacity")
 	event_UUID, _ := record.Get("event_UUID")
+	event_emoji, _ := record.Get("event_emoji")
 
 	// Place
 	place_name, _ := record.Get("place_name")
@@ -160,6 +162,7 @@ func (r Neo4jSpotRepo) getSpotDataFromResult(record *db.Record) domain.Spot {
 			UUID:           event_UUID.(string),
 			MaximunCapacty: event_max_capacity.(int64),
 			EventType:      event_type.(string),
+			Emoji:          event_emoji.(string),
 		},
 		HostInfo: domain.Person{
 			Name:        host_name.(string),
@@ -221,6 +224,7 @@ func (r Neo4jSpotRepo) createSpot(tr neo4j.Transaction, spot domain.Spot) error 
 			SET event.maximunCapacty = $event_max_capacity
 			SET event.eventType = $event_type
 			SET event.name = $event_name
+			SET event.emoji = $event_emoji
 		MERGE (place:Place {mapProviderId: $place_provider_id})
 		ON CREATE
 			SET place.lat = toFloat($place_lat)
@@ -238,6 +242,7 @@ func (r Neo4jSpotRepo) createSpot(tr neo4j.Transaction, spot domain.Spot) error 
 		"event_max_capacity": spot.EventInfo.MaximunCapacty,
 		"event_type":         spot.EventInfo.EventType,
 		"event_name":         spot.EventInfo.Name,
+		"event_emoji":        spot.EventInfo.Emoji,
 		"place_provider_id":  spot.PlaceInfo.MapProviderId,
 		"place_lat":          spot.PlaceInfo.Lat,
 		"place_lon":          spot.PlaceInfo.Lon,

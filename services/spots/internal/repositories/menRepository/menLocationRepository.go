@@ -1,19 +1,19 @@
 package menRepository
 
-type LocationRepository struct {
+type MenSpotActivityTopic struct {
 	men map[string][]byte
 }
 
-func NewLocationRepository() *LocationRepository {
-	return &LocationRepository{
+func NewMenSpotActivityTopic() *MenSpotActivityTopic {
+	return &MenSpotActivityTopic{
 		men: map[string][]byte{},
 	}
 }
 
-func (l *LocationRepository) AppendSpot(spotId string) error {
+func (l *MenSpotActivityTopic) AppendSpot(spotId string) error {
 	return nil
 }
 
-func (l *LocationRepository) RemoveSpot(spotId string) error {
+func (l *MenSpotActivityTopic) RemoveSpot(spotId string) error {
 	return nil
 }

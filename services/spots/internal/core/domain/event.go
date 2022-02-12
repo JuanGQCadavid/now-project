@@ -6,6 +6,7 @@ type Event struct {
 	Description    string `json:"description"` // So as Json use it, we need to make ut public.
 	MaximunCapacty int64  `json:"maximunCapacty"`
 	EventType      string `json:"eventType"`
+	Emoji          string `json:"emoji"`
 }
 
 const (
