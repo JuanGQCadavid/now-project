@@ -1,5 +1,7 @@
 package menRepository
 
+import "github.com/JuanGQCadavid/now-project/services/spots/internal/core/domain"
+
 type MenSpotActivityTopic struct {
 	men map[string][]byte
 }
@@ -10,7 +12,7 @@ func NewMenSpotActivityTopic() *MenSpotActivityTopic {
 	}
 }
 
-func (l *MenSpotActivityTopic) AppendSpot(spotId string) error {
+func (l *MenSpotActivityTopic) AppendSpot(spot domain.Spot) error {
 	return nil
 }
 

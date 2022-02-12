@@ -1,6 +1,12 @@
 package spotactivityservices
 
 import (
+	"encoding/json"
+	"fmt"
+	"log"
+
+	"github.com/JuanGQCadavid/now-project/services/spots/internal/core/domain"
+	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/sns"
 )
@@ -21,21 +27,42 @@ func NewAWSSpotActivityTopic() *AWSSpotActivityTopic {
 		targetArn:  "arn:aws:sns:us-east-2:732596568988:spotActivityTopic",
 	}
 }
-func (r AWSSpotActivityTopic) AppendSpot(spotId string) error {
+func (r AWSSpotActivityTopic) AppendSpot(spot domain.Spot) error {
+	log.Println("AppendSpot: ", "\n\t", " spot: ", fmt.Sprintf("%+v", spot))
 
-	var message = "dude"
+	body, err := json.Marshal(&spot)
 
-	_, err := r.sqsService.Publish(&sns.PublishInput{
-		Message:   &message,
+	if err != nil {
+		return err
+	}
+
+	return r.sendMessageToTopic(string(body), "spot_created")
+}
+func (r AWSSpotActivityTopic) RemoveSpot(spotId string) error {
+	log.Println("AppendSpot: ", "\n\t", " spotId: ", spotId)
+
+	return r.sendMessageToTopic(spotId, "spot_removed")
+}
+
+func (r AWSSpotActivityTopic) sendMessageToTopic(messageBody string, operation string) error {
+	log.Println("sendMessageToTopic: ", "\n\t", " Operation: ", operation, "\n\t", " messageBody:", messageBody)
+
+	operationResult, err := r.sqsService.Publish(&sns.PublishInput{
+		Message: &messageBody,
+		MessageAttributes: map[string]*sns.MessageAttributeValue{
+			"Operation": {
+				DataType:    aws.String("String"),
+				StringValue: aws.String(operation),
+			},
+		},
 		TargetArn: &r.targetArn,
 	})
 
 	if err != nil {
-		println(err)
+		log.Print(err)
+	} else {
+		log.Printf("%+v", operationResult)
 	}
 
 	return err
-}
-func (r AWSSpotActivityTopic) RemoveSpot(spotId string) error {
-	return nil
 }

@@ -86,7 +86,7 @@ func (s *service) createEvent(spot domain.Spot) error {
 		return returnedError
 	}
 
-	if returnedError := s.locationRepository.AppendSpot(spot.EventInfo.UUID); returnedError != nil {
+	if returnedError := s.locationRepository.AppendSpot(spot); returnedError != nil {
 		return returnedError
 	}
 	return nil

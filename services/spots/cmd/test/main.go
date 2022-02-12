@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 
+	"github.com/JuanGQCadavid/now-project/services/spots/internal/core/domain"
 	spotactivityservices "github.com/JuanGQCadavid/now-project/services/spots/internal/repositories/spotActivityServices"
 	"github.com/neo4j/neo4j-go-driver/v4/neo4j"
 )
@@ -10,7 +11,7 @@ import (
 func main() {
 	location := spotactivityservices.NewAWSSpotActivityTopic()
 
-	err := location.AppendSpot("ddjsdfsdf")
+	err := location.AppendSpot(domain.Spot{})
 	panic(err)
 }
 
