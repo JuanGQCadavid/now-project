@@ -27,11 +27,24 @@ func NewAWSSpotActivityTopic() *AWSSpotActivityTopic {
 		targetArn:  "arn:aws:sns:us-east-2:732596568988:spotActivityTopic",
 	}
 }
+
+func NewAWSSpotActivityTopicLocal() *AWSSpotActivityTopic {
+	sess := session.Must(session.NewSessionWithOptions(session.Options{
+		SharedConfigState: session.SharedConfigEnable,
+	}))
+
+	svc := sns.New(sess)
+	return &AWSSpotActivityTopic{
+		sqsService: svc,
+		targetArn:  "arn:aws:sns:us-east-2:732596568988:spotActivityTopic",
+	}
+}
+
 func (r AWSSpotActivityTopic) AppendSpot(spot domain.Spot) error {
 	log.Println("AppendSpot: ", "\n\t", " spot: ", fmt.Sprintf("%+v", spot))
 
 	body, err := json.Marshal(&spot)
-
+	log.Println("body -> ", fmt.Sprintf("%+v", body))
 	if err != nil {
 		return err
 	}
@@ -39,7 +52,7 @@ func (r AWSSpotActivityTopic) AppendSpot(spot domain.Spot) error {
 	return r.sendMessageToTopic(string(body), "spot_created")
 }
 func (r AWSSpotActivityTopic) RemoveSpot(spotId string) error {
-	log.Println("AppendSpot: ", "\n\t", " spotId: ", spotId)
+	log.Println("RemoveSpot: ", "\n\t", " spotId: ", spotId)
 
 	return r.sendMessageToTopic(spotId, "spot_removed")
 }

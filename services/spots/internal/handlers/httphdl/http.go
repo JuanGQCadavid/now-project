@@ -1,6 +1,7 @@
 package httphdl
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/JuanGQCadavid/now-project/services/spots/internal/core/domain"
@@ -47,8 +48,13 @@ func (hdl *HTTPHandler) GetEvents(context *gin.Context) {
 }
 
 func (hdl *HTTPHandler) GoOnline(context *gin.Context) {
+	log.Println("Context -> ", fmt.Sprintf("%+v", context))
+	log.Println("Calling GoOnline")
+
 	spot := domain.Spot{}
 	context.BindJSON(&spot)
+
+	log.Println("Spot -> ", fmt.Sprintf("%+v", spot))
 
 	spot, err := hdl.spotService.GoOnline(spot)
 	if err != nil {
