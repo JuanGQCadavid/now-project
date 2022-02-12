@@ -7,6 +7,7 @@ import (
 	"github.com/JuanGQCadavid/now-project/services/spots/internal/core/services/spotsrv"
 	"github.com/JuanGQCadavid/now-project/services/spots/internal/handlers/httphdl"
 	"github.com/JuanGQCadavid/now-project/services/spots/internal/repositories/neo4jRepository"
+	spotactivityservices "github.com/JuanGQCadavid/now-project/services/spots/internal/repositories/spotActivityServices"
 	"github.com/JuanGQCadavid/now-project/services/spots/pkg/uuidgen"
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
@@ -21,7 +22,7 @@ func init() {
 	log.Printf("Gin cold start")
 
 	repoSpot := neo4jRepository.NewNeo4jSpotRepo() //menRepository.New()
-	repoLocation := neo4jRepository.NewAWSSpotActivityTopic()
+	repoLocation := spotactivityservices.NewAWSSpotActivityTopic()
 	uuid := uuidgen.New()
 
 	service := spotsrv.New(repoSpot, repoLocation, uuid)
