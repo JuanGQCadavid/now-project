@@ -7,7 +7,8 @@ import
   aws_sns as sns,
   aws_sns_subscriptions as subscriptions,
   aws_sqs as sqs,
-  aws_lambda_event_sources as lambdaEvent
+  aws_lambda_event_sources as lambdaEvent,
+  aws_iam as iam
 } from 'aws-cdk-lib';
 
 import { Construct } from 'constructs';
@@ -64,12 +65,36 @@ export class InfraStack extends Stack {
     console.log(path)
 
     // -> spotLambda
+
+    const spotLambdaRole = new iam.Role(this, 'spotLambdaRole', {
+      assumedBy: new iam.ServicePrincipal('lambda.amazonaws.com'),
+      managedPolicies: [
+        iam.ManagedPolicy.fromAwsManagedPolicyName("service-role/AWSLambdaBasicExecutionRole"),
+        iam.ManagedPolicy.fromAwsManagedPolicyName("service-role/AWSLambdaRole")
+      ],
+      roleName: "spotLambdaRole",  
+      description: 'Spot Lambda Role',
+    });
+
+    spotLambdaRole.addToPolicy(new iam.PolicyStatement({
+      actions:[
+        "sns:*"
+      ],
+      effect: iam.Effect.ALLOW,
+      resources: [
+        spotActivityTopic.topicArn
+      ]
+    }))
+
     const spotLambda = new lambda.Function(this, 'spotLambda', {
       runtime : lambda.Runtime.GO_1_X,
       handler: 'main',
+      role: spotLambdaRole, 
       code: lambda.Code.fromAsset(path),
       functionName: "SpotService"
     })
+
+
 
     addMethodToApiGateway(spotLambda, mainApiGateway, "spot")
     

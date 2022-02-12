@@ -105,17 +105,20 @@ func (s *service) GetSpotByUserId(userId string) (domain.Spot, error) {
 	return spot, nil
 }
 
+// TODO -> Fix this!
 func (s *service) EndSpot(spotId string) error {
+	/*
+		if returnedError := s.spotRepository.EndSpot(spotId); returnedError != nil {
+			log.Println("Error on EndSpot: ", returnedError)
+			return returnedError
+		}
 
-	if returnedError := s.spotRepository.EndSpot(spotId); returnedError != nil {
-		log.Println("Error on EndSpot: ", returnedError)
-		return returnedError
-	}
+		if returnedError := s.locationRepository.RemoveSpot(spotId); returnedError != nil {
+			log.Println("Error on EndSpot: ", returnedError)
+			return returnedError
+		}
 
-	if returnedError := s.locationRepository.RemoveSpot(spotId); returnedError != nil {
-		log.Println("Error on EndSpot: ", returnedError)
-		return returnedError
-	}
-
+		return nil
+	*/
 	return nil
 }
