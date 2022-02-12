@@ -3,10 +3,18 @@ package main
 import (
 	"fmt"
 
+	spotactivityservices "github.com/JuanGQCadavid/now-project/services/spots/internal/repositories/spotActivityServices"
 	"github.com/neo4j/neo4j-go-driver/v4/neo4j"
 )
 
 func main() {
+	location := spotactivityservices.NewAWSSpotActivityTopic()
+
+	err := location.AppendSpot("ddjsdfsdf")
+	panic(err)
+}
+
+func testNeo() {
 	// Aura requires you to use "neo4j+s" protocol
 	// (You need to replace your connection details, username and password)
 	uri := "neo4j+s://c36227ce.databases.neo4j.io"
