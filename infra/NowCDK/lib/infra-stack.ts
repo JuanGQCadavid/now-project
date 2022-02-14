@@ -91,7 +91,13 @@ export class InfraStack extends Stack {
       handler: 'main',
       role: spotLambdaRole, 
       code: lambda.Code.fromAsset(path),
-      functionName: "SpotService"
+      functionName: "SpotService",
+      environment: { // TODO -> How can we manage this env variables ?
+        neo4jUser: "neo4jUser",
+        neo4jPassword: "neo4jPassword",
+        neo4jUri: "neo4jUri",
+        snsArn: spotActivityTopic.topicArn
+      }
     })
 
 
@@ -103,7 +109,13 @@ export class InfraStack extends Stack {
       runtime : lambda.Runtime.GO_1_X,
       handler: 'main',
       code: lambda.Code.fromAsset(path),
-      functionName: "FilterService"
+      functionName: "FilterService",
+      environment: {
+        dbUser: "dbUser",
+        dbPassword: "dbPassword",
+        dbName: "dbName",
+        dbUrl: "dbUrl"
+      }
     })
 
     addMethodToApiGateway(filterLambda, mainApiGateway, "filter")
