@@ -2,8 +2,15 @@ package ports
 
 import "github.com/JuanGQCadavid/now-project/services/spots/internal/core/domain"
 
+type OutputFormat string
+
+const (
+	SMALL_FORMAT OutputFormat = "SMALL"
+	FULL_FORMAT  OutputFormat = "FULL"
+)
+
 type SpotService interface {
-	Get(spotId string) (domain.Spot, error)
+	Get(spotId string, format OutputFormat) (domain.Spot, error)
 	GoOnline(spot domain.Spot) (domain.Spot, error)
 	EndSpot(spotId string) error
 	GetSpots(spotIds []string) (domain.MultipleSpots, error)

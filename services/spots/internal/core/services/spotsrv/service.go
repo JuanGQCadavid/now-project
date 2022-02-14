@@ -10,10 +10,6 @@ import (
 	"github.com/JuanGQCadavid/now-project/services/spots/pkg/uuidgen"
 )
 
-const (
-	INTERNAL_ERROR = "internal_error"
-)
-
 /*
 	When implementin a interface is just creating a struct with all
 	the methods that the interface defined.
@@ -32,13 +28,15 @@ func New(spotRepository ports.SpotRepository, locationRepository ports.SpotActiv
 	}
 }
 
-func (s *service) Get(spotId string) (domain.Spot, error) {
-	return s.spotRepository.Get(spotId)
+//, output_format OutputFormat
+func (s *service) Get(spotId string, format ports.OutputFormat) (domain.Spot, error) {
+	log.Println("Service: Get ->", spotId)
+	return s.spotRepository.Get(spotId, format)
 }
 
 func (s *service) GetSpots(spotIds []string) (domain.MultipleSpots, error) {
 	// TODO -> Should we check that all elements are not empy ?
-	log.Println("Service: GetSpots", fmt.Sprintf("%+v", spotIds))
+	log.Println("Service: GetSpots ->", fmt.Sprintf("%+v", spotIds))
 	return s.spotRepository.GetSpots(spotIds)
 }
 

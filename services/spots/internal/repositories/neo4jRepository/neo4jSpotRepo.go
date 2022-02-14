@@ -5,6 +5,8 @@ import (
 	"log"
 
 	"github.com/JuanGQCadavid/now-project/services/spots/internal/core/domain"
+	"github.com/JuanGQCadavid/now-project/services/spots/internal/core/ports"
+	"github.com/JuanGQCadavid/now-project/services/spots/internal/repositories/commands"
 	"github.com/gin-gonic/gin"
 	"github.com/neo4j/neo4j-go-driver/v4/neo4j"
 	"github.com/neo4j/neo4j-go-driver/v4/neo4j/db"
@@ -43,14 +45,26 @@ func (r Neo4jSpotRepo) println(body interface{}) {
 	fmt.Fprintf(gin.DefaultWriter, "%#v", body)
 	fmt.Fprintln(gin.DefaultWriter, "  -> DONE")
 }
-func (r Neo4jSpotRepo) Get(id string) (domain.Spot, error) {
+
+func (r Neo4jSpotRepo) Get(id string, format ports.OutputFormat) (domain.Spot, error) {
 	println("Get id -> ", id)
+
+	var command commands.Command
+
+	switch format {
+	case ports.FULL_FORMAT:
+		command = commands.NewGetFullCommand(id)
+	case ports.SMALL_FORMAT:
+		command = commands.NewGetSmallCommand(id)
+	default:
+		command = commands.NewGetFullCommand(id)
+	}
 
 	session := r.neo4jRepoDriver.driver.NewSession(neo4j.SessionConfig{})
 	defer session.Close()
 
 	records, err := session.ReadTransaction(func(tr neo4j.Transaction) (interface{}, error) {
-		return r.getSpot(tr, id)
+		return command.Run(tr)
 	})
 
 	if err != nil {
@@ -176,31 +190,6 @@ func (r Neo4jSpotRepo) getSpotDataFromResult(record *db.Record) domain.Spot {
 		},
 	}
 
-}
-
-func (r Neo4jSpotRepo) getSpot(tr neo4j.Transaction, spotId string) (*domain.Spot, error) {
-
-	var cypherQuery string = fmt.Sprintf("MATCH %s RETURN %s ",
-		"(host:Person)-[host_relation:ON_LIVE]->(event:Event {UUID : $spotId})-[location_relation:ON]->(place:Place)",
-		r.spotInfo,
-	)
-
-	cyperParams := map[string]interface{}{"spotId": spotId}
-
-	result, err := tr.Run(cypherQuery, cyperParams)
-
-	if err != nil {
-		println("Error at running!", err)
-		return &domain.Spot{}, err
-	}
-	var spot domain.Spot = domain.Spot{}
-	for result.Next() {
-
-		record := result.Record()
-		spot = r.getSpotDataFromResult(record)
-		r.println(spot)
-	}
-	return &spot, nil
 }
 
 func (r Neo4jSpotRepo) CreateOnline(spot domain.Spot) error {

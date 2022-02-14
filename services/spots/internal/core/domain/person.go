@@ -1,7 +1,7 @@
 package domain
 
 type Person struct {
-	Id          string `json:"id"`
-	Name        string `json:"name"`
-	PhoneNumber string `json:"phoneNumber"`
+	Id          string `json:"id,omitempty"`
+	Name        string `json:"name,omitempty"`
+	PhoneNumber string `json:"phoneNumber,omitempty"`
 }

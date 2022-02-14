@@ -21,7 +21,12 @@ func NewHTTPHandler(spotService ports.SpotService) *HTTPHandler {
 
 func (hdl *HTTPHandler) GetEvent(context *gin.Context) {
 
-	event, err := hdl.spotService.Get(context.Param("id"))
+	id := context.Param("id")
+	format := hdl.getOuputFormat(context.DefaultQuery("format", "empty"))
+
+	log.Println("Calling GetEvent with -> Id:", id, ", Format: ", string(format))
+
+	event, err := hdl.spotService.Get(id, format)
 
 	if err != nil {
 		context.AbortWithStatusJSON(500, gin.H{"message": err})
@@ -63,4 +68,14 @@ func (hdl *HTTPHandler) GoOnline(context *gin.Context) {
 	}
 
 	context.JSON(200, spot)
+}
+
+func (hdl *HTTPHandler) getOuputFormat(query string) ports.OutputFormat {
+	switch query {
+	case string(ports.FULL_FORMAT):
+		return ports.FULL_FORMAT
+	case string(ports.SMALL_FORMAT):
+		return ports.SMALL_FORMAT
+	}
+	return ports.FULL_FORMAT
 }
