@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"os"
 	"time"
 
 	"github.com/JuanGQCadavid/now-project/services/filter/internal/core/models"
@@ -33,8 +32,6 @@ func main() {
 	}
 
 	fmt.Printf("%+v", places)
-
-	fmt.Println("db_password -> ", os.Getenv("db_password"))
 }
 
 func oldTest() {

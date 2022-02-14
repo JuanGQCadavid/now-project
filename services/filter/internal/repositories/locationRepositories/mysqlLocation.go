@@ -12,8 +12,9 @@ type locationRepository struct {
 }
 
 func NewLocationRepo() *locationRepository {
+
 	return &locationRepository{
-		connector: NewConector("mysql", "admin", "Vamoshptsisepuede5", "mydb", "locations-db.ckdsydwjdbju.us-east-2.rds.amazonaws.com"),
+		connector: NewConectorFromEnv(),
 	}
 }
 
