@@ -28,16 +28,15 @@ func New(spotRepository ports.SpotRepository, locationRepository ports.SpotActiv
 	}
 }
 
-//, output_format OutputFormat
 func (s *service) Get(spotId string, format ports.OutputFormat) (domain.Spot, error) {
 	log.Println("Service: Get ->", spotId)
 	return s.spotRepository.Get(spotId, format)
 }
 
-func (s *service) GetSpots(spotIds []string) (domain.MultipleSpots, error) {
+func (s *service) GetSpots(spotIds []string, format ports.OutputFormat) (domain.MultipleSpots, error) {
 	// TODO -> Should we check that all elements are not empy ?
 	log.Println("Service: GetSpots ->", fmt.Sprintf("%+v", spotIds))
-	return s.spotRepository.GetSpots(spotIds)
+	return s.spotRepository.GetSpots(spotIds, format)
 }
 
 /*

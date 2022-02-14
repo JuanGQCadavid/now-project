@@ -41,9 +41,11 @@ func (hdl *HTTPHandler) GetEvents(context *gin.Context) {
 	spotIds := SpotsIdsRequest{}
 	context.BindJSON(&spotIds)
 
-	log.Printf("%+v", spotIds)
+	format := hdl.getOuputFormat(context.DefaultQuery("format", "empty"))
 
-	multipleSpots, err := hdl.spotService.GetSpots(spotIds.SpotIds)
+	log.Println("Calling GetEvent with -> spotIds:", fmt.Sprintf("%+v", spotIds), ", Format: ", string(format))
+
+	multipleSpots, err := hdl.spotService.GetSpots(spotIds.SpotIds, format)
 	if err != nil {
 		context.AbortWithStatusJSON(500, gin.H{"message": err})
 		return
