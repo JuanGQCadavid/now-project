@@ -1,6 +1,8 @@
 package neo4jRepository
 
 import (
+	"log"
+	"os"
 	"sync"
 
 	"github.com/neo4j/neo4j-go-driver/v4/neo4j"
@@ -16,14 +18,22 @@ var doOnce = &sync.Once{}
 func GetNeo4jRepoDriver() *Neo4jRepoDriver {
 
 	doOnce.Do(func() {
-		// Aura requires you to use "neo4j+s" protocol
-		// (You need to replace your connection details, username and password)
-		uri := "neo4j+s://b1679330.databases.neo4j.io"
-		auth := neo4j.BasicAuth("neo4j", "rc-dLwLkDBWdaVS_aJZxQyOkLW9AAuyhiamCd1GeS5o", "") //"eKsL1TO0UVU2iblhGTi5fe5JYd6JVHNgDgmsADlZeb4", "")
+		neo4jUri, isPresentURL := os.LookupEnv("neo4jUri")
+		neo4jUser, isPresentUser := os.LookupEnv("neo4jUser")
+		neo4jPassword, isPresentPass := os.LookupEnv("neo4jPassword")
+
+		if !isPresentURL || !isPresentUser || !isPresentPass {
+			log.Println("neo4jUri: ", neo4jUri)
+			log.Println("neo4jUser: ", neo4jUser)
+			log.Println("neo4jPassword: ", neo4jPassword)
+			log.Fatalln("The ULR, Password or Username is not present in the env.")
+		}
+
+		auth := neo4j.BasicAuth(neo4jUser, neo4jPassword, "")
 		// You typically have one driver instance for the entire application. The
 		// driver maintains a pool of database connections to be used by the sessions.
 		// The driver is thread safe.
-		driver, err := neo4j.NewDriver(uri, auth)
+		driver, err := neo4j.NewDriver(neo4jUri, auth)
 		if err != nil {
 			panic(err)
 		}

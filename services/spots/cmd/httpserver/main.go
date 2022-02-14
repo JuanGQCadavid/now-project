@@ -3,15 +3,15 @@ package main
 import (
 	"github.com/JuanGQCadavid/now-project/services/spots/internal/core/services/spotsrv"
 	"github.com/JuanGQCadavid/now-project/services/spots/internal/handlers/httphdl"
-	"github.com/JuanGQCadavid/now-project/services/spots/internal/repositories/menRepository"
 	"github.com/JuanGQCadavid/now-project/services/spots/internal/repositories/neo4jRepository"
+	spotactivityservices "github.com/JuanGQCadavid/now-project/services/spots/internal/repositories/spotActivityServices"
 	"github.com/JuanGQCadavid/now-project/services/spots/pkg/uuidgen"
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
 	repoSpot := neo4jRepository.NewNeo4jSpotRepo() //menRepository.New()
-	repoLocation := menRepository.NewMenSpotActivityTopic()
+	repoLocation := spotactivityservices.NewAWSSpotActivityTopic()
 	uuid := uuidgen.New()
 
 	service := spotsrv.New(repoSpot, repoLocation, uuid)

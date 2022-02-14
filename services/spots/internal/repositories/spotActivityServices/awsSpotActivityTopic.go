@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"os"
 
 	"github.com/JuanGQCadavid/now-project/services/spots/internal/core/domain"
 	"github.com/aws/aws-sdk-go/aws"
@@ -21,22 +22,16 @@ func NewAWSSpotActivityTopic() *AWSSpotActivityTopic {
 		SharedConfigState: session.SharedConfigEnable,
 	}))
 
-	svc := sns.New(sess)
-	return &AWSSpotActivityTopic{
-		sqsService: svc,
-		targetArn:  "arn:aws:sns:us-east-2:732596568988:spotActivityTopic",
+	snsArn, isPresent := os.LookupEnv("snsArn")
+
+	if !isPresent {
+		log.Fatal("snsArn is not configured in the env.")
 	}
-}
-
-func NewAWSSpotActivityTopicLocal() *AWSSpotActivityTopic {
-	sess := session.Must(session.NewSessionWithOptions(session.Options{
-		SharedConfigState: session.SharedConfigEnable,
-	}))
 
 	svc := sns.New(sess)
 	return &AWSSpotActivityTopic{
 		sqsService: svc,
-		targetArn:  "arn:aws:sns:us-east-2:732596568988:spotActivityTopic",
+		targetArn:  snsArn,
 	}
 }
 
