@@ -3,6 +3,7 @@ package httphdl
 import (
 	"fmt"
 	"log"
+	"strings"
 
 	"github.com/JuanGQCadavid/now-project/services/spots/internal/core/domain"
 	"github.com/JuanGQCadavid/now-project/services/spots/internal/core/ports"
@@ -73,7 +74,7 @@ func (hdl *HTTPHandler) GoOnline(context *gin.Context) {
 }
 
 func (hdl *HTTPHandler) getOuputFormat(query string) ports.OutputFormat {
-	switch query {
+	switch strings.ToUpper(query) {
 	case string(ports.FULL_FORMAT):
 		return ports.FULL_FORMAT
 	case string(ports.SMALL_FORMAT):
