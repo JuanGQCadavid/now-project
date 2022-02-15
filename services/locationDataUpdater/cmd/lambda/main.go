@@ -4,15 +4,15 @@ import (
 	"context"
 	"log"
 
+	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
 )
 
-func HandleRequest(ctx context.Context, body interface{}) (string, error) {
+func HandleRequest(ctx context.Context, body events.SNSEvent) (string, error) {
 	log.Println("Hello!")
 	log.Printf("%+v", body)
-	log.Printf(body.(string))
 	log.Printf("%+v", ctx)
-	return body.(string), nil
+	return "Base", nil
 }
 
 func main() {
