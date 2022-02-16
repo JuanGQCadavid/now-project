@@ -8,7 +8,7 @@ import (
 	"github.com/aws/aws-lambda-go/lambda"
 )
 
-func HandleRequest(ctx context.Context, body *events.SNSEvent) (string, error) {
+func HandleRequest(ctx context.Context, body *events.SQSEvent) (string, error) {
 	log.Println("Hello!")
 	log.Printf("%+v", body)
 	log.Printf("%+v", ctx)
@@ -19,8 +19,8 @@ func HandleRequest(ctx context.Context, body *events.SNSEvent) (string, error) {
 
 	for _, record := range records {
 		log.Printf("%+v", record)
-		log.Printf("%+v", record.SNS.Subject)
-		log.Printf("%+v", record.SNS.Message)
+		log.Printf("%+v", record.Body)
+		log.Printf("%+v", record.MessageAttributes)
 	}
 
 	return "Base", nil
