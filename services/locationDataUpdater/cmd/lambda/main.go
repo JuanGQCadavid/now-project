@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 
 	"github.com/aws/aws-lambda-go/events"
@@ -18,9 +19,7 @@ func HandleRequest(ctx context.Context, body *events.SQSEvent) (string, error) {
 	records := body.Records
 
 	for _, record := range records {
-		log.Printf("%+v", record)
-		log.Printf("%+v", record.Body)
-		log.Printf("%+v", record.MessageAttributes)
+		fmt.Printf("The message %s for event source %s = %s \n", record.MessageId, record.EventSource, record.Body)
 	}
 
 	return "Base", nil
