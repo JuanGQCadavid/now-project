@@ -18,10 +18,13 @@ func HandleRequest(ctx context.Context, body *events.SQSEvent) (string, error) {
 		snsMessage := events.SNSEvent{}
 		json.Unmarshal([]byte(record.Body), &snsMessage)
 
+		fmt.Printf("%+v", record.Body)
+
 		snsRecords := snsMessage.Records
 
 		for _, snsRecord := range snsRecords {
-			fmt.Printf("The message %s", snsRecord.SNS.Message)
+			fmt.Println("*********")
+			fmt.Printf("%+v", snsRecord.SNS.Message)
 		}
 
 	}
