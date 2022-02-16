@@ -13,7 +13,15 @@ func HandleRequest(ctx context.Context, body *events.SNSEvent) (string, error) {
 	log.Printf("%+v", body)
 	log.Printf("%+v", ctx)
 
-	log.Printf("%+v", body.)
+	log.Printf("%+v", body.Records)
+
+	records := body.Records
+
+	for _, record := range records {
+		log.Printf("%+v", record)
+		log.Printf("%+v", record.SNS.Subject)
+		log.Printf("%+v", record.SNS.Message)
+	}
 
 	return "Base", nil
 }
