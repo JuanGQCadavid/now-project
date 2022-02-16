@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"log"
 
@@ -19,7 +20,15 @@ func HandleRequest(ctx context.Context, body *events.SQSEvent) (string, error) {
 	records := body.Records
 
 	for _, record := range records {
-		fmt.Printf("The message %s for event source %s = %s \n", record.MessageId, record.EventSource, record.Body)
+		snsMessage := events.SNSEvent{}
+		json.Unmarshal([]byte(record.Body), &snsMessage)
+
+		snsRecords := snsMessage.Records
+
+		for _, snsRecord := range snsRecords {
+			fmt.Printf("The message %s for event source %s = %s \n", snsRecord.SNS.Message, snsRecord.EventSource, snsMessage)
+		}
+
 	}
 
 	return "Base", nil
