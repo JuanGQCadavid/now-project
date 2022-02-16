@@ -12,11 +12,6 @@ import (
 
 func HandleRequest(ctx context.Context, body *events.SQSEvent) (string, error) {
 	log.Println("Hello!")
-	log.Printf("%+v", body)
-	log.Printf("%+v", ctx)
-
-	log.Printf("%+v", body.Records)
-
 	records := body.Records
 
 	for _, record := range records {
@@ -26,7 +21,7 @@ func HandleRequest(ctx context.Context, body *events.SQSEvent) (string, error) {
 		snsRecords := snsMessage.Records
 
 		for _, snsRecord := range snsRecords {
-			fmt.Printf("The message %s for event source %s = %s \n", snsRecord.SNS.Message, snsRecord.EventSource, snsMessage)
+			fmt.Printf("The message %s", snsRecord.SNS.Message)
 		}
 
 	}
