@@ -1,4 +1,4 @@
-package lambda
+package main
 
 import (
 	"context"
@@ -8,10 +8,13 @@ import (
 	"github.com/aws/aws-lambda-go/lambda"
 )
 
-func HandleRequest(ctx context.Context, body events.SNSEvent) (string, error) {
+func HandleRequest(ctx context.Context, body *events.SNSEvent) (string, error) {
 	log.Println("Hello!")
 	log.Printf("%+v", body)
 	log.Printf("%+v", ctx)
+
+	log.Printf("%+v", body.)
+
 	return "Base", nil
 }
 
