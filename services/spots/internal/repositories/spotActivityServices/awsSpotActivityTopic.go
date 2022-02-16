@@ -57,6 +57,7 @@ func (r AWSSpotActivityTopic) sendMessageToTopic(messageBody string, operation s
 
 	operationResult, err := r.sqsService.Publish(&sns.PublishInput{
 		Message: &messageBody,
+		Subject: aws.String(operation),
 		MessageAttributes: map[string]*sns.MessageAttributeValue{
 			"Operation": {
 				DataType:    aws.String("String"),
