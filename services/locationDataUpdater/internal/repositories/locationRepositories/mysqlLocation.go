@@ -37,8 +37,7 @@ func (repo *locationRepository) CrateLocation(spot domain.Spot) error {
 	println(query)
 
 	// TODO -> check the lat and lon, they should no be empty
-	result, err := db.Query(query, spot.EventInfo.UUID, spot.PlaceInfo.Lat, spot.PlaceInfo.Lon)
-	defer result.Close()
+	result, err := db.Exec(query, spot.EventInfo.UUID, spot.PlaceInfo.Lat, spot.PlaceInfo.Lon)
 
 	if err != nil {
 		log.Println("An error ocoured!: ", err)
