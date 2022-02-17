@@ -3,7 +3,7 @@ package filtersrv
 import (
 	"time"
 
-	"github.com/JuanGQCadavid/now-project/services/filter/internal/core/models"
+	"github.com/JuanGQCadavid/now-project/services/filter/internal/core/domain"
 	"github.com/JuanGQCadavid/now-project/services/filter/internal/core/ports"
 )
 
@@ -21,15 +21,15 @@ func New(locationRepository ports.LocationRepository, spotService ports.SpotServ
 	}
 }
 
-func (srv *service) generatePoints(centralPoint models.LatLng, radious float32) (models.LatLng, models.LatLng) {
-	var pointA, pointB models.LatLng
+func (srv *service) generatePoints(centralPoint domain.LatLng, radious float32) (domain.LatLng, domain.LatLng) {
+	var pointA, pointB domain.LatLng
 
-	pointA = models.LatLng{
+	pointA = domain.LatLng{
 		Lat: centralPoint.Lat - radious,
 		Lng: centralPoint.Lng + radious,
 	}
 
-	pointB = models.LatLng{
+	pointB = domain.LatLng{
 		Lat: centralPoint.Lat + radious,
 		Lng: centralPoint.Lng - radious,
 	}
@@ -58,7 +58,7 @@ func (srv *service) generatePoints(centralPoint models.LatLng, radious float32) 
 // 	]
 // }
 // TODO -> should we add the city parameter ?
-func (srv *service) FilterByProximity(centralPointLat float32, centralPointLng float32, radious float32) models.Locations {
+func (srv *service) FilterByProximity(centralPointLat float32, centralPointLng float32, radious float32) domain.Locations {
 	//Procedure:
 	//	1. Create pointes A and B
 	// 	2. Fetch the spotsIds from LocationRepository
@@ -69,8 +69,8 @@ func (srv *service) FilterByProximity(centralPointLat float32, centralPointLng f
 	//	The spots info fetched by spot service but in short format
 
 	// 1. Create pointes A and B
-	var pointA, pointB models.LatLng = srv.generatePoints(
-		models.LatLng{
+	var pointA, pointB domain.LatLng = srv.generatePoints(
+		domain.LatLng{
 			Lat: centralPointLat,
 			Lng: centralPointLng,
 		},
@@ -85,15 +85,30 @@ func (srv *service) FilterByProximity(centralPointLat float32, centralPointLng f
 	}
 
 	// 4. Remove all spots that are not in the 3 time window
+	placesToReturn := srv.filterByTime(locations)
 
+	// 5. Call Spots Service in order to get the spots info
+	spotsInfo, err := srv.spotService.GetSpotsCardsInfo(placesToReturn)
+
+	if err != nil {
+		// TODO -> Do something when it fails here.
+	}
+
+	return domain.Locations{
+		Places: spotsInfo,
+	}
+}
+
+func (srv *service) filterByTime(locations domain.Locations) []string {
 	// TODO -> This seems that is not eficient as it needs to resize when the capacity has been reached.
 	// TODO -> Does golang has garbage collector ? Or should I remove it manually ?
 	var placesToReturn []string
 
 	for _, spot := range locations.Places {
-		println("------------------")
-		startTime, err := time.Parse(time.RFC3339, spot.StartTime)
-		println("Time before parsed", spot.StartTime)
+		startTimeNow := time.Now().Format(time.RFC3339) // Fetch it from Spot!  spot.StartTime
+
+		startTime, err := time.Parse(time.RFC3339, startTimeNow)
+		println("Time before parsed ->", startTimeNow)
 		println("Time Parsed ->  ", startTime.String())
 
 		if err != nil {
@@ -114,18 +129,9 @@ func (srv *service) FilterByProximity(centralPointLat float32, centralPointLng f
 		}
 
 		println("finish")
-		placesToReturn = append(placesToReturn, spot.Id)
-
+		placesToReturn = append(placesToReturn, spot.EventInfo.UUID)
 	}
 
-	// 5. Call Spots Service in order to get the spots info
-	spotsInfo, err := srv.spotService.GetSpotsCardsInfo(placesToReturn)
+	return placesToReturn
 
-	if err != nil {
-		// TODO -> Do something when it fails here.
-	}
-
-	return models.Locations{
-		Places: spotsInfo,
-	}
 }

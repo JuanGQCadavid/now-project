@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/JuanGQCadavid/now-project/services/filter/internal/core/models"
+	"github.com/JuanGQCadavid/now-project/services/filter/internal/core/domain"
 	"github.com/JuanGQCadavid/now-project/services/filter/internal/core/services/filtersrv"
 	fakedata "github.com/JuanGQCadavid/now-project/services/filter/internal/repositories/fakeData"
 	locationrepositories "github.com/JuanGQCadavid/now-project/services/filter/internal/repositories/locationRepositories"
@@ -16,14 +16,14 @@ func main() {
 
 	location := locationrepositories.NewLocationRepo()
 
-	a := models.LatLng{
-		Lat: 6.26174,
-		Lng: -75.60846,
+	a := domain.LatLng{
+		Lat: 78.00,
+		Lng: 39.00,
 	}
 
-	b := models.LatLng{
-		Lat: 6.24706,
-		Lng: -75.5961,
+	b := domain.LatLng{
+		Lat: 72.00,
+		Lng: 30.00,
 	}
 	places, err := location.FetchSpotsIdsByArea(a, b)
 
@@ -35,7 +35,7 @@ func main() {
 }
 
 func oldTest() {
-	cp := models.LatLng{
+	cp := domain.LatLng{
 		Lat: 6.2409826,
 		Lng: -75.5862183,
 	}

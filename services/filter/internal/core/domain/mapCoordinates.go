@@ -1,4 +1,4 @@
-package models
+package domain
 
 type LatLng struct {
 	Lat float32 `json:"lat"`

@@ -5,18 +5,19 @@ import (
 	"math/rand"
 	"time"
 
+	"github.com/JuanGQCadavid/now-project/services/filter/internal/core/domain"
 	"github.com/JuanGQCadavid/now-project/services/filter/internal/core/models"
 	"github.com/google/uuid"
 )
 
 type DummyDataGenerator struct {
 	size         int32
-	centralPoint models.LatLng
+	centralPoint domain.LatLng
 	radious      float32
 	spots        []models.Spot
 }
 
-func NewDummyDataGenerator(size int32, centralPoint models.LatLng, radious float32) *DummyDataGenerator {
+func NewDummyDataGenerator(size int32, centralPoint domain.LatLng, radious float32) *DummyDataGenerator {
 
 	spots := make([]models.Spot, size)
 
@@ -96,25 +97,25 @@ func (gen *DummyDataGenerator) GeneratePoints() {
 
 }
 
-func (gen *DummyDataGenerator) splitData(actualIndex int, maxIndex int, deltaX float32, deltaY float32) models.LatLng {
+func (gen *DummyDataGenerator) splitData(actualIndex int, maxIndex int, deltaX float32, deltaY float32) domain.LatLng {
 
 	if actualIndex < maxIndex/4 {
-		return models.LatLng{
+		return domain.LatLng{
 			Lat: gen.centralPoint.Lat + deltaX,
 			Lng: gen.centralPoint.Lng + deltaY,
 		}
 	} else if actualIndex >= maxIndex/4 && actualIndex < ((maxIndex/4)*2) {
-		return models.LatLng{
+		return domain.LatLng{
 			Lat: gen.centralPoint.Lat - deltaX,
 			Lng: gen.centralPoint.Lng + deltaY,
 		}
 	} else if actualIndex >= ((maxIndex/4)*2) && actualIndex < ((maxIndex/4)*3) {
-		return models.LatLng{
+		return domain.LatLng{
 			Lat: gen.centralPoint.Lat + deltaX,
 			Lng: gen.centralPoint.Lng - deltaY,
 		}
 	} else {
-		return models.LatLng{
+		return domain.LatLng{
 			Lat: gen.centralPoint.Lat - deltaX,
 			Lng: gen.centralPoint.Lng - deltaY,
 		}

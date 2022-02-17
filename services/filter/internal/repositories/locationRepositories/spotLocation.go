@@ -1,7 +1,7 @@
 package locationrepositories
 
 type SpotLocation struct {
-	Lat    float32 `json:"lat"`
-	Lng    float32 `json:"lng"`
+	Lat    float64 `json:"lat"`
+	Lng    float64 `json:"lng"`
 	SpotId string  `json:"spotId"`
 }

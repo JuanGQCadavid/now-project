@@ -1,7 +1,9 @@
 package ports
 
-import "github.com/JuanGQCadavid/now-project/services/filter/internal/core/models"
+import (
+	"github.com/JuanGQCadavid/now-project/services/filter/internal/core/domain"
+)
 
 type SpotService interface {
-	GetSpotsCardsInfo(spots []string) ([]models.Spot, error)
+	GetSpotsCardsInfo(spots []string) ([]domain.Spot, error)
 }

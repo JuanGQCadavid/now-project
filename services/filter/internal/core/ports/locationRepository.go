@@ -1,9 +1,9 @@
 package ports
 
 import (
-	"github.com/JuanGQCadavid/now-project/services/filter/internal/core/models"
+	"github.com/JuanGQCadavid/now-project/services/filter/internal/core/domain"
 )
 
 type LocationRepository interface {
-	FetchSpotsIdsByArea(pointA models.LatLng, pointB models.LatLng) (models.Locations, error)
+	FetchSpotsIdsByArea(pointA domain.LatLng, pointB domain.LatLng) (domain.Locations, error)
 }

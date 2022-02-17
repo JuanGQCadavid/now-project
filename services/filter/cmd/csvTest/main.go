@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/JuanGQCadavid/now-project/services/filter/internal/core/models"
+	"github.com/JuanGQCadavid/now-project/services/filter/internal/core/domain"
 	fakedata "github.com/JuanGQCadavid/now-project/services/filter/internal/repositories/fakeData"
 )
 
@@ -20,7 +20,7 @@ type Application struct {
 
 func main() {
 
-	cp := models.LatLng{
+	cp := domain.LatLng{
 		Lat: 6.2409826,
 		Lng: -75.5862183,
 	}

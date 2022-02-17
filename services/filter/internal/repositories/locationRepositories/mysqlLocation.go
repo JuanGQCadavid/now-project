@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"math"
 
-	"github.com/JuanGQCadavid/now-project/services/filter/internal/core/models"
+	"github.com/JuanGQCadavid/now-project/services/filter/internal/core/domain"
 )
 
 type locationRepository struct {
@@ -18,7 +18,7 @@ func NewLocationRepo() *locationRepository {
 	}
 }
 
-func (repo *locationRepository) FetchSpotsIdsByArea(pointA models.LatLng, pointB models.LatLng) (models.Locations, error) {
+func (repo *locationRepository) FetchSpotsIdsByArea(pointA domain.LatLng, pointB domain.LatLng) (domain.Locations, error) {
 	db, err := repo.connector.CreateSession()
 	defer db.Close()
 
@@ -53,22 +53,25 @@ func (repo *locationRepository) FetchSpotsIdsByArea(pointA models.LatLng, pointB
 		panic(err)
 	}
 
-	var spotResult []models.Spot = []models.Spot{}
+	spotResult := []domain.Spot{}
 
 	for result.Next() {
 
 		var spotLocation SpotLocation
 		err = result.Scan(&spotLocation.SpotId, &spotLocation.Lat, &spotLocation.Lng)
-		spotResult = append(spotResult, models.Spot{
-			Id: spotLocation.SpotId,
-			LatLng: models.LatLng{
+
+		spotResult = append(spotResult, domain.Spot{
+			EventInfo: domain.Event{
+				UUID: spotLocation.SpotId,
+			},
+			PlaceInfo: domain.Place{
 				Lat: spotLocation.Lat,
-				Lng: spotLocation.Lng,
+				Lon: spotLocation.Lng,
 			},
 		})
 	}
 
-	return models.Locations{
+	return domain.Locations{
 		Places: spotResult,
 	}, nil
 }

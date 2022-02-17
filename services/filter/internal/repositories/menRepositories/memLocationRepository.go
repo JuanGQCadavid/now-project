@@ -3,6 +3,7 @@ package menrepositories
 import (
 	"math"
 
+	"github.com/JuanGQCadavid/now-project/services/filter/internal/core/domain"
 	"github.com/JuanGQCadavid/now-project/services/filter/internal/core/models"
 )
 
@@ -19,7 +20,7 @@ func NewLocationRepo(data []models.Spot) *locationRepository {
 // This function returns all spots that are btw the rectangle that is formed
 // btw the to points ( point A and Point B), in this case the data is dummy data
 // which one was created at the instanciation of the struct
-func (repo *locationRepository) FetchSpotsIdsByArea(pointA models.LatLng, pointB models.LatLng) (models.Locations, error) {
+func (repo *locationRepository) FetchSpotsIdsByArea(pointA domain.LatLng, pointB domain.LatLng) (domain.Locations, error) {
 	// Procedure:
 	// 1. Iterate over the memory map
 	// 	- If the spot is btw the two points then added it to the repsonse
@@ -28,7 +29,7 @@ func (repo *locationRepository) FetchSpotsIdsByArea(pointA models.LatLng, pointB
 	// Return
 	//	Locations
 
-	var response = []models.Spot{}
+	var response = []domain.Spot{}
 	pointALatFloat := float64(pointA.Lat)
 	pointBLatFloat := float64(pointB.Lat)
 
@@ -42,11 +43,19 @@ func (repo *locationRepository) FetchSpotsIdsByArea(pointA models.LatLng, pointB
 
 		if math.Min(pointALatFloat, pointBLatFloat) <= spotLatFloat && spotLatFloat <= math.Max(pointALatFloat, pointBLatFloat) {
 			if math.Min(pointALngFloat, pointBLngFloat) <= spotLngFloat && spotLngFloat <= math.Max(pointALngFloat, pointBLngFloat) {
-				response = append(response, spot)
+				response = append(response, domain.Spot{
+					EventInfo: domain.Event{
+						UUID: spot.Id,
+					},
+					PlaceInfo: domain.Place{
+						Lat: float64(spot.LatLng.Lat),
+						Lon: float64(spot.LatLng.Lng),
+					},
+				})
 			}
 		}
 	}
-	return models.Locations{
+	return domain.Locations{
 		Places: response,
 	}, nil
 }
