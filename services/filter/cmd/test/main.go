@@ -2,61 +2,44 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
-	"time"
+	"log"
 
-	"github.com/JuanGQCadavid/now-project/services/filter/internal/core/domain"
 	"github.com/JuanGQCadavid/now-project/services/filter/internal/core/services/filtersrv"
-	fakedata "github.com/JuanGQCadavid/now-project/services/filter/internal/repositories/fakeData"
 	locationrepositories "github.com/JuanGQCadavid/now-project/services/filter/internal/repositories/locationRepositories"
-	menrepositories "github.com/JuanGQCadavid/now-project/services/filter/internal/repositories/menRepositories"
+	spotservicelambda "github.com/JuanGQCadavid/now-project/services/filter/internal/repositories/spotServiceLambda"
 )
 
 func main() {
 
 	location := locationrepositories.NewLocationRepo()
+	spot := spotservicelambda.NewSpotServiceLambda()
 
-	a := domain.LatLng{
-		Lat: 78.00,
-		Lng: 39.00,
-	}
+	srv := filtersrv.New(location, spot)
 
-	b := domain.LatLng{
-		Lat: 72.00,
-		Lng: 30.00,
-	}
-	places, err := location.FetchSpotsIdsByArea(a, b)
+	locations := srv.FilterByProximity(75.15, 32.59, 0.5)
 
-	if err != nil {
-		panic(err)
-	}
+	str, _ := json.Marshal(locations)
 
-	fmt.Printf("%+v", places)
-}
+	log.Println(string(str))
 
-func oldTest() {
-	cp := domain.LatLng{
-		Lat: 6.2409826,
-		Lng: -75.5862183,
-	}
+	//log.Printf("%+v", locations)
 
-	var maxItem int32 = 4
-	var r float32 = 0.05
+	/*
+		a := domain.LatLng{
+			Lat: 78.00,
+			Lng: 39.00,
+		}
 
-	gen := fakedata.NewDummyDataGenerator(maxItem, cp, r)
-	gen.GeneratePoints()
+		b := domain.LatLng{
+			Lat: 72.00,
+			Lng: 30.00,
+		}
+		places, err := location.FetchSpotsIdsByArea(a, b)
 
-	menLocationService := menrepositories.NewLocationRepo(gen.GetAllData())
-	menSpotService := menrepositories.NewMenSpotService(gen.GetAllData())
+		if err != nil {
+			panic(err)
+		}
 
-	service := filtersrv.New(menLocationService, menSpotService)
-
-	locations := service.FilterByProximity(cp.Lat, cp.Lng, r)
-
-	println("RESULT  ***********************************************************")
-	marsh, _ := json.Marshal(locations)
-	fmt.Printf("%+v\n", string(marsh))
-
-	println("Size -> ", len(locations.Places))
-	println("Actual time -> ", time.Now().String())
+		fmt.Printf("%+v", places)
+	*/
 }
