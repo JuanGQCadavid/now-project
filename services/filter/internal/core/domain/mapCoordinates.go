@@ -1,6 +1,6 @@
 package domain
 
 type LatLng struct {
-	Lat float32 `json:"lat"`
-	Lng float32 `json:"lng"`
+	Lat float64 `json:"lat"`
+	Lng float64 `json:"lng"`
 }

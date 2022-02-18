@@ -5,5 +5,5 @@ import (
 )
 
 type FilterService interface {
-	FilterByProximity(centralPointLat float32, centralPointLng float32, radious float32) domain.Locations
+	FilterByProximity(centralPointLat float64, centralPointLng float64, radious float64) domain.Locations
 }

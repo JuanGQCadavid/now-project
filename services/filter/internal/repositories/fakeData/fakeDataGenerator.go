@@ -13,11 +13,11 @@ import (
 type DummyDataGenerator struct {
 	size         int32
 	centralPoint domain.LatLng
-	radious      float32
+	radious      float64
 	spots        []models.Spot
 }
 
-func NewDummyDataGenerator(size int32, centralPoint domain.LatLng, radious float32) *DummyDataGenerator {
+func NewDummyDataGenerator(size int32, centralPoint domain.LatLng, radious float64) *DummyDataGenerator {
 
 	spots := make([]models.Spot, size)
 
@@ -48,12 +48,12 @@ func (gen *DummyDataGenerator) GeneratePoints() {
 		":D", ":O", ":P", ":V", ":Q_",
 	}
 
-	randomCoords := [][2]float32{}
+	randomCoords := [][2]float64{}
 
 	for range gen.spots {
-		innerarray := [2]float32{
-			gen.radious * rand.Float32(),
-			gen.radious * rand.Float32(),
+		innerarray := [2]float64{
+			gen.radious * rand.Float64(),
+			gen.radious * rand.Float64(),
 		}
 		randomCoords = append(randomCoords, innerarray)
 	}
@@ -97,7 +97,7 @@ func (gen *DummyDataGenerator) GeneratePoints() {
 
 }
 
-func (gen *DummyDataGenerator) splitData(actualIndex int, maxIndex int, deltaX float32, deltaY float32) domain.LatLng {
+func (gen *DummyDataGenerator) splitData(actualIndex int, maxIndex int, deltaX float64, deltaY float64) domain.LatLng {
 
 	if actualIndex < maxIndex/4 {
 		return domain.LatLng{

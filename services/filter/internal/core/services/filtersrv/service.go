@@ -21,7 +21,7 @@ func New(locationRepository ports.LocationRepository, spotService ports.SpotServ
 	}
 }
 
-func (srv *service) generatePoints(centralPoint domain.LatLng, radious float32) (domain.LatLng, domain.LatLng) {
+func (srv *service) generatePoints(centralPoint domain.LatLng, radious float64) (domain.LatLng, domain.LatLng) {
 	var pointA, pointB domain.LatLng
 
 	pointA = domain.LatLng{
@@ -58,7 +58,7 @@ func (srv *service) generatePoints(centralPoint domain.LatLng, radious float32) 
 // 	]
 // }
 // TODO -> should we add the city parameter ?
-func (srv *service) FilterByProximity(centralPointLat float32, centralPointLng float32, radious float32) domain.Locations {
+func (srv *service) FilterByProximity(centralPointLat float64, centralPointLng float64, radious float64) domain.Locations {
 	//Procedure:
 	//	1. Create pointes A and B
 	// 	2. Fetch the spotsIds from LocationRepository
