@@ -102,7 +102,7 @@ export class InfraStack extends Stack {
 
 
 
-    addMethodToApiGateway(spotLambda, mainApiGateway, "spot")
+    const spotMethod = addMethodToApiGateway(spotLambda, mainApiGateway, "spot")
     
     // -> filterLambda
     const filterLambda = new lambda.Function(this, 'filterLambda', {
@@ -114,7 +114,8 @@ export class InfraStack extends Stack {
         dbUser: "dbUser",
         dbPassword: "dbPassword",
         dbName: "dbName",
-        dbUrl: "dbUrl"
+        dbUrl: "dbUrl",
+        spotServiceURL: `https://${mainApiGateway.restApiId}.execute-api.${this.region}.amazonaws.com/prod${spotMethod.path}`
       }
     })
 
@@ -125,7 +126,13 @@ export class InfraStack extends Stack {
       runtime : lambda.Runtime.GO_1_X,
       handler: 'main',
       code: lambda.Code.fromAsset(path),
-      functionName: "LocationDataUpdater"
+      functionName: "LocationDataUpdater",
+      environment:{
+        dbUser: "dbUser",
+        dbPassword: "dbPassword",
+        dbName: "dbName",
+        dbUrl: "dbUrl"
+      }
     })
 
     const locationDataUpdaterEvent = new lambdaEvent.SqsEventSource(updateLocationDataSQS,{
