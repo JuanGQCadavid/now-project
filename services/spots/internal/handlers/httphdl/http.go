@@ -1,7 +1,6 @@
 package httphdl
 
 import (
-	"fmt"
 	"log"
 	"strings"
 
@@ -23,14 +22,26 @@ func NewHTTPHandler(spotService ports.SpotService) *HTTPHandler {
 func (hdl *HTTPHandler) GetEvent(context *gin.Context) {
 
 	id := context.Param("id")
+
+	if len(id) == 0 {
+		context.AbortWithStatusJSON(400, ErrorMessage{
+			Message: "Missing Id param",
+		})
+		return
+	}
+
 	format := hdl.getOuputFormat(context.DefaultQuery("format", "empty"))
 
-	log.Println("Calling GetEvent with -> Id:", id, ", Format: ", string(format))
+	log.Printf("\nHandler: GetEvent \n\tId: %s, \n\tFormat: %s", id, string(format))
 
 	event, err := hdl.spotService.Get(id, format)
 
 	if err != nil {
-		context.AbortWithStatusJSON(500, gin.H{"message": err})
+		log.Println(err)
+		context.AbortWithStatusJSON(400, ErrorMessage{
+			Message:       "We face an error while fethcing the data",
+			InternalError: err.Error(),
+		})
 		return
 	}
 
@@ -39,16 +50,22 @@ func (hdl *HTTPHandler) GetEvent(context *gin.Context) {
 
 func (hdl *HTTPHandler) GetEvents(context *gin.Context) {
 
+	// Getting data from call
 	spotIds := SpotsIdsRequest{}
 	context.BindJSON(&spotIds)
 
 	format := hdl.getOuputFormat(context.DefaultQuery("format", "empty"))
 
-	log.Println("Calling GetEvent with -> spotIds:", fmt.Sprintf("%+v", spotIds), ", Format: ", string(format))
+	log.Printf("\nHandler: GetEvents \n\tSpotIds: %+v, \n\tFormat: %s", spotIds, string(format))
 
 	multipleSpots, err := hdl.spotService.GetSpots(spotIds.SpotIds, format)
+
 	if err != nil {
-		context.AbortWithStatusJSON(500, gin.H{"message": err})
+		log.Println(err)
+		context.AbortWithStatusJSON(400, ErrorMessage{
+			Message:       "We face an error while fethcing the data",
+			InternalError: err.Error(),
+		})
 		return
 	}
 
@@ -56,17 +73,27 @@ func (hdl *HTTPHandler) GetEvents(context *gin.Context) {
 }
 
 func (hdl *HTTPHandler) GoOnline(context *gin.Context) {
-	log.Println("Context -> ", fmt.Sprintf("%+v", context))
-	log.Println("Calling GoOnline")
 
 	spot := domain.Spot{}
 	context.BindJSON(&spot)
 
-	log.Println("Spot -> ", fmt.Sprintf("%+v", spot))
+	log.Printf("\nHandler: GoOnline \n\tSpot: %+v", spot)
+
+	if !hdl.isSpotCorrect(spot) {
+		context.AbortWithStatusJSON(400, ErrorMessage{
+			Message: "The spot is missing some data.",
+		})
+		return
+	}
 
 	spot, err := hdl.spotService.GoOnline(spot)
+
 	if err != nil {
-		context.AbortWithStatusJSON(500, gin.H{"message": err})
+		log.Println(err)
+		context.AbortWithStatusJSON(400, ErrorMessage{
+			Message:       "We face an error while Going online",
+			InternalError: err.Error(),
+		})
 		return
 	}
 
@@ -81,4 +108,10 @@ func (hdl *HTTPHandler) getOuputFormat(query string) ports.OutputFormat {
 		return ports.SMALL_FORMAT
 	}
 	return ports.FULL_FORMAT
+}
+
+func (hdl *HTTPHandler) isSpotCorrect(spot domain.Spot) bool {
+	// TODO -> Could we use json schemas here ?
+
+	return true
 }
