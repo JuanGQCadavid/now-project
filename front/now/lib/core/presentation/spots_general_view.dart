@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:now/filters/application/fetch_data.dart';
 import 'spots_granular_view.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:flutter/services.dart' show rootBundle;
 
 class SpotGeneralView extends StatelessWidget {
   const SpotGeneralView({Key? key}) : super(key: key);
@@ -56,11 +57,21 @@ class _MapBody extends StatefulWidget {
 class __MapBodyState extends State<_MapBody> {
   late GoogleMapController mapController;
   final Map<String, Marker> _markers = {};
-
+  late String _mapStyle;
   final LatLng _center = const LatLng(0, 0); //LatLng(6.246408, -75.590666);
+
+  @override
+  void initState() {
+    super.initState();
+
+    rootBundle.loadString('assets/maps/mapStyle.json').then((string) {
+      _mapStyle = string;
+    });
+  }
 
   void _onMapCreated(GoogleMapController controller) async {
     mapController = controller;
+    mapController.setMapStyle(_mapStyle);
 
     final googleOficies = await getGoogleOfficies();
     final BitmapDescriptor pinLocation = await BitmapDescriptor.fromAssetImage(
