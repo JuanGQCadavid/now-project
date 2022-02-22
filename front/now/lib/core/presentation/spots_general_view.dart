@@ -50,37 +50,42 @@ class _Body extends StatelessWidget {
               color: Colors.blueGrey,
             ),
           ),
-          Material(
-            borderRadius: const BorderRadius.only(
-                bottomLeft: Radius.circular(25),
-                bottomRight: Radius.circular(25)),
-            elevation: 6,
-            child: Container(
-              margin: const EdgeInsets.fromLTRB(0, 0, 0, 10),
-              padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
-              child: Row(
-                children: [
-                  const IconButton(
-                    onPressed: null,
-                    icon: Icon(Icons.menu),
-                  ),
-                  Flexible(
-                    child: Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 10),
-                      child: const TextField(
-                        decoration: InputDecoration(
-                            enabled: false,
-                            suffixIcon: Icon(Icons.search),
-                            border: UnderlineInputBorder(),
-                            hintText: "Que hacemos?"),
+          Container(
+            margin: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+            child: Material(
+              color: Colors.white,
+              borderRadius: const BorderRadius.only(
+                  bottomLeft: Radius.circular(25),
+                  bottomRight: Radius.circular(25),
+                  topLeft: Radius.circular(25),
+                  topRight: Radius.circular(25)),
+              elevation: 6,
+              child: Container(
+                padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+                child: Row(
+                  children: [
+                    IconButton(
+                      onPressed: () {},
+                      icon: Icon(Icons.menu),
+                    ),
+                    Flexible(
+                      child: Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 10),
+                        child: const TextField(
+                          decoration: InputDecoration(
+                              enabled: false,
+                              suffixIcon: Icon(Icons.search),
+                              border: UnderlineInputBorder(),
+                              hintText: "Que hacemos?"),
+                        ),
                       ),
                     ),
-                  ),
-                  const IconButton(
-                    onPressed: null,
-                    icon: Icon(Icons.filter_list),
-                  ),
-                ],
+                    IconButton(
+                      onPressed: () {},
+                      icon: Icon(Icons.filter_list),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
