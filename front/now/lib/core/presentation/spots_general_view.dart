@@ -25,15 +25,20 @@ class _PageScafold extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: const _Body(),
-      appBar: AppBar(
-        title: Center(
-          child: Text("Ongoing events!"),
+      floatingActionButton: FloatingActionButton(
+        elevation: 6,
+        backgroundColor: Colors.white,
+        child: const Icon(
+          Icons.arrow_forward_ios,
+          color: Colors.black,
         ),
+        onPressed: () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => const SpotGranularView()));
+        },
       ),
-      floatingActionButton: FloatingActionButton(onPressed: () {
-        Navigator.push(context,
-            MaterialPageRoute(builder: (context) => const SpotGranularView()));
-      }),
     );
   }
 }
