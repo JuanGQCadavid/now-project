@@ -1,13 +1,6 @@
-import 'dart:convert';
-import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
-import 'package:location/location.dart';
-import 'package:now/core/services/filterService.dart';
-import 'package:now/core/domain/models/spot.dart' as models;
-
+import 'package:now/features/filters/presentation/centralMap.dart';
 import 'spots_granular_view.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:flutter/services.dart' show rootBundle;
 
 class SpotGeneralView extends StatelessWidget {
   const SpotGeneralView({Key? key}) : super(key: key);
@@ -48,102 +41,60 @@ class _Body extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: _MapBody(),
-      decoration: const BoxDecoration(
-        color: Colors.blueGrey,
+    return SafeArea(
+      child: Stack(
+        children: [
+          Container(
+            child: const MapBody(),
+            decoration: const BoxDecoration(
+              color: Colors.blueGrey,
+            ),
+          ),
+          Material(
+            borderRadius: const BorderRadius.only(
+                bottomLeft: Radius.circular(25),
+                bottomRight: Radius.circular(25)),
+            elevation: 6,
+            child: Container(
+              margin: const EdgeInsets.fromLTRB(0, 0, 0, 10),
+              padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+              child: Row(
+                children: [
+                  const IconButton(
+                    onPressed: null,
+                    icon: Icon(Icons.menu),
+                  ),
+                  Flexible(
+                    child: Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 10),
+                      child: const TextField(
+                        decoration: InputDecoration(
+                            enabled: false,
+                            suffixIcon: Icon(Icons.search),
+                            border: UnderlineInputBorder(),
+                            hintText: "Que hacemos?"),
+                      ),
+                    ),
+                  ),
+                  const IconButton(
+                    onPressed: null,
+                    icon: Icon(Icons.filter_list),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
 }
 
-class _MapBody extends StatefulWidget {
-  const _MapBody({Key? key}) : super(key: key);
-
-  @override
-  __MapBodyState createState() => __MapBodyState();
-}
-
-class __MapBodyState extends State<_MapBody> {
-  late GoogleMapController mapController;
-  final Map<String, Marker> _markers = {};
-  late String _mapStyle;
-  final LatLng _center = const LatLng(0, 0);
-
-  late FilterService filterService;
-  final Location _location = Location();
-
-  @override
-  void initState() {
-    super.initState();
-
-    filterService = FilterService();
-
-    rootBundle
-        .loadString('assets/maps/mapStyle.json', cache: true)
-        .then((string) {
-      _mapStyle = string;
-    });
-  }
-
-  void _onMapCreated(GoogleMapController controller) async {
-    mapController = controller;
-    mapController.setMapStyle(_mapStyle);
-
-    final locationData = await _location.getLocation();
-
-    mapController.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
-        target: LatLng(
-          locationData.latitude ?? 0.0,
-          locationData.longitude ?? 0.0,
-        ),
-        zoom: 15)));
-
-    // _location.onLocationChanged.listen((loc) {
-    //   mapController.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
-    //       target: LatLng(loc.latitude ?? 0.0, loc.longitude ?? 0.0),
-    //       zoom: 15)));
-    // });
-
-    final backendResponse =
-        await filterService.fetchByProximity(lat: 6.246944, lon: -75.586930);
-
-    backendResponse.fold((l) => null, (response) async {
-      final BitmapDescriptor pinLocation =
-          await BitmapDescriptor.fromAssetImage(
-              ImageConfiguration(devicePixelRatio: 2.5),
-              'assets/custo_marker.png');
-
-      setState(() {
-        _markers.clear();
-        for (final spot in response.places) {
-          final marker = Marker(
-            icon: pinLocation,
-            markerId: MarkerId(spot.eventInfo.id),
-            position: LatLng(spot.placeInfo.lat, spot.placeInfo.lon),
-            infoWindow: InfoWindow(
-                title: spot.eventInfo.name, snippet: spot.eventInfo.emoji),
-          );
-          _markers[spot.eventInfo.id] = marker;
-        }
-      });
-    });
-  }
+class _Header extends StatelessWidget {
+  const _Header({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return GoogleMap(
-      onMapCreated: _onMapCreated,
-      initialCameraPosition: CameraPosition(
-        target: _center,
-        zoom: 2, //20.0,
-      ),
-      mapToolbarEnabled: false,
-      myLocationButtonEnabled: false,
-      liteModeEnabled: false,
-      zoomControlsEnabled: false,
-      minMaxZoomPreference: const MinMaxZoomPreference(15, 30),
-      markers: _markers.values.toSet(),
-    );
+    return Container();
   }
 }
