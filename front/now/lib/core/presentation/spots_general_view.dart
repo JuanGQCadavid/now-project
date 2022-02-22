@@ -52,42 +52,7 @@ class _Body extends StatelessWidget {
           ),
           Container(
             margin: const EdgeInsets.fromLTRB(10, 10, 10, 10),
-            child: Material(
-              color: Colors.white,
-              borderRadius: const BorderRadius.only(
-                  bottomLeft: Radius.circular(25),
-                  bottomRight: Radius.circular(25),
-                  topLeft: Radius.circular(25),
-                  topRight: Radius.circular(25)),
-              elevation: 6,
-              child: Container(
-                padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
-                child: Row(
-                  children: [
-                    IconButton(
-                      onPressed: () {},
-                      icon: Icon(Icons.menu),
-                    ),
-                    Flexible(
-                      child: Container(
-                        margin: const EdgeInsets.symmetric(horizontal: 10),
-                        child: const TextField(
-                          decoration: InputDecoration(
-                              enabled: false,
-                              suffixIcon: Icon(Icons.search),
-                              border: UnderlineInputBorder(),
-                              hintText: "Que hacemos?"),
-                        ),
-                      ),
-                    ),
-                    IconButton(
-                      onPressed: () {},
-                      icon: Icon(Icons.filter_list),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+            child: const _Header(),
           ),
         ],
       ),
@@ -100,6 +65,43 @@ class _Header extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Container(
+      child: Material(
+        color: Colors.white,
+        borderRadius: const BorderRadius.only(
+            bottomLeft: Radius.circular(25),
+            bottomRight: Radius.circular(25),
+            topLeft: Radius.circular(25),
+            topRight: Radius.circular(25)),
+        elevation: 6,
+        child: Container(
+          padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+          child: Row(
+            children: [
+              IconButton(
+                onPressed: () {},
+                icon: const Icon(Icons.menu),
+              ),
+              Flexible(
+                child: Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 10),
+                  child: const TextField(
+                    decoration: InputDecoration(
+                        enabled: false,
+                        suffixIcon: Icon(Icons.search),
+                        border: UnderlineInputBorder(),
+                        hintText: "Que hacemos?"),
+                  ),
+                ),
+              ),
+              IconButton(
+                onPressed: () {},
+                icon: const Icon(Icons.filter_list),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }

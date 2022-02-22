@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:now/core/presentation/utils/marksIcons.dart';
 
 import 'package:now/core/services/filterService.dart';
 import 'package:location/location.dart';
@@ -61,11 +62,15 @@ class _MapBodyState extends State<MapBody> {
               ImageConfiguration(devicePixelRatio: 2.5),
               'assets/custo_marker.png');
 
+      var markerGen = MarkerGenerator(100);
+      var icon = await markerGen.createBitmapDescriptorFromIconData(
+          Icons.ac_unit, Colors.blue, Colors.white, Colors.yellow);
+
       setState(() {
         _markers.clear();
         for (final spot in response.places) {
           final marker = Marker(
-            icon: pinLocation,
+            icon: icon,
             markerId: MarkerId(spot.eventInfo.id),
             position: LatLng(spot.placeInfo.lat, spot.placeInfo.lon),
             infoWindow: InfoWindow(
