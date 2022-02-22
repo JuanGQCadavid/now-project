@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
+import 'package:location/location.dart';
 import 'package:now/core/services/filterService.dart';
 import 'package:now/core/domain/models/spot.dart' as models;
 
@@ -62,9 +63,10 @@ class __MapBodyState extends State<_MapBody> {
   late GoogleMapController mapController;
   final Map<String, Marker> _markers = {};
   late String _mapStyle;
-  final LatLng _center = const LatLng(0, 0); //LatLng(6.246408, -75.590666);
+  final LatLng _center = const LatLng(0, 0);
 
   late FilterService filterService;
+  final Location _location = Location();
 
   @override
   void initState() {
@@ -82,6 +84,21 @@ class __MapBodyState extends State<_MapBody> {
   void _onMapCreated(GoogleMapController controller) async {
     mapController = controller;
     mapController.setMapStyle(_mapStyle);
+
+    final locationData = await _location.getLocation();
+
+    mapController.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
+        target: LatLng(
+          locationData.latitude ?? 0.0,
+          locationData.longitude ?? 0.0,
+        ),
+        zoom: 15)));
+
+    // _location.onLocationChanged.listen((loc) {
+    //   mapController.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
+    //       target: LatLng(loc.latitude ?? 0.0, loc.longitude ?? 0.0),
+    //       zoom: 15)));
+    // });
 
     final backendResponse =
         await filterService.fetchByProximity(lat: 6.246944, lon: -75.586930);
@@ -116,6 +133,11 @@ class __MapBodyState extends State<_MapBody> {
         target: _center,
         zoom: 2, //20.0,
       ),
+      mapToolbarEnabled: false,
+      myLocationButtonEnabled: false,
+      liteModeEnabled: false,
+      zoomControlsEnabled: false,
+      minMaxZoomPreference: const MinMaxZoomPreference(15, 30),
       markers: _markers.values.toSet(),
     );
   }
