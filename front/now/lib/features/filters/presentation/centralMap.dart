@@ -1,32 +1,41 @@
 import 'package:flutter/material.dart';
-import 'package:now/core/presentation/utils/marksIcons.dart';
-
-import 'package:now/core/services/filterService.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:location/location.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:now/features/filters/application/filter_providers.dart';
+import 'package:now/features/filters/application/filter_state.dart';
 
-class MapBody extends StatefulWidget {
+class MapBody extends ConsumerStatefulWidget {
   const MapBody({Key? key}) : super(key: key);
 
   @override
   _MapBodyState createState() => _MapBodyState();
 }
 
-class _MapBodyState extends State<MapBody> {
+class _MapBodyState extends ConsumerState<MapBody> {
   late GoogleMapController mapController;
   final Map<String, Marker> _markers = {};
   late String _mapStyle;
   final LatLng _center = const LatLng(0, 0);
 
-  late FilterService filterService;
   final Location _location = Location();
 
   @override
   void initState() {
     super.initState();
 
-    filterService = FilterService();
+    WidgetsBinding.instance?.addPostFrameCallback((_) {
+      final provider = ref.read(filterNotifierProvier);
+      _location.getLocation().then(
+            (value) => provider.fetchSpotsFrom(
+              LatLng(
+                value.latitude ?? 0.0,
+                value.longitude ?? 0.0,
+              ),
+            ),
+          );
+    });
 
     rootBundle
         .loadString('assets/maps/mapStyle.json', cache: true)
@@ -48,42 +57,12 @@ class _MapBodyState extends State<MapBody> {
   void _onMapCreated(GoogleMapController controller) async {
     mapController = controller;
     mapController.setMapStyle(_mapStyle);
-
-    final locationData = await _location.getLocation();
-
     findMe();
-
-    final backendResponse =
-        await filterService.fetchByProximity(lat: 6.246944, lon: -75.586930);
-
-    backendResponse.fold((l) => null, (response) async {
-      final BitmapDescriptor pinLocation =
-          await BitmapDescriptor.fromAssetImage(
-              ImageConfiguration(devicePixelRatio: 2.5),
-              'assets/custo_marker.png');
-
-      var markerGen = MarkerGenerator(100);
-      var icon = await markerGen.createBitmapDescriptorFromIconData(
-          Icons.ac_unit, Colors.blue, Colors.white, Colors.yellow);
-
-      setState(() {
-        _markers.clear();
-        for (final spot in response.places) {
-          final marker = Marker(
-            icon: icon,
-            markerId: MarkerId(spot.eventInfo.id),
-            position: LatLng(spot.placeInfo.lat, spot.placeInfo.lon),
-            infoWindow: InfoWindow(
-                title: spot.eventInfo.name, snippet: spot.eventInfo.emoji),
-          );
-          _markers[spot.eventInfo.id] = marker;
-        }
-      });
-    });
   }
 
   @override
   Widget build(BuildContext context) {
+    final provider = ref.read(filterNotifierProvier);
     return GoogleMap(
       onMapCreated: _onMapCreated,
       initialCameraPosition: CameraPosition(
@@ -95,7 +74,7 @@ class _MapBodyState extends State<MapBody> {
       liteModeEnabled: false,
       zoomControlsEnabled: false,
       minMaxZoomPreference: const MinMaxZoomPreference(15, 30),
-      markers: _markers.values.toSet(),
+      markers: provider.markers.values.toSet(),
     );
   }
 }
