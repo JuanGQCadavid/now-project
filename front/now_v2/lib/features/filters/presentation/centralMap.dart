@@ -1,12 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:location/location.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:flutter/services.dart' show rootBundle;
-import 'package:now_v2/features/filters/application/filter_notifier.dart';
 import 'package:now_v2/features/filters/application/filter_providers.dart';
-import 'package:now_v2/features/filters/application/filter_state.dart';
 
 class CentralMap extends ConsumerStatefulWidget {
   const CentralMap({Key? key}) : super(key: key);
