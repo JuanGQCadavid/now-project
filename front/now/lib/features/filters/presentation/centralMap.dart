@@ -3,8 +3,38 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:location/location.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:now/features/filters/application/filter_notifier.dart';
 import 'package:now/features/filters/application/filter_providers.dart';
 import 'package:now/features/filters/application/filter_state.dart';
+
+class MapBody2 extends StatelessWidget {
+  MapBody2({Key? key}) : super(key: key);
+
+  final LatLng _center = const LatLng(0, 0);
+  //late FilterChangeNotifier filterProvider;
+
+  void _onMapCreated(GoogleMapController controller) async {
+    //filterProvider.mapController = controller;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    //filterProvider = ref.watch(filterNotifierProvier);
+    return GoogleMap(
+      onMapCreated: _onMapCreated,
+      initialCameraPosition: CameraPosition(
+        target: _center,
+        zoom: 2, //20.0,
+      ),
+      mapToolbarEnabled: false,
+      myLocationButtonEnabled: false,
+      liteModeEnabled: false,
+      zoomControlsEnabled: false,
+      minMaxZoomPreference: const MinMaxZoomPreference(15, 30),
+      //markers: filterProvider.markers.values.toSet(),
+    );
+  }
+}
 
 class MapBody extends ConsumerStatefulWidget {
   const MapBody({Key? key}) : super(key: key);
@@ -15,7 +45,6 @@ class MapBody extends ConsumerStatefulWidget {
 
 class _MapBodyState extends ConsumerState<MapBody> {
   late GoogleMapController mapController;
-  final Map<String, Marker> _markers = {};
   late String _mapStyle;
   final LatLng _center = const LatLng(0, 0);
 
@@ -62,7 +91,7 @@ class _MapBodyState extends ConsumerState<MapBody> {
 
   @override
   Widget build(BuildContext context) {
-    final provider = ref.read(filterNotifierProvier);
+    final provider = ref.watch(filterNotifierProvier);
     return GoogleMap(
       onMapCreated: _onMapCreated,
       initialCameraPosition: CameraPosition(

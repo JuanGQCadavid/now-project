@@ -10,7 +10,7 @@ class FilterChangeNotifier extends ChangeNotifier {
   late Map<String, Spot> _spotData;
   late Map<String, Marker> _markersData;
   late FilterState _filterState;
-  final Location _location = Location();
+  late GoogleMapController mapController;
 
   final INowFIlterService filterService;
 
@@ -22,6 +22,7 @@ class FilterChangeNotifier extends ChangeNotifier {
 
   set _spots(Map<String, Spot> locations) {
     _spotData = locations;
+    notifyListeners();
   }
 
   Map<String, Spot> get spotData {
@@ -38,6 +39,7 @@ class FilterChangeNotifier extends ChangeNotifier {
 
   set _markers(Map<String, Marker> newMarkers) {
     _markersData = newMarkers;
+    notifyListeners();
   }
 
   Map<String, Marker> get markers {
@@ -73,7 +75,5 @@ class FilterChangeNotifier extends ChangeNotifier {
         _spotData = newSpotData;
       },
     );
-
-    notifyListeners();
   }
 }

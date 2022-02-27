@@ -45,7 +45,7 @@ class _Body extends StatelessWidget {
       child: Stack(
         children: [
           Container(
-            child: const MapBody(),
+            child: MapBody2(),
             decoration: const BoxDecoration(
               color: Colors.blueGrey,
             ),

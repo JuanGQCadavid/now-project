@@ -1,15 +1,17 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.now">
-   
+    package="com.example.now_v2">
+
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
    <application
-        android:label="now"
+        android:label="now_v2"
+        android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
-
-        <meta-data android:name="com.google.android.geo.API_KEY"
-               android:value="AIzaSyBQ_UD6GIF6cdVfy2T2jDnOBOPHLsCcwPE"/>
-
         <activity
             android:name=".MainActivity"
+            android:exported="true"
             android:launchMode="singleTop"
             android:theme="@style/LaunchTheme"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
@@ -23,15 +25,6 @@
               android:name="io.flutter.embedding.android.NormalTheme"
               android:resource="@style/NormalTheme"
               />
-            <!-- Displays an Android View that continues showing the launch screen
-                 Drawable until Flutter paints its first frame, then this splash
-                 screen fades out. A splash screen is useful to avoid any visual
-                 gap between the end of Android's launch screen and the painting of
-                 Flutter's first frame. -->
-            <meta-data
-              android:name="io.flutter.embedding.android.SplashScreenDrawable"
-              android:resource="@drawable/launch_background"
-              />
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
@@ -43,8 +36,4 @@
             android:name="flutterEmbedding"
             android:value="2" />
     </application>
-
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.INTERNET"/>
 </manifest>
