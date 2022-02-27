@@ -9,19 +9,20 @@ import 'filter_state.dart';
 
 class FilterChangeNotifier extends ChangeNotifier {
   late Map<String, Spot> _spotData;
-  late Map<String, Marker> _markersData;
+  late Map<String, Marker> markersData;
   late FilterState _filterState;
   final INowFIlterService filterService;
+  late MapController mapController;
 
   FilterChangeNotifier({required this.filterService}) {
     _spotData = {};
-    _markersData = {};
+    markersData = {};
     _filterState = const FilterState.initial();
   }
 
   set _spots(Map<String, Spot> locations) {
     _spotData = locations;
-    notifyListeners();
+    //notifyListeners();
   }
 
   Map<String, Spot> get spotData {
@@ -32,17 +33,16 @@ class FilterChangeNotifier extends ChangeNotifier {
     return _filterState;
   }
 
-  set __filterState(FilterState newState) {
+  set filterState(FilterState newState) {
     _filterState = newState;
   }
 
-  set _markers(Map<String, Marker> newMarkers) {
-    _markersData = newMarkers;
-    notifyListeners();
+  set markers(Map<String, Marker> newMarkers) {
+    markersData = newMarkers;
   }
 
   Map<String, Marker> get markers {
-    return _markersData;
+    return markersData;
   }
 
   void fetchSpotsFrom(LatLng latLng) async {
@@ -50,10 +50,31 @@ class FilterChangeNotifier extends ChangeNotifier {
         lat: latLng.latitude, lon: latLng.longitude, radious: 1);
 
     backendResponse.fold(
-      (l) => __filterState = const FilterState.onError(),
+      (l) => filterState = const FilterState.onError(),
       (response) async {
-        print(response);
+        Map<String, Spot> newSpotData = {};
+        Map<String, Marker> newMarkersData = {};
+        for (final spot in response.places) {
+          final marker = Marker(
+            width: 80.0,
+            height: 80.0,
+            point: LatLng(spot.placeInfo.lat, spot.placeInfo.lon),
+            builder: (ctx) => Container(
+                color: Colors.red,
+                child: TextButton(
+                    child: Text(spot.eventInfo.emoji),
+                    onPressed: () {
+                      print(spot.eventInfo.id);
+                    })),
+          );
+          newSpotData[spot.eventInfo.id] = spot;
+          newMarkersData[spot.eventInfo.id] = marker;
+        }
+
+        markersData = newMarkersData;
+        _spotData = newSpotData;
       },
     );
+    notifyListeners();
   }
 }

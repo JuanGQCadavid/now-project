@@ -4,16 +4,37 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:location/location.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:now_v2/features/filters/application/filter_notifier.dart';
+import 'package:now_v2/features/filters/application/filter_providers.dart';
+import 'package:now_v2/features/filters/application/filter_state.dart';
 
-class Body extends StatelessWidget {
-  const Body({Key? key}) : super(key: key);
-  final String apiKey = "INSERT_HERE";
+class CentralMap extends ConsumerStatefulWidget {
+  const CentralMap({Key? key}) : super(key: key);
+
+  @override
+  CentralMapState createState() => CentralMapState();
+}
+
+class CentralMapState extends ConsumerState<CentralMap> {
+  final String apiKey = "INSERT_KEY";
+
+  @override
+  void initState() {
+    super.initState();
+
+    final filterNotifier = ref.read(filterNotifierProvier);
+    WidgetsBinding.instance?.addPostFrameCallback((_) {
+      filterNotifier.fetchSpotsFrom(LatLng(6.2471017, -75.5874348));
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    // También podemos usar "ref" para escuchar a un provider dentro del método build
+    final filterNotifier = ref.watch(filterNotifierProvier);
     return FlutterMap(
       options: MapOptions(
-        center: LatLng(51.5, -0.09),
+        center: LatLng(6.2471017, -75.5874348),
         //zoom: 19.0,
         //maxZoom: 18,
         minZoom: 11.0,
@@ -31,95 +52,9 @@ class Body extends StatelessWidget {
           },
         ),
         MarkerLayerOptions(
-          markers: [
-            Marker(
-              width: 80.0,
-              height: 80.0,
-              point: LatLng(51.5, -0.09),
-              builder: (ctx) => Container(
-                  color: Colors.red,
-                  child: TextButton(
-                      child: Text("dsfsdf"),
-                      onPressed: () {
-                        print("DUDEEE");
-                      })),
-            ),
-          ],
+          markers: filterNotifier.markers.values.toList(),
         ),
       ],
     );
   }
 }
-
-
-// class MapBody extends ConsumerStatefulWidget {
-//   const MapBody({Key? key}) : super(key: key);
-
-//   @override
-//   _MapBodyState createState() => _MapBodyState();
-// }
-
-// class _MapBodyState extends ConsumerState<MapBody> {
-//   late GoogleMapController mapController;
-//   late String _mapStyle;
-//   final LatLng _center = const LatLng(0, 0);
-
-//   final Location _location = Location();
-
-//   @override
-//   void initState() {
-//     super.initState();
-
-//     WidgetsBinding.instance?.addPostFrameCallback((_) {
-//       final provider = ref.read(filterNotifierProvier);
-//       _location.getLocation().then(
-//             (value) => provider.fetchSpotsFrom(
-//               LatLng(
-//                 value.latitude ?? 0.0,
-//                 value.longitude ?? 0.0,
-//               ),
-//             ),
-//           );
-//     });
-
-//     rootBundle
-//         .loadString('assets/maps/mapStyle.json', cache: true)
-//         .then((string) {
-//       _mapStyle = string;
-//     });
-//   }
-
-//   void findMe() async {
-//     final locationData = await _location.getLocation();
-//     mapController.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
-//         target: LatLng(
-//           locationData.latitude ?? 0.0,
-//           locationData.longitude ?? 0.0,
-//         ),
-//         zoom: 15)));
-//   }
-
-//   void _onMapCreated(GoogleMapController controller) async {
-//     mapController = controller;
-//     mapController.setMapStyle(_mapStyle);
-//     findMe();
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     final provider = ref.watch(filterNotifierProvier);
-//     return GoogleMap(
-//       onMapCreated: _onMapCreated,
-//       initialCameraPosition: CameraPosition(
-//         target: _center,
-//         zoom: 2, //20.0,
-//       ),
-//       mapToolbarEnabled: false,
-//       myLocationButtonEnabled: false,
-//       liteModeEnabled: false,
-//       zoomControlsEnabled: false,
-//       minMaxZoomPreference: const MinMaxZoomPreference(15, 30),
-//       markers: provider.markers.values.toSet(),
-//     );
-//   }
-// }
