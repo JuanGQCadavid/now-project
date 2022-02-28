@@ -26,12 +26,7 @@ class _PageScafold extends StatelessWidget {
           Icons.arrow_forward_ios,
           color: Colors.black,
         ),
-        onPressed: () {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => const SpotGranularView()));
-        },
+        onPressed: () {},
       ),
     );
   }

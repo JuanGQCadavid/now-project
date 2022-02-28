@@ -12,7 +12,7 @@ class CentralMap extends ConsumerStatefulWidget {
 }
 
 class CentralMapState extends ConsumerState<CentralMap> {
-  final String apiKey = "INSERT_KEY";
+  final String apiKey = "INSERT_HERE";
 
   @override
   void initState() {

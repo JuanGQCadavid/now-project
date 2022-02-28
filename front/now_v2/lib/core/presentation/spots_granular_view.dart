@@ -1,34 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:now_v2/core/domain/models/spot.dart';
 import 'spots_detail_view.dart';
 
 class SpotGranularView extends StatelessWidget {
-  const SpotGranularView({Key? key}) : super(key: key);
+  final Spot centerSpot;
 
-  @override
-  Widget build(BuildContext context) {
-    return const _PageScafold();
-  }
-}
-
-class _PageScafold extends StatelessWidget {
-  const _PageScafold({Key? key}) : super(key: key);
+  const SpotGranularView({
+    Key? key,
+    required this.centerSpot,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: const _Body(),
+      body: _Body(),
       appBar: AppBar(
-        /*
-        actions: [
-          IconButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              icon: const Icon(Icons.arrow_back))
-        ],
-        */
-        title: const Center(
-          child: Text("Granular view"),
+        title: Center(
+          child: Text(centerSpot.eventInfo.name),
         ),
       ),
       floatingActionButton: FloatingActionButton(onPressed: () {
@@ -36,6 +25,24 @@ class _PageScafold extends StatelessWidget {
             MaterialPageRoute(builder: (context) => const SpotDetaillView()));
       }),
     );
+  }
+}
+
+class _Page extends StatefulWidget {
+  final Spot centerSpot;
+  const _Page({
+    Key? key,
+    required this.centerSpot,
+  }) : super(key: key);
+
+  @override
+  __PageState createState() => __PageState();
+}
+
+class __PageState extends State<_Page> {
+  @override
+  Widget build(BuildContext context) {
+    return Container();
   }
 }
 

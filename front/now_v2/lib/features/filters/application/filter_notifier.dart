@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:location/location.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:now_v2/features/filters/presentation/marker.dart';
 
 import '../../../core/domain/models/spot.dart';
 import '../../../core/domain/ports/i_now_filter_service.dart';
@@ -56,16 +57,12 @@ class FilterChangeNotifier extends ChangeNotifier {
         Map<String, Marker> newMarkersData = {};
         for (final spot in response.places) {
           final marker = Marker(
-            width: 80.0,
-            height: 80.0,
+            width: 40.0,
+            height: 40.0,
             point: LatLng(spot.placeInfo.lat, spot.placeInfo.lon),
-            builder: (ctx) => Container(
-                color: Colors.red,
-                child: TextButton(
-                    child: Text(spot.eventInfo.emoji),
-                    onPressed: () {
-                      print(spot.eventInfo.id);
-                    })),
+            builder: (ctx) => SpotMarker(
+              spotData: spot,
+            ),
           );
           newSpotData[spot.eventInfo.id] = spot;
           newMarkersData[spot.eventInfo.id] = marker;
