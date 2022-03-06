@@ -57,8 +57,8 @@ class FilterChangeNotifier extends ChangeNotifier {
         Map<String, Marker> newMarkersData = {};
         for (final spot in response.places) {
           final marker = Marker(
-            width: 40.0,
-            height: 40.0,
+            width: 50.0,
+            height: 50.0,
             point: LatLng(spot.placeInfo.lat, spot.placeInfo.lon),
             builder: (ctx) => SpotMarker(
               spotData: spot,
