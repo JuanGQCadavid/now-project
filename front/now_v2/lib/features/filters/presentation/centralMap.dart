@@ -31,8 +31,9 @@ class CentralMapState extends ConsumerState<CentralMap> {
     // También podemos usar "ref" para escuchar a un provider dentro del método build
     final filterNotifier = ref.watch(filterNotifierProvier);
 
-    return AppMap(
+    return AppMapStateful(
       markers: filterNotifier.markers.values.toList(),
+      boundOnPoints: false,
     );
   }
 }

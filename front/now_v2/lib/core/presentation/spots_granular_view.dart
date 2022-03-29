@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:now_v2/core/domain/models/spot.dart';
+import 'package:now_v2/features/filters/presentation/marker.dart';
 import '../../features/filters/presentation/map.dart';
 import 'spots_detail_view.dart';
 import 'package:latlong2/latlong.dart';
@@ -108,7 +109,19 @@ class __PageState extends State<_Page> {
           Container(
             child: Expanded(
               child: AppMap(
-                markers: List.empty(),
+                blockMove: true,
+                markers: [
+                  Marker(
+                    width: 100.0,
+                    height: 100.0,
+                    point: LatLng(widget.centerSpot.placeInfo.lat,
+                        widget.centerSpot.placeInfo.lon),
+                    builder: (ctx) => SpotMarker(
+                      showFullInfo: true,
+                      spotData: widget.centerSpot,
+                    ),
+                  )
+                ],
               ),
             ),
           ),
