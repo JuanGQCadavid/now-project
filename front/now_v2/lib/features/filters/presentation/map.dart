@@ -9,7 +9,7 @@ class AppMap extends StatelessWidget {
     required this.markers,
   }) : super(key: key);
 
-  final String apiKey = "HERE";
+  final String apiKey = "sk.eyJ1IjoianVhbmdvbnphbG8iLCJhIjoiY2wwNWo0ZWRyMXlnNzNicGtza3JjdGl5cSJ9.G-lRBbPXFx3zKLxp7ekudg";
 
   @override
   Widget build(BuildContext context) {
