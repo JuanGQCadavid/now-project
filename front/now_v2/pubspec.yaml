@@ -31,7 +31,7 @@ dependencies:
     sdk: flutter
   flutter_map: any
   flutter_riverpod: ^1.0.3
-  location:
+  geolocator: ^8.2.0
   freezed_annotation:
   cupertino_icons: ^1.0.2
   http: ^0.13.4

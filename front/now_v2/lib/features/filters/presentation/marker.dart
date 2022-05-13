@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_map/plugin_api.dart';
 import 'package:now_v2/core/domain/models/spot.dart';
 import 'package:now_v2/core/presentation/spots_granular_view.dart';
 
@@ -62,6 +63,25 @@ class _FullSpotMarker extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+
+class HumanMarkerContent extends StatelessWidget {
+  const HumanMarkerContent({ Key? key }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.only(
+              bottomLeft: Radius.circular(50),
+              bottomRight: Radius.circular(50),
+              topLeft: Radius.circular(50),
+              topRight: Radius.circular(50))),
+      child: const Icon( Icons.person, color: Colors.red,)
     );
   }
 }
