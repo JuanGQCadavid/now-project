@@ -19,7 +19,6 @@ class CentralMapState extends ConsumerState<CentralMap> {
   @override
   void initState() {
     super.initState();
-
     final filterNotifier = ref.read(filterNotifierProvier);
     WidgetsBinding.instance?.addPostFrameCallback((_) {
       filterNotifier.fetchSpotsFrom(LatLng(6.2471017, -75.5874348));
@@ -31,8 +30,9 @@ class CentralMapState extends ConsumerState<CentralMap> {
     // También podemos usar "ref" para escuchar a un provider dentro del método build
     final filterNotifier = ref.watch(filterNotifierProvier);
 
-    return AppMap(
+    return AppMapStateful(
       markers: filterNotifier.markers.values.toList(),
+      boundOnPoints: false,
     );
   }
 }

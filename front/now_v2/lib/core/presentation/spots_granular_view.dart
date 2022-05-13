@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:now_v2/core/domain/models/spot.dart';
-import '../../features/filters/presentation/map.dart';
+import 'package:now_v2/features/filters/presentation/marker.dart';
+import '../../mapService/presentation/map.dart';
 import 'spots_detail_view.dart';
 import 'package:latlong2/latlong.dart';
 
@@ -11,7 +12,7 @@ class SpotGranularView extends StatelessWidget {
   const SpotGranularView({
     Key? key,
     required this.centerSpot,
-  }) : super(key: key);
+  }) : super(key: key); 
 
   @override
   Widget build(BuildContext context) {
@@ -107,8 +108,21 @@ class __PageState extends State<_Page> {
           // Map
           Container(
             child: Expanded(
-              child: AppMap(
-                markers: List.empty(),
+              child: MapPage(
+                addUserLocation: true,
+                blockMove: true,
+                markers: [
+                  Marker(
+                    width: 50.0,
+                    height: 50.0,
+                    point: LatLng(widget.centerSpot.placeInfo.lat,
+                        widget.centerSpot.placeInfo.lon),
+                    builder: (ctx) => SpotMarker(
+                      showFullInfo: false,
+                      spotData: widget.centerSpot,
+                    ),
+                  )
+                ],
               ),
             ),
           ),
