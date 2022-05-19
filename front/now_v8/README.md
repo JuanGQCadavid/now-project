@@ -1,16 +1,13 @@
 # now_v8
 
-A new Flutter project.
+## M1 setup
 
-## Getting Started
+If you find problems while running it due to cocopod you should run this command:
 
-This project is a starting point for a Flutter application.
+```
+arch -x86_64 sudo gem install ffi
+flutter build ios --no-codesign
+```
 
-A few resources to get you started if this is your first Flutter project:
+Taken from https://medium.com/p-society/cocoapods-on-apple-silicon-m1-computers-86e05aa10d3e
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
