@@ -7,4 +7,4 @@
 
 The idea is to have a combination of StateNotifierProvider with StateNotifier, where we are going to simplify our lifes just managin one state per notifier, thus we are going to be more granular and avoiding creating big view-models monsters!
 
-![States creation](https://drive.google.com/file/d/10kBk4MN9ye6ztBe9eUyaCPNvPVj2rKtW)
+![States creation](https://drive.google.com/uc?export=view&id=10kBk4MN9ye6ztBe9eUyaCPNvPVj2rKtW)
