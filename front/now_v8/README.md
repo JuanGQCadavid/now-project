@@ -1,5 +1,11 @@
 # now_v8
 
+## Visual studio code setup
+
+Extensions:
+* Flutter + dart
+* Riverpod -> https://marketplace.visualstudio.com/items?itemName=robert-brunhage.flutter-riverpod-snippets
+
 ## M1 setup
 
 If you find problems while running it due to cocopod you should run this command:
