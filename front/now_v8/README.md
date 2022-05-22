@@ -6,8 +6,7 @@ The idea is to have a combination of StateNotifierProvider with StateNotifier, w
 
 ![States creation](https://drive.google.com/uc?export=view&id=10kBk4MN9ye6ztBe9eUyaCPNvPVj2rKtW)
 
-
-At the end of the day we are going to have different states connected together.
+At the end of the day we are going to have different states connected together for a single feature.
 
 ![States joining together](https://drive.google.com/uc?export=view&id=1h6hTIE6xJ-LIx_fvrN6GKLt-IvjpWpwi)
 

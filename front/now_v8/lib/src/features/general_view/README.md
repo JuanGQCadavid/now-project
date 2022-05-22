@@ -8,3 +8,14 @@ we are going to fallow a Hexagonal architecture.
 * views -> Here we are going to have all about User interface / flutter widgets for the feature.
 
 * Views_model -> here we are going to have only the state manager that will connect the view with the model.
+
+
+# Initial drafts
+
+## View 
+
+![View](https://drive.google.com/uc?export=view&id=1Tt6bYQ5WMXgrfrCFy9l6JFc2VZkqWux9)
+
+## Flutter schema draft
+
+![Flutter schema draft](https://drive.google.com/uc?export=view&id=1yNhn8itU1WCimOgFGCl5xGBprUKY5DiJ)
