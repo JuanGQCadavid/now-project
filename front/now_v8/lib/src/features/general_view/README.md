@@ -18,4 +18,5 @@ we are going to fallow a Hexagonal architecture.
 
 ## Flutter schema draft
 
-![Flutter schema draft](https://drive.google.com/uc?export=view&id=1yNhn8itU1WCimOgFGCl5xGBprUKY5DiJ)
+![Flutter schema draft](https://drive.google.com/uc?export=view&id=1lVB75c_o16vvLy9pSalBkO5qZvtFihve)
+
