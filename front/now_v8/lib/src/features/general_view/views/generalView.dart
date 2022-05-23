@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:now_v8/src/features/general_view/views/widgets/footbar.dart';
 import 'package:now_v8/src/features/general_view/views/widgets/header.dart';
+import 'package:now_v8/src/features/general_view/views/widgets/nowMap.dart';
 
 class GeneralViewFeature extends StatelessWidget {
   const GeneralViewFeature({Key? key}) : super(key: key);
@@ -9,10 +11,7 @@ class GeneralViewFeature extends StatelessWidget {
     return SafeArea(
       child: Scaffold(
         body: GeneralViewBody(),
-        bottomNavigationBar: Container(
-          color: Colors.blue,
-          child: Text("Hi!"),
-        ),
+        bottomNavigationBar: BottomBar(),
       ),
     );
   }
@@ -30,9 +29,9 @@ class GeneralViewBody extends StatelessWidget {
           margin: const EdgeInsets.all(10),
         ),
         Expanded(
-          child: Container(
-            color: Colors.blue,
-            child: Text("Here will be the map"),
+          child: ClipRRect(
+            borderRadius: BorderRadius.only(topLeft: Radius.circular(25), topRight: Radius.circular(25),bottomLeft: Radius.circular(25) ),
+            child: MapSample(),
           ),
         )
       ],

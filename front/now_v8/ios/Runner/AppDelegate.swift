@@ -11,14 +11,14 @@ import Darwin
   ) -> Bool {
     let noApiKey = "NO_API_KEY_SET_UP"
     let apiKey = ProcessInfo.processInfo.environment["GOOGLE_MAP_API_KEY"] ?? noApiKey 
-    
+    print(apiKey)
     if apiKey == noApiKey {
       print("**************")
       print("You sould create a Variable envairoment with the name GOOGLE_MAP_API_KEY pointing to the google api key")
       print("**************")
     }
     
-    GMSServices.provideAPIKey(apiKey)
+    GMSServices.provideAPIKey("")
     GeneratedPluginRegistrant.register(with: self)
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
