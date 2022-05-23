@@ -21,6 +21,7 @@ class GeneralViewHeader extends StatelessWidget {
               IconButton(onPressed: () {}, icon: Icon(Icons.person))
             ],
           ),
+          SizedBox(height: 15,),
           LocationInfo(),
         ],
       ),

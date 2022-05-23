@@ -2,6 +2,8 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 
+import 'package:now_v8/src/features/general_view/views/widgets/spotTagWidget.dart';
+
 class MapSample extends StatefulWidget {
   @override
   State<MapSample> createState() => MapSampleState();
@@ -17,15 +19,72 @@ class MapSampleState extends State<MapSample> {
 
   @override
   Widget build(BuildContext context) {
-    return GoogleMap(
-      mapType: MapType.normal,
-      initialCameraPosition: _kGooglePlex,
-      mapToolbarEnabled: false,
-      myLocationButtonEnabled: false,
-      padding: EdgeInsets.only(bottom: 50),
-      onMapCreated: (GoogleMapController controller) {
-        _controller.complete(controller);
-      },
+    return Stack(
+      children: [
+        GoogleMap(
+          mapType: MapType.normal,
+          initialCameraPosition: _kGooglePlex,
+          mapToolbarEnabled: false,
+          myLocationButtonEnabled: false,
+          padding: EdgeInsets.only(bottom: 65, left: 15),
+          onMapCreated: (GoogleMapController controller) {
+            _controller.complete(controller);
+          },
+        ),
+        Align(
+          alignment: Alignment.bottomLeft,
+          child: Container(
+            margin: EdgeInsets.only(left: 15, bottom: 15),
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: [
+                  Container(
+                    margin: EdgeInsets.only(right: 15),
+                    child: SpotTag(
+                      color: Colors.green.shade900,
+                      tag: "CoffeLovers",
+                      onPressed: (){},
+                    ),
+                  ),
+                  Container(
+                    margin: EdgeInsets.only(right: 15),
+                    child: SpotTag(
+                      color: Colors.blue.shade900,
+                      tag: "ReadingClub",
+                      onPressed: (){},
+                    ),
+                  ),
+                  Container(
+                    margin: EdgeInsets.only(right: 15),
+                    child: SpotTag(
+                      color: Colors.red.shade900,
+                      tag: "StreePainting",
+                      onPressed: (){},
+                    ),
+                  ),
+                  Container(
+                    margin: EdgeInsets.only(right: 15),
+                    child: SpotTag(
+                      color: Colors.orange.shade900,
+                      tag: "Dance",
+                      onPressed: (){},
+                    ),
+                  ),
+                  Container(
+                    margin: EdgeInsets.only(right: 15),
+                    child: SpotTag(
+                      color: Colors.pink.shade900,
+                      tag: "Lettering",
+                      onPressed: (){},
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        )
+      ],
     );
   }
 }
