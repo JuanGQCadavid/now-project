@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:now_v8/src/features/general_view/views/widgets/nowTextCTA.dart';
+import 'package:now_v8/src/core/widgets/nowTextCTA.dart';
 import 'package:now_v8/src/features/general_view/views/widgets/spotTagWidget.dart';
 
 

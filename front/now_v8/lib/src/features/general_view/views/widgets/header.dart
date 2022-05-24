@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:now_v8/src/features/general_view/views/widgets/locationInfo.dart';
+import 'package:now_v8/src/core/widgets/locationInfo.dart';
 
 class GeneralViewHeader extends StatelessWidget {
   final greetingMessage = "Welcome back, \n Juan Gonzalo!";
