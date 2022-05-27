@@ -1,14 +1,31 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:now_v8/src/core/contracts/colorService.dart';
+import 'package:now_v8/src/core/contracts/filterService.dart';
+import 'package:now_v8/src/core/contracts/locationService.dart';
 import 'package:now_v8/src/core/models/spot.dart';
+import 'package:now_v8/src/features/general_view/model/generalViewModel.dart';
 import 'package:now_v8/src/features/general_view/views_model/spotsStateNotifier.dart';
+import 'package:now_v8/src/services/colors_service/colors_service.dart';
 import 'package:now_v8/src/services/providers.dart';
+
+final generalViewModelProvider = Provider<GeneralViewModel>((ref) {
+  final IColorService colorsService = ref.read(colorsServiceProvider);
+  final IFilterService filterService = ref.read(filterServiceProvider);
+  final ILocationService locationService = ref.read(locationServiceProvider);
+
+  return GeneralViewModel(
+    colorService: colorsService,
+    filterService: filterService,
+    locationService: locationService,
+  );
+});
 
 final spotsStateProvider = StateNotifierProvider<SpotsNotifer, List<Spot>>(
   ((ref) {
-    final spotService = ref.read(spotServiceProvider);
+    final generalViewModel = ref.read(generalViewModelProvider);
 
     return SpotsNotifer(
-      spotService: spotService,
+      generalViewModel: generalViewModel,
     );
   }),
 );

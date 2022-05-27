@@ -1,6 +1,7 @@
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:now_v8/src/core/models/spot.dart';
+import 'package:now_v8/src/features/general_view/model/generalViewModel.dart';
 
 /**
  * We are going to have singles state notifiers
@@ -12,7 +13,16 @@ import 'package:now_v8/src/core/models/spot.dart';
  */
 
 class SpotsNotifer extends StateNotifier<List<Spot>> {
-  final int spotService;
-  SpotsNotifer({required this.spotService}):super([]);
+  final GeneralViewModel generalViewModel;
+
+  SpotsNotifer({required this.generalViewModel}):super([]) {
+    refreshSpots();
+  }
+
+
+  void refreshSpots(){
+    List<Spot> spots = generalViewModel.getSpots();
+    state = spots;
+  }
 
 }
