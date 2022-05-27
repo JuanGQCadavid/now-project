@@ -3,7 +3,7 @@ import 'package:now_v8/src/core/contracts/filterService.dart';
 import 'package:now_v8/src/core/models/spot.dart';
 
 // What about a provider with configuration abput the server api gateway ?
-class FilterService implements IFilterService {
+class FilterFakeService implements IFilterService {
   List<Spot> spots = [
     Spot.withOutSpotColors(
       principalTag: "CoffeLovers",
@@ -30,7 +30,7 @@ class FilterService implements IFilterService {
     )
   ];
 
-  FilterService();
+  FilterFakeService();
 
   List<Spot> getByProximity(
       {required double cpLat, required double cpLng, double radious = 10}) {

@@ -1,7 +1,7 @@
 import 'package:google_maps_flutter_platform_interface/src/types/location.dart';
 import 'package:now_v8/src/core/contracts/locationService.dart';
 
-class LocationService implements ILocationService {
+class LocationFakeService implements ILocationService {
   // TODO -> Implement this service!
   @override
   LatLng getUserCurrentLocation() {
