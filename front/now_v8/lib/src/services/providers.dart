@@ -17,4 +17,6 @@ final filterServiceProvider = Provider<IFilterService>((ref) {
   return FilterFakeService();
 });
 
-final colorsServiceProvider = Provider<ColorsService>((ref) => ColorsService());
+final colorsServiceProvider = Provider<ColorsService>(
+  (ref) => ColorsService(),
+);
