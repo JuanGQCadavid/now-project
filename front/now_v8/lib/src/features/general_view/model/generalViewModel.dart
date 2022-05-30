@@ -17,10 +17,10 @@ class GeneralViewModel {
     required this.locationService
   });
 
-  List<Spot> getSpots(){
+  Future<List<Spot>> getSpots() async {
     LatLng userLocation = locationService.getUserCurrentLocation();
 
-    spots = filterService.getByProximity(cpLat: userLocation.latitude, cpLng: userLocation.longitude);
+    spots = await filterService.getByProximity(cpLat: userLocation.latitude, cpLng: userLocation.longitude);
 
     spots.forEach((spot) {
       spot.spotsColor = colorService.getColor();

@@ -20,8 +20,8 @@ class SpotsNotifer extends StateNotifier<List<Spot>> {
   }
 
 
-  void refreshSpots(){
-    List<Spot> spots = generalViewModel.getSpots();
+  void refreshSpots() async{
+    List<Spot> spots = await generalViewModel.getSpots();
     state = spots;
   }
 

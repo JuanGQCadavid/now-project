@@ -32,8 +32,8 @@ class FilterFakeService implements IFilterService {
 
   FilterFakeService();
 
-  List<Spot> getByProximity(
-      {required double cpLat, required double cpLng, double radious = 10}) {
+  Future<List<Spot>> getByProximity(
+      {required double cpLat, required double cpLng, double radious = 10})  async {
     return spots;
   }
 }
