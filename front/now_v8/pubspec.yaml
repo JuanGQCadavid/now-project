@@ -30,8 +30,9 @@ dependencies:
   flutter:
     sdk: flutter
   google_maps_flutter: any
-  #riverpod: ^2.0.0-dev.7
+  json_annotation: any
   flutter_riverpod: any
+  dio: ^4.0.6
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -40,6 +41,8 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  build_runner: ^2.1.7
+  json_serializable: any
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
