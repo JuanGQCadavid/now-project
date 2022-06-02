@@ -5,8 +5,7 @@ import 'package:now_v8/src/core/contracts/locationService.dart';
 import 'package:now_v8/src/core/models/spot.dart';
 import 'package:now_v8/src/features/general_view/model/generalViewModel.dart';
 import 'package:now_v8/src/features/general_view/views_model/spotsStateNotifier.dart';
-import 'package:now_v8/src/services/colors_service/colors_service.dart';
-import 'package:now_v8/src/services/providers.dart';
+import 'package:now_v8/src/services/core/providers.dart';
 
 final generalViewModelProvider = Provider<GeneralViewModel>((ref) {
   final IColorService colorsService = ref.read(colorsServiceProvider);
