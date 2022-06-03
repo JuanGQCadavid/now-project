@@ -40,7 +40,7 @@ func (s *service) GetSpots(spotIds []string, format ports.OutputFormat) (domain.
 }
 
 /*
-	The user should not me online in more tha  two events
+	The user should not be online in more tha  two events
 
 	Procedure:
 		1. check if the user is already in a Online event		YES

@@ -1,5 +1,8 @@
 package domain
 
 type Topic struct {
-	Name string `json:"name,omitempty"`
+	// deprecated
+	Name            string   `json:"name,omitempty"`
+	PrincipalTopic  string   `json:"principalTopic,omitempty"`
+	SecondaryTopics []string `json:"secondaryTopics,omitempty"`
 }
