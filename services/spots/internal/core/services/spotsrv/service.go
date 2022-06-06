@@ -3,6 +3,7 @@ package spotsrv
 import (
 	"fmt"
 	"log"
+	"strings"
 
 	"github.com/JuanGQCadavid/now-project/services/spots/internal/core/domain"
 	"github.com/JuanGQCadavid/now-project/services/spots/internal/core/ports"
@@ -61,6 +62,7 @@ func (s *service) GoOnline(spot domain.Spot) (domain.Spot, error) {
 	log.Println("GoOnline -> ", fmt.Sprintf("%+v", spot))
 	//TODO -> Missing body validation
 
+	// TODO -> I think this is not working as I spect, we need to check this.
 	if returnedSpot, returnedError := s.GetSpotByUserId(spot.HostInfo.Id); returnedError == nil {
 		if err := s.EndSpot(returnedSpot.EventInfo.UUID); err != nil {
 			return domain.Spot{}, err
@@ -74,7 +76,46 @@ func (s *service) GoOnline(spot domain.Spot) (domain.Spot, error) {
 		return domain.Spot{}, returnedError
 	}
 
+	// Check if method contains tags for the event
+
+	if spot.TopicsInfo.PrincipalTopic != "" || spot.TopicsInfo.SecondaryTopics != nil {
+		if returnedError := s.createSpotTags(spot); returnedError != nil {
+			return domain.Spot{}, returnedError
+		}
+	}
+
 	return spot, nil
+}
+
+func (s *service) createSpotTags(spot domain.Spot) error {
+
+	var principalTag *domain.Optional = s.sanitizeTag(spot.TopicsInfo.PrincipalTopic)
+	var secondaryTopics []string = s.sanitizeTags(spot.TopicsInfo.SecondaryTopics...)
+
+	return s.spotRepository.CreateSpotTags(spot.EventInfo.UUID, *principalTag, secondaryTopics)
+}
+
+func (s *service) sanitizeTags(tags ...string) []string {
+	var response []string
+
+	for _, tag := range tags {
+		newTagOptional := s.sanitizeTag(tag)
+
+		if newTagOptional.IsPresent() {
+			response = append(response, newTagOptional.GetValue())
+		}
+	}
+
+	return response
+}
+
+func (s *service) sanitizeTag(tag string) *domain.Optional {
+	var newTag string = strings.ToLower(tag)
+	newTag = strings.ReplaceAll(newTag, " ", "")
+
+	return domain.NewOptional(
+		newTag,
+	)
 }
 
 func (s *service) createEvent(spot domain.Spot) error {
@@ -83,9 +124,9 @@ func (s *service) createEvent(spot domain.Spot) error {
 		return returnedError
 	}
 
-	if returnedError := s.locationRepository.AppendSpot(spot); returnedError != nil {
-		return returnedError
-	}
+	// if returnedError := s.locationRepository.AppendSpot(spot); returnedError != nil {
+	// 	return returnedError
+	// }
 	return nil
 
 }

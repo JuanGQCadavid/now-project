@@ -19,3 +19,7 @@ func (l *MenSpotActivityTopic) AppendSpot(spot domain.Spot) error {
 func (l *MenSpotActivityTopic) RemoveSpot(spotId string) error {
 	return nil
 }
+
+func (l *MenSpotActivityTopic) CreateSpotTags(spotId string, principalTag domain.Optional, secondaryTags []string) error {
+	return nil
+}

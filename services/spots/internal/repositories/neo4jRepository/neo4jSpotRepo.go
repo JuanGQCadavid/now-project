@@ -6,7 +6,7 @@ import (
 
 	"github.com/JuanGQCadavid/now-project/services/spots/internal/core/domain"
 	"github.com/JuanGQCadavid/now-project/services/spots/internal/core/ports"
-	"github.com/JuanGQCadavid/now-project/services/spots/internal/repositories/commands"
+	"github.com/JuanGQCadavid/now-project/services/spots/internal/repositories/neo4jRepository/commands"
 	"github.com/neo4j/neo4j-go-driver/v4/neo4j"
 )
 
@@ -139,5 +139,52 @@ func (r Neo4jSpotRepo) GetSpotByUserId(personId string) (domain.Spot, error) {
 	return domain.Spot{}, nil
 }
 func (r Neo4jSpotRepo) EndSpot(spotId string) error {
+	return nil
+}
+
+func (r Neo4jSpotRepo) CreateSpotTags(spotId string, principalTag domain.Optional, secondaryTags []string) error {
+	log.Println("Repository: CreateSpotTags", "\nspotId: ", spotId, "\nprincipalTag: ", fmt.Sprintf("%+v", principalTag), "\nsecondaryTags: ", fmt.Sprintf("%+v", secondaryTags))
+
+	if !principalTag.IsPresent() && (secondaryTags == nil || len(secondaryTags) == 0) {
+		log.Println("Avoiding process as both Principal and secondary tags are empty.")
+		return nil
+	}
+
+	session := r.neo4jRepoDriver.driver.NewSession(neo4j.SessionConfig{})
+	defer session.Close()
+
+	_, err := session.WriteTransaction(func(tx neo4j.Transaction) (interface{}, error) {
+		return nil, r.createSpotTags(tx, spotId, principalTag, secondaryTags)
+	})
+
+	return err
+}
+
+func (r Neo4jSpotRepo) createSpotTags(tr neo4j.Transaction, spotId string, principalTag domain.Optional, secondaryTags []string) error {
+
+	var cypherBaseCommand string = "MATCH (spot:Event {UUID: $event_uuid})"
+
+	var params map[string]interface{} = make(map[string]interface{})
+	params["event_uuid"] = spotId
+
+	if principalTag.IsPresent() {
+		cyperPrimaryTagCommand := "MERGE (primaryTag:Topic {tag: $primaryTag })\nMERGE (primaryTag)-[:TAGGED {isPrincipal:true}]->(spot)"
+
+		cypherBaseCommand = fmt.Sprintf("%s\n%s", cypherBaseCommand, cyperPrimaryTagCommand)
+		params["primaryTag"] = principalTag.GetValue()
+	}
+
+	if secondaryTags != nil {
+		for index, tag := range secondaryTags {
+			tagKey := fmt.Sprintf("secondaryTag%d", index)
+			cyperSecondaryTagCommandCreation := fmt.Sprintf("MERGE (%s:Topic {tag: $%s })", tagKey, tagKey)
+			cyperSecondaryTagCommandLinking := fmt.Sprintf("MERGE (%s)-[:TAGGED {isPrincipal:false}]->(spot)", tagKey)
+			cypherBaseCommand = fmt.Sprintf("%s\n%s\n%s", cypherBaseCommand, cyperSecondaryTagCommandCreation, cyperSecondaryTagCommandLinking)
+			params[tagKey] = tag
+		}
+	}
+
+	log.Println(cypherBaseCommand)
+
 	return nil
 }

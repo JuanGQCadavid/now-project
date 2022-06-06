@@ -8,4 +8,5 @@ type SpotRepository interface {
 	GetSpotByUserId(personId string) (domain.Spot, error)
 	EndSpot(spotId string) error
 	GetSpots(spotIds []string, format OutputFormat) (domain.MultipleSpots, error)
+	CreateSpotTags(spotId string, principalTag domain.Optional, secondaryTags []string) error
 }
