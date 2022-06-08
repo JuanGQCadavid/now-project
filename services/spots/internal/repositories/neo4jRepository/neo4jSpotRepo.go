@@ -153,38 +153,11 @@ func (r Neo4jSpotRepo) CreateSpotTags(spotId string, principalTag domain.Optiona
 	session := r.neo4jRepoDriver.driver.NewSession(neo4j.SessionConfig{})
 	defer session.Close()
 
-	_, err := session.WriteTransaction(func(tx neo4j.Transaction) (interface{}, error) {
-		return nil, r.createSpotTags(tx, spotId, principalTag, secondaryTags)
+	var cmd commands.Command = commands.NewCreateSpotTagsCommand(spotId, principalTag, secondaryTags)
+
+	output, err := session.WriteTransaction(func(tx neo4j.Transaction) (interface{}, error) {
+		return cmd.Run(tx)
 	})
-
+	log.Println(fmt.Sprintf("%+v", output))
 	return err
-}
-
-func (r Neo4jSpotRepo) createSpotTags(tr neo4j.Transaction, spotId string, principalTag domain.Optional, secondaryTags []string) error {
-
-	var cypherBaseCommand string = "MATCH (spot:Event {UUID: $event_uuid})"
-
-	var params map[string]interface{} = make(map[string]interface{})
-	params["event_uuid"] = spotId
-
-	if principalTag.IsPresent() {
-		cyperPrimaryTagCommand := "MERGE (primaryTag:Topic {tag: $primaryTag })\nMERGE (primaryTag)-[:TAGGED {isPrincipal:true}]->(spot)"
-
-		cypherBaseCommand = fmt.Sprintf("%s\n%s", cypherBaseCommand, cyperPrimaryTagCommand)
-		params["primaryTag"] = principalTag.GetValue()
-	}
-
-	if secondaryTags != nil {
-		for index, tag := range secondaryTags {
-			tagKey := fmt.Sprintf("secondaryTag%d", index)
-			cyperSecondaryTagCommandCreation := fmt.Sprintf("MERGE (%s:Topic {tag: $%s })", tagKey, tagKey)
-			cyperSecondaryTagCommandLinking := fmt.Sprintf("MERGE (%s)-[:TAGGED {isPrincipal:false}]->(spot)", tagKey)
-			cypherBaseCommand = fmt.Sprintf("%s\n%s\n%s", cypherBaseCommand, cyperSecondaryTagCommandCreation, cyperSecondaryTagCommandLinking)
-			params[tagKey] = tag
-		}
-	}
-
-	log.Println(cypherBaseCommand)
-
-	return nil
 }
