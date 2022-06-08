@@ -19,6 +19,7 @@ func (command *GetFullMultipleSpotsCommand) Run(tr neo4j.Transaction) (interface
 		(host:Person)-[host_relation:ON_LIVE]->(event:Event)-[location_relation:ON]->(place:Place)
 	WHERE
 		event.UUID IN $spotIds
+	OPTIONAL MATCH (tags:Topic)-[tagged:TAGGED]->(event)
 	RETURN
 		event.description as event_desc,
 		event.name as event_name,
@@ -31,7 +32,9 @@ func (command *GetFullMultipleSpotsCommand) Run(tr neo4j.Transaction) (interface
 		place.mapProviderId as place_provider_id,
 		place.lat as place_lat,
 		host.phoneNumber as host_phone_number,
-		host.name as host_name
+		host.name as host_name,
+		collect(tags.tag) as tag_tags,
+		collect(tagged.isPrincipal) as tag_principals
 	`
 	println(cypherQ)
 
@@ -77,6 +80,23 @@ func (command *GetFullMultipleSpotsCommand) getSpotDataFromResult(record *db.Rec
 	host_phone_number, _ := record.Get("host_phone_number")
 	host_name, _ := record.Get("host_name")
 
+	// Tags
+	tags_ids, _ := record.Get("tag_tags")
+	tags_principals, _ := record.Get("tag_principals")
+	tags_principals_array := tags_principals.([]interface{})
+
+	secondary_tag := make([]string, 0, len(tags_principals_array))
+	primary_tag := ""
+
+	for index, tag := range tags_ids.([]interface{}) {
+		if tags_principals_array[index].(bool) {
+			primary_tag = tag.(string)
+		} else {
+			secondary_tag = append(secondary_tag, tag.(string))
+		}
+
+	}
+
 	log.Printf("%+v", record)
 
 	return domain.Spot{
@@ -97,6 +117,10 @@ func (command *GetFullMultipleSpotsCommand) getSpotDataFromResult(record *db.Rec
 			Lat:           getFloat64FromInterface(place_lat),
 			Lon:           getFloat64FromInterface(place_lon),
 			MapProviderId: getStringFromInterface(place_provider_id),
+		},
+		TopicsInfo: domain.Topic{
+			PrincipalTopic:  primary_tag,
+			SecondaryTopics: secondary_tag,
 		},
 	}
 
