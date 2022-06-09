@@ -2,15 +2,14 @@ package menrepositories
 
 import (
 	"github.com/JuanGQCadavid/now-project/services/filter/internal/core/domain"
-	"github.com/JuanGQCadavid/now-project/services/filter/internal/core/models"
 )
 
 type MemSpotService struct {
-	data map[string]models.Spot
+	data map[string]domain.SimpleSpot
 }
 
-func NewMenSpotService(data []models.Spot) *MemSpotService {
-	dataInMap := map[string]models.Spot{}
+func NewMenSpotService(data []domain.SimpleSpot) *MemSpotService {
+	dataInMap := map[string]domain.SimpleSpot{}
 
 	for _, spotToAdd := range data {
 		dataInMap[spotToAdd.Id] = spotToAdd

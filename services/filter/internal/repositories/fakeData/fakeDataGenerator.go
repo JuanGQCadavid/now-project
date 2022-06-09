@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/JuanGQCadavid/now-project/services/filter/internal/core/domain"
-	"github.com/JuanGQCadavid/now-project/services/filter/internal/core/models"
 	"github.com/google/uuid"
 )
 
@@ -14,12 +13,12 @@ type DummyDataGenerator struct {
 	size         int32
 	centralPoint domain.LatLng
 	radious      float64
-	spots        []models.Spot
+	spots        []domain.SimpleSpot
 }
 
 func NewDummyDataGenerator(size int32, centralPoint domain.LatLng, radious float64) *DummyDataGenerator {
 
-	spots := make([]models.Spot, size)
+	spots := make([]domain.SimpleSpot, size)
 
 	return &DummyDataGenerator{
 		size:         size,
@@ -29,7 +28,7 @@ func NewDummyDataGenerator(size int32, centralPoint domain.LatLng, radious float
 	}
 }
 
-func (gen *DummyDataGenerator) GetAllData() []models.Spot {
+func (gen *DummyDataGenerator) GetAllData() []domain.SimpleSpot {
 	return gen.spots
 }
 
@@ -59,7 +58,7 @@ func (gen *DummyDataGenerator) GeneratePoints() {
 	}
 
 	for index, _ := range gen.spots {
-		spot := models.Spot{}
+		spot := domain.SimpleSpot{}
 
 		// 1. Generate the UUIDS
 		spot.Id = gen.NewUUID()

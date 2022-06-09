@@ -4,14 +4,13 @@ import (
 	"math"
 
 	"github.com/JuanGQCadavid/now-project/services/filter/internal/core/domain"
-	"github.com/JuanGQCadavid/now-project/services/filter/internal/core/models"
 )
 
 type locationRepository struct {
-	memory []models.Spot
+	memory []domain.SimpleSpot
 }
 
-func NewLocationRepo(data []models.Spot) *locationRepository {
+func NewLocationRepo(data []domain.SimpleSpot) *locationRepository {
 	return &locationRepository{
 		memory: data,
 	}

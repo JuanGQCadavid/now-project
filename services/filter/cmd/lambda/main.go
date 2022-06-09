@@ -4,8 +4,8 @@ import (
 	"context"
 	"log"
 
-	"github.com/JuanGQCadavid/now-project/services/filter/internal/core/handlers/httphdl"
 	"github.com/JuanGQCadavid/now-project/services/filter/internal/core/services/filtersrv"
+	"github.com/JuanGQCadavid/now-project/services/filter/internal/handlers/httphdl"
 	locationrepositories "github.com/JuanGQCadavid/now-project/services/filter/internal/repositories/locationRepositories"
 	spotservicelambda "github.com/JuanGQCadavid/now-project/services/filter/internal/repositories/spotServiceLambda"
 	"github.com/aws/aws-lambda-go/events"
