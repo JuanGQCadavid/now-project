@@ -1,4 +1,6 @@
 
+import 'dart:developer';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:now_v8/src/core/models/spot.dart';
 import 'package:now_v8/src/features/general_view/model/generalViewModel.dart';
@@ -19,10 +21,26 @@ class SpotsNotifer extends StateNotifier<List<Spot>> {
     refreshSpots();
   }
 
-
   void refreshSpots() async{
     List<Spot> spots = await generalViewModel.getSpots();
     state = spots;
   }
+}
 
+class TagsNotifier extends StateNotifier<Set<String>> {
+
+  TagsNotifier(): super({});
+
+  void tagSelected(String tag){
+    Set<String> newState = new Set.from(state);
+    if (state.contains(tag)) {
+      newState.remove(tag);
+    }else {
+      newState.add(tag);
+    } 
+
+    state = newState;
+
+    // updateShouldNotify(old, current)
+  }
 }

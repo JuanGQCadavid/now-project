@@ -1,8 +1,11 @@
+import 'dart:developer';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:now_v8/src/core/models/spot.dart';
 import 'package:now_v8/src/core/models/spotColors.dart';
+import 'package:now_v8/src/features/general_view/model/filteredSpots.dart';
 import 'dart:async';
 
 import 'package:now_v8/src/features/general_view/views/widgets/spotTagWidget.dart';
@@ -13,17 +16,17 @@ class MapSample extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final spotsState = ref.watch(spotsStateProvider);
+    final filteredSpots = ref.watch(filteredSpotsProvider);
 
     return Stack(
       children: [
         NowMap(
-          spots: spotsState,
+          filteredSpots: filteredSpots,
         ),
         Align(
           alignment: Alignment.bottomLeft,
           child: MapTags(
-            spots: spotsState,
+            filteredSpots: filteredSpots,
           ),
         )
       ],
@@ -31,27 +34,79 @@ class MapSample extends ConsumerWidget {
   }
 }
 
-class MapTags extends StatelessWidget {
-  final List<Spot> spots;
+class MapTags extends ConsumerWidget {
+  final FilteredSpots filteredSpots;
+
   const MapTags({
-    required this.spots,
+    required this.filteredSpots,
     Key? key,
   }) : super(key: key);
 
+  void onTagClick(WidgetRef ref, String tag) {
+    final tagsNotifier = ref.read(tagsSelectedProvider.notifier);
+    tagsNotifier.tagSelected(tag);
+  }
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     List<Widget> rowTags = [];
 
-    spots.forEach((spot) {
-      rowTags.add(Container(
-        margin: EdgeInsets.only(right: 15),
-        child: SpotTag(
-          color: spot.spotsColor.color,
-          tag: spot.principalTag,
-          onPressed: () {},
-        ),
-      ));
-    });
+    log(filteredSpots.tagsOff.toString());
+    log(filteredSpots.tagsSelected.toString());
+
+    if (filteredSpots.tagsSelected.isNotEmpty) {
+      // First Adding the tags that are selected.
+      filteredSpots.tagsSelected.forEach((tag) {
+        rowTags.add(Container(
+          margin: EdgeInsets.only(right: 15),
+          child: SpotTag(
+            color: filteredSpots.onFilterColor.color,
+            tag: tag,
+            onPressed: () => onTagClick(ref, tag),
+          ),
+        ));
+      });
+
+      // Then Adding the ones that are not selected as gray
+
+      filteredSpots.tagsOff.forEach((tag) {
+        rowTags.add(Container(
+          margin: EdgeInsets.only(right: 15),
+          child: SpotTag(
+            color: Colors.black38,
+            tag: tag,
+            onPressed: () => onTagClick(ref, tag),
+          ),
+        ));
+      });
+    } else {
+      Map<String, Color> tags = {};
+
+      filteredSpots.spots.forEach((spot) {
+        Color tagColor = Colors.black;
+
+        if (!tags.containsKey(spot.principalTag)) {
+          tags[spot.principalTag] = spot.spotsColor.color;
+        }
+
+        spot.secondaryTags.forEach((secondaryTag) {
+          if (!tags.containsKey(secondaryTag)) {
+            tags[spot.principalTag] = spot.spotsColor.color;
+          }
+        });
+      });
+
+      tags.forEach((tag, color) {
+        rowTags.add(Container(
+          margin: EdgeInsets.only(right: 15),
+          child: SpotTag(
+            color: color,
+            tag: tag,
+            onPressed: () => onTagClick(ref, tag),
+          ),
+        ));
+      });
+    }
 
     return Container(
       margin: EdgeInsets.only(left: 15, bottom: 15),
@@ -66,10 +121,10 @@ class MapTags extends StatelessWidget {
 }
 
 class NowMap extends StatefulWidget {
-  final List<Spot> spots;
+  final FilteredSpots filteredSpots;
   NowMap({
     Key? key,
-    required this.spots,
+    required this.filteredSpots,
   }) : super(key: key);
 
   @override
@@ -89,13 +144,15 @@ class _NowMapState extends State<NowMap> {
   Widget build(BuildContext context) {
     Set<Marker> markers = Set();
 
-    widget.spots.forEach((spot) {
+    widget.filteredSpots.spots.forEach((spot) {
       markers.add(
         Marker(
             markerId: MarkerId(spot.spotId),
             position: spot.latLng,
             visible: true,
-            icon: spot.spotsColor.hue,
+            icon: widget.filteredSpots.tagsSelected.isEmpty
+                ? spot.spotsColor.hue
+                : widget.filteredSpots.onFilterColor.hue,
             infoWindow: InfoWindow(title: spot.principalTag)),
       );
     });
