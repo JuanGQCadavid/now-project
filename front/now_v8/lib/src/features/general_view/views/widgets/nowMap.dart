@@ -91,7 +91,7 @@ class MapTags extends ConsumerWidget {
 
         spot.secondaryTags.forEach((secondaryTag) {
           if (!tags.containsKey(secondaryTag)) {
-            tags[spot.principalTag] = spot.spotsColor.color;
+            tags[secondaryTag] = spot.spotsColor.color;
           }
         });
       });

@@ -7,10 +7,16 @@ class FilterServiceDTOsMappers {
     List<Spot> spots = [];
 
     locations.places.forEach((place) {
+      print(place.topicInfo.principalTopic);
+      print(place.topicInfo.secondaryTopics);
+
       spots.add(
         Spot.withOutSpotColors(
-          principalTag: place.eventInfo.name,
-          secondaryTags: [],
+          principalTag: place.topicInfo.principalTopic.isNotEmpty ||
+                  place.topicInfo.secondaryTopics.isNotEmpty
+              ? place.topicInfo.principalTopic
+              : place.eventInfo.name.toLowerCase().replaceAll(RegExp(r' '), ""),
+          secondaryTags: place.topicInfo.secondaryTopics,
           latLng: LatLng(
             place.placeInfo.lat,
             place.placeInfo.lon,

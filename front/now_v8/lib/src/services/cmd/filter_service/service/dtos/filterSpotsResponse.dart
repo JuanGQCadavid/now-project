@@ -19,10 +19,12 @@ class Locations {
 class FilterSpot {
   final EventInfo eventInfo;
   final PlaceInfo placeInfo;
+  final TopicInfo topicInfo;
 
   FilterSpot({
     required this.eventInfo,
     required this.placeInfo,
+    required this.topicInfo,
   });
 
   factory FilterSpot.fromJson(Map<String, dynamic> json) => _$FilterSpotFromJson(json);
@@ -67,4 +69,22 @@ class PlaceInfo {
       _$PlaceInfoFromJson(json);
 
   Map<String, dynamic> toJson() => _$PlaceInfoToJson(this);
+}
+
+@JsonSerializable()
+class TopicInfo {
+  // @JsonKey(defaultValue: "")
+  final String principalTopic;
+  // @JsonKey(defaultValue: [])
+  final List<String> secondaryTopics;
+
+  TopicInfo({
+    this.principalTopic = "",
+    this.secondaryTopics = const [],
+  });
+
+  factory TopicInfo.fromJson(Map<String, dynamic> json) =>
+      _$TopicInfoFromJson(json);
+
+  Map<String, dynamic> toJson() => _$TopicInfoToJson(this);
 }
