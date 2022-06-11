@@ -47,37 +47,32 @@ class MapTags extends ConsumerWidget {
     tagsNotifier.tagSelected(tag);
   }
 
+  void onClearButtom(WidgetRef ref) {
+    final tagsNotifier = ref.read(tagsSelectedProvider.notifier);
+    tagsNotifier.cleanTags();
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     List<Widget> rowTags = [];
 
-    log(filteredSpots.tagsOff.toString());
-    log(filteredSpots.tagsSelected.toString());
-
     if (filteredSpots.tagsSelected.isNotEmpty) {
+      // Clear buttom
+      rowTags.add(clearButtom(ref));
+
       // First Adding the tags that are selected.
       filteredSpots.tagsSelected.forEach((tag) {
-        rowTags.add(Container(
-          margin: EdgeInsets.only(right: 15),
-          child: SpotTag(
-            color: filteredSpots.onFilterColor.color,
-            tag: tag,
-            onPressed: () => onTagClick(ref, tag),
-          ),
-        ));
+        rowTags.add(
+          generateTag(filteredSpots.onFilterColor.color, tag, ref),
+        );
       });
 
       // Then Adding the ones that are not selected as gray
 
       filteredSpots.tagsOff.forEach((tag) {
-        rowTags.add(Container(
-          margin: EdgeInsets.only(right: 15),
-          child: SpotTag(
-            color: Colors.black38,
-            tag: tag,
-            onPressed: () => onTagClick(ref, tag),
-          ),
-        ));
+        rowTags.add(
+          generateTag(Colors.black38, tag, ref),
+        );
       });
     } else {
       Map<String, Color> tags = {};
@@ -97,14 +92,7 @@ class MapTags extends ConsumerWidget {
       });
 
       tags.forEach((tag, color) {
-        rowTags.add(Container(
-          margin: EdgeInsets.only(right: 15),
-          child: SpotTag(
-            color: color,
-            tag: tag,
-            onPressed: () => onTagClick(ref, tag),
-          ),
-        ));
+        rowTags.add(generateTag(color, tag, ref));
       });
     }
 
@@ -115,6 +103,31 @@ class MapTags extends ConsumerWidget {
         child: Row(
           children: rowTags,
         ),
+      ),
+    );
+  }
+
+  Widget generateTag(Color color, String tag, WidgetRef ref) {
+    return Container(
+      margin: EdgeInsets.only(right: 15),
+      child: SpotTag(
+        color: color,
+        tag: tag,
+        onPressed: () => onTagClick(ref, tag),
+      ),
+    );
+  }
+
+  Widget clearButtom(WidgetRef ref) {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(50),
+        color: Colors.white,
+      ),
+      margin: EdgeInsets.only(right: 15),
+      child: IconButton(
+        onPressed: () => onClearButtom(ref),
+        icon: const Icon(Icons.delete_outline),
       ),
     );
   }

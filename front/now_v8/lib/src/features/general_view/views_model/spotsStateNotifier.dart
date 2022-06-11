@@ -40,7 +40,9 @@ class TagsNotifier extends StateNotifier<Set<String>> {
     } 
 
     state = newState;
+  }
 
-    // updateShouldNotify(old, current)
+  void cleanTags() {
+    state = {};
   }
 }
