@@ -29,7 +29,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  google_maps_flutter: any
+  google_maps_flutter: 2.1.8
   json_annotation: any
   flutter_riverpod: any
   dio: ^4.0.6

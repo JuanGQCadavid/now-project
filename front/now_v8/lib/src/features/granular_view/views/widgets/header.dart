@@ -23,6 +23,17 @@ class GanularHeader extends StatelessWidget {
           Container(
             height: mapSize,
             color: appColor,
+            child: const GoogleMap(
+              mapType: MapType.normal,
+              zoomControlsEnabled: false,
+              initialCameraPosition: CameraPosition(
+                target: LatLng(6.251723, -75.592771),
+                zoom: 14.4746,
+              ),
+              mapToolbarEnabled: false,
+              myLocationButtonEnabled: false,
+              padding: EdgeInsets.only(bottom: 65, left: 15),
+            ),
           ),
           Align(
             alignment: Alignment.bottomLeft,
