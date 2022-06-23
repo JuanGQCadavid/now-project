@@ -5,12 +5,14 @@ class CreatorLabel extends StatelessWidget {
   final void Function() onTap;
   final String unhighlightedText;
   final String highlightedText;
+  final Color appColor;
   const CreatorLabel({
     Key? key,
     this.generalMaring = const EdgeInsets.symmetric(horizontal: 15),
     this.unhighlightedText = "Hosted by",
     required this.highlightedText,
     required this.onTap,
+    required this.appColor
 
   }) : super(key: key);
 
@@ -29,7 +31,7 @@ class CreatorLabel extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(5),
               decoration: BoxDecoration(
-                  color: Colors.redAccent,
+                  color: appColor,
                   borderRadius: BorderRadius.circular(10)),
               child: Text(
                 highlightedText,

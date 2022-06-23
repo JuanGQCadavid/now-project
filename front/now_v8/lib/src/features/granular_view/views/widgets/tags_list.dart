@@ -7,12 +7,14 @@ class TagsList extends StatelessWidget {
   final String primaryTag;
   final List<String> secondaryTags;
   final String emptyMessage;
+  final Color appColor;
 
   const TagsList({
     Key? key,
     this.primaryTag = "",
     this.secondaryTags = const [],
     this.emptyMessage = "No tags",
+    required this.appColor,
     this.generalMaring = const EdgeInsets.symmetric(horizontal: 15),
   }) : super(key: key);
 
@@ -39,7 +41,7 @@ class TagsList extends StatelessWidget {
         margin: EdgeInsets.only(right: 15),
         child: SpotTag(
           tag: primaryTag,
-          color: Colors.red,
+          color: appColor,
           onPressed: () {},
         ),
       ));
@@ -53,7 +55,7 @@ class TagsList extends StatelessWidget {
               margin: EdgeInsets.only(right: 15),
               child: SpotTag(
                 tag: tag,
-                color: Colors.redAccent,
+                color: appColor,
                 onPressed: () {},
               ),
             ),

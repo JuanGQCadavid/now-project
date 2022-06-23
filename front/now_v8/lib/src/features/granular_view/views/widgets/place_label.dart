@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 
 class PlaceLabel extends StatelessWidget {
   final String placeName;
-  const PlaceLabel({Key? key, required this.placeName}) : super(key: key);
+  final Color appColor;
+  const PlaceLabel({Key? key, required this.placeName, required this.appColor}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -12,9 +13,9 @@ class PlaceLabel extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(
+          Icon(
             Icons.place,
-            color: Colors.red,
+            color: appColor,
           ),
           const SizedBox(
             width: 10,

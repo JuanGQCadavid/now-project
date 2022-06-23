@@ -6,12 +6,13 @@ class GanularHeader extends StatelessWidget {
   final double headerSize = 300;
   final double mapSize = 250;
   final double spotsHeaderSize = 80;
+  final Color appColor;
   final GranularSpotWindow spotWindow = const GranularSpotWindow(
       actualOne: "Actual One",
       nextOne: "Next one",
       previousOne: "Previous one");
 
-  const GanularHeader({Key? key}) : super(key: key);
+  const GanularHeader({Key? key, required this.appColor}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -21,13 +22,13 @@ class GanularHeader extends StatelessWidget {
         children: [
           Container(
             height: mapSize,
-            color: Colors.red,
+            color: appColor,
           ),
           Align(
             alignment: Alignment.bottomLeft,
             child: Container(
               height: spotsHeaderSize,
-              color: Colors.white,
+              color: Theme.of(context).scaffoldBackgroundColor,
               child: Row(
                 children: [
                   Expanded(
