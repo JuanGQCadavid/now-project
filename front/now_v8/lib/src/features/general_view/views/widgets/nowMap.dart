@@ -173,10 +173,11 @@ class _NowMapState extends State<NowMap> {
     return GoogleMap(
       markers: markers,
       mapType: MapType.normal,
+      zoomControlsEnabled: false,
       initialCameraPosition: _kGooglePlex,
       mapToolbarEnabled: false,
       myLocationButtonEnabled: false,
-      padding: EdgeInsets.only(bottom: 65, left: 15),
+      padding: const EdgeInsets.only(bottom: 65, left: 15),
       // onMapCreated: (GoogleMapController controller) {
       //   _controller.complete(controller);
       // },

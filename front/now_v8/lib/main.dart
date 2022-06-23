@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
-        home: GranularView() //MyHomePage(title: 'Flutter Demo Home Page'),
+        home: GeneralViewFeature() //MyHomePage(title: 'Flutter Demo Home Page'),
         );
   }
 }
