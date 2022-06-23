@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:now_v8/src/features/general_view/views/generalView.dart';
+import 'package:now_v8/src/features/granular_view/views/greanular_view.dart';
 
 void main() => runApp(
       ProviderScope(
@@ -19,19 +20,7 @@ class MyApp extends StatelessWidget {
           primarySwatch: Colors.blue,
         ),
         home:
-            const GeneralViewFeature() //MyHomePage(title: 'Flutter Demo Home Page'),
+            const GranularView() //MyHomePage(title: 'Flutter Demo Home Page'),
         );
-  }
-}
-
-
-class MyWidget extends StatelessWidget {
-  const MyWidget({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Text("HI"),
-    );
   }
 }
