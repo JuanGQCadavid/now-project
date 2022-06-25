@@ -1,10 +1,6 @@
-import 'dart:developer';
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:now_v8/src/core/models/spot.dart';
-import 'package:now_v8/src/core/models/spotColors.dart';
 import 'package:now_v8/src/features/general_view/model/filteredSpots.dart';
 import 'dart:async';
 
@@ -148,7 +144,7 @@ class _NowMapState extends State<NowMap> {
   Completer<GoogleMapController> _controller = Completer();
   // final Completer<GoogleMapController> _controller;
 
-  static final CameraPosition _kGooglePlex = CameraPosition(
+  static const CameraPosition _kGooglePlex = CameraPosition(
     target: LatLng(6.251723, -75.592771),
     zoom: 14.4746,
   );

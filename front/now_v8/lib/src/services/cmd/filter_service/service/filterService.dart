@@ -1,10 +1,11 @@
-import 'dart:convert';
 
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:now_v8/src/core/contracts/filterService.dart';
+import 'package:now_v8/src/core/models/long_spot.dart';
 import 'package:now_v8/src/core/models/spot.dart';
+import 'package:now_v8/src/core/models/state_response.dart';
 import 'package:now_v8/src/services/cmd/filter_service/service/dtos/filterSpotsResponse.dart';
 import 'package:now_v8/src/services/cmd/filter_service/service/mappers/mappers.dart';
 import 'package:now_v8/src/services/core/models/backend_errors.dart';
@@ -48,5 +49,14 @@ class FilterService implements IFilterService {
       return mappers.fromPlacesToSpotList(locations);
     });
     
+  }
+
+  Future<StateResponse<List<LongSpot>, String>> getByProximityWithState({
+    required double cpLat,
+    required double cpLng,
+    double radious = 10,
+    String token = "",
+  }) async {
+    return StateResponse(response: [], token: "token");
   }
 }

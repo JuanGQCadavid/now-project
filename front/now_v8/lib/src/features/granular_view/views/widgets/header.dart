@@ -1,21 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:now_v8/src/features/granular_view/model/granular_spot.dart';
+import 'package:now_v8/src/features/granular_view/views_model/providers.dart';
 
-class GanularHeader extends StatelessWidget {
+class GanularHeader extends ConsumerWidget {
   final double headerSize = 300;
   final double mapSize = 250;
   final double spotsHeaderSize = 80;
   final Color appColor;
-  final GranularSpotWindow spotWindow = const GranularSpotWindow(
-      actualOne: "Actual One",
-      nextOne: "Next one",
-      previousOne: "Previous one");
-
-  const GanularHeader({Key? key, required this.appColor}) : super(key: key);
+  final SpotWindow spotWindow;
+  GanularHeader({Key? key, required this.appColor, required this.spotWindow})
+      : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Container(
       height: headerSize,
       child: Stack(
@@ -45,7 +44,10 @@ class GanularHeader extends StatelessWidget {
                   Expanded(
                     flex: 1,
                     child: TextHeaderOption(
-                      onPressed: () {},
+                      onPressed: () {
+                        final onSpot = ref.read(onSpotProvider.notifier);
+                        onSpot.previousOne();
+                      },
                       text: spotWindow.previousOne,
                       isPrincipal: false,
                     ),
@@ -61,7 +63,10 @@ class GanularHeader extends StatelessWidget {
                   Expanded(
                     flex: 1,
                     child: TextHeaderOption(
-                      onPressed: () {},
+                      onPressed: () {
+                        final onSpot = ref.read(onSpotProvider.notifier);
+                        onSpot.nextOne();
+                      },
                       text: spotWindow.nextOne,
                       isPrincipal: false,
                     ),
@@ -69,7 +74,24 @@ class GanularHeader extends StatelessWidget {
                 ],
               ),
             ),
-          )
+          ),
+          Align(
+              alignment: Alignment.topLeft,
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(50),
+                  color: Colors.white,
+                ),
+                child: IconButton(
+                  icon: Icon(
+                    Icons.arrow_back_ios_new,
+                    size: 15,
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ))
         ],
       ),
     );
@@ -94,7 +116,7 @@ class TextHeaderOption extends StatelessWidget {
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 5),
         child: TextButton(
-          onPressed: onPressed,
+          onPressed: isPrincipal ? null : onPressed,
           child: Text(
             text,
             maxLines: 3,
