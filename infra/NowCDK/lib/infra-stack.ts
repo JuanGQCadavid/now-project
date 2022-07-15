@@ -8,7 +8,8 @@ import
   aws_sns_subscriptions as subscriptions,
   aws_sqs as sqs,
   aws_lambda_event_sources as lambdaEvent,
-  aws_iam as iam
+  aws_iam as iam,
+  aws_dynamodb as dynamodb
 } from 'aws-cdk-lib';
 
 import { Construct } from 'constructs';
@@ -99,10 +100,36 @@ export class InfraStack extends Stack {
         snsArn: spotActivityTopic.topicArn
       }
     })
-
-
-
     const spotMethod = addMethodToApiGateway(spotLambda, mainApiGateway, "spot")
+
+    // Filter 
+
+    const filterSessionsDynamoTable = new dynamodb.Table(this, "filterSessionsDynamoTable", {
+      partitionKey:  {
+        name: "SessionId",
+        type: dynamodb.AttributeType.STRING
+      },
+      sortKey: {
+        name: "State",
+        type: dynamodb.AttributeType.STRING
+      },
+      billingMode: dynamodb.BillingMode.PROVISIONED,
+      writeCapacity: 20,
+      readCapacity: 20,
+      tableName: "FilterSessions",
+      timeToLiveAttribute: "TTL",
+      stream: dynamodb.StreamViewType.NEW_AND_OLD_IMAGES
+    })
+
+    const filterLambdaRole = new iam.Role(this, "filterLambdaRole", {
+      assumedBy: new iam.ServicePrincipal("lambda.amazonaws.com"),
+      description: "Role for filter service",
+    })
+    
+    // Lambda Permisions
+    filterLambdaRole.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName("service-role/AWSLambdaBasicExecutionRole"))
+    // filterLambdaRole.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName("service-role/AWSLambdaVPCAccessExecutionRole"))
+    filterSessionsDynamoTable.grantReadWriteData(filterLambdaRole)
     
     // -> filterLambda
     const filterLambda = new lambda.Function(this, 'filterLambda', {
@@ -110,11 +137,13 @@ export class InfraStack extends Stack {
       handler: 'main',
       code: lambda.Code.fromAsset(path),
       functionName: "FilterService",
+      role: filterLambdaRole, 
       environment: {
         dbUser: "dbUser",
         dbPassword: "dbPassword",
         dbName: "dbName",
         dbUrl: "dbUrl",
+        sessionTableName: filterSessionsDynamoTable.tableName,
         spotServiceURL: `https://${mainApiGateway.restApiId}.execute-api.${this.region}.amazonaws.com/prod${spotMethod.path}`
       }
     })
@@ -141,8 +170,5 @@ export class InfraStack extends Stack {
     })
 
     locationDataUpdater.addEventSource(locationDataUpdaterEvent)
-
-
-
   }
 }
