@@ -164,11 +164,26 @@ export class InfraStack extends Stack {
       }
     })
 
+    const userTrackFilterSearchSession = new lambda.Function(this, "userTrackFilterSearchSession", {
+      runtime: lambda.Runtime.GO_1_X,
+      handler: 'main',
+      code: lambda.Code.fromAsset(path),
+      functionName: "UserTrackFilterSearchSession"
+    })
+
+    const userTrackFilterSearchSessionEvent = new lambdaEvent.DynamoEventSource(filterSessionsDynamoTable, {
+      startingPosition: lambda.StartingPosition.LATEST,
+      batchSize: 10,
+      enabled: true,
+      retryAttempts: 2,
+      reportBatchItemFailures: true // Check later on code its implications.
+    })
+    userTrackFilterSearchSession.addEventSource(userTrackFilterSearchSessionEvent)
+
     const locationDataUpdaterEvent = new lambdaEvent.SqsEventSource(updateLocationDataSQS,{
       enabled: true,
       batchSize: 10
     })
-
     locationDataUpdater.addEventSource(locationDataUpdaterEvent)
   }
 }
