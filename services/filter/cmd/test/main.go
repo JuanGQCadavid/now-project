@@ -1,26 +1,29 @@
 package main
 
 import (
-	"encoding/json"
-	"log"
+	"fmt"
 
-	"github.com/JuanGQCadavid/now-project/services/filter/internal/core/services/filtersrv"
-	locationrepositories "github.com/JuanGQCadavid/now-project/services/filter/internal/repositories/locationRepositories"
-	spotservicelambda "github.com/JuanGQCadavid/now-project/services/filter/internal/repositories/spotServiceLambda"
+	"github.com/JuanGQCadavid/now-project/services/filter/internal/core/domain/session"
+	sessionservice "github.com/JuanGQCadavid/now-project/services/filter/internal/repositories/sessionService"
 )
 
 func main() {
 
-	location := locationrepositories.NewLocationRepo()
-	spot := spotservicelambda.NewSpotServiceLambda()
+	search := sessionservice.NewSearchSessionDynamoDbService()
+	session2, _ := search.CreateSession(session.SpotsReturned)
 
-	srv := filtersrv.New(location, spot)
+	fmt.Println(fmt.Sprintf("%+v", session2))
 
-	locations := srv.FilterByProximity(75.15, 32.59, 0.5)
+	// location := locationrepositories.NewLocationRepo()
+	// spot := spotservicelambda.NewSpotServiceLambda()
 
-	str, _ := json.Marshal(locations)
+	// srv := filtersrv.New(location, spot)
 
-	log.Println(string(str))
+	// locations := srv.FilterByProximity(75.15, 32.59, 0.5)
+
+	// str, _ := json.Marshal(locations)
+
+	// log.Println(string(str))
 
 	//log.Printf("%+v", locations)
 
