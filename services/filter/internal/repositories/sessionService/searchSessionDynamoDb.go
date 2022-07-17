@@ -7,6 +7,7 @@ import (
 
 	"github.com/JuanGQCadavid/now-project/services/filter/internal/core/domain/session"
 	"github.com/JuanGQCadavid/now-project/services/filter/internal/repositories/sessionService/domain"
+	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
 	"github.com/google/uuid"
@@ -64,6 +65,36 @@ func (svc *SearchSessionDynamoDbService) CreateSession(sessionType session.Sessi
 
 func (svc *SearchSessionDynamoDbService) GetSessionData(sessionId string, sessionType session.SessionTypes) (session.SessionData, error) {
 	return session.SessionData{}, nil
+}
+
+func (svc *SearchSessionDynamoDbService) AddSpotsToSession(sessionId string, sessionType session.SessionTypes, spots []string) error {
+
+	key, err := dynamodbattribute.MarshalMap(domain.SessionItem{SessionId: sessionId, State: string(sessionType)})
+
+	if err != nil {
+		log.Fatalf("Got error marshalling key item: %s", err)
+	}
+
+	log.Println(key)
+
+	input := &dynamodb.UpdateItemInput{
+		Key:       key,
+		TableName: &svc.dynamoDbConnector.TableName,
+		ExpressionAttributeValues: map[string]*dynamodb.AttributeValue{
+			":spots": {
+				SS: aws.StringSlice(spots),
+			},
+		},
+		ExpressionAttributeNames: map[string]*string{
+			"#timestamp": aws.String(time.Now().Format(time.RFC3339)),
+		},
+		ReturnConsumedCapacity: aws.String(dynamodb.ReturnConsumedCapacityIndexes),
+		UpdateExpression:       aws.String("set #timestamp = :spots"),
+	}
+
+	_, err = svc.dynamoDbConnector.Svc.UpdateItem(input)
+
+	return err
 }
 
 func (svc *SearchSessionDynamoDbService) newUUID() string {
