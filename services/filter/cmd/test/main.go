@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+
 	"github.com/JuanGQCadavid/now-project/services/filter/internal/core/domain/session"
 	"github.com/JuanGQCadavid/now-project/services/filter/internal/core/ports"
 	sessionservice "github.com/JuanGQCadavid/now-project/services/filter/internal/repositories/sessionService"
@@ -8,16 +10,24 @@ import (
 
 func main() {
 
+	// var time1 = time.Now().Format(time.RFC3339Nano)
+
+	// var time2 = time.Now().Format(time.RFC3339Nano)
+
+	// log.Println(time1, time2)
+
+	// log.Println(time1 == time2)
+
 	var search ports.SearchSessionService = sessionservice.NewSearchSessionDynamoDbService()
-	// session2, _ := search.CreateSession(session.SpotsReturned)
-	// fmt.Println(fmt.Sprintf("%+v", session2))
+	session2, _ := search.CreateSession(session.SpotsReturned)
+	fmt.Println(fmt.Sprintf("%+v", session2))
 
-	// spotsIds := []string{
-	// 	"spotId1", "SpotId2", "SpotId3",
-	// }
+	spotsIds := []string{
+		"spotId1", "SpotId2", "SpotId3", "spotId4", "SpotId5", "SpotId6", "spotId7", "SpotId8", "SpotId9", "spotId10", "SpotId11", "SpotId12", "spotId13", "SpotId14", "SpotId15",
+	}
 
-	// err := search.AddSpotsToSession(session2.SessionId, session2.SessionType, spotsIds)
-	// fmt.Println(fmt.Sprintf("%+v", err))
+	err := search.AddSpotsToSession(session2.SessionId, session2.SessionType, spotsIds)
+	fmt.Println(fmt.Sprintf("%+v", err))
 
 	// time.Sleep(time.Duration(2) * time.Second)
 
@@ -26,7 +36,7 @@ func main() {
 
 	// log.Println(session2.SessionId)
 
-	search.GetSessionData("946d1ec9-4a5d-468f-8628-677e485645be", session.SpotsReturned)
+	search.GetSessionData(session2.SessionId, session.SpotsReturned)
 
 	// for {
 	// 	err := search.AddSpotsToSession(session2.SessionId, session2.SessionType, spotsIds)

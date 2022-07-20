@@ -152,7 +152,10 @@ func (svc *SearchSessionDynamoDbService) getString(source map[string]*dynamodb.A
 }
 
 func (svc *SearchSessionDynamoDbService) AddSpotsToSession(sessionId string, sessionType session.SessionTypes, spots []string) error {
-
+	if len(spots) == 0 {
+		log.Println("Empty spots, avoiding process")
+		return nil
+	}
 	key, err := dynamodbattribute.MarshalMap(domain.SessionItem{SessionId: sessionId, State: string(sessionType)})
 
 	if err != nil {
@@ -161,19 +164,44 @@ func (svc *SearchSessionDynamoDbService) AddSpotsToSession(sessionId string, ses
 
 	log.Println(key)
 
+	expressionAttributeValues := map[string]*dynamodb.AttributeValue{}
+	updateExpression := "set"
+	expressionAttributesNames := map[string]*string{}
+
+	var startIndex, cutIndex, count, slope, maxIndex int = 0, 0, 0, 15, len(spots)
+	var stopFlag bool = false
+
+	for !stopFlag {
+
+		cutIndex = startIndex + slope
+
+		if cutIndex >= maxIndex {
+			cutIndex = maxIndex
+			stopFlag = true
+		}
+
+		identifier := fmt.Sprintf("spots%d", count)
+		attributeNameValue := time.Now().Format(time.RFC3339Nano)
+		updateExpression = fmt.Sprintf("%s #%s = :%s,", updateExpression, identifier, identifier)
+		expressionAttributesNames[fmt.Sprintf("#%s", identifier)] = aws.String(attributeNameValue)
+		expressionAttributeValues[fmt.Sprintf(":%s", identifier)] = &dynamodb.AttributeValue{
+			SS: aws.StringSlice(spots[startIndex:cutIndex]),
+		}
+
+		startIndex = cutIndex
+		count = count + 1
+	}
+
+	// Remove last " , " in the updateExpression
+	updateExpression = strings.TrimSuffix(updateExpression, ",")
+
 	input := &dynamodb.UpdateItemInput{
-		Key:       key,
-		TableName: &svc.dynamoDbConnector.TableName,
-		ExpressionAttributeValues: map[string]*dynamodb.AttributeValue{
-			":spots": {
-				SS: aws.StringSlice(spots),
-			},
-		},
-		ExpressionAttributeNames: map[string]*string{
-			"#timestamp": aws.String(time.Now().Format(time.RFC3339)),
-		},
-		ReturnConsumedCapacity: aws.String(dynamodb.ReturnConsumedCapacityIndexes),
-		UpdateExpression:       aws.String("set #timestamp = :spots"),
+		Key:                       key,
+		TableName:                 &svc.dynamoDbConnector.TableName,
+		ExpressionAttributeValues: expressionAttributeValues,
+		ExpressionAttributeNames:  expressionAttributesNames,
+		ReturnConsumedCapacity:    aws.String(dynamodb.ReturnConsumedCapacityIndexes),
+		UpdateExpression:          &updateExpression,
 	}
 
 	_, err = svc.dynamoDbConnector.Svc.UpdateItem(input)
