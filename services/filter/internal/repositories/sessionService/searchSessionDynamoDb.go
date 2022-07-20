@@ -1,8 +1,11 @@
 package sessionservice
 
 import (
+	"errors"
 	"fmt"
 	"log"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/JuanGQCadavid/now-project/services/filter/internal/core/domain/session"
@@ -63,8 +66,89 @@ func (svc *SearchSessionDynamoDbService) CreateSession(sessionType session.Sessi
 	}, nil
 }
 
-func (svc *SearchSessionDynamoDbService) GetSessionData(sessionId string, sessionType session.SessionTypes) (session.SessionData, error) {
-	return session.SessionData{}, nil
+func (svc *SearchSessionDynamoDbService) GetSessionData(sessionId string, sessionType session.SessionTypes) (session.SearchSessionData, error) {
+
+	key, err := dynamodbattribute.MarshalMap(domain.SessionItem{SessionId: sessionId, State: string(sessionType)})
+
+	if err != nil {
+		log.Fatalf("Got error marshalling get item: %s", err)
+	}
+
+	input := &dynamodb.GetItemInput{
+		TableName: &svc.dynamoDbConnector.TableName,
+		Key:       key,
+	}
+
+	output, err := svc.dynamoDbConnector.Svc.GetItem(input)
+
+	if err != nil {
+		log.Fatalf("Got error geting item: %s", err)
+	}
+
+	log.Println(fmt.Sprintf("%+v", output))
+
+	if output.Item == nil {
+		log.Println("Session Not founded")
+		return session.SearchSessionData{}, errors.New("Session not founded")
+	}
+
+	item := output.Item
+	sessionData := session.SearchSessionData{
+		SessionData: session.SessionData{
+			SessionConfiguration: session.SessionConfig{},
+		},
+		Spots: make(map[string][]string),
+	}
+
+	for key := range item {
+
+		if key == "TTL" {
+			log.Println("Key: ", key, " Value: ", item[key])
+			ttl := ""
+			dynamodbattribute.Unmarshal(item[key], &ttl)
+
+			log.Println("TTL: ", ttl)
+			convertedValue, err := strconv.ParseInt(ttl, 10, 64)
+
+			if err != nil {
+				log.Println("TTL bad formated, asigning 0")
+				convertedValue = 0
+			}
+			sessionData.SessionConfiguration.TTL = convertedValue
+		} else if key == "State" {
+			state := ""
+			svc.getString(item, &state, key)
+
+			println(state)
+
+			if strings.ToUpper(state) == strings.ToUpper(string(session.SpotsReturned)) {
+				sessionData.SessionConfiguration.SessionType = session.SpotsReturned
+			} else {
+				log.Println("Empty State, assigning Empty")
+				sessionData.SessionConfiguration.SessionType = session.Empty
+			}
+
+		} else if key == "SessionId" {
+			sessionData.SessionConfiguration.SessionId = sessionId
+		} else {
+			log.Println("Key: ", key, " Value: ", item[key])
+
+			var sessionItems []string = make([]string, 15)
+			dynamodbattribute.Unmarshal(item[key], &sessionItems)
+			log.Println(fmt.Sprintf("%+v", sessionItems))
+
+			sessionData.Spots[key] = sessionItems
+		}
+	}
+
+	log.Println("Result: ", fmt.Sprintf("%+v", sessionData))
+	return sessionData, nil
+}
+
+func (svc *SearchSessionDynamoDbService) getString(source map[string]*dynamodb.AttributeValue, destinatio *string, key string) {
+	log.Println("Key: ", key, " Source: ", source[key])
+	dynamodbattribute.Unmarshal(source[key], destinatio)
+	log.Println("Value: ", *destinatio)
 }
 
 func (svc *SearchSessionDynamoDbService) AddSpotsToSession(sessionId string, sessionType session.SessionTypes, spots []string) error {

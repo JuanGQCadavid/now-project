@@ -4,6 +4,7 @@ type SessionTypes string
 
 const (
 	SpotsReturned SessionTypes = "SPOTS_RETURNED"
+	Empty         SessionTypes = "Empty"
 )
 
 type SessionConfig struct {

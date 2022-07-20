@@ -24,5 +24,5 @@ type SearchSessionService interface {
 		SessionConfig (Sessionid, TTL, SessionType) + SessionData
 		[("TimeStamp", ["SpotId1", "SpotId2" ...]), ("TimeStamp", ["SpotId1", "SpotId2" ...])]
 	*/
-	GetSessionData(sessionId string, sessionType session.SessionTypes) (session.SessionData, error)
+	GetSessionData(sessionId string, sessionType session.SessionTypes) (session.SearchSessionData, error)
 }
