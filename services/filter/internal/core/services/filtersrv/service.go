@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/JuanGQCadavid/now-project/services/filter/internal/core/domain"
+	"github.com/JuanGQCadavid/now-project/services/filter/internal/core/domain/session"
 	"github.com/JuanGQCadavid/now-project/services/filter/internal/core/ports"
 )
 
@@ -58,7 +59,7 @@ func (srv *service) generatePoints(centralPoint domain.LatLng, radious float64) 
 // 	]
 // }
 // TODO -> should we add the city parameter ?
-func (srv *service) FilterByProximity(centralPointLat float64, centralPointLng float64, radious float64) domain.Locations {
+func (srv *service) FilterByProximity(centralPointLat float64, centralPointLng float64, radious float64, session session.SearchSessionData) domain.Locations {
 	//Procedure:
 	//	1. Create pointes A and B
 	// 	2. Fetch the spotsIds from LocationRepository

@@ -29,6 +29,7 @@ func NewSearchSessionDynamoDbService() *SearchSessionDynamoDbService {
 }
 
 func (svc *SearchSessionDynamoDbService) CreateSession(sessionType session.SessionTypes) (*session.SessionConfig, error) {
+	log.Println(fmt.Sprintf("CreateSession -> Creating session with sessionType: %s", string(sessionType)))
 	sessionId := svc.newUUID()
 	ttl := svc.generateTTL()
 	log.Println(sessionId, ttl)
@@ -38,6 +39,7 @@ func (svc *SearchSessionDynamoDbService) CreateSession(sessionType session.Sessi
 		State:     string(sessionType),
 		TTL:       ttl,
 	}
+	log.Println(fmt.Sprintf("CreateSession -> Item %+v", item))
 
 	itemMarshaled, err := dynamodbattribute.MarshalMap(item)
 
@@ -57,7 +59,7 @@ func (svc *SearchSessionDynamoDbService) CreateSession(sessionType session.Sessi
 		log.Fatalf("Got error on the output of the put item : %s", outErr)
 	}
 
-	fmt.Printf("%+v\n", output)
+	fmt.Printf("CreateSession -> Goes well, result: %+v\n", output)
 
 	return &session.SessionConfig{
 		TTL:         ttl,
@@ -67,7 +69,7 @@ func (svc *SearchSessionDynamoDbService) CreateSession(sessionType session.Sessi
 }
 
 func (svc *SearchSessionDynamoDbService) GetSessionData(sessionId string, sessionType session.SessionTypes) (session.SearchSessionData, error) {
-
+	log.Println(fmt.Sprintf("GetSessionData -> Getting session with sessionType: %s, sessionId: %s", string(sessionType), sessionId))
 	key, err := dynamodbattribute.MarshalMap(domain.SessionItem{SessionId: sessionId, State: string(sessionType)})
 
 	if err != nil {
@@ -78,14 +80,13 @@ func (svc *SearchSessionDynamoDbService) GetSessionData(sessionId string, sessio
 		TableName: &svc.dynamoDbConnector.TableName,
 		Key:       key,
 	}
-
 	output, err := svc.dynamoDbConnector.Svc.GetItem(input)
 
 	if err != nil {
 		log.Fatalf("Got error geting item: %s", err)
 	}
 
-	log.Println(fmt.Sprintf("%+v", output))
+	log.Println(fmt.Sprintf("Get operation goes well, Output:%+v", output))
 
 	if output.Item == nil {
 		log.Println("Session Not founded")
@@ -152,6 +153,8 @@ func (svc *SearchSessionDynamoDbService) getString(source map[string]*dynamodb.A
 }
 
 func (svc *SearchSessionDynamoDbService) AddSpotsToSession(sessionId string, sessionType session.SessionTypes, spots []string) error {
+	log.Println(fmt.Sprintf("AddSpotsToSession -> Adding spots session with sessionType: %s, sessionId: %s, Spots: %+v", string(sessionType), sessionId, spots))
+
 	if len(spots) == 0 {
 		log.Println("Empty spots, avoiding process")
 		return nil
@@ -162,7 +165,7 @@ func (svc *SearchSessionDynamoDbService) AddSpotsToSession(sessionId string, ses
 		log.Fatalf("Got error marshalling key item: %s", err)
 	}
 
-	log.Println(key)
+	log.Println(fmt.Sprintf("AddSpotsToSession -> key %+v", key))
 
 	expressionAttributeValues := map[string]*dynamodb.AttributeValue{}
 	updateExpression := "set"
