@@ -1,6 +1,8 @@
 package filtersrv
 
 import (
+	"fmt"
+	"log"
 	"time"
 
 	"github.com/JuanGQCadavid/now-project/services/filter/internal/core/domain"
@@ -59,7 +61,7 @@ func (srv *service) generatePoints(centralPoint domain.LatLng, radious float64) 
 // 	]
 // }
 // TODO -> should we add the city parameter ?
-func (srv *service) FilterByProximity(centralPointLat float64, centralPointLng float64, radious float64, session session.SearchSessionData) domain.Locations {
+func (srv *service) FilterByProximity(centralPointLat float64, centralPointLng float64, radious float64, sessionData session.SearchSessionData) domain.Locations {
 	//Procedure:
 	//	1. Create pointes A and B
 	// 	2. Fetch the spotsIds from LocationRepository
@@ -77,9 +79,15 @@ func (srv *service) FilterByProximity(centralPointLat float64, centralPointLng f
 		},
 		radious)
 
+	var locations domain.Locations
+	var err error
 	// 2. Fetch the spotsIds from LocationRepository
-
-	locations, err := srv.locationRepository.FetchSpotsIdsByArea(pointA, pointB)
+	if sessionData.SessionConfiguration.SessionType != session.Empty && len(sessionData.Spots) > 0 {
+		spots := srv.unfoldSpotsIds(sessionData.Spots)
+		locations, err = srv.locationRepository.FetchSpotsIdsByAreaExcludingSpots(pointA, pointB, spots)
+	} else {
+		locations, err = srv.locationRepository.FetchSpotsIdsByArea(pointA, pointB)
+	}
 
 	if err != nil {
 		// TODO -> Do something when it fails here.
@@ -98,6 +106,18 @@ func (srv *service) FilterByProximity(centralPointLat float64, centralPointLng f
 	return domain.Locations{
 		Places: spotsInfo,
 	}
+}
+
+func (srv *service) unfoldSpotsIds(sessionDataSpots map[string][]string) []string {
+	log.Println("unfoldSpotsIds. sessionDataSpots:", fmt.Sprintf("%+v", sessionDataSpots))
+
+	spots := []string{}
+	for key, value := range sessionDataSpots {
+		log.Println("Appending sesison data from timestamp: ", key)
+		spots = append(spots, value...)
+	}
+
+	return spots
 }
 
 func (srv *service) filterByTime(locations domain.Locations) []string {
