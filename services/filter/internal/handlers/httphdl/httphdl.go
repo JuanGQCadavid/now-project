@@ -7,6 +7,7 @@ import (
 
 	"github.com/JuanGQCadavid/now-project/services/filter/internal/core/domain/session"
 	"github.com/JuanGQCadavid/now-project/services/filter/internal/core/ports"
+	"github.com/JuanGQCadavid/now-project/services/filter/internal/handlers/httphdl/domain"
 	"github.com/gin-gonic/gin"
 )
 
@@ -105,7 +106,18 @@ func (hdl *HTTPHandler) FilterSpots(context *gin.Context) {
 		} else {
 			log.Println("Empty response, omiting storing ids on session.")
 		}
+		httpResponse := &domain.ProxymityResult{
+			Result: response,
+			SearchSessionResponse: domain.SearchSessionResponse{
+				SessionDetail: *domain.NewSessionDetails(sessionData.SessionConfiguration.SessionId, sessionData.SessionConfiguration.TTL),
+			},
+		}
+		context.JSON(200, httpResponse)
+		return
 	}
 
-	context.JSON(200, response)
+	httpResponse := &domain.ProxymityResult{
+		Result: response,
+	}
+	context.JSON(200, httpResponse)
 }
