@@ -6,6 +6,18 @@ part of 'filterSpotsResponse.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
+FilterProxymityResponse _$FilterProxymityResponseFromJson(
+        Map<String, dynamic> json) =>
+    FilterProxymityResponse(
+      result: Locations.fromJson(json['result'] as Map<String, dynamic>),
+    );
+
+Map<String, dynamic> _$FilterProxymityResponseToJson(
+        FilterProxymityResponse instance) =>
+    <String, dynamic>{
+      'result': instance.result.toJson(),
+    };
+
 Locations _$LocationsFromJson(Map<String, dynamic> json) => Locations(
       places: (json['places'] as List<dynamic>)
           .map((e) => FilterSpot.fromJson(e as Map<String, dynamic>))

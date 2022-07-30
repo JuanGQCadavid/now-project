@@ -3,6 +3,18 @@ import "package:json_annotation/json_annotation.dart";
 part 'filterSpotsResponse.g.dart';
 
 @JsonSerializable(explicitToJson: true)
+class FilterProxymityResponse {
+  final Locations result;
+
+  FilterProxymityResponse({required this.result});
+
+  factory FilterProxymityResponse.fromJson(Map<String, dynamic> json) =>
+      _$FilterProxymityResponseFromJson(json);
+
+  Map<String, dynamic> toJson() => _$FilterProxymityResponseToJson(this);
+}
+
+@JsonSerializable(explicitToJson: true)
 class Locations {
   final List<FilterSpot> places;
 

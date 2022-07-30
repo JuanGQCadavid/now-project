@@ -45,7 +45,7 @@ class FilterService implements IFilterService {
       // On error! What are we going to do bro ?
       return List.empty();
     }, (requestResponse) {
-      Locations locations = Locations.fromJson(requestResponse);
+      Locations locations = FilterProxymityResponse.fromJson(requestResponse).result;
       return mappers.fromPlacesToSpotList(locations);
     });
     
