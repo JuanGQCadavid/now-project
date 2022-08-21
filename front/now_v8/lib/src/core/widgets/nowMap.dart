@@ -145,6 +145,8 @@ class _NowMapV2State extends State<NowMapV2> {
       myLocationButtonEnabled: widget.myLocationButtonEnabled,
       myLocationEnabled: true,
       onMapCreated: onMapCreated,
+      scrollGesturesEnabled: !widget.blockMap,
+      zoomGesturesEnabled: !widget.blockMap,
     );
   }
 
