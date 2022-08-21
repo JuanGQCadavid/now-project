@@ -1,4 +1,7 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:location/location.dart';
 import 'package:now_v8/src/core/contracts/filterService.dart';
 import 'package:now_v8/src/core/contracts/locationService.dart';
 import 'package:now_v8/src/services/cmd/colors_service/colors_service.dart';
@@ -31,3 +34,14 @@ final colorsServiceProvider = Provider<ColorsService>(
 final apiConfigProvider = Provider<ApiConfig>(
   (ref) => ApiConfig.toProd(),
 );
+
+final locationProvider = Provider<Location>((ref) {
+  Location location = Location();
+  return location;
+});
+
+
+final locationStreamProvider = StreamProvider((ref) {
+  Location location = ref.read(locationProvider);
+  return location.onLocationChanged;
+});
