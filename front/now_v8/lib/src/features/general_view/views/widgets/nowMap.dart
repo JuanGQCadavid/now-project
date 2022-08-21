@@ -1,11 +1,13 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:now_v8/src/core/widgets/nowMap.dart';
 import 'package:now_v8/src/features/general_view/model/filteredSpots.dart';
 import 'dart:async';
 
 import 'package:now_v8/src/features/general_view/views/widgets/spotTagWidget.dart';
 import 'package:now_v8/src/features/general_view/views_model/providers.dart';
+import 'package:now_v8/src/services/core/providers.dart';
 
 class MapSample extends ConsumerWidget {
   const MapSample({Key? key}) : super(key: key);
@@ -13,11 +15,18 @@ class MapSample extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final filteredSpots = ref.watch(filteredSpotsProvider);
+    final location = const LatLng(6.251723, -75.592771);
+
+    // if (widget.includeUserLocation != null || widget.centerMapOnSpots != true) {
+    //   locationData = await location.getLocation();
+    // }
 
     return Stack(
       children: [
-        NowMap(
-          filteredSpots: filteredSpots,
+        NowMapV2.fromFilteredSpots(
+          filteredSpots,
+          camaraPosition: location,
+          centerMapOnSpots: true,
         ),
         Align(
           alignment: Alignment.bottomLeft,

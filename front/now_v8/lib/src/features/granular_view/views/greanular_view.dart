@@ -80,7 +80,7 @@ class _Body extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             GanularHeader(
-              spotWindow: onSpot.window,
+              onSpot: onSpot, 
               appColor: appColor,
             ),
             Center(

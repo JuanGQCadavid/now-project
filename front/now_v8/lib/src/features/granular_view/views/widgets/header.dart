@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:now_v8/src/core/models/spot.dart';
+import 'package:now_v8/src/core/widgets/nowMap.dart';
 import 'package:now_v8/src/features/granular_view/model/granular_spot.dart';
 import 'package:now_v8/src/features/granular_view/views_model/providers.dart';
 
@@ -9,12 +11,13 @@ class GanularHeader extends ConsumerWidget {
   final double mapSize = 250;
   final double spotsHeaderSize = 80;
   final Color appColor;
-  final SpotWindow spotWindow;
-  GanularHeader({Key? key, required this.appColor, required this.spotWindow})
+  final GranularSpot onSpot;
+  GanularHeader({Key? key, required this.appColor, required this.onSpot})
       : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final location = const LatLng(6.251723, -75.592771);
     return Container(
       height: headerSize,
       child: Stack(
@@ -22,16 +25,15 @@ class GanularHeader extends ConsumerWidget {
           Container(
             height: mapSize,
             color: appColor,
-            child: const GoogleMap(
-              mapType: MapType.normal,
-              zoomControlsEnabled: false,
-              initialCameraPosition: CameraPosition(
-                target: LatLng(6.251723, -75.592771),
-                zoom: 14.4746,
-              ),
-              mapToolbarEnabled: false,
+            child: NowMapV2(
+              blockMap: true,
+              camaraPosition: location,
               myLocationButtonEnabled: false,
-              padding: EdgeInsets.only(bottom: 65, left: 15),
+              centerMapOnSpots: true,
+              userLocation: location,
+              spots: [
+                Spot.fromLongSpot(onSpot.spot),
+                ],
             ),
           ),
           Align(
@@ -48,7 +50,7 @@ class GanularHeader extends ConsumerWidget {
                         final onSpot = ref.read(onSpotProvider.notifier);
                         onSpot.previousOne();
                       },
-                      text: spotWindow.previousOne,
+                      text: onSpot.window.previousOne,
                       isPrincipal: false,
                     ),
                   ),
@@ -56,7 +58,7 @@ class GanularHeader extends ConsumerWidget {
                     flex: 2,
                     child: TextHeaderOption(
                       onPressed: () {},
-                      text: spotWindow.actualOne,
+                      text: onSpot.window.actualOne,
                       isPrincipal: true,
                     ),
                   ),
@@ -67,7 +69,7 @@ class GanularHeader extends ConsumerWidget {
                         final onSpot = ref.read(onSpotProvider.notifier);
                         onSpot.nextOne();
                       },
-                      text: spotWindow.nextOne,
+                      text: onSpot.window.nextOne,
                       isPrincipal: false,
                     ),
                   )

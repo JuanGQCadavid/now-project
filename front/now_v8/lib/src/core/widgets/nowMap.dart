@@ -14,7 +14,7 @@ class NowMapV2 extends StatefulWidget {
   final bool myLocationButtonEnabled;
 
   // Optional nulls
-  final LatLng? includeUserLocation;
+  final LatLng? userLocation;
   late LatLng? camaraPosition;
 
   // Internally
@@ -29,14 +29,14 @@ class NowMapV2 extends StatefulWidget {
       this.mapZoom = 14.5,
       this.myLocationButtonEnabled = true,
       this.camaraPosition,
-      this.includeUserLocation})
+      this.userLocation})
       : super(key: key) {
     if (camaraPosition == null) {
       if (spots.isNotEmpty && spots.length == 1) {
         camaraPosition = spots.first.latLng;
       } else {
-        if (includeUserLocation != null) {
-          camaraPosition = includeUserLocation;
+        if (userLocation != null) {
+          camaraPosition = userLocation;
         } else {
           camaraPosition = const LatLng(0, 0);
         }
@@ -48,7 +48,15 @@ class NowMapV2 extends StatefulWidget {
     );
   }
 
-  factory NowMapV2.fromFilteredSpots(FilteredSpots filteredSpots) {
+  factory NowMapV2.fromFilteredSpots(
+    FilteredSpots filteredSpots, {
+    bool centerMapOnSpots = true,
+    bool blockMap = false,
+    double mapZoom = 14.5,
+    bool myLocationButtonEnabled = false,
+    LatLng? camaraPosition,
+    LatLng? userLocation,
+  }) {
     List<Spot> spots = [];
 
     filteredSpots.spots.forEach((spot) {
@@ -63,7 +71,15 @@ class NowMapV2 extends StatefulWidget {
       ));
     });
 
-    return NowMapV2(spots: spots);
+    return NowMapV2(
+      spots: spots,
+      centerMapOnSpots: centerMapOnSpots,
+      blockMap: blockMap,
+      mapZoom: mapZoom,
+      myLocationButtonEnabled: myLocationButtonEnabled,
+      camaraPosition: camaraPosition,
+      userLocation: userLocation,
+    );
   }
 
   @override
@@ -84,10 +100,12 @@ class _NowMapV2State extends State<NowMapV2> {
     //   locationData = await location.getLocation();
     // }
 
-    if (widget.centerMapOnSpots) {
-      if (widget.includeUserLocation != null) {
+    if (widget.centerMapOnSpots &&
+        widget.spots.isNotEmpty) {
+      if (widget.userLocation != null) {
+        print("Hello?");
         bounds = getCameraLatLngBounds(widget.spots,
-            userLocation: widget.includeUserLocation!);
+            userLocation: widget.userLocation!);
       } else {
         bounds = getCameraLatLngBounds(widget.spots);
       }
