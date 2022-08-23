@@ -8,11 +8,8 @@ import 'package:now_v8/src/services/cmd/colors_service/colors_service.dart';
 import 'package:now_v8/src/services/cmd/filter_service/fake/filterFakeService.dart';
 import 'package:now_v8/src/services/cmd/filter_service/service/filterService.dart';
 import 'package:now_v8/src/services/cmd/location_service/fake/locationFakeService.dart';
+import 'package:now_v8/src/services/cmd/location_service/service/locationService.dart';
 import 'package:now_v8/src/services/core/services_api_configuration.dart';
-
-final spotServiceProvider = Provider((ref) {
-  return 0;
-});
 
 final locationServiceProvider = Provider<ILocationService>((ref) {
   return LocationFakeService();
@@ -34,14 +31,3 @@ final colorsServiceProvider = Provider<ColorsService>(
 final apiConfigProvider = Provider<ApiConfig>(
   (ref) => ApiConfig.toProd(),
 );
-
-final locationProvider = Provider<Location>((ref) {
-  Location location = Location();
-  return location;
-});
-
-
-final locationStreamProvider = StreamProvider((ref) {
-  Location location = ref.read(locationProvider);
-  return location.onLocationChanged;
-});

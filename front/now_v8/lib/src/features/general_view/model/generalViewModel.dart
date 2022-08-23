@@ -22,8 +22,9 @@ class GeneralViewModel {
   }
 
   Future<List<Spot>> getSpots() async {
-    LatLng userLocation = locationService.getUserCurrentLocation();
-
+    print("getSpots");
+    LatLng userLocation = await locationService.getUserCurrentLocation();
+    print("userLocation done");
     spots = await filterService.getByProximity(
         cpLat: userLocation.latitude, cpLng: userLocation.longitude);
 

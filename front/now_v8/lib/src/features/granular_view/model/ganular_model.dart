@@ -23,7 +23,7 @@ class GranularModel {
   }
 
   Future<List<LongSpot>> getSpots() async {
-    LatLng userLocation = locationService.getUserCurrentLocation();
+    LatLng userLocation = await locationService.getUserCurrentLocation();
 
     StateResponse<List<LongSpot>, String> filterResponse =
         await filterService.getByProximityWithState(

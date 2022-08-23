@@ -17,7 +17,6 @@ class GanularHeader extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final location = const LatLng(6.251723, -75.592771);
     return Container(
       height: headerSize,
       child: Stack(
@@ -27,10 +26,9 @@ class GanularHeader extends ConsumerWidget {
             color: appColor,
             child: NowMapV2(
               blockMap: true,
-              camaraPosition: location,
               myLocationButtonEnabled: false,
               centerMapOnSpots: true,
-              userLocation: location,
+              includeUserLocation: true,
               spots: [
                 Spot.fromLongSpot(onSpot.spot),
                 ],

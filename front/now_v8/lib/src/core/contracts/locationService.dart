@@ -4,7 +4,7 @@ abstract class ILocationService {
 
   // This method return the user physical current location
   // in the map
-  LatLng getUserCurrentLocation();
+  Future<LatLng> getUserCurrentLocation();
 
   // This method will return the location that the user
   // is while browsing in the map

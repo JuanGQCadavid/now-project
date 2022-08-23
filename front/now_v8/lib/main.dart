@@ -21,7 +21,7 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
-        home: GeneralViewFeature() //MyHomePage(title: 'Flutter Demo Home Page'),
+        home: GeneralViewFeature(),//NowMapTest(),//GeneralViewFeature() //MyHomePage(title: 'Flutter Demo Home Page'),
         );
   }
 }
@@ -74,7 +74,7 @@ class NowMapOld extends StatelessWidget {
       color: Colors.red,
       child: NowMapV2(
           spots: spot,
-          userLocation: const LatLng(6.246371, -75.5903657),
+          includeUserLocation: true,
           myLocationButtonEnabled: true, centerMapOnSpots: true,),
     );
   }

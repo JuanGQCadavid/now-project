@@ -6,11 +6,11 @@
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>We need your location to find all the spots closed</string>
 
-	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>Just because</string>
+	<!-- <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Just because</string> -->
 
-	<key>UIBackgroundModes</key>
-	<string>location</string>
+	<!-- <key>UIBackgroundModes</key>
+	<string>location</string> -->
 
 	<!-- Default permissions -->
 	<key>CADisableMinimumFrameDurationOnPhone</key>

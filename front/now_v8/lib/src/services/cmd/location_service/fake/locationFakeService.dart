@@ -4,8 +4,8 @@ import 'package:now_v8/src/core/contracts/locationService.dart';
 class LocationFakeService implements ILocationService {
   // TODO -> Implement this service!
   @override
-  LatLng getUserCurrentLocation() {
-    return LatLng(6.251723, -75.592771);
+  Future<LatLng> getUserCurrentLocation() async{
+    return const LatLng(6.251723, -75.592771);
   }
 
   @override
