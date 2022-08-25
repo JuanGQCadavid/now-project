@@ -15,6 +15,49 @@ class FilterProxymityResponse {
 }
 
 @JsonSerializable(explicitToJson: true)
+class FilterProxyResponseWithState {
+  final Locations result;
+  final SearchSession search_session;
+
+  FilterProxyResponseWithState(
+      {required this.result, required this.search_session});
+
+  factory FilterProxyResponseWithState.fromJson(Map<String, dynamic> json) =>
+      _$FilterProxyResponseWithStateFromJson(json);
+
+  Map<String, dynamic> toJson() => _$FilterProxyResponseWithStateToJson(this);
+}
+
+@JsonSerializable(explicitToJson: true)
+class SearchSession {
+  final SessionDetails session_details;
+  SearchSession({required this.session_details});
+
+  factory SearchSession.fromJson(Map<String, dynamic> json) =>
+      _$SearchSessionFromJson(json);
+
+  Map<String, dynamic> toJson() => _$SearchSessionToJson(this);
+}
+
+@JsonSerializable(explicitToJson: true)
+class SessionDetails {
+  final String session_id;
+  final String header_name;
+  final int ttl;
+
+  SessionDetails({
+    required this.session_id,
+    required this.header_name,
+    required this.ttl,
+  });
+
+  factory SessionDetails.fromJson(Map<String, dynamic> json) =>
+      _$SessionDetailsFromJson(json);
+
+  Map<String, dynamic> toJson() => _$SessionDetailsToJson(this);
+}
+
+@JsonSerializable(explicitToJson: true)
 class Locations {
   final List<FilterSpot> places;
 
@@ -24,7 +67,6 @@ class Locations {
       _$LocationsFromJson(json);
 
   Map<String, dynamic> toJson() => _$LocationsToJson(this);
-
 }
 
 @JsonSerializable()
@@ -39,11 +81,11 @@ class FilterSpot {
     required this.topicInfo,
   });
 
-  factory FilterSpot.fromJson(Map<String, dynamic> json) => _$FilterSpotFromJson(json);
+  factory FilterSpot.fromJson(Map<String, dynamic> json) =>
+      _$FilterSpotFromJson(json);
 
   Map<String, dynamic> toJson() => _$FilterSpotToJson(this);
 }
-
 
 @JsonSerializable()
 class EventInfo {

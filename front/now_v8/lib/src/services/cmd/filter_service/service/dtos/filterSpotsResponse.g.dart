@@ -18,6 +18,46 @@ Map<String, dynamic> _$FilterProxymityResponseToJson(
       'result': instance.result.toJson(),
     };
 
+FilterProxyResponseWithState _$FilterProxyResponseWithStateFromJson(
+        Map<String, dynamic> json) =>
+    FilterProxyResponseWithState(
+      result: Locations.fromJson(json['result'] as Map<String, dynamic>),
+      search_session: SearchSession.fromJson(
+          json['search_session'] as Map<String, dynamic>),
+    );
+
+Map<String, dynamic> _$FilterProxyResponseWithStateToJson(
+        FilterProxyResponseWithState instance) =>
+    <String, dynamic>{
+      'result': instance.result.toJson(),
+      'search_session': instance.search_session.toJson(),
+    };
+
+SearchSession _$SearchSessionFromJson(Map<String, dynamic> json) =>
+    SearchSession(
+      session_details: SessionDetails.fromJson(
+          json['session_details'] as Map<String, dynamic>),
+    );
+
+Map<String, dynamic> _$SearchSessionToJson(SearchSession instance) =>
+    <String, dynamic>{
+      'session_details': instance.session_details.toJson(),
+    };
+
+SessionDetails _$SessionDetailsFromJson(Map<String, dynamic> json) =>
+    SessionDetails(
+      session_id: json['session_id'] as String,
+      header_name: json['header_name'] as String,
+      ttl: json['ttl'] as int,
+    );
+
+Map<String, dynamic> _$SessionDetailsToJson(SessionDetails instance) =>
+    <String, dynamic>{
+      'session_id': instance.session_id,
+      'header_name': instance.header_name,
+      'ttl': instance.ttl,
+    };
+
 Locations _$LocationsFromJson(Map<String, dynamic> json) => Locations(
       places: (json['places'] as List<dynamic>)
           .map((e) => FilterSpot.fromJson(e as Map<String, dynamic>))
