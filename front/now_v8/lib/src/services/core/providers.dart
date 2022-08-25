@@ -36,5 +36,5 @@ final apiConfigProvider = Provider<ApiConfig>(
 
 
 final keyValueProvider = Provider.family<IKeyValueStorage, String>((ref, databaseName) {
-  return HiveKeyValue<String>(databaseName);
+  return HiveKeyValue<String>(boxName: databaseName);
 },);

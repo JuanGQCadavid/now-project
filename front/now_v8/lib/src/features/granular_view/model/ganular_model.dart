@@ -1,5 +1,6 @@
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:now_v8/src/core/contracts/filterService.dart';
+import 'package:now_v8/src/core/contracts/key_value_storage.dart';
 import 'package:now_v8/src/core/contracts/locationService.dart';
 import 'package:now_v8/src/core/models/long_spot.dart';
 import 'package:now_v8/src/core/models/state_response.dart';
@@ -8,8 +9,15 @@ import 'package:now_v8/src/features/granular_view/model/granular_spot.dart';
 class GranularModel {
   final IFilterService filterService;
   final ILocationService locationService;
+  final IKeyValueStorage sessionDatabase;
 
-  GranularModel({required this.filterService, required this.locationService});
+  final String searchSessionKey = "X-Now-Search-Session-Id";
+
+  GranularModel({
+    required this.filterService,
+    required this.locationService,
+    required this.sessionDatabase,
+  });
 
   GranularSpot generateNewModel(int newIndex, List<LongSpot> actualList) {
     SpotWindow spotWindow = generateSpotWindow(newIndex, actualList);
@@ -24,10 +32,31 @@ class GranularModel {
 
   Future<List<LongSpot>> getSpots() async {
     LatLng userLocation = await locationService.getUserCurrentLocation();
+    await sessionDatabase.doInit();
+
+    print("Before calling Search Session key");
+    String token = sessionDatabase.getValue(searchSessionKey);
+    print("Token -> " + token);
 
     StateResponse<List<LongSpot>, String> filterResponse =
         await filterService.getByProximityWithState(
-            cpLat: userLocation.latitude, cpLng: userLocation.longitude);
+            cpLat: userLocation.latitude, cpLng: userLocation.longitude, token: token);
+
+    if(filterResponse.token.isNotEmpty && filterResponse.token != token) {
+      print("Differente tokens");
+      print("Before calling Search Session key");
+      print("filterResponse.token -> " + filterResponse.token);
+      print("Token -> " + token);
+      sessionDatabase.save(filterResponse.token, searchSessionKey);
+
+      print("Before calling Search Session key again");
+      String token2 = sessionDatabase.getValue(searchSessionKey);
+      print("token2 -> " + token2);
+    } else {
+      print("Same token as the one we use to call the service");
+      print("filterResponse.token -> " + filterResponse.token);
+      print("Token -> " + token);
+    }
 
     return filterResponse.response;
   }

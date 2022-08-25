@@ -1,19 +1,26 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:now_v8/src/core/contracts/filterService.dart';
+import 'package:now_v8/src/core/contracts/key_value_storage.dart';
 import 'package:now_v8/src/core/contracts/locationService.dart';
 import 'package:now_v8/src/core/models/long_spot.dart';
 import 'package:now_v8/src/features/granular_view/model/ganular_model.dart';
 import 'package:now_v8/src/features/granular_view/model/granular_spot.dart';
 import 'package:now_v8/src/features/granular_view/views_model/state_notifiers.dart';
 import 'package:now_v8/src/services/core/providers.dart';
+
 // fakeFilterServiceProvider
 // filterServiceProvider
 final granularModelProvider = Provider<GranularModel>((ref) {
   final IFilterService filterService = ref.read(fakeFilterServiceProvider);
   final ILocationService locationService = ref.read(locationServiceProvider);
+  final IKeyValueStorage keyValueStorage =
+      ref.read(keyValueProvider("sessionData"));
 
   return GranularModel(
-      filterService: filterService, locationService: locationService);
+    filterService: filterService,
+    locationService: locationService,
+    sessionDatabase: keyValueStorage
+  );
 });
 
 final detailedSpotProvider =
