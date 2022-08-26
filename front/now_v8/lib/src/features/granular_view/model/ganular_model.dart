@@ -42,7 +42,7 @@ class GranularModel {
         await filterService.getByProximityWithState(
             cpLat: userLocation.latitude, cpLng: userLocation.longitude, token: token);
 
-    if(filterResponse.token.isNotEmpty && filterResponse.token != token) {
+    if(filterResponse.token.isEmpty || filterResponse.token != token) {
       print("Differente tokens");
       print("Before calling Search Session key");
       print("filterResponse.token -> " + filterResponse.token);

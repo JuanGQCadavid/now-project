@@ -11,7 +11,7 @@ import 'package:now_v8/src/services/core/providers.dart';
 // fakeFilterServiceProvider
 // filterServiceProvider
 final granularModelProvider = Provider<GranularModel>((ref) {
-  final IFilterService filterService = ref.read(fakeFilterServiceProvider);
+  final IFilterService filterService = ref.read(filterServiceProvider);
   final ILocationService locationService = ref.read(locationServiceProvider);
   final IKeyValueStorage keyValueStorage =
       ref.read(keyValueProvider("sessionData"));

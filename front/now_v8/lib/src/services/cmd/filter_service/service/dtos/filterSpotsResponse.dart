@@ -46,9 +46,9 @@ class SessionDetails {
   final int ttl;
 
   SessionDetails({
-    required this.session_id,
-    required this.header_name,
-    required this.ttl,
+    this.session_id = "",
+    this.header_name = "",
+    this.ttl = 0,
   });
 
   factory SessionDetails.fromJson(Map<String, dynamic> json) =>

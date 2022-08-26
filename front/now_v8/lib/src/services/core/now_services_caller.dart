@@ -20,16 +20,24 @@ class NowServicesCaller {
     Method method,
     String path, {
     Map<String, dynamic>? queryParameters,
+    Map<String, dynamic>? headers,
     Map<String, dynamic>? data,
   }) async {
     Response response;
 
     try {
+      Options options = Options();
+      if (headers != null) {
+        options = Options(
+          headers: headers
+        );
+      }
+
       if (method == Method.GET) {
-        response = await _dio.get(path, queryParameters: queryParameters);
+        response = await _dio.get(path, queryParameters: queryParameters, options: options);
       } else {
         response =
-            await _dio.post(path, data: data, queryParameters: queryParameters);
+            await _dio.post(path, data: data, queryParameters: queryParameters, options: options);
       }
 
       // Checkers on 500

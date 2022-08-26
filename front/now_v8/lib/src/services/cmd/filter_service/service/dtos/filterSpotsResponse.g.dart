@@ -46,9 +46,9 @@ Map<String, dynamic> _$SearchSessionToJson(SearchSession instance) =>
 
 SessionDetails _$SessionDetailsFromJson(Map<String, dynamic> json) =>
     SessionDetails(
-      session_id: json['session_id'] as String,
-      header_name: json['header_name'] as String,
-      ttl: json['ttl'] as int,
+      session_id: json['session_id'] as String? ?? "",
+      header_name: json['header_name'] as String? ?? "",
+      ttl: json['ttl'] as int? ?? 0,
     );
 
 Map<String, dynamic> _$SessionDetailsToJson(SessionDetails instance) =>
