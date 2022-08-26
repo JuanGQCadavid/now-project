@@ -34,7 +34,7 @@ final detailedSpotProvider =
 
 final onSpotProvider = StateNotifierProvider<OnSpotState, GranularSpot>((ref) {
   final granularModel = ref.read(granularModelProvider);
-  final detailedSpot = ref.watch(detailedSpotProvider);
+  final detailedSpotNotifier = ref.watch(detailedSpotProvider);
 
-  return OnSpotState(granularModel: granularModel, actualList: detailedSpot);
+  return OnSpotState(granularModel: granularModel, actualList: detailedSpotNotifier, ref: ref);
 });

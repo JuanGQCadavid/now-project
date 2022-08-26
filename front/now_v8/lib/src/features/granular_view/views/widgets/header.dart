@@ -31,7 +31,7 @@ class GanularHeader extends ConsumerWidget {
               includeUserLocation: true,
               spots: [
                 Spot.fromLongSpot(onSpot.spot),
-                ],
+              ],
             ),
           ),
           Align(
@@ -43,14 +43,16 @@ class GanularHeader extends ConsumerWidget {
                 children: [
                   Expanded(
                     flex: 1,
-                    child: TextHeaderOption(
-                      onPressed: () {
-                        final onSpot = ref.read(onSpotProvider.notifier);
-                        onSpot.previousOne();
-                      },
-                      text: onSpot.window.previousOne,
-                      isPrincipal: false,
-                    ),
+                    child: onSpot.window.previousOne.isEmpty
+                        ? Container()
+                        : TextHeaderOption(
+                            onPressed: () {
+                              final onSpot = ref.read(onSpotProvider.notifier);
+                              onSpot.previousOne();
+                            },
+                            text: onSpot.window.previousOne,
+                            isPrincipal: false,
+                          ),
                   ),
                   Expanded(
                     flex: 2,
@@ -62,14 +64,21 @@ class GanularHeader extends ConsumerWidget {
                   ),
                   Expanded(
                     flex: 1,
-                    child: TextHeaderOption(
-                      onPressed: () {
-                        final onSpot = ref.read(onSpotProvider.notifier);
-                        onSpot.nextOne();
-                      },
-                      text: onSpot.window.nextOne,
-                      isPrincipal: false,
-                    ),
+                    child: onSpot.window.nextOne.isEmpty
+                        ? IconButton(
+                            onPressed: () {
+                              final onSpot = ref.read(onSpotProvider.notifier);
+                              onSpot.nextOne();
+                            },
+                            icon: Icon(Icons.refresh))
+                        : TextHeaderOption(
+                            onPressed: () {
+                              final onSpot = ref.read(onSpotProvider.notifier);
+                              onSpot.nextOne();
+                            },
+                            text: onSpot.window.nextOne,
+                            isPrincipal: false,
+                          ),
                   )
                 ],
               ),

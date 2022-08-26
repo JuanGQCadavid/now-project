@@ -92,7 +92,7 @@ class GranularModel {
     } else {
       if (middleSpotIndex == 0) {
         return SpotWindow(
-          previousOne: spotsList[spotsList.length - 1].eventInfo.name,
+          previousOne: "",//spotsList[spotsList.length - 1].eventInfo.name,
           actualOne: spotsList[middleSpotIndex].eventInfo.name,
           nextOne: spotsList[middleSpotIndex + 1].eventInfo.name,
         );
@@ -100,7 +100,7 @@ class GranularModel {
         return SpotWindow(
           previousOne: spotsList[middleSpotIndex - 1].eventInfo.name,
           actualOne: spotsList[middleSpotIndex].eventInfo.name,
-          nextOne: spotsList[0].eventInfo.name,
+          nextOne: "",
         );
       } else {
         return SpotWindow(

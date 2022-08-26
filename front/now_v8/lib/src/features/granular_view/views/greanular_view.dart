@@ -65,22 +65,37 @@ class _Body extends ConsumerWidget {
 
     if (onSpot.window.isEmpty()) {
       return Container(
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            new CircularProgressIndicator(),
-            new Text("Loading"),
-          ],
+        child: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                child: const CircularProgressIndicator(),
+                height: 90,
+                width: 90,
+              ),
+              SizedBox(
+                height: 30,
+              ),
+              Container(
+                child: Text(
+                  "We are finding something amazing for you",
+                  style: Theme.of(context).textTheme.titleLarge,
+                  textAlign: TextAlign.center,
+                ),
+                width: 300,
+              ),
+            ],
+          ),
         ),
       );
-
     } else {
       return Container(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             GanularHeader(
-              onSpot: onSpot, 
+              onSpot: onSpot,
               appColor: appColor,
             ),
             Center(
