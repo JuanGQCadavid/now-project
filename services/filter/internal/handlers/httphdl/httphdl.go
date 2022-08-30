@@ -35,6 +35,7 @@ func (hdl *HTTPHandler) FilterSpots(context *gin.Context) {
 
 	traceId := hdl.newUUID()
 	log.SetPrefix(traceId + " ")
+	context.Header("X-Trace-Id", traceId)
 
 	if !isLatPresent || !isLonPresent {
 		context.AbortWithStatusJSON(400, map[string]interface{}{
