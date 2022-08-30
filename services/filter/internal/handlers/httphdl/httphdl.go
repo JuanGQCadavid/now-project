@@ -50,6 +50,9 @@ func (hdl *HTTPHandler) FilterSpots(context *gin.Context) {
 		return
 	}
 
+	var onSessionError bool = false
+	var onError domain.OnError = domain.OnError{}
+
 	// Default if not session created.
 	var sessionData session.SearchSessionData = session.SearchSessionData{
 		SessionData: session.SessionData{
@@ -68,6 +71,10 @@ func (hdl *HTTPHandler) FilterSpots(context *gin.Context) {
 		if err != nil {
 			log.Println("Error -> It is not possible to get session")
 			log.Println(err)
+			onSessionError = true
+			onError = domain.OnError{
+				Error: domain.SessionNotFounded,
+			}
 		} else {
 			sessionData = sessionSearch
 			log.Println("Session UUID Fetched perfetcly: SessionSearch:", fmt.Sprintf("%+v", sessionData))
@@ -80,6 +87,10 @@ func (hdl *HTTPHandler) FilterSpots(context *gin.Context) {
 		if err != nil {
 			log.Println("Error -> It is not possible to create session")
 			log.Println(err)
+			onSessionError = true
+			onError = domain.OnError{
+				Error: domain.SessionNotCreated,
+			}
 		} else {
 			log.Println("Session Configuration created correctly: SessionConfig:", fmt.Sprintf("%+v", sessionConfig))
 			sessionData.SessionConfiguration = *sessionConfig
@@ -116,8 +127,19 @@ func (hdl *HTTPHandler) FilterSpots(context *gin.Context) {
 		return
 	}
 
-	httpResponse := &domain.ProxymityResult{
-		Result: response,
+	if onSessionError {
+		httpResponse := &domain.ProxymityResult{
+			Result: response,
+			SearchSessionResponse: domain.SearchSessionResponse{
+				OnError: onError,
+			},
+		}
+		context.JSON(200, httpResponse)
+	} else {
+		httpResponse := &domain.ProxymityResult{
+			Result: response,
+		}
+		context.JSON(200, httpResponse)
 	}
-	context.JSON(200, httpResponse)
+
 }

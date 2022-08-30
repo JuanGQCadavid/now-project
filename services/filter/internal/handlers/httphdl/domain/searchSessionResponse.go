@@ -13,6 +13,20 @@ const (
 
 type SearchSessionResponse struct {
 	SessionDetail SessionDetails `json:"session_details,omitempty"`
+	OnError       OnError        `json:"on_error,omitempty"`
+}
+
+type ErrorType string
+
+const (
+	SessionNotFounded ErrorType = "Session not founded"
+	SessionNotCreated ErrorType = "Session not created"
+)
+
+type OnError struct {
+	Error   ErrorType `json:"error,omitempty"`
+	ErrorId string    `json:"error_id,omitempty"`
+	TraceId string    `json:"traceId,omitempty"`
 }
 
 type SessionDetails struct {
