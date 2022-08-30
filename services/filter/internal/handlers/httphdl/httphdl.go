@@ -9,6 +9,7 @@ import (
 	"github.com/JuanGQCadavid/now-project/services/filter/internal/core/ports"
 	"github.com/JuanGQCadavid/now-project/services/filter/internal/handlers/httphdl/domain"
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 )
 
 type HTTPHandler struct {
@@ -31,6 +32,9 @@ func (hdl *HTTPHandler) FilterSpots(context *gin.Context) {
 	queryRadious := context.DefaultQuery("radious", fmt.Sprintf("%f", hdl.defaultRadious))
 	queryCreateSession := context.DefaultQuery("createSession", "false")
 	headerSessionUUID := context.Request.Header.Get("X-Now-Search-Session-Id")
+
+	traceId := hdl.newUUID()
+	log.SetPrefix(traceId + " ")
 
 	if !isLatPresent || !isLonPresent {
 		context.AbortWithStatusJSON(400, map[string]interface{}{
@@ -73,7 +77,8 @@ func (hdl *HTTPHandler) FilterSpots(context *gin.Context) {
 			log.Println(err)
 			onSessionError = true
 			onError = domain.OnError{
-				Error: domain.SessionNotFounded,
+				Error:   domain.SessionNotFounded,
+				TraceId: traceId,
 			}
 		} else {
 			sessionData = sessionSearch
@@ -89,7 +94,8 @@ func (hdl *HTTPHandler) FilterSpots(context *gin.Context) {
 			log.Println(err)
 			onSessionError = true
 			onError = domain.OnError{
-				Error: domain.SessionNotCreated,
+				Error:   domain.SessionNotCreated,
+				TraceId: traceId,
 			}
 		} else {
 			log.Println("Session Configuration created correctly: SessionConfig:", fmt.Sprintf("%+v", sessionConfig))
@@ -142,4 +148,8 @@ func (hdl *HTTPHandler) FilterSpots(context *gin.Context) {
 		context.JSON(200, httpResponse)
 	}
 
+}
+
+func (hdl *HTTPHandler) newUUID() string {
+	return uuid.NewString()
 }

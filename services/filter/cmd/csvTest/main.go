@@ -5,6 +5,7 @@ package main
 import (
 	"encoding/csv"
 	"fmt"
+	"log"
 	"os"
 
 	"github.com/JuanGQCadavid/now-project/services/filter/internal/core/domain"
@@ -31,7 +32,7 @@ func main() {
 	csvFile, err := os.Create("./data.csv")
 
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 	}
 	defer csvFile.Close()
 

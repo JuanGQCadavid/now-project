@@ -29,6 +29,7 @@ func NewSearchSessionDynamoDbService() *SearchSessionDynamoDbService {
 }
 
 func (svc *SearchSessionDynamoDbService) CreateSession(sessionType session.SessionTypes) (*session.SessionConfig, error) {
+	log.Println("Testing on Search session handler -------------------------")
 	log.Println(fmt.Sprintf("CreateSession -> Creating session with sessionType: %s", string(sessionType)))
 	sessionId := svc.newUUID()
 	ttl := svc.generateTTL()
@@ -120,7 +121,7 @@ func (svc *SearchSessionDynamoDbService) GetSessionData(sessionId string, sessio
 			state := ""
 			svc.getString(item, &state, key)
 
-			println(state)
+			log.Println(state)
 
 			if strings.ToUpper(state) == strings.ToUpper(string(session.SpotsReturned)) {
 				sessionData.SessionConfiguration.SessionType = session.SpotsReturned

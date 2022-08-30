@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/JuanGQCadavid/now-project/services/filter/internal/core/domain/session"
 	"github.com/JuanGQCadavid/now-project/services/filter/internal/core/ports"
@@ -20,19 +21,19 @@ func main() {
 
 	var search ports.SearchSessionService = sessionservice.NewSearchSessionDynamoDbService()
 	session2, _ := search.CreateSession(session.SpotsReturned)
-	fmt.Println(fmt.Sprintf("%+v", session2))
+	log.Println(fmt.Sprintf("%+v", session2))
 
 	spotsIds := []string{
 		"spotId1", "SpotId2", "SpotId3", "spotId4", "SpotId5", "SpotId6", "spotId7", "SpotId8", "SpotId9", "spotId10", "SpotId11", "SpotId12", "spotId13", "SpotId14", "SpotId15",
 	}
 
 	err := search.AddSpotsToSession(session2.SessionId, session2.SessionType, spotsIds)
-	fmt.Println(fmt.Sprintf("%+v", err))
+	log.Println(fmt.Sprintf("%+v", err))
 
 	// time.Sleep(time.Duration(2) * time.Second)
 
 	// err = search.AddSpotsToSession(session2.SessionId, session2.SessionType, spotsIds)
-	// fmt.Println(fmt.Sprintf("%+v", err))
+	// log.Println(fmt.Sprintf("%+v", err))
 
 	// log.Println(session2.SessionId)
 
@@ -41,7 +42,7 @@ func main() {
 	// for {
 	// 	err := search.AddSpotsToSession(session2.SessionId, session2.SessionType, spotsIds)
 	// 	time.Sleep(time.Duration(2) * time.Second)
-	// 	fmt.Println(fmt.Sprintf("%+v", err))
+	// 	log.Println(fmt.Sprintf("%+v", err))
 	// }
 
 	// location := locationrepositories.NewLocationRepo()

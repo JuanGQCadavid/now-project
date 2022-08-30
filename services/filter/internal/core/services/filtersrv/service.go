@@ -72,6 +72,7 @@ func (srv *service) FilterByProximity(centralPointLat float64, centralPointLng f
 	//	The spots info fetched by spot service but in short format
 
 	// 1. Create pointes A and B
+	log.Println("Testing on FilterByProximity -------------------------")
 	var pointA, pointB domain.LatLng = srv.generatePoints(
 		domain.LatLng{
 			Lat: centralPointLat,
@@ -129,27 +130,27 @@ func (srv *service) filterByTime(locations domain.Locations) []string {
 		startTimeNow := time.Now().Format(time.RFC3339) // Fetch it from Spot!  spot.StartTime
 
 		startTime, err := time.Parse(time.RFC3339, startTimeNow)
-		println("Time before parsed ->", startTimeNow)
-		println("Time Parsed ->  ", startTime.String())
+		log.Println("Time before parsed ->", startTimeNow)
+		log.Println("Time Parsed ->  ", startTime.String())
 
 		if err != nil {
 			// TODO -> Do something when it fails here.
 		}
 
 		nowTime := time.Now()
-		println("Time Now ->  ", nowTime.String())
+		log.Println("Time Now ->  ", nowTime.String())
 
 		// if it is > 0 then it was in the pass, if not it is on the future.
 		elapsedTime := nowTime.Sub(startTime)
-		println("Time elapsedTime ->  ", elapsedTime.String())
+		log.Println("Time elapsedTime ->  ", elapsedTime.String())
 
 		// The it was on the past
 		if elapsedTime < 0 && -elapsedTime > srv.maximunTimeWindow {
-			println("Boom chacalaca!!!!!!!!!!!!")
+			log.Println("Boom chacalaca!!!!!!!!!!!!")
 			continue
 		}
 
-		println("finish")
+		log.Println("finish")
 		placesToReturn = append(placesToReturn, spot.EventInfo.UUID)
 	}
 

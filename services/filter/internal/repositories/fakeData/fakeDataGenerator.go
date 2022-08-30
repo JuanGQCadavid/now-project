@@ -2,6 +2,7 @@ package fakedata
 
 import (
 	"fmt"
+	"log"
 	"math/rand"
 	"time"
 
@@ -86,13 +87,12 @@ func (gen *DummyDataGenerator) GeneratePoints() {
 		// 4. Btwn the central point and the cp + radious generates lat and lot for each spot
 		spot.LatLng = gen.splitData(index, len(gen.spots), randomCoords[index][0], randomCoords[index][1])
 
-		fmt.Printf("%+v\n", spot)
-		fmt.Println("")
+		log.Println(fmt.Sprintf("%+v\n", spot))
 		gen.spots[index] = spot
 	}
 
 	println("Finish! the result is")
-	fmt.Printf("%+v\n", gen.spots)
+	log.Println(fmt.Sprintf("%+v\n", gen.spots))
 
 }
 
