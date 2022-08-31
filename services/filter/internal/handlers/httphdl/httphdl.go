@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"strconv"
+	"strings"
 
 	"github.com/JuanGQCadavid/now-project/services/filter/internal/core/domain/session"
 	"github.com/JuanGQCadavid/now-project/services/filter/internal/core/ports"
@@ -31,6 +32,7 @@ func (hdl *HTTPHandler) FilterSpots(context *gin.Context) {
 	queryLon, isLonPresent := context.GetQuery("cpLon")
 	queryRadious := context.DefaultQuery("radious", fmt.Sprintf("%f", hdl.defaultRadious))
 	queryCreateSession := context.DefaultQuery("createSession", "false")
+	queryFormat := context.DefaultQuery("format", "small")
 	headerSessionUUID := context.Request.Header.Get("X-Now-Search-Session-Id")
 
 	traceId := hdl.newUUID()
@@ -47,6 +49,14 @@ func (hdl *HTTPHandler) FilterSpots(context *gin.Context) {
 	cpLat, errLat := strconv.ParseFloat(queryLat, 64)
 	cpLon, errLon := strconv.ParseFloat(queryLon, 64)
 	radious, errRad := strconv.ParseFloat(queryRadious, 64)
+	format := ports.SMALL_FORMAT
+
+	if strings.ToUpper(queryFormat) == string(ports.FULL_FORMAT) {
+		log.Println(fmt.Sprintf("Using FULL format, format value passed by query: %s", queryFormat))
+		format = ports.FULL_FORMAT
+	} else {
+		log.Println(fmt.Sprintf("Using default (SMALL) format, format value passed by query: %s", queryFormat))
+	}
 
 	if errLat != nil || errLon != nil || errRad != nil {
 		context.AbortWithStatusJSON(400, map[string]interface{}{
@@ -108,7 +118,7 @@ func (hdl *HTTPHandler) FilterSpots(context *gin.Context) {
 		log.Println("Nor Query or header where present on the request. Proceeding with default session.")
 	}
 
-	response := hdl.service.FilterByProximity(cpLat, cpLon, radious, sessionData)
+	response := hdl.service.FilterByProximity(cpLat, cpLon, radious, sessionData, format)
 
 	if sessionData.SessionConfiguration.SessionType != session.Empty {
 		log.Println("Checking if we need to update the session.")

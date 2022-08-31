@@ -10,6 +10,7 @@ import (
 	"os"
 
 	"github.com/JuanGQCadavid/now-project/services/filter/internal/core/domain"
+	"github.com/JuanGQCadavid/now-project/services/filter/internal/core/ports"
 )
 
 type SpotServiceLambda struct {
@@ -31,7 +32,7 @@ func NewSpotServiceLambda() *SpotServiceLambda {
 	}
 }
 
-func (srv *SpotServiceLambda) GetSpotsCardsInfo(spots []string) ([]domain.Spot, error) {
+func (srv *SpotServiceLambda) GetSpotsCardsInfo(spots []string, format ports.OutputFormat) ([]domain.Spot, error) {
 
 	body, err := json.Marshal(map[string]interface{}{
 		"spotIds": spots,
@@ -43,7 +44,7 @@ func (srv *SpotServiceLambda) GetSpotsCardsInfo(spots []string) ([]domain.Spot, 
 		log.Fatalln("An error while marshalling the body: ", err)
 	}
 
-	resp, err := http.Post(fmt.Sprintf("%s/%s?format=small", srv.SpotServiceURL, srv.GetSpotsURI), "application/json", bytes.NewBuffer(body))
+	resp, err := http.Post(fmt.Sprintf("%s/%s?format=%s", srv.SpotServiceURL, srv.GetSpotsURI, string(format)), "application/json", bytes.NewBuffer(body))
 
 	if err != nil {
 		log.Fatalln("An error while making the request: ", err)

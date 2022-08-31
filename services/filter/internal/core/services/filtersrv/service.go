@@ -61,7 +61,7 @@ func (srv *service) generatePoints(centralPoint domain.LatLng, radious float64) 
 // 	]
 // }
 // TODO -> should we add the city parameter ?
-func (srv *service) FilterByProximity(centralPointLat float64, centralPointLng float64, radious float64, sessionData session.SearchSessionData) domain.Locations {
+func (srv *service) FilterByProximity(centralPointLat float64, centralPointLng float64, radious float64, sessionData session.SearchSessionData, format ports.OutputFormat) domain.Locations {
 	//Procedure:
 	//	1. Create pointes A and B
 	// 	2. Fetch the spotsIds from LocationRepository
@@ -98,7 +98,7 @@ func (srv *service) FilterByProximity(centralPointLat float64, centralPointLng f
 	placesToReturn := srv.filterByTime(locations)
 
 	// 5. Call Spots Service in order to get the spots info
-	spotsInfo, err := srv.spotService.GetSpotsCardsInfo(placesToReturn)
+	spotsInfo, err := srv.spotService.GetSpotsCardsInfo(placesToReturn, format)
 
 	if err != nil {
 		// TODO -> Do something when it fails here.

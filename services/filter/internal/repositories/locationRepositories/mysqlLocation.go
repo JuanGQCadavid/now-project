@@ -93,7 +93,7 @@ func (repo *locationRepository) FetchSpotsIdsByArea(pointA domain.LatLng, pointB
 		AND
 		%f <= lng AND lng <= %f`, coord.LatLeftLimit, coord.LatRigthLimit, coord.LntLeftLimit, coord.LntRigthLimit)
 
-	println(query)
+	log.Println(query)
 	result, err := repo.db.Query(query)
 	if err != nil {
 		panic(err)

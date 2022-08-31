@@ -5,6 +5,13 @@ import (
 	"github.com/JuanGQCadavid/now-project/services/filter/internal/core/domain/session"
 )
 
+type OutputFormat string
+
+const (
+	SMALL_FORMAT OutputFormat = "SMALL"
+	FULL_FORMAT  OutputFormat = "FULL"
+)
+
 type FilterService interface {
-	FilterByProximity(centralPointLat float64, centralPointLng float64, radious float64, session session.SearchSessionData) domain.Locations
+	FilterByProximity(centralPointLat float64, centralPointLng float64, radious float64, session session.SearchSessionData, format OutputFormat) domain.Locations
 }

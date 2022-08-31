@@ -5,5 +5,5 @@ import (
 )
 
 type SpotService interface {
-	GetSpotsCardsInfo(spots []string) ([]domain.Spot, error)
+	GetSpotsCardsInfo(spots []string, format OutputFormat) ([]domain.Spot, error)
 }
