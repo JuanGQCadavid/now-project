@@ -23,12 +23,6 @@ const (
 	SessionNotCreated ErrorType = "Session not created"
 )
 
-type OnError struct {
-	Error   ErrorType `json:"error,omitempty"`
-	ErrorId string    `json:"error_id,omitempty"`
-	TraceId string    `json:"traceId,omitempty"`
-}
-
 type SessionDetails struct {
 	SessionId  string `json:"session_id,omitempty"`
 	HeaderName string `json:"header_name,omitempty"`

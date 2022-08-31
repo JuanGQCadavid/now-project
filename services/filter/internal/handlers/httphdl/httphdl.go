@@ -118,7 +118,18 @@ func (hdl *HTTPHandler) FilterSpots(context *gin.Context) {
 		log.Println("Nor Query or header where present on the request. Proceeding with default session.")
 	}
 
-	response := hdl.service.FilterByProximity(cpLat, cpLon, radious, sessionData, format)
+	response, err := hdl.service.FilterByProximity(cpLat, cpLon, radious, sessionData, format)
+
+	if err != nil {
+		httpResponse := &domain.ProxymityResult{
+			OnError: domain.OnError{
+				Error:   domain.ErrorType(err.Error()),
+				TraceId: traceId,
+			},
+		}
+		context.JSON(500, httpResponse)
+		return
+	}
 
 	if sessionData.SessionConfiguration.SessionType != session.Empty {
 		log.Println("Checking if we need to update the session.")

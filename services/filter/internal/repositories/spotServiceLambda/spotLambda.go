@@ -33,21 +33,22 @@ func NewSpotServiceLambda() *SpotServiceLambda {
 }
 
 func (srv *SpotServiceLambda) GetSpotsCardsInfo(spots []string, format ports.OutputFormat) ([]domain.Spot, error) {
+	log.Println(fmt.Sprintf("GetSpotsCardsInfo | \nspots:%+v ,\nformat:%s", spots, string(format)))
 
 	body, err := json.Marshal(map[string]interface{}{
 		"spotIds": spots,
 	})
 
-	log.Printf("Request Body: \n\t%s\n", body)
-
 	if err != nil {
-		log.Fatalln("An error while marshalling the body: ", err)
+		log.Println("[ERROR] An error while marshalling the body: ", err.Error())
+		return nil, ports.ErrBodyRequestUnmarshal
 	}
 
 	resp, err := http.Post(fmt.Sprintf("%s/%s?format=%s", srv.SpotServiceURL, srv.GetSpotsURI, string(format)), "application/json", bytes.NewBuffer(body))
 
 	if err != nil {
-		log.Fatalln("An error while making the request: ", err)
+		log.Println("[ERROR] An error while making the request: ", err.Error())
+		return nil, ports.ErrSendingRequest
 	}
 
 	defer resp.Body.Close()
@@ -55,7 +56,8 @@ func (srv *SpotServiceLambda) GetSpotsCardsInfo(spots []string, format ports.Out
 	responseBody, err := ioutil.ReadAll(resp.Body)
 
 	if err != nil {
-		log.Fatalln("An error while Reading the resquest: ", err)
+		log.Println("[ERROR] An error while Reading the resquest: ", err.Error())
+		return nil, ports.ErrBodyResponseReadFail
 	}
 
 	spotResponse := SpotResponse{}
@@ -63,10 +65,10 @@ func (srv *SpotServiceLambda) GetSpotsCardsInfo(spots []string, format ports.Out
 	unmarshalError := json.Unmarshal(responseBody, &spotResponse)
 
 	if unmarshalError != nil {
-		log.Fatalln("An error while Unmarshal the resquest: ", err)
+		log.Println("[ERROR] An error while Unmarshal the resquest: ", unmarshalError)
+		return nil, ports.ErrBodyResponseUnmarshal
 	}
 
-	log.Printf("Response: \n\t%+v\n", spotResponse)
-
+	// log.Printf("Response: \n\t%+v\n", spotResponse)
 	return spotResponse.Spots, nil
 }

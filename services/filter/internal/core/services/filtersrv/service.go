@@ -61,7 +61,7 @@ func (srv *service) generatePoints(centralPoint domain.LatLng, radious float64) 
 // 	]
 // }
 // TODO -> should we add the city parameter ?
-func (srv *service) FilterByProximity(centralPointLat float64, centralPointLng float64, radious float64, sessionData session.SearchSessionData, format ports.OutputFormat) domain.Locations {
+func (srv *service) FilterByProximity(centralPointLat float64, centralPointLng float64, radious float64, sessionData session.SearchSessionData, format ports.OutputFormat) (domain.Locations, error) {
 	//Procedure:
 	//	1. Create pointes A and B
 	// 	2. Fetch the spotsIds from LocationRepository
@@ -101,12 +101,30 @@ func (srv *service) FilterByProximity(centralPointLat float64, centralPointLng f
 	spotsInfo, err := srv.spotService.GetSpotsCardsInfo(placesToReturn, format)
 
 	if err != nil {
-		// TODO -> Do something when it fails here.
+		switch err {
+		case ports.ErrBodyRequestUnmarshal:
+			log.Println("[ERROR] The process halts wile performign the body request unmarshal, returning empty spots")
+			break
+		case ports.ErrBodyResponseUnmarshal:
+			log.Println("[ERROR] The process halts wile performign the body response unmarshal, returning empty spots")
+			break
+		case ports.ErrBodyResponseReadFail:
+			log.Println("[ERROR] The process halts wile performign the body data read, returning empty spots")
+			break
+		case ports.ErrSendingRequest:
+			log.Println("[ERROR] The process halts wile performign the spot service call, returning empty spots")
+			break
+		default:
+			log.Println("[ERROR] ", err)
+			break
+		}
+
+		return domain.Locations{}, ports.ErrSpotServiceFail
 	}
 
 	return domain.Locations{
 		Places: spotsInfo,
-	}
+	}, nil
 }
 
 func (srv *service) unfoldSpotsIds(sessionDataSpots map[string][]string) []string {
