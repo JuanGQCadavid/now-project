@@ -72,7 +72,8 @@ func (srv *service) FilterByProximity(centralPointLat float64, centralPointLng f
 	//	The spots info fetched by spot service but in short format
 
 	// 1. Create pointes A and B
-	log.Println("Testing on FilterByProximity -------------------------")
+	log.Println(fmt.Sprintf("FilterByProximity - centralPointLat: %f, centralPointLng: %f, radious: %f, sessionData: %+v", centralPointLat, centralPointLng, radious, sessionData))
+
 	var pointA, pointB domain.LatLng = srv.generatePoints(
 		domain.LatLng{
 			Lat: centralPointLat,

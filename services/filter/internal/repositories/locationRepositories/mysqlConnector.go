@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 
+	"github.com/JuanGQCadavid/now-project/services/filter/internal/core/ports"
 	_ "github.com/go-sql-driver/mysql"
 )
 
@@ -28,7 +29,9 @@ func NewConector(conectorType string, dbUser string, dbPassword string, dbName s
 
 }
 
-func NewConectorFromEnv() *MysqlConnector {
+func NewConectorFromEnv() (*MysqlConnector, error) {
+	log.Println("NewConectorFromEnv")
+
 	dbUser, isPresentUser := os.LookupEnv("dbUser")
 	dbPassword, isPresentPass := os.LookupEnv("dbPassword")
 	dbName, isPresentName := os.LookupEnv("dbName")
@@ -39,12 +42,25 @@ func NewConectorFromEnv() *MysqlConnector {
 		log.Println("dbPassword: ", dbPassword)
 		log.Println("dbName: ", dbName)
 		log.Println("dbUrl: ", dbUrl)
-		log.Fatalln("The ULR, Password or Username, dbName is not present in the env.")
+		log.Println("[ERROR] The ULR, Password or Username, dbName is not present in the env.")
+		return &MysqlConnector{}, ports.ErrDBEnvCredentialsMissing
 	}
+	log.Println("dbUser, dbPassword, dbName and dbUrl are present.")
 
-	return NewConector("mysql", dbUser, dbPassword, dbName, dbUrl)
+	return NewConector("mysql", dbUser, dbPassword, dbName, dbUrl), nil
 }
 
 func (con *MysqlConnector) CreateSession() (*sql.DB, error) {
-	return sql.Open(con.conectorType, fmt.Sprintf("%s:%s@tcp(%s:3306)/%s", con.dbUser, con.dbPassword, con.dbUrl, con.dbName))
+	log.Println("CreateSession")
+
+	var dataSourceConnection string = fmt.Sprintf("%s:%s@tcp(%s:3306)/%s", con.dbUser, con.dbPassword, con.dbUrl, con.dbName)
+	sqlDb, err := sql.Open(con.conectorType, dataSourceConnection)
+
+	if err != nil {
+		log.Println("[ERROR] We face a problem while creating the db session")
+		log.Println("[ERROR] ", err.Error())
+		return nil, ports.ErrUnableToCreateDBSession
+	}
+
+	return sqlDb, nil
 }

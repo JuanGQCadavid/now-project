@@ -11,6 +11,7 @@ var (
 	ErrBodyResponseUnmarshal = errors.New("Body response unmarshal fail")
 	ErrBodyResponseReadFail  = errors.New("Body response unable to read")
 	ErrSendingRequest        = errors.New("The service is not able to send the request")
+	ErrMissingEnvParams      = errors.New("Missing env params in order to connect to spotService")
 )
 
 type SpotService interface {

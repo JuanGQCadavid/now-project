@@ -7,6 +7,7 @@ import (
 	"math"
 
 	"github.com/JuanGQCadavid/now-project/services/filter/internal/core/domain"
+	"github.com/JuanGQCadavid/now-project/services/filter/internal/core/ports"
 )
 
 type Coordinates struct {
@@ -21,21 +22,34 @@ type locationRepository struct {
 	db        *sql.DB
 }
 
-func NewLocationRepo() *locationRepository {
-	connector := NewConectorFromEnv()
+func NewLocationRepo() (*locationRepository, error) {
+	log.Println("NewLocationRepo")
+
+	connector, err := NewConectorFromEnv()
+
+	if err != nil {
+		log.Println("[ERROR] An error ocoured while calling NewConectorFromEnv")
+		log.Println("[ERROR] ", err.Error())
+		return nil, err
+	}
+
 	db, err := connector.CreateSession()
 
 	if err != nil {
-		panic(err)
+		log.Println("[ERROR] An error ocoured while calling MysqlConnector.CreateSession")
+		log.Println("[ERROR] ", err.Error())
+		return nil, err
 	}
 
 	return &locationRepository{
 		connector: connector,
 		db:        db,
-	}
+	}, nil
 }
+
 func (repo *locationRepository) FetchSpotsIdsByAreaExcludingSpots(pointA domain.LatLng, pointB domain.LatLng, spotsIdsToExclude []string) (domain.Locations, error) {
 	log.Println("FetchSpotsIdsByAreaExcludingSpots. Params:", fmt.Sprintf("pointA: %+v, pointB: %+v, spotsIdsToExclude: %+v", pointA, pointB, spotsIdsToExclude))
+
 	if len(spotsIdsToExclude) == 0 {
 		log.Println("Spots to exclude are empty, calling default FetchSpotsIdsByArea")
 		return repo.FetchSpotsIdsByArea(pointA, pointB)
@@ -70,17 +84,22 @@ func (repo *locationRepository) FetchSpotsIdsByAreaExcludingSpots(pointA domain.
 		AND
 		%f <= lng AND lng <= %f
 		AND spotId NOT IN %s`, coord.LatLeftLimit, coord.LatRigthLimit, coord.LntLeftLimit, coord.LntRigthLimit, inStatement)
-
-	log.Println("FetchSpotsIdsByAreaExcludingSpots. Query", query)
-
+	// TODO -> We could map all query errors instead of returning a generic one
 	result, err := repo.db.Query(query)
+
 	if err != nil {
-		panic(err)
+		log.Println("[ERROR] An error occoured while runnning Query")
+		log.Println("[ERROR] FetchSpotsIdsByAreaExcludingSpots. Query", query)
+		log.Println("[ERROR] ", err.Error())
+		return domain.Locations{}, ports.ErrQueringData
 	}
+
 	return repo.queryResultToLocations(result)
 }
 
 func (repo *locationRepository) FetchSpotsIdsByArea(pointA domain.LatLng, pointB domain.LatLng) (domain.Locations, error) {
+	log.Println("FetchSpotsIdsByArea. Params:", fmt.Sprintf("pointA: %+v, pointB: %+v", pointA, pointB))
+
 	var coord Coordinates = repo.generateCoordinates(pointA, pointB)
 
 	query := fmt.Sprintf(`
@@ -93,15 +112,19 @@ func (repo *locationRepository) FetchSpotsIdsByArea(pointA domain.LatLng, pointB
 		AND
 		%f <= lng AND lng <= %f`, coord.LatLeftLimit, coord.LatRigthLimit, coord.LntLeftLimit, coord.LntRigthLimit)
 
-	log.Println(query)
 	result, err := repo.db.Query(query)
+
 	if err != nil {
-		panic(err)
+		log.Println("[ERROR] An error occoured while runnning Query")
+		log.Println("[ERROR] FetchSpotsIdsByArea. Query", query)
+		log.Println("[ERROR] ", err.Error())
+		return domain.Locations{}, ports.ErrQueringData
 	}
 	return repo.queryResultToLocations(result)
 }
 
 func (repo *locationRepository) generateCoordinates(pointA domain.LatLng, pointB domain.LatLng) Coordinates {
+	// TODO -> What if both pontA and pointB are the same ?
 	pointALatFloat := float64(pointA.Lat)
 	pointBLatFloat := float64(pointB.Lat)
 

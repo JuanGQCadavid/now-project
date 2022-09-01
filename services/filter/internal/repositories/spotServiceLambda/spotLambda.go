@@ -18,18 +18,19 @@ type SpotServiceLambda struct {
 	GetSpotsURI    string
 }
 
-func NewSpotServiceLambda() *SpotServiceLambda {
+func NewSpotServiceLambda() (*SpotServiceLambda, error) {
 
 	spotURL, isPresent := os.LookupEnv("spotServiceURL")
 
 	if !isPresent {
-		log.Fatal("spotServiceURL is not present in the env")
+		log.Println("[ERROR] spotServiceURL is not present in the env")
+		return nil, ports.ErrMissingEnvParams
 	}
 
 	return &SpotServiceLambda{
 		SpotServiceURL: spotURL,
 		GetSpotsURI:    "getSpots",
-	}
+	}, nil
 }
 
 func (srv *SpotServiceLambda) GetSpotsCardsInfo(spots []string, format ports.OutputFormat) ([]domain.Spot, error) {

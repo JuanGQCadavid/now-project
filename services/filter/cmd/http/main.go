@@ -13,8 +13,16 @@ import (
 
 func main() {
 	log.SetFlags(log.LstdFlags)
-	locationRepo := locationrepositories.NewLocationRepo()
-	spotSrv := spotservicelambda.NewSpotServiceLambda()
+	locationRepo, err := locationrepositories.NewLocationRepo()
+
+	if err != nil {
+		panic(err.Error())
+	}
+	spotSrv, err := spotservicelambda.NewSpotServiceLambda()
+
+	if err != nil {
+		panic(err.Error())
+	}
 
 	filterSrv := filtersrv.New(locationRepo, spotSrv)
 	sessionHdl := sessionservice.NewSearchSessionDynamoDbService()

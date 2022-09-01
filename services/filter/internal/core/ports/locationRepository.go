@@ -1,7 +1,15 @@
 package ports
 
 import (
+	"errors"
+
 	"github.com/JuanGQCadavid/now-project/services/filter/internal/core/domain"
+)
+
+var (
+	ErrDBEnvCredentialsMissing = errors.New("Missing db env data")
+	ErrUnableToCreateDBSession = errors.New("Unable to create db session")
+	ErrQueringData             = errors.New("A error occoure while quering the data")
 )
 
 type LocationRepository interface {

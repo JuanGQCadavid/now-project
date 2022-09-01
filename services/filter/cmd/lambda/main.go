@@ -21,8 +21,18 @@ func init() {
 	log.SetFlags(log.LstdFlags)
 	log.Println("Filter service")
 
-	locationRepo := locationrepositories.NewLocationRepo()
-	spotSrv := spotservicelambda.NewSpotServiceLambda()
+	// TODO -> How can we return an error from an init method ?
+	locationRepo, err := locationrepositories.NewLocationRepo()
+
+	if err != nil {
+		panic(err.Error())
+	}
+
+	spotSrv, err := spotservicelambda.NewSpotServiceLambda()
+
+	if err != nil {
+		panic(err.Error())
+	}
 
 	filterSrv := filtersrv.New(locationRepo, spotSrv)
 	sessionHdl := sessionservice.NewSearchSessionDynamoDbService()
