@@ -131,14 +131,14 @@ class _Body extends ConsumerWidget {
               direction: Axis.horizontal,
               children: [
                 IconTextButtom(
-                  message: "Instagram.com",
+                  message: "Instagram",
                   mainColor: Colors.grey.shade700,
                   icon: Icons.link,
                   iconColor: Colors.white,
                   onTap: () {},
                 ),
                 IconTextButtom(
-                  message: "Say hi",
+                  message: "WhatsApp",
                   mainColor: Colors.green.shade500,
                   icon: Icons.phone,
                   iconColor: Colors.white,

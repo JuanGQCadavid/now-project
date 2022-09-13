@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 class NowTextCTA extends StatelessWidget {
   final String ctaText;
   final void Function() onPressed;
-  final Color textColot ;
-  NowTextCTA({
-    Key? key,
-    required this.ctaText,
-    required this.onPressed,
-    this.textColot = Colors.black
-  }) : super(key: key);
+  final Color textColot;
+  NowTextCTA(
+      {Key? key,
+      required this.ctaText,
+      required this.onPressed,
+      this.textColot = Colors.black})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -25,22 +25,23 @@ class NowTextCTA extends StatelessWidget {
   }
 }
 
-
 class IconTextButtom extends StatelessWidget {
   final String message;
   final Color mainColor;
   final IconData icon;
   final Color iconColor;
+  final bool addUnderline;
   final Function() onTap;
 
-  IconTextButtom({
-    Key? key,
-    required this.message,
-    required this.mainColor,
-    required this.icon,
-    required this.iconColor,
-    required this.onTap,
-  }) : super(key: key);
+  IconTextButtom(
+      {Key? key,
+      required this.message,
+      required this.mainColor,
+      required this.icon,
+      required this.iconColor,
+      required this.onTap,
+      this.addUnderline = false})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -67,9 +68,11 @@ class IconTextButtom extends StatelessWidget {
             ),
             Container(
               decoration: BoxDecoration(
-                border: Border(
-                  bottom: BorderSide(color: mainColor, width: 2.0),
-                ),
+                border: addUnderline
+                    ? Border(
+                        bottom: BorderSide(color: mainColor, width: 2.0),
+                      )
+                    : const Border(),
               ),
               child: Text(
                 message,
@@ -81,4 +84,3 @@ class IconTextButtom extends StatelessWidget {
     );
   }
 }
-

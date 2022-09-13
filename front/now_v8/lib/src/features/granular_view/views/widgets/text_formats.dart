@@ -6,15 +6,14 @@ class CreatorLabel extends StatelessWidget {
   final String unhighlightedText;
   final String highlightedText;
   final Color appColor;
-  const CreatorLabel({
-    Key? key,
-    this.generalMaring = const EdgeInsets.symmetric(horizontal: 15),
-    this.unhighlightedText = "Hosted by",
-    required this.highlightedText,
-    required this.onTap,
-    required this.appColor
-
-  }) : super(key: key);
+  const CreatorLabel(
+      {Key? key,
+      this.generalMaring = const EdgeInsets.symmetric(horizontal: 15),
+      this.unhighlightedText = "Hosted by",
+      required this.highlightedText,
+      required this.onTap,
+      required this.appColor})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -31,8 +30,7 @@ class CreatorLabel extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(5),
               decoration: BoxDecoration(
-                  color: appColor,
-                  borderRadius: BorderRadius.circular(10)),
+                  color: appColor, borderRadius: BorderRadius.circular(10)),
               child: Text(
                 highlightedText,
                 style: Theme.of(context)
@@ -62,9 +60,7 @@ class ReadMoreBox extends StatelessWidget {
     return Container(
       margin: generalMaring,
       child: Column(children: [
-        Text(
-          textBody
-        ),
+        Text(textBody),
       ]),
     );
   }
