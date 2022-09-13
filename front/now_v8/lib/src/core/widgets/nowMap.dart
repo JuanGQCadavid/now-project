@@ -78,7 +78,7 @@ class _NowMapV2State extends ConsumerState<NowMapV2> {
   void onMapCreated(GoogleMapController mapController, {LatLng? userLocation}) {
     googleMapController = mapController;
     LatLngBounds bounds;
-
+    print("Hello?");
     if (widget.centerMapOnSpots && widget.spots.isNotEmpty) {
       if (userLocation != null) {
         print("Hello?");

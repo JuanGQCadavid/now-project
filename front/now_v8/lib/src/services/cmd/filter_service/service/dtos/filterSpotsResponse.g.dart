@@ -72,6 +72,9 @@ FilterSpot _$FilterSpotFromJson(Map<String, dynamic> json) => FilterSpot(
       eventInfo: EventInfo.fromJson(json['eventInfo'] as Map<String, dynamic>),
       placeInfo: PlaceInfo.fromJson(json['placeInfo'] as Map<String, dynamic>),
       topicInfo: TopicInfo.fromJson(json['topicInfo'] as Map<String, dynamic>),
+      hostInfo: json['hostInfo'] == null
+          ? null
+          : HostInfo.fromJson(json['hostInfo'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$FilterSpotToJson(FilterSpot instance) =>
@@ -79,6 +82,15 @@ Map<String, dynamic> _$FilterSpotToJson(FilterSpot instance) =>
       'eventInfo': instance.eventInfo,
       'placeInfo': instance.placeInfo,
       'topicInfo': instance.topicInfo,
+      'hostInfo': instance.hostInfo,
+    };
+
+HostInfo _$HostInfoFromJson(Map<String, dynamic> json) => HostInfo(
+      name: json['name'] as String? ?? "",
+    );
+
+Map<String, dynamic> _$HostInfoToJson(HostInfo instance) => <String, dynamic>{
+      'name': instance.name,
     };
 
 EventInfo _$EventInfoFromJson(Map<String, dynamic> json) => EventInfo(
@@ -86,6 +98,7 @@ EventInfo _$EventInfoFromJson(Map<String, dynamic> json) => EventInfo(
       id: json['id'] as String,
       eventType: json['eventType'] as String,
       emoji: json['emoji'] as String,
+      description: json['description'] as String? ?? "",
     );
 
 Map<String, dynamic> _$EventInfoToJson(EventInfo instance) => <String, dynamic>{
@@ -93,18 +106,21 @@ Map<String, dynamic> _$EventInfoToJson(EventInfo instance) => <String, dynamic>{
       'id': instance.id,
       'eventType': instance.eventType,
       'emoji': instance.emoji,
+      'description': instance.description,
     };
 
 PlaceInfo _$PlaceInfoFromJson(Map<String, dynamic> json) => PlaceInfo(
       mapProviderId: json['mapProviderId'] as String,
       lat: (json['lat'] as num).toDouble(),
       lon: (json['lon'] as num).toDouble(),
+      name: json['name'] as String? ?? "",
     );
 
 Map<String, dynamic> _$PlaceInfoToJson(PlaceInfo instance) => <String, dynamic>{
       'mapProviderId': instance.mapProviderId,
       'lat': instance.lat,
       'lon': instance.lon,
+      'name': instance.name,
     };
 
 TopicInfo _$TopicInfoFromJson(Map<String, dynamic> json) => TopicInfo(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:now_v8/src/core/widgets/buttons.dart';
 import 'package:now_v8/src/features/granular_view/views/widgets/header.dart';
 import 'package:now_v8/src/features/granular_view/views/widgets/host_updates.dart';
 import 'package:now_v8/src/features/granular_view/views/widgets/place_label.dart';
@@ -117,6 +118,35 @@ class _Body extends ConsumerWidget {
             ),
             ReadMoreBox(
               textBody: onSpot.spot.eventInfo.description,
+            ),
+                        const SizedBox(
+              height: 15,
+            ),
+            Wrap(
+              direction: Axis.horizontal,
+              children: [
+                IconTextButtom(
+                  message: "Instagram.com",
+                  mainColor: Colors.grey.shade700,
+                  icon: Icons.link,
+                  iconColor: Colors.white,
+                  onTap: () {},
+                ),
+                IconTextButtom(
+                  message: "Say hi",
+                  mainColor: Colors.green.shade500,
+                  icon: Icons.phone,
+                  iconColor: Colors.white,
+                  onTap: () {},
+                ),
+                IconTextButtom(
+                  message: "Call me",
+                  mainColor: Colors.blue.shade500,
+                  icon: Icons.phone,
+                  iconColor: Colors.white,
+                  onTap: () {},
+                ),
+              ],
             ),
             const SizedBox(
               height: 15,

@@ -74,11 +74,13 @@ class FilterSpot {
   final EventInfo eventInfo;
   final PlaceInfo placeInfo;
   final TopicInfo topicInfo;
+  final HostInfo? hostInfo;
 
   FilterSpot({
     required this.eventInfo,
     required this.placeInfo,
     required this.topicInfo,
+    this.hostInfo, // This could crash :'()
   });
 
   factory FilterSpot.fromJson(Map<String, dynamic> json) =>
@@ -88,17 +90,37 @@ class FilterSpot {
 }
 
 @JsonSerializable()
+class HostInfo {
+
+  final String name;
+
+  HostInfo({
+    this.name = ""
+  });
+
+  factory HostInfo.empty() => HostInfo();
+
+  factory HostInfo.fromJson(Map<String, dynamic> json) =>
+      _$HostInfoFromJson(json);
+
+  Map<String, dynamic> toJson() => _$HostInfoToJson(this);
+
+}
+
+@JsonSerializable()
 class EventInfo {
   final String name;
   final String id;
   final String eventType;
   final String emoji;
+  final String description;
 
   EventInfo({
     required this.name,
     required this.id,
     required this.eventType,
     required this.emoji,
+    this.description = ""
   });
 
   factory EventInfo.fromJson(Map<String, dynamic> json) =>
@@ -112,11 +134,13 @@ class PlaceInfo {
   final String mapProviderId;
   final double lat;
   final double lon;
+  final String name;
 
   PlaceInfo({
     required this.mapProviderId,
     required this.lat,
     required this.lon,
+    this.name = ""
   });
 
   factory PlaceInfo.fromJson(Map<String, dynamic> json) =>

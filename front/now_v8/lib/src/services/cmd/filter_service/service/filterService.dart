@@ -2,7 +2,7 @@ import 'package:dartz/dartz.dart';
 import 'package:now_v8/src/core/contracts/filterService.dart';
 import 'package:now_v8/src/core/models/long_spot.dart';
 
-import 'package:now_v8/src/core/models/long_spot/host_info.dart';
+import 'package:now_v8/src/core/models/long_spot/host_info.dart' as long_host;
 import 'package:now_v8/src/core/models/long_spot/event_info.dart' as long_event;
 import 'package:now_v8/src/core/models/long_spot/place_info.dart' as long_place;
 import 'package:now_v8/src/core/models/long_spot/topics_info.dart'
@@ -72,6 +72,7 @@ class FilterService implements IFilterService {
         queryParameters: {
           "cpLat": cpLat,
           "cpLon": cpLng,
+          "format": "full",
           "createSession": "true"
         },
       );
@@ -82,6 +83,7 @@ class FilterService implements IFilterService {
           .request(Method.GET, proximityResource, queryParameters: {
         "cpLat": cpLat,
         "cpLon": cpLng,
+        "format": "full"
       }, headers: {
         "X-Now-Search-Session-Id": token
       });
@@ -93,6 +95,9 @@ class FilterService implements IFilterService {
 
       return StateResponse(response: [], token: "");
     }, (bodyResponse) {
+      print("--- My NIGGA---");
+      print(bodyResponse);
+      print("------");
       FilterProxyResponseWithState response =
           FilterProxyResponseWithState.fromJson(bodyResponse);
 
@@ -100,11 +105,14 @@ class FilterService implements IFilterService {
 
       response.result.places.forEach(
         (FilterSpot spot) {
+
+          String hostName = spot.hostInfo?.name ?? "" ;
+
           spots.add(
             LongSpot(
-              hostInfo: const HostInfo(name: "MISSING_FROM_BACKEND"),
+              hostInfo: long_host.HostInfo(name: hostName),
               eventInfo: long_event.EventInfo(
-                  description: "MISSING_FROM_BACKEND",
+                  description: spot.eventInfo.description,
                   emoji: spot.eventInfo.emoji,
                   eventType: spot.eventInfo.eventType,
                   id: spot.eventInfo.id,
@@ -114,7 +122,7 @@ class FilterService implements IFilterService {
                   lat: spot.placeInfo.lat,
                   lon: spot.placeInfo.lon,
                   mapProviderId: spot.placeInfo.mapProviderId,
-                  name: "MISSING_FROM_BACKEND"),
+                  name: spot.placeInfo.name),
               topicInfo: long_topic.TopicsInfo(
                 principalTag: spot.topicInfo.principalTopic,
                 secondaryTags: spot.topicInfo.secondaryTopics
