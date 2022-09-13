@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:now_v8/src/core/widgets/buttons.dart';
 import 'package:now_v8/src/features/granular_view/views/widgets/header.dart';
 import 'package:now_v8/src/features/granular_view/views/widgets/host_updates.dart';
@@ -7,12 +8,13 @@ import 'package:now_v8/src/features/granular_view/views/widgets/place_label.dart
 import 'package:now_v8/src/features/granular_view/views/widgets/tags_list.dart';
 import 'package:now_v8/src/features/granular_view/views/widgets/text_formats.dart';
 import 'dart:math';
-
+import 'dart:async';
 import 'package:now_v8/src/features/granular_view/views_model/providers.dart';
 
 class GranularView extends StatelessWidget {
   GranularView({Key? key}) : super(key: key);
   final Color appColor = Colors.cyan.shade400;
+  late Completer<GoogleMapController> mapController = Completer();
 
   @override
   Widget build(BuildContext context) {
@@ -20,6 +22,7 @@ class GranularView extends StatelessWidget {
       child: Scaffold(
         body: _Body(
           appColor: appColor,
+          mapController: mapController,
         ),
         floatingActionButton: Wrap(
           direction: Axis.vertical,
@@ -58,7 +61,8 @@ class GranularView extends StatelessWidget {
 
 class _Body extends ConsumerWidget {
   final Color appColor;
-  const _Body({Key? key, required this.appColor}) : super(key: key);
+  final Completer<GoogleMapController> mapController;
+  const _Body({Key? key, required this.appColor, required this.mapController}) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -98,6 +102,7 @@ class _Body extends ConsumerWidget {
             GanularHeader(
               onSpot: onSpot,
               appColor: appColor,
+              mapController: mapController,
             ),
             Center(
               child: PlaceLabel(

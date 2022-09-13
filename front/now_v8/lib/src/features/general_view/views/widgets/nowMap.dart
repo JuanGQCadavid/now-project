@@ -10,7 +10,8 @@ import 'package:now_v8/src/features/general_view/views_model/providers.dart';
 import 'package:now_v8/src/services/core/providers.dart';
 
 class MapSample extends ConsumerWidget {
-  const MapSample({Key? key}) : super(key: key);
+  final Completer<GoogleMapController> mapController;
+  const MapSample({Key? key, required this.mapController}) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -25,6 +26,7 @@ class MapSample extends ConsumerWidget {
       children: [
         NowMapV2.fromFilteredSpots(
           filteredSpots,
+          mapController, 
           camaraPosition: location,
           centerMapOnSpots: true,
         ),

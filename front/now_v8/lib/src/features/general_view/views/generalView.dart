@@ -1,16 +1,22 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:now_v8/src/features/general_view/views/widgets/footbar.dart';
 import 'package:now_v8/src/features/general_view/views/widgets/header.dart';
 import 'package:now_v8/src/features/general_view/views/widgets/nowMap.dart';
 
 class GeneralViewFeature extends StatelessWidget {
-  const GeneralViewFeature({Key? key}) : super(key: key);
+  GeneralViewFeature({Key? key}) : super(key: key);
+  final Completer<GoogleMapController> mapController = Completer();
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        body: GeneralViewBody(),
+        body: GeneralViewBody(
+          mapController: mapController,
+        ),
         bottomNavigationBar: BottomBar(),
       ),
     );
@@ -18,7 +24,8 @@ class GeneralViewFeature extends StatelessWidget {
 }
 
 class GeneralViewBody extends StatelessWidget {
-  const GeneralViewBody({Key? key}) : super(key: key);
+  final Completer<GoogleMapController> mapController;
+  const GeneralViewBody({Key? key, required this.mapController}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +42,9 @@ class GeneralViewBody extends StatelessWidget {
               topRight: Radius.circular(25),
               bottomLeft: Radius.circular(25),
             ),
-            child: MapSample(),
+            child: MapSample(
+              mapController: mapController 
+            ),
           ),
         )
       ],

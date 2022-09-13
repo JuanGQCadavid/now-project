@@ -17,10 +17,9 @@ final granularModelProvider = Provider<GranularModel>((ref) {
       ref.read(keyValueProvider("sessionData"));
 
   return GranularModel(
-    filterService: filterService,
-    locationService: locationService,
-    sessionDatabase: keyValueStorage
-  );
+      filterService: filterService,
+      locationService: locationService,
+      sessionDatabase: keyValueStorage);
 });
 
 final detailedSpotProvider =
@@ -35,6 +34,12 @@ final detailedSpotProvider =
 final onSpotProvider = StateNotifierProvider<OnSpotState, GranularSpot>((ref) {
   final granularModel = ref.read(granularModelProvider);
   final detailedSpotNotifier = ref.watch(detailedSpotProvider);
+  final locationService = ref.read(locationServiceProvider);
 
-  return OnSpotState(granularModel: granularModel, actualList: detailedSpotNotifier, ref: ref);
+  return OnSpotState(
+    granularModel: granularModel,
+    actualList: detailedSpotNotifier,
+    locationService: locationService,
+    ref: ref,
+  );
 });

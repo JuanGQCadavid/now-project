@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -12,7 +14,8 @@ class GanularHeader extends ConsumerWidget {
   final double spotsHeaderSize = 80;
   final Color appColor;
   final GranularSpot onSpot;
-  GanularHeader({Key? key, required this.appColor, required this.onSpot})
+  final Completer<GoogleMapController> mapController;
+  GanularHeader({Key? key, required this.appColor, required this.onSpot, required this.mapController})
       : super(key: key);
 
   @override
@@ -29,6 +32,7 @@ class GanularHeader extends ConsumerWidget {
               myLocationButtonEnabled: false,
               centerMapOnSpots: true,
               includeUserLocation: true,
+              mapController: mapController,
               spots: [
                 Spot.fromLongSpot(onSpot.spot),
               ],
@@ -48,7 +52,7 @@ class GanularHeader extends ConsumerWidget {
                         : TextHeaderOption(
                             onPressed: () {
                               final onSpot = ref.read(onSpotProvider.notifier);
-                              onSpot.previousOne();
+                              onSpot.previousOne(mapController);
                             },
                             text: onSpot.window.previousOne,
                             isPrincipal: false,
@@ -68,13 +72,13 @@ class GanularHeader extends ConsumerWidget {
                         ? IconButton(
                             onPressed: () {
                               final onSpot = ref.read(onSpotProvider.notifier);
-                              onSpot.nextOne();
+                              onSpot.refresh(mapController);
                             },
                             icon: Icon(Icons.refresh))
                         : TextHeaderOption(
                             onPressed: () {
                               final onSpot = ref.read(onSpotProvider.notifier);
-                              onSpot.nextOne();
+                              onSpot.nextOne(mapController);
                             },
                             text: onSpot.window.nextOne,
                             isPrincipal: false,

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -5,7 +7,6 @@ import 'package:location/location.dart';
 import 'package:now_v8/src/core/models/spot.dart';
 import 'package:now_v8/src/features/general_view/model/filteredSpots.dart';
 import 'package:now_v8/src/services/core/providers.dart';
-
 
 // Statefull with consumer
 class NowMapV2 extends ConsumerStatefulWidget {
@@ -16,6 +17,7 @@ class NowMapV2 extends ConsumerStatefulWidget {
   final bool myLocationButtonEnabled;
   final bool includeUserLocation;
   late LatLng? camaraPosition;
+  final Completer<GoogleMapController> mapController;
 
   // Internally
   final double mapPaddingOnCentered = 50;
@@ -28,13 +30,15 @@ class NowMapV2 extends ConsumerStatefulWidget {
       this.mapZoom = 14.5,
       this.myLocationButtonEnabled = true,
       this.includeUserLocation = true,
-      this.camaraPosition})
-      : super(key: key){
-        print("on NowMap");
-      }
+      this.camaraPosition,
+      required this.mapController})
+      : super(key: key) {
+    print("on NowMap");
+  }
 
   factory NowMapV2.fromFilteredSpots(
-    FilteredSpots filteredSpots, {
+    FilteredSpots filteredSpots,
+    Completer<GoogleMapController> mapController, {
     bool centerMapOnSpots = true,
     bool blockMap = false,
     double mapZoom = 14.5,
@@ -64,6 +68,7 @@ class NowMapV2 extends ConsumerStatefulWidget {
       myLocationButtonEnabled: myLocationButtonEnabled,
       camaraPosition: camaraPosition,
       includeUserLocation: includeUserLocation,
+      mapController: mapController,
     );
   }
 
@@ -72,20 +77,24 @@ class NowMapV2 extends ConsumerStatefulWidget {
 }
 
 class _NowMapV2State extends ConsumerState<NowMapV2> {
-  late GoogleMapController googleMapController;
   late CameraPosition initialCameraPosition;
+  late GoogleMapController _mapController;
 
   void onMapCreated(GoogleMapController mapController, {LatLng? userLocation}) {
-    googleMapController = mapController;
+    widget.mapController.complete(mapController);
+
+    setState(() {
+      _mapController = mapController;
+    });
     LatLngBounds bounds;
     print("Hello?");
     if (widget.centerMapOnSpots && widget.spots.isNotEmpty) {
       if (userLocation != null) {
         print("Hello?");
         bounds =
-            getCameraLatLngBounds(widget.spots, userLocation: userLocation);
+            MapUtilities.getCameraLatLngBounds(widget.spots, userLocation: userLocation);
       } else {
-        bounds = getCameraLatLngBounds(widget.spots);
+        bounds = MapUtilities.getCameraLatLngBounds(widget.spots);
       }
 
       mapController.animateCamera(
@@ -132,36 +141,35 @@ class _NowMapV2State extends ConsumerState<NowMapV2> {
               }
             }
 
-          initialCameraPosition = CameraPosition(
-            target: widget.camaraPosition!,
-            zoom: widget.mapZoom,
-          );
-          return GoogleMap(
-            markers: markers,
-            mapType: MapType.normal,
-            zoomControlsEnabled: false,
-            initialCameraPosition: initialCameraPosition,
-            mapToolbarEnabled: false,
-            myLocationButtonEnabled: widget.myLocationButtonEnabled,
-            myLocationEnabled: true,
-            onMapCreated: (controller) {
-              onMapCreated(controller, userLocation: snapshot.data);
-            },
-            scrollGesturesEnabled: !widget.blockMap,
-            zoomGesturesEnabled: !widget.blockMap,
-          );
-
-          } else if(snapshot.hasError) {
+            initialCameraPosition = CameraPosition(
+              target: widget.camaraPosition!,
+              zoom: widget.mapZoom,
+            );
+            return GoogleMap(
+              markers: markers,
+              mapType: MapType.normal,
+              zoomControlsEnabled: false,
+              initialCameraPosition: initialCameraPosition,
+              mapToolbarEnabled: false,
+              myLocationButtonEnabled: widget.myLocationButtonEnabled,
+              myLocationEnabled: true,
+              onMapCreated: (controller) {
+                onMapCreated(controller, userLocation: snapshot.data);
+              },
+              scrollGesturesEnabled: !widget.blockMap,
+              zoomGesturesEnabled: !widget.blockMap,
+            );
+          } else if (snapshot.hasError) {
             print("snapshot.hasError");
-            return Container(child: Text("Ops we are having problems to didplay the map"),);
-
+            return Container(
+              child: Text("Ops we are having problems to didplay the map"),
+            );
           } else {
             print("snapshot loading");
             return Center(child: const CircularProgressIndicator());
           }
         },
       );
-      
     } else {
       if (widget.camaraPosition == null) {
         if (widget.spots.isNotEmpty && widget.spots.length == 1) {
@@ -192,8 +200,10 @@ class _NowMapV2State extends ConsumerState<NowMapV2> {
       );
     }
   }
+}
 
-  LatLngBounds getCameraLatLngBounds(List<Spot> spots,
+class MapUtilities {
+  static LatLngBounds getCameraLatLngBounds(List<Spot> spots,
       {LatLng userLocation = const LatLng(0, 0)}) {
     Spot spot = spots.first;
     double down, up, left, rigth;
@@ -217,4 +227,3 @@ class _NowMapV2State extends ConsumerState<NowMapV2> {
         southwest: LatLng(down, left), northeast: LatLng(up, rigth));
   }
 }
-
