@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"fmt"
 	"log"
 
@@ -15,7 +14,7 @@ func HandleRequest(event domain.ServiceEvent) error {
 	log.Println("END")
 
 	fmt.Println("Hi Dude")
-	return errors.New("I'm working?")
+	return nil //errors.New("I'm working?")
 }
 
 func main() {
