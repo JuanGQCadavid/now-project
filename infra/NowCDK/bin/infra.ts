@@ -3,6 +3,7 @@ import 'source-map-support/register';
 import * as cdk from 'aws-cdk-lib';
 import { InfraStack } from '../lib/infra-stack';
 import { InfraMoneySavers } from '../lib/infra-helpers';
+import { InfraChangeNotifier } from '../lib/infra-changes-notifers';
 
 const app = new cdk.App();
 const defaultRegion = "us-east-2"
@@ -12,5 +13,9 @@ new InfraStack(app, 'InfraStack', {
 });
 
 new InfraMoneySavers(app, 'InfraMoneySavers', {
+  env: { account: process.env.CDK_DEFAULT_ACCOUNT, region:  defaultRegion},
+})
+
+new InfraChangeNotifier(app, 'InfraChangeNotifier', {
   env: { account: process.env.CDK_DEFAULT_ACCOUNT, region:  defaultRegion},
 })
