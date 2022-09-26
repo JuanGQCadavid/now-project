@@ -1,0 +1,23 @@
+{
+    "version":"0",
+    "id":"e8cb06c4-b3eb-19fb-53fd-6d8260795232",
+    "detail-type":"RDS DB Instance Event",
+    "source":"aws.rds",
+    "account":"732596568988",
+    "time":"2022-09-23T19:02:45Z",
+    "region":"us-east-2",
+    "resources":[
+       "arn:aws:rds:us-east-2:732596568988:db:locations-db"
+    ],
+    "detail":{
+       "EventCategories":[
+          "availability"
+       ],
+       "SourceType":"DB_INSTANCE",
+       "SourceArn":"arn:aws:rds:us-east-2:732596568988:db:locations-db",
+       "Date":"2022-09-23T19:02:45.656Z",
+       "Message":"DB instance restarted",
+       "SourceIdentifier":"locations-db",
+       "EventID":"RDS-EVENT-0006"
+    }
+ }

@@ -1,0 +1,23 @@
+{
+    "version":"0",
+    "id":"86687c63-d3cb-f07f-aad7-112635125ecc",
+    "detail-type":"RDS DB Instance Event",
+    "source":"aws.rds",
+    "account":"732596568988",
+    "time":"2022-09-23T19:03:07Z",
+    "region":"us-east-2",
+    "resources":[
+       "arn:aws:rds:us-east-2:732596568988:db:locations-db"
+    ],
+    "detail":{
+       "EventCategories":[
+          "recovery"
+       ],
+       "SourceType":"DB_INSTANCE",
+       "SourceArn":"arn:aws:rds:us-east-2:732596568988:db:locations-db",
+       "Date":"2022-09-23T19:03:07.191Z",
+       "Message":"Recovery of the DB instance is complete.",
+       "SourceIdentifier":"locations-db",
+       "EventID":"RDS-EVENT-0021"
+    }
+ }

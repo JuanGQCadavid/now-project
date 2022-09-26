@@ -1,0 +1,23 @@
+{
+    "version":"0",
+    "id":"4522476b-33a0-3f04-d3a3-5d4d05bf95f8",
+    "detail-type":"RDS DB Instance Event",
+    "source":"aws.rds",
+    "account":"732596568988",
+    "time":"2022-09-23T19:14:45Z",
+    "region":"us-east-2",
+    "resources":[
+       "arn:aws:rds:us-east-2:732596568988:db:locations-db"
+    ],
+    "detail":{
+       "EventCategories":[
+          "notification"
+       ],
+       "SourceType":"DB_INSTANCE",
+       "SourceArn":"arn:aws:rds:us-east-2:732596568988:db:locations-db",
+       "Date":"2022-09-23T19:14:45.069Z",
+       "Message":"DB instance stopped",
+       "SourceIdentifier":"locations-db",
+       "EventID":"RDS-EVENT-0087"
+    }
+ }

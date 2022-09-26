@@ -1,0 +1,23 @@
+{
+    "version":"0",
+    "id":"0f2cc07d-3b0f-64a0-18e5-8385e67d190f",
+    "detail-type":"RDS DB Instance Event",
+    "source":"aws.rds",
+    "account":"732596568988",
+    "time":"2022-09-23T19:00:39Z",
+    "region":"us-east-2",
+    "resources":[
+       "arn:aws:rds:us-east-2:732596568988:db:locations-db"
+    ],
+    "detail":{
+       "EventCategories":[
+          "recovery"
+       ],
+       "SourceType":"DB_INSTANCE",
+       "SourceArn":"arn:aws:rds:us-east-2:732596568988:db:locations-db",
+       "Date":"2022-09-23T19:00:39.219Z",
+       "Message":"Recovery of the DB instance has started. Recovery time will vary with the amount of data to be recovered.",
+       "SourceIdentifier":"locations-db",
+       "EventID":"RDS-EVENT-0020"
+    }
+ }
