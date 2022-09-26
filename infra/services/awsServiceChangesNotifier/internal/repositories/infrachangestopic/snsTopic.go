@@ -47,6 +47,7 @@ func (infra *InfraSNSChangeTopic) Publish() {
 
 	input := &sns.PublishInput{
 		TopicArn: aws.String(infra.TopicArn),
+		Message:  aws.String("Missing"),
 	}
 
 	infra.Service.Publish(input)
