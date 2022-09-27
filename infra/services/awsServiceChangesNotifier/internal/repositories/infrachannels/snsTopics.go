@@ -1,10 +1,13 @@
-package infrachangestopic
+package infrachannels
 
 import (
+	"encoding/json"
 	"errors"
+	"fmt"
 	"log"
 	"os"
 
+	"github.com/JuanGQCadavid/now-project/infra/services/awsServiceChangesNotifier/internal/core/domain"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/sns"
@@ -12,6 +15,7 @@ import (
 
 const (
 	TOPIC_ARN_ENV_NAME string = "infraChangesTopicArn"
+	GROUP_ID           string = "InfraEvents"
 )
 
 var (
@@ -43,12 +47,27 @@ func NewInfraSNSChangeTopic() (*InfraSNSChangeTopic, error) {
 	}, nil
 }
 
-func (infra *InfraSNSChangeTopic) Publish() {
+func (infra *InfraSNSChangeTopic) Publish(body domain.InfraTopicBody) error {
 
-	input := &sns.PublishInput{
-		TopicArn: aws.String(infra.TopicArn),
-		Message:  aws.String("Missing"),
+	bodyContent, err := json.Marshal(body)
+	if err != nil {
+		fmt.Println("Error: ", err.Error())
+		return err
 	}
 
-	infra.Service.Publish(input)
+	fmt.Println(string(bodyContent))
+
+	input := &sns.PublishInput{
+		TopicArn:       aws.String(infra.TopicArn),
+		Message:        aws.String(string(bodyContent)),
+		MessageGroupId: aws.String(GROUP_ID),
+	}
+	_, errOnPublish := infra.Service.Publish(input)
+
+	if errOnPublish != nil {
+		log.Println("ERROR: ", errOnPublish.Error())
+		return errOnPublish
+	}
+	return nil
+
 }
