@@ -24,7 +24,8 @@ export class InfraChangeNotifier extends Stack {
     const infraChangesSNS = new sns.Topic(this, "infraChangesSNS", {
       displayName: "infraChangesSNS",
       topicName: "infraChangesSNS.fifo",
-      fifo: true
+      fifo: true,
+      contentBasedDeduplication: true
     });
 
     const emailNotifierSQS = new sqs.Queue(this, "emailNotifierSQS", {
