@@ -84,5 +84,5 @@ jobs:
           aws-region: us-east-2
 
       - name: Deploy to awsServiceChangesNotifier lambda
-        run: aws --version ;  aws lambda update-function-code --function-name EmailSende --zip-file fileb://${{ github.workspace }}/infra/services/emailSender/main.zip
+        run: aws --version ;  aws lambda update-function-code --function-name EmailSender --zip-file fileb://${{ github.workspace }}/infra/services/emailSender/main.zip
 
