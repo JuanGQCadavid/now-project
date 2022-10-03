@@ -3,6 +3,8 @@ on:
   push: # https://docs.github.com/en/actions/using-workflows/triggering-a-workflow
     branches:  # This is a filter that belongs to push
       - main
+    paths:
+      - '/services/**'
 
 jobs:
   Spot-Service-Deployment:
