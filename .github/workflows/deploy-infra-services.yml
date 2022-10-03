@@ -4,7 +4,7 @@ on:
     branches:  # This is a filter that belongs to push
       - main
     paths:
-      - '/infra/services/**'
+      - 'infra/services/**'
 
 jobs:
   Money-Saver-Deployment:
