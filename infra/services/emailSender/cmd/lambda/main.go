@@ -8,7 +8,7 @@ import (
 )
 
 func Handler(request interface{}) error {
-	log.Println(fmt.Sprintf("Request: \n %+v", request))
+	log.Println(fmt.Sprintf("Request : \n %+v", request))
 
 	return nil
 }
