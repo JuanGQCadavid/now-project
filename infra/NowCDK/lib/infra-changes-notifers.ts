@@ -73,7 +73,9 @@ export class InfraChangeNotifier extends Stack {
       role: emailSenderLambdaRole,
       environment: {
         from: "now.inc.project@gmail.com",
-        to: "jquirozcadavid@gmail.com"
+        to: "jquirozcadavid@gmail.com",
+        TWILIO_ACCOUNT_SID: "_MISSING_",
+        TWILIO_AUTH_TOKEN: "_MISSING_",
       },
     });
     
