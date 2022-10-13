@@ -10,9 +10,11 @@ then
     chmod +x /usr/local/bin/swagger
 fi
 
+echo "Creating swagger directory"
+mkdir swagger
+
 echo "Generating go-swagger config"
 swagger generate spec -o ./swagger/swagger.json --scan-models
-
 
 echo "Copying dist"
 cp -r ../swagger-dist/* ./swagger
