@@ -43,6 +43,7 @@ func init() {
 	router.Static("/filter/swagger", "./swagger")
 
 	ginLambda = ginadapter.New(router)
+	ginLambda.StripBasePath("/prod")
 
 }
 
