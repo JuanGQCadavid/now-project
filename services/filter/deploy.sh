@@ -4,7 +4,7 @@ echo "Runing build script"
 sh build.sh
 
 echo "Zipping"
-zip main.zip main
+zip -r main.zip main swagger
 
 echo "Deploying"
 aws lambda update-function-code --function-name FilterService --zip-file fileb://main.zip

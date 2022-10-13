@@ -40,6 +40,7 @@ func init() {
 
 	router := gin.Default()
 	router.GET("/filter/proximity", filterHandler.FilterSpots)
+	router.Static("/swagger", "../../swagger")
 
 	ginLambda = ginadapter.New(router)
 

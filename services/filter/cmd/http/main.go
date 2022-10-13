@@ -30,6 +30,7 @@ func main() {
 
 	router := gin.Default()
 	router.GET("/filter/proximity", filterHandler.FilterSpots)
+	router.Static("/swagger", "../../swagger")
 
 	router.Run(":8001")
 }

@@ -18,6 +18,9 @@ jobs:
         with:
           go-version: 1.17
 
+      - name: Generating swagger configuration
+        run: cd ${{ github.workspace }}/services/filter ; sh generate_swagger.sh ;
+
       - name: Build Filter service to run on lambda
         run: cd ${{ github.workspace }}/services/filter ; sh build.sh ;
       

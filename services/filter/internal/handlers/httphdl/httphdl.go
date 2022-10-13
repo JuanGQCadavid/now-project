@@ -1,3 +1,26 @@
+// Package docs Filter service.
+//
+// This service filters schedule and in-time spots
+// base on the user proximity, furthermore there will be
+// filters base on treanding spots.
+//
+//     	Schemes: https, http
+//     	BasePath: /prod/filter/proximity
+//     	Version: 1.0.0
+//     	Host: 4co5utcub8.execute-api.us-east-2.amazonaws.com
+//
+// 	   	TermsOfService: http://swagger.io/terms/
+//		Contact: Juan Gonzalo Quiroz Cadavid <jquirozcadavid@gmail.com> http://john.blogs.com
+//		License: MIT http://opensource.org/licenses/MIT
+//
+//     	Consumes:
+//     	- application/json
+//
+//     	Produces:
+//     	- application/json
+//
+//
+// swagger:meta
 package httphdl
 
 import (
@@ -27,6 +50,59 @@ func NewHTTPHandler(service ports.FilterService, session ports.SearchSessionServ
 	}
 }
 
+// swagger:route GET / ByProximity filter
+//
+// Lists spots filtered by some parameters, also it stores the result if specified
+// in order to avoid returning the same data in future calls.
+//
+//
+//     Consumes:
+//     - application/json
+//
+//     Produces:
+//     - application/json
+//
+//     Schemes: http, https
+//
+//     Parameters:
+//       + name: cpLat
+//         in: query
+//         description: Central point location on latitude coordinates.
+//         required: true
+//         type: number
+//		 + name: cpLon
+//         in: query
+//         description: Central point location on longitude coordinates.
+//         required: true
+//         type: number
+//       + name: radious
+//         in: query
+//         description: radious from cpLat, cpLon.
+//         required: false
+//         type: number
+//		   ddefault: 0.5
+//		 + name: createSession
+//         in: query
+//         description: If true then it returns a search session id with its details in the response.
+//         required: false
+//         type: boolean
+//		   default: false
+//		 + name: format
+//         in: query
+//         description: if small then some attributes are omited, full will return all data.
+//         required: false
+//         type: string
+//		   default: small
+//		 + name: X-Now-Search-Session-Id
+//         in: header
+//         description: Session Id, if present then it will be used to return spots that were not prevoiusly returned in the session
+//         required: false
+//         type: string
+//
+//     Responses:
+//       default: ProxymityResult
+//       200: ProxymityResult
+//       422: ProxymityResult
 func (hdl *HTTPHandler) FilterSpots(context *gin.Context) {
 	queryLat, isLatPresent := context.GetQuery("cpLat")
 	queryLon, isLonPresent := context.GetQuery("cpLon")
