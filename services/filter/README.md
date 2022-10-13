@@ -3,7 +3,6 @@
 ## Resources
 * [ Fetch spots by proximity](#fetch-spots-by-proximity)
 
-
 ----
 ## Fetch spots by proximity
 
