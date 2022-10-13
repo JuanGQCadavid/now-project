@@ -11,4 +11,4 @@ echo "Golang envs"
 go env
 
 echo "Building service"
-go build -o main ./cmd/http/main.go
+go build -o main ./cmd/lambda/main.go
