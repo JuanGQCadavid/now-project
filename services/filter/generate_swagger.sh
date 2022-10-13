@@ -20,4 +20,5 @@ echo "Copying dist"
 cp -r ../swagger-dist/* ./swagger
 
 echo "Updating json from dist"
-sed -i bak -e 's|url: "https://petstore.swagger.io/v2/swagger.json"|url: "/swagger/swagger.json"|g' swagger/swagger-initializer.js
+#sed -i bak -e 's|url: "https://petstore.swagger.io/v2/swagger.json"|url: "/swagger/swagger.json"|g' swagger/swagger-initializer.js
+sed -i 's|url: "https://petstore.swagger.io/v2/swagger.json"|url: "/swagger/swagger.json"|g' swagger/swagger-initializer.js
