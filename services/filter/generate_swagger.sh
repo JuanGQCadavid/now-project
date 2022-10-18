@@ -1,5 +1,4 @@
 #!/bin/bash
-
 echo "Checking installation"
 if ! command -v swagger &> /dev/null
 then
