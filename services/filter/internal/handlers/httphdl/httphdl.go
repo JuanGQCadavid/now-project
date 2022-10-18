@@ -5,9 +5,9 @@
 // filters base on treanding spots.
 //
 //     	Schemes: https, http
-//     	BasePath: /prod/filter/proximity
+//     	BasePath: /filter
 //     	Version: 1.0.0
-//     	Host: 4co5utcub8.execute-api.us-east-2.amazonaws.com
+//     	Host: api.pululapp.com
 //
 // 	   	TermsOfService: http://swagger.io/terms/
 //		Contact: Juan Gonzalo Quiroz Cadavid <jquirozcadavid@gmail.com> http://john.blogs.com
@@ -50,7 +50,7 @@ func NewHTTPHandler(service ports.FilterService, session ports.SearchSessionServ
 	}
 }
 
-// swagger:route GET / ByProximity filter
+// swagger:route GET /proximity ByProximity filter
 //
 // Lists spots filtered by some parameters, also it stores the result if specified
 // in order to avoid returning the same data in future calls.
