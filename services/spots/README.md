@@ -1,3 +1,11 @@
+# Location Data Updater.
+
+## WTF?
+
+This service is the one that creates online spots, it stores the data in Neo4js.
+
+## Useful links
+* TBD
 
 ## Golang commands
 
