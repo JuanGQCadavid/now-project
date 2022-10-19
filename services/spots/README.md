@@ -22,4 +22,5 @@ go build -o main .\cmd\lambda\main.go
 ```
 
 * zip main and deployed it.
-  
+
+![now-Filter service drawio (2)](https://user-images.githubusercontent.com/21164304/196567528-1e942632-6aca-4e74-8f0b-e56af925474f.png)
