@@ -50,5 +50,3 @@ Right now the project has only one environment (stage/test), this one is being u
 ### Project architecture
 
 ![now-Infra v1 1 drawio](https://user-images.githubusercontent.com/21164304/196831452-7d1fbf86-7313-4402-b560-5e4657c0f617.png)
-
-![now-Page-7 drawio](https://user-images.githubusercontent.com/21164304/155010210-42a0973c-cbde-415d-9028-cf36e37fc745.png)
