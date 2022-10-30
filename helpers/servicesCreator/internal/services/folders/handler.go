@@ -57,17 +57,17 @@ func CreateFolderStructure(serviceInfo *domain.ServiceInformation) {
 
 	// Initial root
 	root := fmt.Sprintf("%s/%s", serviceInfo.ServicePath, serviceInfo.ServiceName.ToLoweCase())
-	// err = os.MkdirAll(root, 0777)
+	err = os.MkdirAll(root, 0777)
 
-	// if err != nil {
-	// 	log.Fatal("Error while creating folder", root, "err:", err.Error())
-	// }
+	if err != nil {
+		log.Fatal("Error while creating folder", root, "err:", err.Error())
+	}
 
-	// log.Println("Creating folders")
-	// for _, element := range folderStructure.Root {
-	// 	doFolderCreation(element, root)
-	// }
-	// log.Println("Folders creation done.")
+	log.Println("Creating folders")
+	for _, element := range folderStructure.Root {
+		doFolderCreation(element, root)
+	}
+	log.Println("Folders creation done.")
 
 	doConfig(serviceInfo, folderStructure.Config, root)
 }
