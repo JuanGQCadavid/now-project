@@ -7,7 +7,7 @@ echo "Zipping"
 zip -r main.zip main
 
 echo "Deploying"
-aws lambda update-function-code --function-name FilterService --zip-file fileb://main.zip
+aws lambda update-function-code --function-name LambdaName --zip-file fileb://main.zip
 
 echo "Cleaning"
 rm -rf main.zip

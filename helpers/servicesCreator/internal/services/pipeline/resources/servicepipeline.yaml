@@ -1,10 +1,10 @@
 name: Deploy {{.ServiceName}} service
 on:
   push: # https://docs.github.com/en/actions/using-workflows/triggering-a-workflow
-    branches:  # This is a filter that belongs to push
+    branches: 
       - main
     paths:
-      - {{.ServicePath}}/** #'services/filter/**'
+      - {{.ServicePath}}/** 
 
 jobs:
   {{.ServiceName}}-Service-Deployment:
@@ -18,14 +18,11 @@ jobs:
         with:
           go-version: 1.17
 
-      # - name: Generating swagger configuration
-      #   run: cd ${{ github.workspace }}/{{.ServicePath}} ; sh generate_swagger.sh ;
-
       - name: Build {{.ServiceName}} service to run on lambda
         run: cd ${{ github.workspace }}/{{.ServicePath}} ; sh build.sh ;
       
       - name: Zip code
-        run: cd ${{ github.workspace }}/{{.ServicePath}} ; zip -r main.zip main #swagger
+        run: cd ${{ github.workspace }}/{{.ServicePath}} ; zip main.zip main
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
