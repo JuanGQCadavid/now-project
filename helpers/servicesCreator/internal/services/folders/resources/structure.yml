@@ -1,0 +1,36 @@
+root:
+  - type: folder
+    name: cmd
+    inner:
+      - type: folder
+        name: lambda
+        inner: 
+          - type: file
+            name: main.go
+      - type: folder
+        name: http
+        inner: 
+          - type: file
+            name: main.go
+
+  - type: folder
+    name: internal
+    inner: 
+      - type: file
+        name: keep.it
+
+  - type: file
+    name: .gitignore
+    copyFrom: gitignore
+  
+  - type: file
+    name: build.sh
+    copyFrom: build.sh
+  
+  - type: file
+    name: deploy.sh
+    copyFrom: deploy.sh
+
+  - type: file
+    name: README.md
+    copyFrom: README.md
