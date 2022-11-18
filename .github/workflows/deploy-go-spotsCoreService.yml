@@ -1,13 +1,13 @@
-name: Deploy spotsScheduledService service
+name: Deploy spotsCoreService service
 on:
   push: # https://docs.github.com/en/actions/using-workflows/triggering-a-workflow
     branches: 
       - main
     paths:
-      - services/spotsScheduledService/** 
+      - services/spotsCoreService/** 
 
 jobs:
-  spotsScheduledService-Service-Deployment:
+  spotsCoreService-Service-Deployment:
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository code
@@ -18,11 +18,11 @@ jobs:
         with:
           go-version: 1.17
 
-      - name: Build spotsScheduledService service to run on lambda
-        run: cd ${{ github.workspace }}/services/spotsScheduledService ; sh build.sh ;
+      - name: Build spotsCoreService service to run on lambda
+        run: cd ${{ github.workspace }}/services/spotsCoreService ; sh build.sh ;
       
       - name: Zip code
-        run: cd ${{ github.workspace }}/services/spotsScheduledService ; zip main.zip main
+        run: cd ${{ github.workspace }}/services/spotsCoreService ; zip main.zip main
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -31,5 +31,5 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-2
 
-      - name: Deploy spotsScheduledService lambda
-        run: aws --version ;  aws lambda update-function-code --function-name SpotsScheduledService --zip-file fileb://${{ github.workspace }}/services/spotsScheduledService/main.zip
+      - name: Deploy spotsCoreService lambda
+        run: aws --version ;  aws lambda update-function-code --function-name SpotsCoreService --zip-file fileb://${{ github.workspace }}/services/spotsCoreService/main.zip
