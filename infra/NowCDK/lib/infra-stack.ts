@@ -215,8 +215,8 @@ export class InfraStack extends Stack {
       rootMethod,
       "core"
     );
-    Tags.of(spotsCoredMethod).add("Type", SERVICE_TYPE);
-    Tags.of(spotsCoredMethod).add("Family", SPOT_FAMILY);
+    Tags.of(spotsCoreLambda).add("Type", SERVICE_TYPE);
+    Tags.of(spotsCoreLambda).add("Family", SPOT_FAMILY);
 
     // Spots Online
 
