@@ -31,7 +31,7 @@ func NewSSMCredentialsFinder() *SSMCredentialsFinder {
 // 2. validated nonempty
 // 3. return driversFinder
 func (cf *SSMCredentialsFinder) FindNeo4jCredentials(neo4jUserSSMParam string, neo4jPasswordSSMParam string, neo4jUriSSMParam string) (neo4j.Driver, error) {
-
+	log.Printf("FindNeo4jCredentials -> neo4jUserSSMParam: %s, neo4jPasswordSSMParam: %s, neo4jUriSSMParam: %s", neo4jUserSSMParam, neo4jPasswordSSMParam, neo4jUriSSMParam)
 	response := cf.fetchSSMParams(&neo4jUserSSMParam, &neo4jPasswordSSMParam, &neo4jUriSSMParam)
 
 	neo4jCreds := domain.Neo4jCredentials{
@@ -40,13 +40,13 @@ func (cf *SSMCredentialsFinder) FindNeo4jCredentials(neo4jUserSSMParam string, n
 		URI:      response[neo4jUriSSMParam],
 	}
 
-	log.Printf("%+v\n", neo4jCreds)
+	//log.Printf("%+v\n", neo4jCreds)
 
 	return service.FindNeo4jDriver(neo4jCreds)
 }
 
 func (cf *SSMCredentialsFinder) FindDBCredentials(dbUserSSMParam string, dbPasswordSSMParam string, dbNameSSMParam string, dbUrlSSMParam string) (*sql.DB, error) {
-
+	log.Printf("FindNeo4jCredentials -> dbUserSSMParam: %s, dbPasswordSSMParam: %s, dbNameSSMParam: %s, dbUrlSSMParam: %s", dbUserSSMParam, dbPasswordSSMParam, dbNameSSMParam, dbUrlSSMParam)
 	response := cf.fetchSSMParams(&dbUserSSMParam, &dbPasswordSSMParam, &dbNameSSMParam, &dbUrlSSMParam)
 
 	neo4jCreds := domain.DBCredentials{
@@ -56,7 +56,7 @@ func (cf *SSMCredentialsFinder) FindDBCredentials(dbUserSSMParam string, dbPassw
 		Name:     response[dbNameSSMParam],
 	}
 
-	log.Printf("%+v\n", neo4jCreds)
+	//log.Printf("%+v\n", neo4jCreds)
 
 	return service.FindDBDriver(&neo4jCreds)
 }

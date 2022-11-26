@@ -29,12 +29,22 @@ func FindNeo4jDriver(credentials domain.Neo4jCredentials) (neo4j.Driver, error) 
 		return nil, err
 	}
 
-	log.Println("Driver created sucessfully")
+	log.Println("Driver creation goes well")
+
+	err = driver.VerifyConnectivity()
+
+	if err != nil {
+		log.Println("[ERROR] Neo4j verify connection fail.")
+		log.Println("[ERROR] ", err.Error())
+		return nil, err
+	}
+	log.Println("Driver tested sucessfully")
 	return driver, nil
 
 }
 
 func FindDBDriver(creds *domain.DBCredentials) (*sql.DB, error) {
+	log.Println("On FindDBDriver")
 	var dataSourceConnection string = fmt.Sprintf("%s:%s@tcp(%s:3306)/%s", creds.User, creds.Password, creds.Url, creds.Name)
 	sqlDb, err := sql.Open("mysql", dataSourceConnection)
 
@@ -43,7 +53,7 @@ func FindDBDriver(creds *domain.DBCredentials) (*sql.DB, error) {
 		log.Println("[ERROR] ", err.Error())
 		return nil, ErrDBSessionCreation
 	}
-
+	log.Println("Connection goes well")
 	err = sqlDb.Ping()
 
 	if err != nil {
@@ -51,6 +61,6 @@ func FindDBDriver(creds *domain.DBCredentials) (*sql.DB, error) {
 		log.Println("[ERROR] ", err.Error())
 		return nil, ErrDBPing
 	}
-
+	log.Println("Ping operation goes well")
 	return sqlDb, nil
 }
