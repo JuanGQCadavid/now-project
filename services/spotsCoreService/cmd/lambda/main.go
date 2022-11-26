@@ -20,7 +20,7 @@ import (
 var ginLambda *ginadapter.GinLambda
 
 func init() {
-	// stdout and stderr are sent to AWS CloudWatch Logs
+	// stdout and stderr are sent to AWS CloudWatch  Logs
 	log.Printf("Gin cold start")
 
 	credsFinder := ssm.NewSSMCredentialsFinder()
