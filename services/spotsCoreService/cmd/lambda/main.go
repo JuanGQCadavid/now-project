@@ -40,9 +40,9 @@ func init() {
 	httpHandler := httphdl.NewHTTPHandler(service)
 
 	router := gin.Default()
-	router.GET("/spot/:id", httpHandler.GetEvent)
-	router.POST("/spot/online", httpHandler.GoOnline)
-	router.POST("/spot/getSpots", httpHandler.GetEvents)
+	router.GET("/spots/core/:id", httpHandler.GetEvent)
+	router.POST("/spots/core/online", httpHandler.GoOnline)
+	router.POST("/spots/core/getSpots", httpHandler.GetEvents)
 
 	ginLambda = ginadapter.New(router)
 }

@@ -195,6 +195,14 @@ export class InfraStack extends Stack {
       })
     );
 
+    spotsCoreLambdaRole.addToPolicy(
+      new iam.PolicyStatement({
+        actions: ["ssm:GetParameters"],
+        effect: iam.Effect.ALLOW,
+        resources: ["*"],
+      })
+    );
+
     const spotsCoreLambda = new lambda.Function(this, "spotsCoreLambda", {
       runtime: lambda.Runtime.GO_1_X,
       handler: "main",
@@ -233,6 +241,14 @@ export class InfraStack extends Stack {
       roleName: "spotsOnlineLambdaRole",
       description: "Spot Online Lambda Role",
     });
+
+    spotsOnlineLambdaRole.addToPolicy(
+      new iam.PolicyStatement({
+        actions: ["ssm:GetParameters"],
+        effect: iam.Effect.ALLOW,
+        resources: ["*"],
+      })
+    );
 
     const spotsOnlineLambda = new lambda.Function(this, "spotsOnlineLambda", {
       runtime: lambda.Runtime.GO_1_X,
@@ -275,6 +291,14 @@ export class InfraStack extends Stack {
         roleName: "spotsScheduledLambdaRole",
         description: "Spots Shchedule Lambda Role",
       }
+    );
+
+    spotsScheduledLambdaRole.addToPolicy(
+      new iam.PolicyStatement({
+        actions: ["ssm:GetParameters"],
+        effect: iam.Effect.ALLOW,
+        resources: ["*"],
+      })
     );
 
     const spotsScheduledLambda = new lambda.Function(
@@ -320,6 +344,14 @@ export class InfraStack extends Stack {
       description: "Spot handler lambda role",
     });
 
+    spotHandlerLambdaRole.addToPolicy(
+      new iam.PolicyStatement({
+        actions: ["ssm:GetParameters"],
+        effect: iam.Effect.ALLOW,
+        resources: ["*"],
+      })
+    );
+
     const spotHandlerLambda = new lambda.Function(this, "spotHandlerLambda", {
       runtime: lambda.Runtime.GO_1_X,
       handler: "main",
@@ -358,6 +390,14 @@ export class InfraStack extends Stack {
         roleName: "confirmationSpotLambdaRole",
         description: "Spots Shchedule Lambda Role",
       }
+    );
+
+    confirmationSpotLambdaRole.addToPolicy(
+      new iam.PolicyStatement({
+        actions: ["ssm:GetParameters"],
+        effect: iam.Effect.ALLOW,
+        resources: ["*"],
+      })
     );
 
     const confirmationSpotLambda = new lambda.Function(
@@ -420,6 +460,14 @@ export class InfraStack extends Stack {
       iam.ManagedPolicy.fromAwsManagedPolicyName(
         "service-role/AWSLambdaBasicExecutionRole"
       )
+    );
+
+    filterLambdaRole.addToPolicy(
+      new iam.PolicyStatement({
+        actions: ["ssm:GetParameters"],
+        effect: iam.Effect.ALLOW,
+        resources: ["*"],
+      })
     );
     // filterLambdaRole.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName("service-role/AWSLambdaVPCAccessExecutionRole"))
     filterSessionsDynamoTable.grantReadWriteData(filterLambdaRole);
