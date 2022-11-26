@@ -1,6 +1,9 @@
 package main
 
 import (
+	"log"
+
+	"github.com/JuanGQCadavid/now-project/services/pkgs/credentialsFinder/cmd/ssm"
 	"github.com/JuanGQCadavid/now-project/services/spotsCoreService/internal/core/services/spotsrv"
 	"github.com/JuanGQCadavid/now-project/services/spotsCoreService/internal/handlers/httphdl"
 	"github.com/JuanGQCadavid/now-project/services/spotsCoreService/internal/repositories/neo4jRepository"
@@ -9,9 +12,27 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+var (
+	repoSpot     *neo4jRepository.Neo4jSpotRepo
+	repoLocation *spotactivityservices.AWSSpotActivityTopic
+)
+
+func init() {
+	credsFinder := ssm.NewSSMCredentialsFinder()
+
+	neo4jDriver, err := credsFinder.FindNeo4jCredentialsFromDefaultEnv()
+
+	if err != nil {
+		log.Println("There were an error while attempting to create drivers")
+		log.Fatalln(err.Error())
+	}
+
+	repoSpot = neo4jRepository.NewNeo4jSpotRepoWithDriver(neo4jDriver) //menRepository.New()
+	repoLocation = spotactivityservices.NewAWSSpotActivityTopic()
+}
+
 func main() {
-	repoSpot := neo4jRepository.NewNeo4jSpotRepo() //menRepository.New()
-	repoLocation := spotactivityservices.NewAWSSpotActivityTopic()
+
 	uuid := uuidgen.New()
 
 	service := spotsrv.New(repoSpot, repoLocation, uuid)

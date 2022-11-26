@@ -12,13 +12,20 @@ import (
 
 type Neo4jSpotRepo struct {
 	neo4jRepoDriver *Neo4jRepoDriver
+	driver          neo4j.Driver
 }
 
 func NewNeo4jSpotRepo() *Neo4jSpotRepo {
 
 	neo4jRepoDriver := GetNeo4jRepoDriver()
 	return &Neo4jSpotRepo{
-		neo4jRepoDriver: neo4jRepoDriver,
+		driver: neo4jRepoDriver.driver,
+	}
+}
+
+func NewNeo4jSpotRepoWithDriver(driver neo4j.Driver) *Neo4jSpotRepo {
+	return &Neo4jSpotRepo{
+		driver: driver,
 	}
 }
 
@@ -36,7 +43,7 @@ func (r Neo4jSpotRepo) Get(id string, format ports.OutputFormat) (domain.Spot, e
 		command = commands.NewGetFullCommand(id)
 	}
 
-	session := r.neo4jRepoDriver.driver.NewSession(neo4j.SessionConfig{})
+	session := r.driver.NewSession(neo4j.SessionConfig{})
 	defer session.Close()
 
 	records, err := session.ReadTransaction(func(tr neo4j.Transaction) (interface{}, error) {
@@ -64,7 +71,7 @@ func (r Neo4jSpotRepo) GetSpots(spotIds []string, format ports.OutputFormat) (do
 		command = commands.NewGetFullMultipleSpotsCommand(spotIds)
 	}
 
-	session := r.neo4jRepoDriver.driver.NewSession(neo4j.SessionConfig{})
+	session := r.driver.NewSession(neo4j.SessionConfig{})
 	defer session.Close()
 
 	records, err := session.ReadTransaction(func(tx neo4j.Transaction) (interface{}, error) {
@@ -80,7 +87,7 @@ func (r Neo4jSpotRepo) GetSpots(spotIds []string, format ports.OutputFormat) (do
 
 func (r Neo4jSpotRepo) CreateOnline(spot domain.Spot) error {
 
-	session := r.neo4jRepoDriver.driver.NewSession(neo4j.SessionConfig{})
+	session := r.driver.NewSession(neo4j.SessionConfig{})
 	_, err := session.WriteTransaction(func(tx neo4j.Transaction) (interface{}, error) {
 		return nil, r.createSpot(tx, spot)
 	})
@@ -150,7 +157,7 @@ func (r Neo4jSpotRepo) CreateSpotTags(spotId string, principalTag domain.Optiona
 		return nil
 	}
 
-	session := r.neo4jRepoDriver.driver.NewSession(neo4j.SessionConfig{})
+	session := r.driver.NewSession(neo4j.SessionConfig{})
 	defer session.Close()
 
 	var cmd commands.Command = commands.NewCreateSpotTagsCommand(spotId, principalTag, secondaryTags)
