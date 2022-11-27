@@ -1,4 +1,4 @@
-module github.com/JuanGQCadavid/now-project/services/pkgs/credentialsFinder
+module cm
 
 go 1.18
 
