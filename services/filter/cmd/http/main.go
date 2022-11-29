@@ -8,12 +8,24 @@ import (
 	locationrepositories "github.com/JuanGQCadavid/now-project/services/filter/internal/repositories/locationRepositories"
 	sessionservice "github.com/JuanGQCadavid/now-project/services/filter/internal/repositories/sessionService"
 	spotservicelambda "github.com/JuanGQCadavid/now-project/services/filter/internal/repositories/spotServiceLambda"
+	"github.com/JuanGQCadavid/now-project/services/pkgs/credentialsFinder/cmd/ssm"
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
 	log.SetFlags(log.LstdFlags)
-	locationRepo, err := locationrepositories.NewLocationRepo()
+
+	credsFinder := ssm.NewSSMCredentialsFinder()
+
+	dbDriver, err := credsFinder.FindDBCredentialsFromDefaultEnv()
+
+	if err != nil {
+		log.Println("There were an error while attempting to create drivers")
+		log.Fatalln(err.Error())
+	}
+
+	// TODO -> How can we return an error from an init method ?
+	locationRepo, err := locationrepositories.NewLocationRepoWithDriver(dbDriver)
 
 	if err != nil {
 		panic(err.Error())

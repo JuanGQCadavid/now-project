@@ -18,8 +18,7 @@ type Coordinates struct {
 }
 
 type locationRepository struct {
-	connector *MysqlConnector
-	db        *sql.DB
+	db *sql.DB
 }
 
 func NewLocationRepo() (*locationRepository, error) {
@@ -42,8 +41,13 @@ func NewLocationRepo() (*locationRepository, error) {
 	}
 
 	return &locationRepository{
-		connector: connector,
-		db:        db,
+		db: db,
+	}, nil
+}
+func NewLocationRepoWithDriver(db *sql.DB) (*locationRepository, error) {
+	log.Println("NewLocationRepoWithDriver")
+	return &locationRepository{
+		db: db,
 	}, nil
 }
 
