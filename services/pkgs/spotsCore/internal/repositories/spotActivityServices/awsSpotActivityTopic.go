@@ -35,8 +35,8 @@ func NewAWSSpotActivityTopic() *AWSSpotActivityTopic {
 	}
 }
 
-func (r AWSSpotActivityTopic) AppendSpot(spot domain.Spot) error {
-	log.Println("AppendSpot: ", "\n\t", " spot: ", fmt.Sprintf("%+v", spot))
+func (r AWSSpotActivityTopic) NotifySpotCreated(spot domain.Spot) error {
+	log.Println("NotifySpotCreated: ", "\n\t", " spot: ", fmt.Sprintf("%+v", spot))
 
 	body, err := json.Marshal(&spot)
 	log.Println("body -> ", fmt.Sprintf("%+v", body))
@@ -46,8 +46,8 @@ func (r AWSSpotActivityTopic) AppendSpot(spot domain.Spot) error {
 
 	return r.sendMessageToTopic(string(body), "spot_created")
 }
-func (r AWSSpotActivityTopic) RemoveSpot(spotId string) error {
-	log.Println("RemoveSpot: ", "\n\t", " spotId: ", spotId)
+func (r AWSSpotActivityTopic) NotifySpotStopped(spotId string) error {
+	log.Println("NotifySpotStopped: ", "\n\t", " spotId: ", spotId)
 
 	return r.sendMessageToTopic(spotId, "spot_removed")
 }

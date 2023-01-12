@@ -7,25 +7,24 @@ import (
 
 	"github.com/JuanGQCadavid/now-project/services/spotsCore/internal/core/domain"
 	"github.com/JuanGQCadavid/now-project/services/spotsCore/internal/core/ports"
-	"github.com/JuanGQCadavid/now-project/services/spotsCore/pkg/apperrors"
 	"github.com/JuanGQCadavid/now-project/services/spotsCore/pkg/uuidgen"
 )
 
 /*
-	When implementin a interface is just creating a struct with all
-	the methods that the interface defined.
+When implementin a interface is just creating a struct with all
+the methods that the interface defined.
 */
 type service struct {
-	spotRepository     ports.SpotRepository
-	locationRepository ports.SpotActivityTopic
-	uuidGen            uuidgen.UUIDGen
+	spotRepository    ports.SpotRepository
+	spotActivityTopic ports.SpotActivityTopic
+	uuidGen           uuidgen.UUIDGen
 }
 
-func New(spotRepository ports.SpotRepository, locationRepository ports.SpotActivityTopic, uuidGen uuidgen.UUIDGen) *service {
+func New(spotRepository ports.SpotRepository, spotActivityTopic ports.SpotActivityTopic, uuidGen uuidgen.UUIDGen) *service {
 	return &service{
-		spotRepository:     spotRepository,
-		locationRepository: locationRepository,
-		uuidGen:            uuidGen,
+		spotRepository:    spotRepository,
+		spotActivityTopic: spotActivityTopic,
+		uuidGen:           uuidGen,
 	}
 }
 
@@ -44,11 +43,8 @@ func (s *service) GetSpots(spotIds []string, format ports.OutputFormat) (domain.
 	The user should not be online in more tha  two events
 
 	Procedure:
-		1. check if the user is already in a Online event		YES
 
-			YES -> Desvincalte it from it						YES
-
-		2. Generate UUID for the spot							YES
+		1. Generate UUID for the spot							YES
 
 		3. make the user Online in the repo						YES
 
@@ -58,26 +54,23 @@ func (s *service) GetSpots(spotIds []string, format ports.OutputFormat) (domain.
 
 */
 
-func (s *service) GoOnline(spot domain.Spot) (domain.Spot, error) {
-	log.Println("GoOnline -> ", fmt.Sprintf("%+v", spot))
-	//TODO -> Missing body validation
+func (s *service) CreateSpot(spot domain.Spot) (domain.Spot, error) {
 
-	// TODO -> I think this is not working as I spect, we need to check this.
-	if returnedSpot, returnedError := s.GetSpotByUserId(spot.HostInfo.Id); returnedError == nil {
-		if err := s.EndSpot(returnedSpot.EventInfo.UUID); err != nil {
-			return domain.Spot{}, err
-		}
-	}
+	log.Println("Service: CreateSpot -> ", fmt.Sprintf("%+v", spot))
+	//TODO -> Missing body validation
 
 	uuid := s.uuidGen.New()
 	spot.EventInfo.UUID = uuid
 
-	if returnedError := s.createEvent(spot); returnedError != nil {
+	if returnedError := s.spotRepository.CreateSpot(spot); returnedError != nil {
+		return domain.Spot{}, returnedError
+	}
+
+	if returnedError := s.spotActivityTopic.NotifySpotCreated(spot); returnedError != nil {
 		return domain.Spot{}, returnedError
 	}
 
 	// Check if method contains tags for the event
-
 	if spot.TopicsInfo.PrincipalTopic != "" || spot.TopicsInfo.SecondaryTopics != nil {
 		if returnedError := s.createSpotTags(spot); returnedError != nil {
 			return domain.Spot{}, returnedError
@@ -118,45 +111,37 @@ func (s *service) sanitizeTag(tag string) *domain.Optional {
 	)
 }
 
-func (s *service) createEvent(spot domain.Spot) error {
-
-	if returnedError := s.spotRepository.CreateOnline(spot); returnedError != nil {
-		return returnedError
-	}
-
-	if returnedError := s.locationRepository.AppendSpot(spot); returnedError != nil {
-		return returnedError
-	}
-	return nil
-
-}
-
 func (s *service) GetSpotByUserId(userId string) (domain.Spot, error) {
 	spot, returnedError := s.spotRepository.GetSpotByUserId(userId)
 
 	// TODO -> Improve this.
 	if returnedError != nil {
 		log.Println("Error on GetSpotByUserId: ", returnedError)
-		return domain.Spot{}, apperrors.Internal
+		return domain.Spot{}, returnedError
 	}
 
 	return spot, nil
 }
 
 // TODO -> Fix this!
-func (s *service) EndSpot(spotId string) error {
+func (s *service) FinalizeSpot(spotId string) error {
 	/*
 		if returnedError := s.spotRepository.EndSpot(spotId); returnedError != nil {
 			log.Println("Error on EndSpot: ", returnedError)
 			return returnedError
 		}
 
-		if returnedError := s.locationRepository.RemoveSpot(spotId); returnedError != nil {
+		if returnedError := s.spotActivityTopic.RemoveSpot(spotId); returnedError != nil {
 			log.Println("Error on EndSpot: ", returnedError)
 			return returnedError
 		}
 
 		return nil
 	*/
+	return nil
+}
+
+// TODO Implement
+func (s *service) UpdateSpot() error {
 	return nil
 }

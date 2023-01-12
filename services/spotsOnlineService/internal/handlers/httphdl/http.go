@@ -72,12 +72,12 @@ func (hdl *HTTPHandler) GetEvents(context *gin.Context) {
 	context.JSON(200, multipleSpots)
 }
 
-func (hdl *HTTPHandler) CreateSpot(context *gin.Context) {
+func (hdl *HTTPHandler) GoOnline(context *gin.Context) {
 
 	spot := domain.Spot{}
 	context.BindJSON(&spot)
 
-	log.Printf("\nHandler: CreateSpot \n\tSpot: %+v", spot)
+	log.Printf("\nHandler: GoOnline \n\tSpot: %+v", spot)
 
 	if !hdl.isSpotCorrect(spot) {
 		context.AbortWithStatusJSON(400, ErrorMessage{
@@ -86,12 +86,12 @@ func (hdl *HTTPHandler) CreateSpot(context *gin.Context) {
 		return
 	}
 
-	spot, err := hdl.spotService.CreateSpot(spot)
+	spot, err := hdl.spotService.GoOnline(spot)
 
 	if err != nil {
 		log.Println(err)
 		context.AbortWithStatusJSON(400, ErrorMessage{
-			Message:       "We face an error while creating spot",
+			Message:       "We face an error while Going online",
 			InternalError: err.Error(),
 		})
 		return
