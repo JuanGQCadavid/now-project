@@ -1,8 +1,6 @@
 package commands
 
 import (
-	"log"
-
 	"github.com/JuanGQCadavid/now-project/services/spotsCore/internal/core/domain"
 	"github.com/neo4j/neo4j-go-driver/v4/neo4j"
 )
@@ -18,11 +16,6 @@ func NewCreateSpotCommand(spot *domain.Spot) *CreateSpotCommand {
 }
 
 func (cmd *CreateSpotCommand) Run(tr neo4j.Transaction) (interface{}, error) {
-
-}
-
-func (r Neo4jSpotRepo) createSpot(tr neo4j.Transaction, spot domain.Spot) error {
-
 	var cypher string = `
 		MERGE (event:Event {UUID: $event_uuid })
 		ON CREATE
@@ -40,28 +33,22 @@ func (r Neo4jSpotRepo) createSpot(tr neo4j.Transaction, spot domain.Spot) error 
 		ON CREATE 
 			SET host.name = $host_name
 		MERGE (host)<-[:CREATED_BY]-(event)-[:ON]->(place)
-	
 	`
-	result, error := tr.Run(cypher, map[string]interface{}{
-		"event_uuid":         spot.EventInfo.UUID,
-		"event_desc":         spot.EventInfo.Description,
-		"event_max_capacity": spot.EventInfo.MaximunCapacty,
-		"event_type":         spot.EventInfo.EventType,
-		"event_name":         spot.EventInfo.Name,
-		"event_emoji":        spot.EventInfo.Emoji,
-		"place_provider_id":  spot.PlaceInfo.MapProviderId,
-		"place_lat":          spot.PlaceInfo.Lat,
-		"place_lon":          spot.PlaceInfo.Lon,
-		"place_name":         spot.PlaceInfo.Name,
-		"host_phone_number":  spot.HostInfo.PhoneNumber,
-		"host_name":          spot.HostInfo.Name,
-	})
 
-	if error != nil {
-		log.Println(error)
-
-		return error
+	cypherParams := map[string]interface{}{
+		"event_uuid":         cmd.Spot.EventInfo.UUID,
+		"event_desc":         cmd.Spot.EventInfo.Description,
+		"event_max_capacity": cmd.Spot.EventInfo.MaximunCapacty,
+		"event_type":         cmd.Spot.EventInfo.EventType,
+		"event_name":         cmd.Spot.EventInfo.Name,
+		"event_emoji":        cmd.Spot.EventInfo.Emoji,
+		"place_provider_id":  cmd.Spot.PlaceInfo.MapProviderId,
+		"place_lat":          cmd.Spot.PlaceInfo.Lat,
+		"place_lon":          cmd.Spot.PlaceInfo.Lon,
+		"place_name":         cmd.Spot.PlaceInfo.Name,
+		"host_phone_number":  cmd.Spot.HostInfo.PhoneNumber,
+		"host_name":          cmd.Spot.HostInfo.Name,
 	}
-	log.Println(result)
-	return nil
+
+	return tr.Run(cypher, cypherParams)
 }
