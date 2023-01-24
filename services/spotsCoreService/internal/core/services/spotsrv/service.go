@@ -59,8 +59,10 @@ func (s *service) CreateSpot(spot domain.Spot) (domain.Spot, error) {
 	log.Println("Service: CreateSpot -> ", fmt.Sprintf("%+v", spot))
 	//TODO -> Missing body validation
 
-	uuid := s.uuidGen.New()
-	spot.EventInfo.UUID = uuid
+	spotUuid := s.uuidGen.New()
+	hostUuid := s.uuidGen.New()
+	spot.EventInfo.UUID = spotUuid
+	spot.HostInfo.Id = hostUuid
 
 	if returnedError := s.spotRepository.CreateSpot(spot); returnedError != nil {
 		return domain.Spot{}, returnedError

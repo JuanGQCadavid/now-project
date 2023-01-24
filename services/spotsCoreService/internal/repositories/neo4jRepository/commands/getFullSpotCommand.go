@@ -16,13 +16,12 @@ func (command *GetFullSpotCommand) Run(tr neo4j.Transaction) (interface{}, error
 
 	var cypherQ string = `
 	MATCH
-		(host:Person)-[host_relation:ON_LIVE]->(event:Event {UUID : $spotId})-[location_relation:ON]->(place:Place)
+		(host:Person)-[:OWNS]->(event:Event {UUID : $spotId})-[:ON]->(place:Place)
 	OPTIONAL MATCH 
 		(tags:Topic)-[tagged:TAGGED]->(event)
 	RETURN
 		event.description as event_desc,
 		event.name as event_name,
-		event.eventType as event_type,
 		event.maximunCapacty as event_max_capacity,
 		event.UUID as event_UUID,
 		event.emoji as event_emoji,
@@ -30,11 +29,12 @@ func (command *GetFullSpotCommand) Run(tr neo4j.Transaction) (interface{}, error
 		place.lon as place_lon,
 		place.mapProviderId as place_provider_id,
 		place.lat as place_lat,
-		host.phoneNumber as host_phone_number,
+		host.id as host_id,
 		host.name as host_name,
 		collect(tags.tag) as tag_tags,
 		collect(tagged.isPrincipal) as tag_principals
 	`
+
 	cyperParams := map[string]interface{}{"spotId": command.spotId}
 
 	result, err := tr.Run(cypherQ, cyperParams)
@@ -57,7 +57,6 @@ func (command *GetFullSpotCommand) getSpotDataFromResult(record *db.Record) doma
 	// Event
 	event_desc, _ := record.Get("event_desc")
 	event_name, _ := record.Get("event_name")
-	event_type, _ := record.Get("event_type")
 	event_max_capacity, _ := record.Get("event_max_capacity")
 	event_UUID, _ := record.Get("event_UUID")
 	event_emoji, _ := record.Get("event_emoji")
@@ -69,7 +68,7 @@ func (command *GetFullSpotCommand) getSpotDataFromResult(record *db.Record) doma
 	place_lat, _ := record.Get("place_lat")
 
 	// Host
-	host_phone_number, _ := record.Get("host_phone_number")
+	host_id, _ := record.Get("host_id")
 	host_name, _ := record.Get("host_name")
 
 	// Tags
@@ -97,12 +96,11 @@ func (command *GetFullSpotCommand) getSpotDataFromResult(record *db.Record) doma
 			Description:    event_desc.(string),
 			UUID:           event_UUID.(string),
 			MaximunCapacty: event_max_capacity.(int64),
-			EventType:      event_type.(string),
 			Emoji:          event_emoji.(string),
 		},
 		HostInfo: domain.Person{
-			Name:        host_name.(string),
-			PhoneNumber: host_phone_number.(string),
+			Name: host_name.(string),
+			Id:   host_id.(string),
 		},
 		PlaceInfo: domain.Place{
 			Name:          place_name.(string),

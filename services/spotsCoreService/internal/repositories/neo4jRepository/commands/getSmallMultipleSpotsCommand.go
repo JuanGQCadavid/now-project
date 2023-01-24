@@ -16,13 +16,12 @@ func (command *GetSmallMultipleSpotsCommand) Run(tr neo4j.Transaction) (interfac
 
 	var cypherQ string = `
 	MATCH
-		(host:Person)-[host_relation:ON_LIVE]->(event:Event)-[location_relation:ON]->(place:Place)
+		(host:Person)-[host_relation:OWNS]->(event:Event)-[location_relation:ON]->(place:Place)
 	WHERE
 		event.UUID IN $spotIds
 	OPTIONAL MATCH (tags:Topic)-[tagged:TAGGED]->(event)
 	RETURN
 		event.name as event_name,
-		event.eventType as event_type,
 		event.UUID as event_UUID,
 		event.emoji as event_emoji,
 		place.lon as place_lon,
@@ -60,7 +59,6 @@ func (command *GetSmallMultipleSpotsCommand) Run(tr neo4j.Transaction) (interfac
 func (command *GetSmallMultipleSpotsCommand) getSpotDataFromResult(record *db.Record) domain.Spot {
 	// Event
 	event_name, _ := record.Get("event_name")
-	event_type, _ := record.Get("event_type")
 	event_UUID, _ := record.Get("event_UUID")
 	event_emoji, _ := record.Get("event_emoji")
 
@@ -90,10 +88,9 @@ func (command *GetSmallMultipleSpotsCommand) getSpotDataFromResult(record *db.Re
 
 	return domain.Spot{
 		EventInfo: domain.Event{
-			Name:      getStringFromInterface(event_name),
-			UUID:      getStringFromInterface(event_UUID),
-			EventType: getStringFromInterface(event_type),
-			Emoji:     getStringFromInterface(event_emoji),
+			Name:  getStringFromInterface(event_name),
+			UUID:  getStringFromInterface(event_UUID),
+			Emoji: getStringFromInterface(event_emoji),
 		},
 		PlaceInfo: domain.Place{
 			Lat:           getFloat64FromInterface(place_lat),

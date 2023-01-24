@@ -31,6 +31,7 @@ func (cmd *CreateSpotCommand) Run(tr neo4j.Transaction) (interface{}, error) {
 		MERGE (host:Person {phoneNumber:$host_phone_number})
 		ON CREATE 
 			SET host.name = $host_name
+			SET host.id = $host_id
 		MERGE (host)-[:OWNS]->(event)-[:ON]->(place)
 	`
 
@@ -46,6 +47,7 @@ func (cmd *CreateSpotCommand) Run(tr neo4j.Transaction) (interface{}, error) {
 		"place_name":         cmd.Spot.PlaceInfo.Name,
 		"host_phone_number":  cmd.Spot.HostInfo.PhoneNumber,
 		"host_name":          cmd.Spot.HostInfo.Name,
+		"host_id":            cmd.Spot.HostInfo.Id,
 	}
 
 	return tr.Run(cypher, cypherParams)
