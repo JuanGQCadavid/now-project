@@ -1,6 +1,9 @@
 package main
 
 import (
+	"log"
+
+	"github.com/JuanGQCadavid/now-project/services/pkgs/credentialsFinder/cmd/ssm"
 	"github.com/JuanGQCadavid/now-project/services/spotsCoreService/internal/core/services/spotsrv"
 	"github.com/JuanGQCadavid/now-project/services/spotsCoreService/internal/handlers/httphdl"
 	"github.com/JuanGQCadavid/now-project/services/spotsCoreService/internal/repositories/neo4jRepository"
@@ -15,7 +18,16 @@ var (
 )
 
 func init() {
-	repoSpot = neo4jRepository.NewNeo4jSpotRepo()
+	credsFinder := ssm.NewSSMCredentialsFinder()
+
+	neo4jDriver, err := credsFinder.FindNeo4jCredentialsFromDefaultEnv()
+
+	if err != nil {
+		log.Println("There were an error while attempting to create drivers")
+		log.Fatalln(err.Error())
+	}
+
+	repoSpot = neo4jRepository.NewNeo4jSpotRepoWithDriver(neo4jDriver) //menRepository.New()
 	repoLocation = spotactivityservices.NewAWSSpotActivityTopic()
 }
 
@@ -27,9 +39,13 @@ func main() {
 	httpHandler := httphdl.NewHTTPHandler(service)
 
 	router := gin.Default()
-	router.GET("/spots/core/:id", httpHandler.GetEvent)
-	router.POST("/spots/core/online", httpHandler.CreateSpot)
-	router.POST("/spots/core/getSpots", httpHandler.GetEvents)
+
+	router.POST("/spots/core/", httpHandler.CreateSpot)                 // OK
+	router.POST("/spots/core/bulk/fetch", httpHandler.GetMultipleSpots) // OK
+	router.POST("/spots/core/:id/finalize", httpHandler.FinalizeSpot)   // OK
+	router.GET("/spots/core/:id", httpHandler.GetSpot)                  // OK
+	router.PUT("/spots/core/:id", httpHandler.UpdateSpot)               // OK
+	router.DELETE("/spots/core/:id", httpHandler.DeleteSpot)            // OK
 
 	router.Run(":8000")
 }

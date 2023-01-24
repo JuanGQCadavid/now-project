@@ -21,7 +21,6 @@ func (cmd *CreateSpotCommand) Run(tr neo4j.Transaction) (interface{}, error) {
 		ON CREATE
 			SET event.description = $event_desc
 			SET event.maximunCapacty = $event_max_capacity
-			SET event.eventType = $event_type
 			SET event.name = $event_name
 			SET event.emoji = $event_emoji
 		MERGE (place:Place {mapProviderId: $place_provider_id})
@@ -32,14 +31,13 @@ func (cmd *CreateSpotCommand) Run(tr neo4j.Transaction) (interface{}, error) {
 		MERGE (host:Person {phoneNumber:$host_phone_number})
 		ON CREATE 
 			SET host.name = $host_name
-		MERGE (host)<-[:CREATED_BY]-(event)-[:ON]->(place)
+		MERGE (host)-[:OWNS]->(event)-[:ON]->(place)
 	`
 
 	cypherParams := map[string]interface{}{
 		"event_uuid":         cmd.Spot.EventInfo.UUID,
 		"event_desc":         cmd.Spot.EventInfo.Description,
 		"event_max_capacity": cmd.Spot.EventInfo.MaximunCapacty,
-		"event_type":         cmd.Spot.EventInfo.EventType,
 		"event_name":         cmd.Spot.EventInfo.Name,
 		"event_emoji":        cmd.Spot.EventInfo.Emoji,
 		"place_provider_id":  cmd.Spot.PlaceInfo.MapProviderId,

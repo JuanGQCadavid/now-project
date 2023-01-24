@@ -19,7 +19,8 @@ func NewHTTPHandler(spotService ports.SpotService) *HTTPHandler {
 	}
 }
 
-func (hdl *HTTPHandler) GetEvent(context *gin.Context) {
+// /spots/core/:id
+func (hdl *HTTPHandler) GetSpot(context *gin.Context) {
 
 	id := context.Param("id")
 
@@ -48,7 +49,8 @@ func (hdl *HTTPHandler) GetEvent(context *gin.Context) {
 	context.JSON(200, event)
 }
 
-func (hdl *HTTPHandler) GetEvents(context *gin.Context) {
+// /spots/core/bulk/fetch
+func (hdl *HTTPHandler) GetMultipleSpots(context *gin.Context) {
 
 	// Getting data from call
 	spotIds := SpotsIdsRequest{}
@@ -72,6 +74,7 @@ func (hdl *HTTPHandler) GetEvents(context *gin.Context) {
 	context.JSON(200, multipleSpots)
 }
 
+// /spots/core/
 func (hdl *HTTPHandler) CreateSpot(context *gin.Context) {
 
 	spot := domain.Spot{}
@@ -98,6 +101,33 @@ func (hdl *HTTPHandler) CreateSpot(context *gin.Context) {
 	}
 
 	context.JSON(200, spot)
+}
+
+// /spots/core/:id/finalize
+func (hdl *HTTPHandler) FinalizeSpot(context *gin.Context) {
+	id := context.Param("id")
+	context.JSON(200, map[string]string{
+		"method": "FinalizeSpot",
+		"id":     id,
+	})
+}
+
+// /spots/core/:id
+func (hdl *HTTPHandler) UpdateSpot(context *gin.Context) {
+	id := context.Param("id")
+	context.JSON(200, map[string]string{
+		"method": "UpdateSpot",
+		"id":     id,
+	})
+}
+
+// /spots/core/:id
+func (hdl *HTTPHandler) DeleteSpot(context *gin.Context) {
+	id := context.Param("id")
+	context.JSON(200, map[string]string{
+		"method": "DeleteSpot",
+		"id":     id,
+	})
 }
 
 func (hdl *HTTPHandler) getOuputFormat(query string) ports.OutputFormat {
