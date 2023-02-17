@@ -1,6 +1,7 @@
 package httphdl
 
 import (
+	"fmt"
 	"log"
 	"strings"
 
@@ -92,7 +93,7 @@ func (hdl *HTTPHandler) CreateSpot(context *gin.Context) {
 	spot, err := hdl.spotService.CreateSpot(spot)
 
 	if err != nil {
-		log.Println(err)
+		log.Println(err.Error())
 		context.AbortWithStatusJSON(400, ErrorMessage{
 			Message:       "We face an error while creating spot",
 			InternalError: err.Error(),
@@ -112,11 +113,46 @@ func (hdl *HTTPHandler) FinalizeSpot(context *gin.Context) {
 	})
 }
 
-// /spots/core/:id
-func (hdl *HTTPHandler) UpdateSpot(context *gin.Context) {
+// /spots/core/:id/event
+func (hdl *HTTPHandler) UpdateSpotEvent(context *gin.Context) {
+	id := context.Param("id")
+	userId := context.Request.Header.Get("Authorization")
+	spotEvent := domain.Spot{}
+	context.BindJSON(&spotEvent)
+
+	log.Printf("Handler - UpdateSpotEvent: UserId %s,  Id %s, spotEvent %+v\n", userId, id, fmt.Sprintf("%+v", spotEvent.EventInfo))
+
+	if err := hdl.spotService.UpdateSpotEvent(id, userId, &spotEvent.EventInfo); err != nil {
+		log.Println("Hanlder - UpdateSpotEvent - Error", err.Error())
+
+		if err == ports.ErrSpotToUpdateIsTheSameAsTheDb {
+			context.Status(204)
+			return
+		}
+		context.AbortWithStatusJSON(500, ErrorMessage{
+			Message:       "We face an error while updating the spot event info",
+			InternalError: err.Error(),
+		})
+		return
+	}
+
+	context.Status(204)
+}
+
+// /spots/core/:id/place
+func (hdl *HTTPHandler) UpdateSpotPlace(context *gin.Context) {
 	id := context.Param("id")
 	context.JSON(200, map[string]string{
-		"method": "UpdateSpot",
+		"method": "UpdateSpotPlace",
+		"id":     id,
+	})
+}
+
+// /spots/core/:id/topic
+func (hdl *HTTPHandler) UpdateSpotTopic(context *gin.Context) {
+	id := context.Param("id")
+	context.JSON(200, map[string]string{
+		"method": "UpdateSpotTopic",
 		"id":     id,
 	})
 }

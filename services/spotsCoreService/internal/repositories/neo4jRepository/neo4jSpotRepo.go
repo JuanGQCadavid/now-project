@@ -131,3 +131,32 @@ func (r Neo4jSpotRepo) CreateSpotTags(spotId string, principalTag domain.Optiona
 	log.Println(fmt.Sprintf("%+v", output))
 	return err
 }
+
+func (r *Neo4jSpotRepo) UpdateSpotEvent(spotEvent domain.Event, spotId string) error {
+	log.Printf("Repository: UpdateSpotEvent %+v \n", spotEvent)
+
+	var command commands.Command = commands.NewUpdateSpotEventCommand(&spotEvent, spotId)
+
+	session := r.driver.NewSession(neo4j.SessionConfig{})
+	defer session.Close()
+
+	eventInterface, err := session.WriteTransaction(func(tx neo4j.Transaction) (interface{}, error) {
+		return command.Run(tx)
+	})
+
+	if err != nil {
+		log.Println(err)
+		return err
+	}
+
+	eventUpdated := eventInterface.(*domain.Event)
+	fmt.Printf("\n THE EVENT Updated was -> %+v \n", eventUpdated)
+
+	if !spotEvent.IsEquals(eventUpdated) {
+		return ports.ErrSpotUpdatedFail
+	}
+
+	return nil
+}
+func (r *Neo4jSpotRepo) UpdateSpotPlace(spotEvent domain.Place, spotId string) error { return nil }
+func (r *Neo4jSpotRepo) UpdateSpotTopic(spotEvent domain.Topic, spotId string) error { return nil }

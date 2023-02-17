@@ -60,9 +60,13 @@ func (s *service) CreateSpot(spot domain.Spot) (domain.Spot, error) {
 	//TODO -> Missing body validation
 
 	spotUuid := s.uuidGen.New()
-	hostUuid := s.uuidGen.New()
+
+	if len(spot.HostInfo.Id) == 0 {
+		hostUuid := s.uuidGen.New()
+		spot.HostInfo.Id = hostUuid
+	}
+
 	spot.EventInfo.UUID = spotUuid
-	spot.HostInfo.Id = hostUuid
 
 	if returnedError := s.spotRepository.CreateSpot(spot); returnedError != nil {
 		return domain.Spot{}, returnedError
@@ -143,7 +147,86 @@ func (s *service) FinalizeSpot(spotId string) error {
 	return nil
 }
 
-// TODO Implement
-func (s *service) UpdateSpot() error {
+/*
+Only users with owner relationship could update an spot.
+
+Body that could be changed:
+
+	{
+		"eventInfo": {
+			"name": "...",
+			"description": "...",
+			"maximunCapacty": ##,
+			"emoji": "..."
+		}
+	}
+
+Procedure:
+
+ 1. Fetch the event that the spot id belongs to.
+
+ 2. Verify that the owner id is the same as the one that is making the request
+
+ 3. Verify that the data is diffent
+    TRUE -> Update Event
+    FALSE -> Just return
+*/
+func (s *service) UpdateSpotEvent(spotId string, ownerId string, spotEvent *domain.Event) error {
+	log.Printf("Service - UpdateSpotEvent: Id: %s, SpotEvent: %+v \n", spotId, spotEvent)
+
+	// 1. Fetch the event that the spot id belongs to.
+	originalSpot, err := s.spotRepository.Get(spotId, ports.FULL_FORMAT)
+
+	if err != nil {
+		log.Println("ERROR: Service - UpdateSpotEvent: ", err.Error())
+		return err
+	}
+
+	// 2. Verify that the owner id is the same as the one that is making the request
+	if originalSpot.HostInfo.Id != ownerId {
+		return ports.ErrSpotUserNotOwnerWhenUpdatingSpot
+	}
+
+	//  3. Verify that the data is diffent
+	spotEvent.UUID = spotId
+	if originalSpot.EventInfo.IsEquals(spotEvent) {
+		return ports.ErrSpotToUpdateIsTheSameAsTheDb
+	}
+
+	// Updated the event
+	return s.spotRepository.UpdateSpotEvent(*spotEvent, spotId)
+}
+
+/*
+Only users with owner relationship could update an spot.
+
+Body that could be changed:
+
+	{
+		"placeInfo": {
+			"name": "...",
+			"lat": ###,
+			"lon": ###,
+			"mapProviderId": "..."
+		}
+	}
+*/
+func (s *service) UpdateSpotPlace(spotId string, ownerId string, spotEvent *domain.Place) error {
+	return nil
+}
+
+/*
+Only users with owner relationship could update an spot.
+
+Body that could be changed:
+
+	{
+		"topicInfo": {
+			"principalTopic": "...",
+			"secondaryTopics" : ["...", "..."]
+		}
+	}
+*/
+func (s *service) UpdateSpotTopic(spotId string, ownerId string, spotEvent *domain.Topic) error {
 	return nil
 }
