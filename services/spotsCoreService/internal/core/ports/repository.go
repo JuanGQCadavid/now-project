@@ -22,5 +22,6 @@ type SpotRepository interface {
 	UpdateSpotPlace(spotEvent domain.Place, spotId string) error
 	UpdateSpotTopic(spotEvent domain.Topic, spotId string) error
 
-	EndSpot(spotId string) error
+	FinalizeSpot(spotId string) error
+	DeleteSpot(spotId string) error
 }

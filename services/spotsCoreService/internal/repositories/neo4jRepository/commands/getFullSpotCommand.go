@@ -17,6 +17,8 @@ func (command *GetFullSpotCommand) Run(tr neo4j.Transaction) (interface{}, error
 	var cypherQ string = `
 	MATCH
 		(host:Person)-[:OWNS]->(event:Event {UUID : $spotId})-[:ON]->(place:Place)
+	WHERE NOT 
+		(event)-[:IS_DELETED]->(event)
 	OPTIONAL MATCH 
 		(tags:Topic)-[tagged:TAGGED]->(event)
 	RETURN
@@ -37,6 +39,7 @@ func (command *GetFullSpotCommand) Run(tr neo4j.Transaction) (interface{}, error
 
 	cyperParams := map[string]interface{}{"spotId": command.spotId}
 
+	log.Println(cypherQ)
 	result, err := tr.Run(cypherQ, cyperParams)
 
 	if err != nil {

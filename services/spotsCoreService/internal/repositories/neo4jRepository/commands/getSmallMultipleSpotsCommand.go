@@ -19,6 +19,7 @@ func (command *GetSmallMultipleSpotsCommand) Run(tr neo4j.Transaction) (interfac
 		(host:Person)-[host_relation:OWNS]->(event:Event)-[location_relation:ON]->(place:Place)
 	WHERE
 		event.UUID IN $spotIds
+		AND NOT (event)-[:IS_DELETED]->(event)
 	OPTIONAL MATCH (tags:Topic)-[tagged:TAGGED]->(event)
 	RETURN
 		event.name as event_name,

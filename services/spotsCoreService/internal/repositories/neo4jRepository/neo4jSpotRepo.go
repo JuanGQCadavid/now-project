@@ -108,8 +108,24 @@ func (r Neo4jSpotRepo) CreateSpot(spot domain.Spot) error {
 func (r Neo4jSpotRepo) GetSpotByUserId(personId string) (domain.Spot, error) {
 	return domain.Spot{}, nil
 }
-func (r Neo4jSpotRepo) EndSpot(spotId string) error {
+
+func (r Neo4jSpotRepo) FinalizeSpot(spotId string) error {
 	return nil
+}
+
+func (r Neo4jSpotRepo) DeleteSpot(spotId string) error {
+	log.Println("Repository: DeleteSpot:", spotId)
+
+	session := r.driver.NewSession(neo4j.SessionConfig{})
+	defer session.Close()
+
+	var cmd commands.Command = commands.NewAddSelfRelationship(spotId, domain.Deleted)
+
+	_, err := session.WriteTransaction(func(tx neo4j.Transaction) (interface{}, error) {
+		return cmd.Run(tx)
+	})
+
+	return err
 }
 
 func (r Neo4jSpotRepo) CreateSpotTags(spotId string, principalTag domain.Optional, secondaryTags []string) error {

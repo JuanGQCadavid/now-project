@@ -14,8 +14,9 @@ const (
 )
 
 var (
-	ErrSpotUserNotOwnerWhenUpdatingSpot = errors.New("err the user that request the update is not the owner of the spot")
+	ErrSpotUserNotOwnerWhenUpdatingSpot = errors.New("err the user is not the owner of the spot")
 	ErrSpotToUpdateIsTheSameAsTheDb     = errors.New("err the spot to save is the same as the one in the db")
+	ErrSpotNotFounded                   = errors.New("err the spot is not founded in the repository")
 )
 
 type SpotService interface {
@@ -29,5 +30,6 @@ type SpotService interface {
 	UpdateSpotTopic(spotId string, ownerId string, spotEvent *domain.Topic) error
 
 	// Missing Specification
-	FinalizeSpot(spotId string) error
+	FinalizeSpot(spotId string, requestUserId string) error
+	DeleteSpot(spotId string, requestUserId string) error
 }

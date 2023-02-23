@@ -44,8 +44,11 @@ func main() {
 	router.POST("/spots/core/bulk/fetch", httpHandler.GetMultipleSpots) // OK
 	router.POST("/spots/core/:id/finalize", httpHandler.FinalizeSpot)   // OK
 	router.GET("/spots/core/:id", httpHandler.GetSpot)                  // OK
-	router.PUT("/spots/core/:id", httpHandler.UpdateSpot)               // OK
+	router.PUT("/spots/core/:id/event", httpHandler.UpdateSpotEvent)    // OK
+	router.PUT("/spots/core/:id/topic", httpHandler.UpdateSpotTopic)    // OK
+	router.PUT("/spots/core/:id/place", httpHandler.UpdateSpotPlace)    // OK
 	router.DELETE("/spots/core/:id", httpHandler.DeleteSpot)            // OK
 
-	router.Run(":8000")
+	router.Run("localhost:8000")
+	// router.Run(":8000")
 }

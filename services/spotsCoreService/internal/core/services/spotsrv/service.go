@@ -30,7 +30,19 @@ func New(spotRepository ports.SpotRepository, spotActivityTopic ports.SpotActivi
 
 func (s *service) Get(spotId string, format ports.OutputFormat) (domain.Spot, error) {
 	log.Println("Service: Get ->", spotId)
-	return s.spotRepository.Get(spotId, format)
+	spotFounded, err := s.spotRepository.Get(spotId, format)
+
+	if err != nil {
+		log.Println("We get an error while getting the spot with id", spotId)
+		return domain.Spot{}, err
+	}
+
+	if len(spotFounded.EventInfo.UUID) == 0 {
+		log.Println("Spot not founded with id", spotId)
+		return domain.Spot{}, ports.ErrSpotNotFounded
+	}
+
+	return spotFounded, nil
 }
 
 func (s *service) GetSpots(spotIds []string, format ports.OutputFormat) (domain.MultipleSpots, error) {
@@ -129,8 +141,42 @@ func (s *service) GetSpotByUserId(userId string) (domain.Spot, error) {
 	return spot, nil
 }
 
-// TODO -> Fix this!
-func (s *service) FinalizeSpot(spotId string) error {
+func (s *service) DeleteSpot(spotId string, requestUserId string) error {
+	log.Printf("Service - DeleteSpot: Id: %s, requestUserId: %s \n", spotId, requestUserId)
+
+	// 1. Fetch the event that the spot id belongs to.
+	originalSpot, err := s.spotRepository.Get(spotId, ports.FULL_FORMAT)
+
+	if err != nil {
+		log.Println("ERROR: Service - DeleteSpot - Fetch actual spot fail: ", err.Error())
+		return err
+	}
+
+	if len(originalSpot.EventInfo.UUID) == 0 {
+		log.Println("Spot not founded, it is empty")
+		return ports.ErrSpotNotFounded
+	}
+
+	// 2. Verify that the owner id is the same as the one that is making the request
+	if originalSpot.HostInfo.Id != requestUserId {
+		log.Println("HostInfo", originalSpot.HostInfo.Id)
+		log.Println("requestUserId", requestUserId)
+		return ports.ErrSpotUserNotOwnerWhenUpdatingSpot
+	}
+
+	// 3. Add the Delete state to the spot
+
+	err = s.spotRepository.DeleteSpot(spotId)
+
+	if err != nil {
+		log.Println("ERROR: Service - DeleteSpot - Delete command fail: ", err.Error())
+		return err
+	}
+
+	return nil
+}
+
+func (s *service) FinalizeSpot(spotId string, requestUserId string) error {
 	/*
 		if returnedError := s.spotRepository.EndSpot(spotId); returnedError != nil {
 			log.Println("Error on EndSpot: ", returnedError)

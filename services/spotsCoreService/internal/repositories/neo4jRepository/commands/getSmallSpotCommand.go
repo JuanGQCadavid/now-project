@@ -17,6 +17,8 @@ func (command *GetSmallSpotCommand) Run(tr neo4j.Transaction) (interface{}, erro
 	var cypherQ string = `
 	MATCH
 		(event:Event {UUID : $spotId})-[:ON]->(place:Place)
+	WHERE NOT 
+		(event)-[:IS_DELETED]->(event)
 	OPTIONAL MATCH 
 		(tags:Topic)-[tagged:TAGGED]->(event)
 	RETURN
