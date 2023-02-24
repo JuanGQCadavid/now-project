@@ -1,26 +1,79 @@
-# Location Data Updater.
+# Spots core service
 
 ## WTF?
 
-This service is the one that creates online spots, it stores the data in Neo4js.
+It handles Spots at the core level, it is used only for CRUD regarding spots that later are going to be modified by other services as Oline or schedule spots
 
-## Useful links
-* TBD
+## Methods
 
-## Golang commands
+### Create a spot
+``` javascript
+HTTP  1.1
+POST /spots/core/
 
-go get **package**
-
-## To deploy on lambda
-
-``` PowerShell
-$env:GOOS = "linux"
-$env:CGO_ENABLED = "0"
-$env:GOARCH = "amd64"
-go build -o main main.go
-go build -o main .\cmd\lambda\main.go
+{
+    "eventInfo": {
+        "name": "Gatubella",
+        "description": "My friend",
+        "maximunCapacty": 58,
+        "emoji": ":v"
+    },
+    // This should be remove it.
+    "hostInfo": {
+        "id": "",
+        "name": "Juan 1",
+        "phoneNumber": "+573137590102"
+    },
+    // A service to validate this is needed.
+    "placeInfo": {
+        "name": "Place Laureles",
+        "lat": 6.245887,
+        "lon": -75.589868,
+        "mapProviderId": "Place_Laureles"
+    },
+    "topicInfo": {
+        "principalTopic": "TestingIt",
+        "secondaryTopics" : ["OtherTest", "MaybeSecondary"]
+    }
+}
 ```
 
-* zip main and deployed it.
+### Get spot info
+``` javascript
+HTTP  1.1
+GET /spots/core/<spot_id>/
 
-![now-Filter service drawio (2)](https://user-images.githubusercontent.com/21164304/196567528-1e942632-6aca-4e74-8f0b-e56af925474f.png)
+
+```
+
+### Update spot info
+``` javascript
+HTTP  1.1
+PATCH /spots/core/<spot_id>/
+
+{
+    "eventInfo": {
+        "name": "Gatubella",
+        "description": "My friend",
+        "maximunCapacty": 58,
+        "emoji": ":v"
+    },
+    "placeInfo": {
+        "name": "Place Laureles",
+        "lat": 6.245887,
+        "lon": -75.589868,
+        "mapProviderId": "Place_Laureles"
+    },
+    "topicInfo": {
+        "principalTopic": "TestingIt",
+        "secondaryTopics" : ["OtherTest", "MaybeSecondary"]
+    }
+}
+
+```
+
+### Delete spot info
+``` javascript
+HTTP  1.1
+DELETE /spots/core/<spot_id>/
+```

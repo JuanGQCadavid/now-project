@@ -85,68 +85,47 @@ func (r Neo4jSpotRepo) GetSpots(spotIds []string, format ports.OutputFormat) (do
 	return *records.(*domain.MultipleSpots), nil
 }
 
-func (r Neo4jSpotRepo) CreateOnline(spot domain.Spot) error {
+func (r Neo4jSpotRepo) CreateSpot(spot domain.Spot) error {
+	log.Printf("Repository: CreateSpot %+v \n", spot)
+
+	var command commands.Command = commands.NewCreateSpotCommand(&spot)
 
 	session := r.driver.NewSession(neo4j.SessionConfig{})
+	defer session.Close()
+
 	_, err := session.WriteTransaction(func(tx neo4j.Transaction) (interface{}, error) {
-		return nil, r.createSpot(tx, spot)
+		return command.Run(tx)
 	})
 
-	log.Println(err)
-
-	return err
-}
-
-func (r Neo4jSpotRepo) createSpot(tr neo4j.Transaction, spot domain.Spot) error {
-
-	var cypher string = `
-		MERGE (event:Event {UUID: $event_uuid })
-		ON CREATE
-			SET event.description = $event_desc
-			SET event.maximunCapacty = $event_max_capacity
-			SET event.eventType = $event_type
-			SET event.name = $event_name
-			SET event.emoji = $event_emoji
-		MERGE (place:Place {mapProviderId: $place_provider_id})
-		ON CREATE
-			SET place.lat = toFloat($place_lat)
-			SET place.lon = toFloat($place_lon)
-			SET place.name = $place_name
-		MERGE (host:Person {phoneNumber:$host_phone_number})
-		ON CREATE 
-			SET host.name = $host_name
-		MERGE (host)-[:ON_LIVE]->(event)-[:ON]->(place)
-	
-	`
-	result, error := tr.Run(cypher, map[string]interface{}{
-		"event_uuid":         spot.EventInfo.UUID,
-		"event_desc":         spot.EventInfo.Description,
-		"event_max_capacity": spot.EventInfo.MaximunCapacty,
-		"event_type":         spot.EventInfo.EventType,
-		"event_name":         spot.EventInfo.Name,
-		"event_emoji":        spot.EventInfo.Emoji,
-		"place_provider_id":  spot.PlaceInfo.MapProviderId,
-		"place_lat":          spot.PlaceInfo.Lat,
-		"place_lon":          spot.PlaceInfo.Lon,
-		"place_name":         spot.PlaceInfo.Name,
-		"host_phone_number":  spot.HostInfo.PhoneNumber,
-		"host_name":          spot.HostInfo.Name,
-	})
-
-	if error != nil {
-		log.Println(error)
-
-		return error
+	if err != nil {
+		log.Println(err)
+		return err
 	}
-	log.Println(result)
+
 	return nil
 }
 
 func (r Neo4jSpotRepo) GetSpotByUserId(personId string) (domain.Spot, error) {
 	return domain.Spot{}, nil
 }
-func (r Neo4jSpotRepo) EndSpot(spotId string) error {
+
+func (r Neo4jSpotRepo) FinalizeSpot(spotId string) error {
 	return nil
+}
+
+func (r Neo4jSpotRepo) DeleteSpot(spotId string) error {
+	log.Println("Repository: DeleteSpot:", spotId)
+
+	session := r.driver.NewSession(neo4j.SessionConfig{})
+	defer session.Close()
+
+	var cmd commands.Command = commands.NewAddSelfRelationship(spotId, domain.Deleted)
+
+	_, err := session.WriteTransaction(func(tx neo4j.Transaction) (interface{}, error) {
+		return cmd.Run(tx)
+	})
+
+	return err
 }
 
 func (r Neo4jSpotRepo) CreateSpotTags(spotId string, principalTag domain.Optional, secondaryTags []string) error {
@@ -168,3 +147,32 @@ func (r Neo4jSpotRepo) CreateSpotTags(spotId string, principalTag domain.Optiona
 	log.Println(fmt.Sprintf("%+v", output))
 	return err
 }
+
+func (r *Neo4jSpotRepo) UpdateSpotEvent(spotEvent domain.Event, spotId string) error {
+	log.Printf("Repository: UpdateSpotEvent %+v \n", spotEvent)
+
+	var command commands.Command = commands.NewUpdateSpotEventCommand(&spotEvent, spotId)
+
+	session := r.driver.NewSession(neo4j.SessionConfig{})
+	defer session.Close()
+
+	eventInterface, err := session.WriteTransaction(func(tx neo4j.Transaction) (interface{}, error) {
+		return command.Run(tx)
+	})
+
+	if err != nil {
+		log.Println(err)
+		return err
+	}
+
+	eventUpdated := eventInterface.(*domain.Event)
+	fmt.Printf("\n THE EVENT Updated was -> %+v \n", eventUpdated)
+
+	if !spotEvent.IsEquals(eventUpdated) {
+		return ports.ErrSpotUpdatedFail
+	}
+
+	return nil
+}
+func (r *Neo4jSpotRepo) UpdateSpotPlace(spotEvent domain.Place, spotId string) error { return nil }
+func (r *Neo4jSpotRepo) UpdateSpotTopic(spotEvent domain.Topic, spotId string) error { return nil }

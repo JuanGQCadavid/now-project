@@ -39,9 +39,16 @@ func main() {
 	httpHandler := httphdl.NewHTTPHandler(service)
 
 	router := gin.Default()
-	router.GET("/spots/core/:id", httpHandler.GetEvent)
-	router.POST("/spots/core/online", httpHandler.GoOnline)
-	router.POST("/spots/core/getSpots", httpHandler.GetEvents)
 
-	router.Run(":8000")
+	router.POST("/spots/core/", httpHandler.CreateSpot)                 // OK
+	router.POST("/spots/core/bulk/fetch", httpHandler.GetMultipleSpots) // OK
+	router.POST("/spots/core/:id/finalize", httpHandler.FinalizeSpot)   // OK
+	router.GET("/spots/core/:id", httpHandler.GetSpot)                  // OK
+	router.PUT("/spots/core/:id/event", httpHandler.UpdateSpotEvent)    // OK
+	router.PUT("/spots/core/:id/topic", httpHandler.UpdateSpotTopic)    // OK
+	router.PUT("/spots/core/:id/place", httpHandler.UpdateSpotPlace)    // OK
+	router.DELETE("/spots/core/:id", httpHandler.DeleteSpot)            // OK
+
+	router.Run("localhost:8000")
+	// router.Run(":8000")
 }

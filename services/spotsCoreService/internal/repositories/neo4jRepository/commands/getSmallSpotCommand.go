@@ -16,12 +16,13 @@ func (command *GetSmallSpotCommand) Run(tr neo4j.Transaction) (interface{}, erro
 
 	var cypherQ string = `
 	MATCH
-		(host:Person)-[host_relation:ON_LIVE]->(event:Event {UUID : $spotId})-[location_relation:ON]->(place:Place)
+		(event:Event {UUID : $spotId})-[:ON]->(place:Place)
+	WHERE NOT 
+		(event)-[:IS_DELETED]->(event)
 	OPTIONAL MATCH 
 		(tags:Topic)-[tagged:TAGGED]->(event)
 	RETURN
 		event.name as event_name,
-		event.eventType as event_type,
 		event.UUID as event_UUID,
 		event.emoji as event_emoji,
 		place.lon as place_lon,
@@ -51,7 +52,6 @@ func (command *GetSmallSpotCommand) Run(tr neo4j.Transaction) (interface{}, erro
 func (command *GetSmallSpotCommand) getSpotDataFromResult(record *db.Record) domain.Spot {
 	// Event
 	event_name, _ := record.Get("event_name")
-	event_type, _ := record.Get("event_type")
 	event_UUID, _ := record.Get("event_UUID")
 	event_emoji, _ := record.Get("event_emoji")
 
@@ -81,10 +81,9 @@ func (command *GetSmallSpotCommand) getSpotDataFromResult(record *db.Record) dom
 
 	return domain.Spot{
 		EventInfo: domain.Event{
-			Name:      event_name.(string),
-			UUID:      event_UUID.(string),
-			EventType: event_type.(string),
-			Emoji:     event_emoji.(string),
+			Name:  event_name.(string),
+			UUID:  event_UUID.(string),
+			Emoji: event_emoji.(string),
 		},
 		PlaceInfo: domain.Place{
 			Lat:           place_lat.(float64),

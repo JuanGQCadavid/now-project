@@ -13,7 +13,7 @@ import (
 )
 
 type AWSSpotActivityTopic struct {
-	sqsService *sns.SNS
+	snsService *sns.SNS
 	targetArn  string
 }
 
@@ -30,13 +30,13 @@ func NewAWSSpotActivityTopic() *AWSSpotActivityTopic {
 
 	svc := sns.New(sess)
 	return &AWSSpotActivityTopic{
-		sqsService: svc,
+		snsService: svc,
 		targetArn:  snsArn,
 	}
 }
 
-func (r AWSSpotActivityTopic) AppendSpot(spot domain.Spot) error {
-	log.Println("AppendSpot: ", "\n\t", " spot: ", fmt.Sprintf("%+v", spot))
+func (r AWSSpotActivityTopic) NotifySpotCreated(spot domain.Spot) error {
+	log.Println("NotifySpotCreated: ", "\n\t", " spot: ", fmt.Sprintf("%+v", spot))
 
 	body, err := json.Marshal(&spot)
 	log.Println("body -> ", fmt.Sprintf("%+v", body))
@@ -46,8 +46,8 @@ func (r AWSSpotActivityTopic) AppendSpot(spot domain.Spot) error {
 
 	return r.sendMessageToTopic(string(body), "spot_created")
 }
-func (r AWSSpotActivityTopic) RemoveSpot(spotId string) error {
-	log.Println("RemoveSpot: ", "\n\t", " spotId: ", spotId)
+func (r AWSSpotActivityTopic) NotifySpotStopped(spotId string) error {
+	log.Println("NotifySpotStopped: ", "\n\t", " spotId: ", spotId)
 
 	return r.sendMessageToTopic(spotId, "spot_removed")
 }
@@ -55,7 +55,8 @@ func (r AWSSpotActivityTopic) RemoveSpot(spotId string) error {
 func (r AWSSpotActivityTopic) sendMessageToTopic(messageBody string, operation string) error {
 	log.Println("sendMessageToTopic: ", "\n\t", " Operation: ", operation, "\n\t", " messageBody:", messageBody)
 
-	operationResult, err := r.sqsService.Publish(&sns.PublishInput{
+	log.Println("Target arn: ", r.targetArn)
+	operationResult, err := r.snsService.Publish(&sns.PublishInput{
 		Message: &messageBody,
 		Subject: aws.String(operation),
 		MessageAttributes: map[string]*sns.MessageAttributeValue{
@@ -64,11 +65,12 @@ func (r AWSSpotActivityTopic) sendMessageToTopic(messageBody string, operation s
 				StringValue: aws.String(operation),
 			},
 		},
-		TargetArn: &r.targetArn,
+		TargetArn: aws.String(r.targetArn),
 	})
 
 	if err != nil {
 		log.Print(err)
+		log.Print(err.Error())
 	} else {
 		log.Printf("%+v", operationResult)
 	}
