@@ -49,6 +49,20 @@ func (repo *Neo4jRepo) FetchOnlineSpot(spotId string) (domain.OnlineSpot, error)
 	return onlineSpot, nil
 }
 
-func (repo *Neo4jRepo) AssociateDateWithSpot(domain.OnlineSpot) (string, error) {
-	return "145", nil
+func (repo *Neo4jRepo) AssociateDateWithSpot(spot domain.OnlineSpot) error {
+	log.Printf("AssociateDateWithSpot,  online spot: %+v \n", spot)
+
+	var cmd commands.Command = commands.NewCreateDateAssociationCommand(spot)
+
+	session := repo.driver.NewSession(neo4j.SessionConfig{})
+	defer session.Close()
+
+	_, err := session.WriteTransaction(cmd.Run)
+
+	if err != nil {
+		log.Println("The associate command fail")
+		return ports.ErrAssociatingDate
+	}
+
+	return nil
 }

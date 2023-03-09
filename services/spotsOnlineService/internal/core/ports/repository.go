@@ -7,10 +7,11 @@ import (
 )
 
 var (
-	ErrFetchingData = errors.New("we got and error while fetching the data from the repository")
+	ErrFetchingData    = errors.New("we got an error while fetching the data from the repository")
+	ErrAssociatingDate = errors.New("We got an error while associating the date")
 )
 
 type Repository interface {
 	FetchOnlineSpot(spotId string) (domain.OnlineSpot, error)
-	AssociateDateWithSpot(domain.OnlineSpot) (string, error)
+	AssociateDateWithSpot(domain.OnlineSpot) error
 }

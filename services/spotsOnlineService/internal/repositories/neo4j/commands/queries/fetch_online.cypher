@@ -25,4 +25,4 @@ RETURN
 				host_name: event_host.name
 			}
 		}
-	) as date_onlieonline
+	) as dates_online

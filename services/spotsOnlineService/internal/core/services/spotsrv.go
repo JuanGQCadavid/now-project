@@ -73,15 +73,13 @@ func (s *Service) Start(spotId string, requestUserId string, durationApproximate
 	}
 
 	// 3. Create Date - Spot association with the RequestUserId as the IS_HOSTING relation
-	dateId, err := s.repository.AssociateDateWithSpot(onlineSpot)
+	err = s.repository.AssociateDateWithSpot(onlineSpot)
 
 	if err != nil {
 		log.Println("An error happen while associating the date with the spot, error: ", err.Error())
 		// log.Printf("OnlineSpot: %+v \n")
 		return domain.OnlineSpot{}, err
 	}
-
-	dateInfo.DateId = dateId
 
 	return onlineSpot, nil
 

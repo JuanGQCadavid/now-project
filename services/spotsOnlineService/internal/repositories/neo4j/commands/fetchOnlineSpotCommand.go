@@ -21,7 +21,7 @@ func NewFetchSpotCommand(spotUUID string) *FetchSpotCommand {
 
 var (
 	//go:embed queries/fetch_online.cypher
-	cypherQuery string
+	fetchCypherQuery string
 )
 
 func (cmd *FetchSpotCommand) Run(tr neo4j.Transaction) (interface{}, error) {
@@ -31,9 +31,7 @@ func (cmd *FetchSpotCommand) Run(tr neo4j.Transaction) (interface{}, error) {
 		"spot_uuid": cmd.spotUUID,
 	}
 
-	log.Println(cypherParams, cypherQuery)
-
-	result, err := tr.Run(cypherQuery, cypherParams)
+	result, err := tr.Run(fetchCypherQuery, cypherParams)
 
 	if err != nil {
 		println("Error at running!", err)
@@ -66,12 +64,14 @@ func (command *FetchSpotCommand) getSpotDataFromResult(record *db.Record) *domai
 
 	// Dates
 	date_online, _ := record.Get("dates_online")
-	dates := make([]domain.SpotDate, 0)
-	if date_online != nil {
-		date_online_array := date_online.([]map[string]interface{})
-		dates := make([]domain.SpotDate, len(date_online_array))
+	dates := []domain.SpotDate{}
 
-		for i, date := range date_online_array {
+	if date_online != nil {
+		date_online_array := date_online.([]interface{})
+
+		for _, dateInterface := range date_online_array {
+
+			date := dateInterface.(map[string]interface{})
 			date_uuid, _ := date["date_uuid"].(string)
 			date_duration_in_seconds, _ := date["date_duration_in_seconds"].(int64)
 			date_start_time, _ := date["date_start_time"].(string)
@@ -80,7 +80,11 @@ func (command *FetchSpotCommand) getSpotDataFromResult(record *db.Record) *domai
 			date_maximun_capacity, _ := date["date_maximun_capacity"].(int)
 			hosted_by, _ := date["hosted_by"].(map[string]string)
 
-			dates[i] = domain.SpotDate{
+			if len(date_uuid) == 0 {
+				continue
+			}
+
+			date_to_append := domain.SpotDate{
 				DateId:                        date_uuid,
 				DurationApproximatedInSeconds: date_duration_in_seconds,
 				StartTime:                     date_start_time,
@@ -92,6 +96,8 @@ func (command *FetchSpotCommand) getSpotDataFromResult(record *db.Record) *domai
 					HostName: hosted_by["host_name"],
 				},
 			}
+
+			dates = append(dates, date_to_append)
 		}
 	}
 
