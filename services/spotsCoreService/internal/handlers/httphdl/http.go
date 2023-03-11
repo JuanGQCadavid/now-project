@@ -113,41 +113,6 @@ func (hdl *HTTPHandler) CreateSpot(context *gin.Context) {
 	context.JSON(200, spot)
 }
 
-// /spots/core/:id/finalize
-func (hdl *HTTPHandler) FinalizeSpot(context *gin.Context) {
-	id := context.Param("id")
-	userRequestedId := context.Request.Header.Get("Authorization")
-	log.Printf("Handler - FinalizeSpot: userRequestedId %s,  Id %s", userRequestedId, id)
-
-	if err := hdl.spotService.FinalizeSpot(id, userRequestedId); err != nil {
-		log.Println("Hanlder - FinalizeSpot - Error", err.Error())
-
-		if err == ports.ErrSpotUserNotOwnerWhenUpdatingSpot {
-			context.AbortWithStatusJSON(401, ErrorMessage{
-				Message:       "The user is not the owner of the spot.",
-				InternalError: err.Error(),
-			})
-			return
-		}
-
-		if err == ports.ErrSpotNotFounded {
-			context.AbortWithStatusJSON(404, ErrorMessage{
-				Message:       "The spot does not exist or it does not below to you.",
-				InternalError: err.Error(),
-			})
-			return
-		}
-
-		context.AbortWithStatusJSON(500, ErrorMessage{
-			Message:       "We face an error while finalizing the spot",
-			InternalError: err.Error(),
-		})
-		return
-	}
-
-	context.Status(204)
-}
-
 // /spots/core/:id/event
 func (hdl *HTTPHandler) UpdateSpotEvent(context *gin.Context) {
 	id := context.Param("id")

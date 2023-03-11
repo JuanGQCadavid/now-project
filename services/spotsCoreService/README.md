@@ -1,5 +1,7 @@
 # Spots core service
 
+## Useful commands
+* air init -> run it in the root of the service
 ## WTF?
 
 It handles Spots at the core level, it is used only for CRUD regarding spots that later are going to be modified by other services as Oline or schedule spots

@@ -4,17 +4,26 @@ import (
 	"log"
 
 	"github.com/JuanGQCadavid/now-project/services/pkgs/credentialsFinder/cmd/ssm"
-	"github.com/JuanGQCadavid/now-project/services/spotsCore/internal/core/services/spotsrv"
-	"github.com/JuanGQCadavid/now-project/services/spotsCore/internal/handlers/httphdl"
-	"github.com/JuanGQCadavid/now-project/services/spotsCore/internal/repositories/neo4jRepository"
-	spotactivityservices "github.com/JuanGQCadavid/now-project/services/spotsCore/internal/repositories/spotActivityServices"
-	"github.com/JuanGQCadavid/now-project/services/spotsCore/pkg/uuidgen"
+	"github.com/JuanGQCadavid/now-project/services/spotsOnlineService/internal/core/services"
+	"github.com/JuanGQCadavid/now-project/services/spotsOnlineService/internal/handlers/httphdl"
+	"github.com/JuanGQCadavid/now-project/services/spotsOnlineService/internal/repositories/neo4j"
 	"github.com/gin-gonic/gin"
 )
 
+// import (
+// 	"log"
+
+// 	"github.com/JuanGQCadavid/now-project/services/pkgs/credentialsFinder/cmd/ssm"
+// 	"github.com/JuanGQCadavid/now-project/services/spotsCore/internal/core/services/spotsrv"
+// 	"github.com/JuanGQCadavid/now-project/services/spotsCore/internal/handlers/httphdl"
+// 	"github.com/JuanGQCadavid/now-project/services/spotsCore/internal/repositories/neo4jRepository"
+// 	spotactivityservices "github.com/JuanGQCadavid/now-project/services/spotsCore/internal/repositories/spotActivityServices"
+// 	"github.com/JuanGQCadavid/now-project/services/spotsCore/pkg/uuidgen"
+// 	"github.com/gin-gonic/gin"
+// )
+
 var (
-	repoSpot     *neo4jRepository.Neo4jSpotRepo
-	repoLocation *spotactivityservices.AWSSpotActivityTopic
+	repoSpot *neo4j.Neo4jRepo
 )
 
 func init() {
@@ -27,21 +36,15 @@ func init() {
 		log.Fatalln(err.Error())
 	}
 
-	repoSpot = neo4jRepository.NewNeo4jSpotRepoWithDriver(neo4jDriver) //menRepository.New()
-	repoLocation = spotactivityservices.NewAWSSpotActivityTopic()
+	repoSpot = neo4j.NewNeo4jRepoWithDriver(neo4jDriver)
 }
 
 func main() {
-
-	uuid := uuidgen.New()
-
-	service := spotsrv.New(repoSpot, repoLocation, uuid)
+	service := services.NewService(repoSpot)
 	httpHandler := httphdl.NewHTTPHandler(service)
 
 	router := gin.Default()
-	router.GET("/spots/core/:id", httpHandler.GetEvent)
-	router.POST("/spots/core/online", httpHandler.GoOnline)
-	router.POST("/spots/core/getSpots", httpHandler.GetEvents)
+	router.POST("/spots/online/:spot_uuid/start", httpHandler.Start)
 
-	router.Run(":8000")
+	router.Run("localhost:8000")
 }

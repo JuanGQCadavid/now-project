@@ -42,7 +42,6 @@ func main() {
 
 	router.POST("/spots/core/", httpHandler.CreateSpot)                 // OK
 	router.POST("/spots/core/bulk/fetch", httpHandler.GetMultipleSpots) // OK
-	router.POST("/spots/core/:id/finalize", httpHandler.FinalizeSpot)   // OK
 	router.GET("/spots/core/:id", httpHandler.GetSpot)                  // OK
 	router.PUT("/spots/core/:id/event", httpHandler.UpdateSpotEvent)    // OK
 	router.PUT("/spots/core/:id/topic", httpHandler.UpdateSpotTopic)    // OK

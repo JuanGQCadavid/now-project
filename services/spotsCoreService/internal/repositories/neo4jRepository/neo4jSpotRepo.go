@@ -109,10 +109,6 @@ func (r Neo4jSpotRepo) GetSpotByUserId(personId string) (domain.Spot, error) {
 	return domain.Spot{}, nil
 }
 
-func (r Neo4jSpotRepo) FinalizeSpot(spotId string) error {
-	return nil
-}
-
 func (r Neo4jSpotRepo) DeleteSpot(spotId string) error {
 	log.Println("Repository: DeleteSpot:", spotId)
 

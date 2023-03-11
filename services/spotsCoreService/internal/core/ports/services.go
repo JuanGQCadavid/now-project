@@ -30,6 +30,5 @@ type SpotService interface {
 	UpdateSpotTopic(spotId string, ownerId string, spotEvent *domain.Topic) error
 
 	// Missing Specification
-	FinalizeSpot(spotId string, requestUserId string) error
 	DeleteSpot(spotId string, requestUserId string) error
 }
