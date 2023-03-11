@@ -1,4 +1,11 @@
-// package httphdl
+package httphdl
+
+import (
+	"log"
+
+	"github.com/JuanGQCadavid/now-project/services/spotsOnlineService/internal/core/ports"
+	"github.com/gin-gonic/gin"
+)
 
 // import (
 // 	"log"
@@ -9,15 +16,79 @@
 // 	"github.com/gin-gonic/gin"
 // )
 
-// type HTTPHandler struct {
-// 	spotService ports.SpotService
-// }
+type HTTPHandler struct {
+	spotOnlineService ports.SpotOnlineService
+}
 
-// func NewHTTPHandler(spotService ports.SpotService) *HTTPHandler {
-// 	return &HTTPHandler{
-// 		spotService: spotService,
-// 	}
-// }
+func NewHTTPHandler(spotOnlineService ports.SpotOnlineService) *HTTPHandler {
+	return &HTTPHandler{
+		spotOnlineService: spotOnlineService,
+	}
+}
+
+/*
+/spots/online/:spot_uuid/start
+
+Input:
+
+	Path variable: spot uuid
+	Body: Date body
+
+Output:
+
+	Date with uudi
+*/
+func (hdl *HTTPHandler) Start(context *gin.Context) {
+	log.Println("HTTPHandler: Start")
+	// Path Variables
+	spot_uudi, is_spot_uudi_present := context.Params.Get("spot_uuid")
+	userId := context.Request.Header.Get("Authorization")
+
+	if len(userId) == 0 {
+		log.Println("User id is missinbg in Authorization header")
+		context.AbortWithStatusJSON(401, ErrorMessage{
+			Message: "We could not found the user",
+		})
+		return
+	}
+
+	// Body
+	var date *SpotDateRequest
+	if err := context.BindJSON(&date); err != nil {
+		log.Println("Spot data is mising in the body")
+		log.Println(err.Error())
+		context.AbortWithStatusJSON(400, ErrorMessage{
+			Message: "The spot data is missing in body.",
+		})
+		return
+	}
+
+	if !is_spot_uudi_present {
+		log.Println("Spot id is mising in the path")
+		context.AbortWithStatusJSON(400, ErrorMessage{
+			Message: "The spot id is missing",
+		})
+		// return not id sent
+		return
+	}
+	log.Printf("\nHandler: Start \n\tSpot UUID: %s,\n\tDate: %+v", spot_uudi, date)
+
+	// context.JSON(200, date)
+
+	// spot, err := hdl.spotService.GoOnline(spot)
+	onlineSpot, err := hdl.spotOnlineService.Start(spot_uudi, userId, date.DurationApproximated, date.MaximunCapacity)
+
+	if err != nil {
+		log.Println("We found an error while calling servide start \n", err.Error())
+		context.AbortWithStatusJSON(400, ErrorMessage{
+			Message:       "We face an error while starting the spot online",
+			InternalError: err.Error(),
+		})
+		return
+	}
+
+	context.JSON(200, onlineSpot)
+}
 
 // func (hdl *HTTPHandler) GetEvent(context *gin.Context) {
 
@@ -70,34 +141,6 @@
 // 	}
 
 // 	context.JSON(200, multipleSpots)
-// }
-
-// func (hdl *HTTPHandler) GoOnline(context *gin.Context) {
-
-// 	spot := domain.Spot{}
-// 	context.BindJSON(&spot)
-
-// 	log.Printf("\nHandler: GoOnline \n\tSpot: %+v", spot)
-
-// 	if !hdl.isSpotCorrect(spot) {
-// 		context.AbortWithStatusJSON(400, ErrorMessage{
-// 			Message: "The spot is missing some data.",
-// 		})
-// 		return
-// 	}
-
-// 	spot, err := hdl.spotService.GoOnline(spot)
-
-// 	if err != nil {
-// 		log.Println(err)
-// 		context.AbortWithStatusJSON(400, ErrorMessage{
-// 			Message:       "We face an error while Going online",
-// 			InternalError: err.Error(),
-// 		})
-// 		return
-// 	}
-
-// 	context.JSON(200, spot)
 // }
 
 // func (hdl *HTTPHandler) getOuputFormat(query string) ports.OutputFormat {

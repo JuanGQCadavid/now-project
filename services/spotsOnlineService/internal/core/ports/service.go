@@ -1,6 +1,10 @@
 package ports
 
-import "errors"
+import (
+	"errors"
+
+	"github.com/JuanGQCadavid/now-project/services/spotsOnlineService/internal/core/domain"
+)
 
 var (
 	ErrOnRepository        = errors.New("we found a problem while requesting to the repository")
@@ -10,7 +14,7 @@ var (
 )
 
 type SpotOnlineService interface {
-	Start(spotId string, requestUserId string)
+	Start(spotId string, requestUserId string, durationApproximated int64, maximunCapacity int) (domain.OnlineSpot, error)
 	Stop(spotId string, requestUserId string)
 	Resume(spotId string, requestUserId string)
 	Finalize(spotId string, requestUserId string)

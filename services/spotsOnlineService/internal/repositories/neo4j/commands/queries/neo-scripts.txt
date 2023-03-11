@@ -1,6 +1,6 @@
 
 ---------
-MERGE (event:Event {UUID: "UID_A-1234" })
+MERGE (event:Event {UUID: "UID_E-1234" })
 ON CREATE
     SET event.description = "DESC"
     SET event.maximunCapacty = 60
@@ -11,7 +11,7 @@ ON CREATE
     SET place.lat = toFloat(12.34)
     SET place.lon = toFloat(12.56)
     SET place.name = "I'M JUAN"
-MERGE (host:Person {phoneNumber:"+573013475995"})
+MERGE (host:Person {phoneNumber:"+573137590102"})
 ON CREATE 
     SET host.name = "DON JUAN "
     SET host.id = "1234556778899"
