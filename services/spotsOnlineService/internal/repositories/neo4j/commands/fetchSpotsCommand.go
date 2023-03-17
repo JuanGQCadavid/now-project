@@ -9,29 +9,29 @@ import (
 	"github.com/neo4j/neo4j-go-driver/v4/neo4j/db"
 )
 
-type FetchSpotCommand struct {
+type FetchSposCommand struct {
 	spotUUID string
 }
 
-func NewFetchSpotCommand(spotUUID string) *FetchSpotCommand {
-	return &FetchSpotCommand{
+func NewFetchSposCommand(spotUUID string) *FetchSposCommand {
+	return &FetchSposCommand{
 		spotUUID: spotUUID,
 	}
 }
 
 var (
-	//go:embed queries/fetch_online.cypher
-	fetchCypherQuery string
+	//go:embed queries/fetch_spots_date.cypher
+	fetchAllCypherQuery string
 )
 
-func (cmd *FetchSpotCommand) Run(tr neo4j.Transaction) (interface{}, error) {
-	log.Printf("FetchSpotCommand - Run")
+func (cmd *FetchSposCommand) Run(tr neo4j.Transaction) (interface{}, error) {
+	log.Printf("FetchSposCommand - Run")
 
 	cypherParams := map[string]interface{}{
 		"spot_uuid": cmd.spotUUID,
 	}
-
-	result, err := tr.Run(fetchCypherQuery, cypherParams)
+	log.Println(fetchAllCypherQuery)
+	result, err := tr.Run(fetchAllCypherQuery, cypherParams)
 
 	if err != nil {
 		println("Error at running!", err)
@@ -47,7 +47,7 @@ func (cmd *FetchSpotCommand) Run(tr neo4j.Transaction) (interface{}, error) {
 	return *onlineSpot, nil
 }
 
-func (command *FetchSpotCommand) getSpotDataFromResult(record *db.Record) *domain.OnlineSpot {
+func (command *FetchSposCommand) getSpotDataFromResult(record *db.Record) *domain.OnlineSpot {
 	log.Printf("getSpotDataFromResult -> \n\t%+v", record)
 
 	// Event
@@ -73,18 +73,34 @@ func (command *FetchSpotCommand) getSpotDataFromResult(record *db.Record) *domai
 
 			date := dateInterface.(map[string]interface{})
 			date_uuid, _ := date["date_uuid"].(string)
+			date_status, _ := date["date_at_status"].(string)
+			date_spot_status := domain.ONLINE_SPOT
+
+			if date_status == string(domain.ONLINE_SPOT) {
+				date_spot_status = domain.ONLINE_SPOT
+			} else if date_status == string(domain.FINALIZED_SPOT) {
+				date_spot_status = domain.FINALIZED_SPOT
+			} else if date_status == string(domain.PAUSED_SPOT) {
+				date_spot_status = domain.PAUSED_SPOT
+			}
+
+			date_since, _ := date["date_at_since"].(int64)
 			date_duration_in_seconds, _ := date["date_duration_in_seconds"].(int64)
 			date_start_time, _ := date["date_start_time"].(string)
 			date_date, _ := date["date_date"].(string)
 			date_confirmed, _ := date["date_confirmed"].(bool)
-			date_maximun_capacity, _ := date["date_maximun_capacity"].(int)
-			hosted_by, _ := date["hosted_by"].(map[string]string)
+			date_maximun_capacity, _ := date["date_maximun_capacity"].(int64)
+			hosted_by, _ := date["hosted_by"].(map[string]interface{})
+
+			log.Println(hosted_by)
 
 			if len(date_uuid) == 0 {
 				continue
 			}
 
 			date_to_append := domain.SpotDate{
+				Status:                        date_spot_status,
+				Since:                         date_since,
 				DateId:                        date_uuid,
 				DurationApproximatedInSeconds: date_duration_in_seconds,
 				StartTime:                     date_start_time,
@@ -92,8 +108,8 @@ func (command *FetchSpotCommand) getSpotDataFromResult(record *db.Record) *domai
 				Confirmed:                     date_confirmed,
 				MaximunCapacty:                date_maximun_capacity,
 				HostInfo: domain.HostInfo{
-					HostId:   hosted_by["host_id"],
-					HostName: hosted_by["host_name"],
+					HostId:   hosted_by["host_id"].(string),
+					HostName: hosted_by["host_name"].(string),
 				},
 			}
 

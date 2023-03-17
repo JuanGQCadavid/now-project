@@ -9,4 +9,4 @@ ON CREATE
 	SET date.Confirmed = $date_confirmed
 	SET date.MaximunCapacty = $date_maximun_capacity
 MERGE 
-(host)-[:IS_HOSTING]->(date)-[:BELONGS_TO]->(event)
+(host)-[:HOST]->(date)-[:AT {status: $status, timestamp: $timestamp }]->(event)

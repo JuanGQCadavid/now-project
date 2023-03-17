@@ -7,15 +7,17 @@ import (
 )
 
 var (
-	ErrOnRepository        = errors.New("we found a problem while requesting to the repository")
-	ErrUserIsNotTheOwner   = errors.New("the user is not the owner of the spot")
-	ErrSpotNotFound        = errors.New("the spot does not exist")
-	ErrSpotIsAlreadyOnline = errors.New("the spot is already online")
+	ErrOnRepository               = errors.New("we found a problem while requesting to the repository")
+	ErrUserIsNotTheOwner          = errors.New("the user is not the owner of the spot")
+	ErrSpotNotFound               = errors.New("the spot does not exist")
+	ErrSpotIsAlreadyOnline        = errors.New("the spot is already online")
+	ErrUserIsNotHostingAnDate     = errors.New("The user is not hosting an event in the spot")
+	ErrUserDoesNotHaveStoppedDate = errors.New("The user does not have a stopped date")
 )
 
 type SpotOnlineService interface {
-	Start(spotId string, requestUserId string, durationApproximated int64, maximunCapacity int) (domain.OnlineSpot, error)
-	Stop(spotId string, requestUserId string)
-	Resume(spotId string, requestUserId string)
-	Finalize(spotId string, requestUserId string)
+	Start(spotId string, requestUserId string, durationApproximated int64, maximunCapacity int64) (domain.OnlineSpot, error)
+	Stop(spotId string, requestUserId string) error
+	Resume(spotId string, requestUserId string) error
+	Finalize(spotId string, requestUserId string) error
 }

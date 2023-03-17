@@ -45,6 +45,9 @@ func main() {
 
 	router := gin.Default()
 	router.POST("/spots/online/:spot_uuid/start", httpHandler.Start)
+	router.POST("/spots/online/:spot_uuid/stop", httpHandler.Stop)
+	router.POST("/spots/online/:spot_uuid/resume", httpHandler.Resume)
+	router.POST("/spots/online/:spot_uuid/finalize", httpHandler.Finalize)
 
 	router.Run("localhost:8000")
 }

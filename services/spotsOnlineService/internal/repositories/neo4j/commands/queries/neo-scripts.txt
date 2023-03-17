@@ -19,7 +19,7 @@ MERGE (host)-[:OWNS]->(event)-[:ON]->(place)
 
 
 MATCH 
-(host:Person {phoneNumber:"+573013475995"})-[:OWNS]->(event:Event {UUID: "UID_1234456" })
+(host:Person)-[:OWNS]->(event:Event {UUID: "ed9c65fc-97cd-4291-926c-6e35d8717c2b" })
 MERGE 
 (date:Date {UUID: "date_uudi"})
 ON CREATE
@@ -34,20 +34,18 @@ ON CREATE
 	SET place.lat = toFloat(12.34)
 	SET place.lon = toFloat(12.56)
 	SET place.name = "I'M JUAN"
-MERGE 
-(place)<-[:ON]-(date)-[:BELONGS_TO]->(event)
 MERGE
-(date)<-[:IS_HOSTING]-(host)
+(date)-[:AT {status: "ONLINE", timestamp: 12132423423423423 }]->(date)<-[:HOST]-(host)
 
 
 MATCH
-	(owner:Person)-[:OWNS]->(event:Event {UUID : "UID_1234456"})-[:ON]->(place:Place)
+	(owner:Person)-[:OWNS]->(event:Event {UUID : "ed9c65fc-97cd-4291-926c-6e35d8717c2b"})-[:ON]->(place:Place)
 WHERE NOT 
 	(event)-[:IS_DELETED]->(event)
 OPTIONAL MATCH 
 	(tags:Topic)-[tagged:TAGGED]->(event)
 OPTIONAL MATCH 
-	(event)<-[:BELONGS_TO]-(date:Date)<-[:IS_HOSTING]-(event_host:Person)
+	(event)<-[:AT]-(date:Date)<-[:HOST]-(event_host:Person)
 RETURN
 	event.description as event_desc,
 	event.name as event_name,
@@ -108,3 +106,19 @@ RETURN
 		  ]
 		}
 	  ]
+
+
+getSpotDataFromResult -> 
+        &{Values:[dcc67033-51ff-4ca0-a714-d7af68977da8 Place Laureles -75.589868 Place_Laureles 6.245887 33ddab28-006b-4790-bf42-1832f90dc8d4 [map[date_confirmed:true date_date:2023-03-15 20:30:34.945134 -0500 -05 m=+54.886548417 date_duration_in_seconds:300 date_maximun_capacity:58 date_start_time:2023-03-15 20:30:34.945134 -0500 -05 m=+54.886548417 date_uuid:5ba5179a-802b-438d-812c-b3c02928a9f3 hosted_by:map[host_id:33ddab28-006b-4790-bf42-1832f90dc8d4 host_name:karol G]]]] Keys:[event_UUID place_name place_lon place_provider_id place_lat host_id dates_online]}
+2023/03/15 20:31:21 
+{
+	SpotInfo:{
+		SpotId:dcc67033-51ff-4ca0-a714-d7af68977da8 OwnerId:33ddab28-006b-4790-bf42-1832f90dc8d4} 
+		DatesInfo:[
+			{DateId:5ba5179a-802b-438d-812c-b3c02928a9f3 
+			DurationApproximatedInSeconds:300 
+			StartTime:2023-03-15 20:30:34.945134 -0500 -05 m=+54.886548417 
+			Date:2023-03-15 20:30:34.945134 -0500 -05 m=+54.886548417 
+			Confirmed:true 
+			MaximunCapacty:0 
+			HostInfo:{HostId: HostName:}}] PlaceInfo:{Name:Place Laureles Lat:6.245887 Lon:-75.589868 MapProviderId:Place_Laureles}}

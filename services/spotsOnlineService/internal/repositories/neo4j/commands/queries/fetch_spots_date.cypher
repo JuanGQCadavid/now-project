@@ -4,7 +4,7 @@ MATCH
 WHERE NOT 
 	(event)-[:IS_DELETED]->(event)
 OPTIONAL MATCH 
-	(event)<-[:BELONGS_TO]-(date:Date)<-[:IS_HOSTING]-(event_host:Person)
+	(event)<-[at:AT]-(date:Date)<-[:HOST]-(event_host:Person)
 RETURN
 	event.UUID as event_UUID,
 	place.name as place_name,
@@ -14,6 +14,8 @@ RETURN
 	owner.id as host_id,
 	collect(
 		{
+			date_at_status: at.status,
+			date_at_since: at.timestamp,
 			date_uuid: date.UUID,
 			date_duration_in_seconds: date.DurationApproximatedInSeconds,
 			date_start_time: date.StartTime,

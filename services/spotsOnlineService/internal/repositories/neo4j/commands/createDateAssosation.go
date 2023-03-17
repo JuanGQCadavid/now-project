@@ -3,13 +3,15 @@ package commands
 import (
 	_ "embed"
 	"log"
+	"time"
 
 	"github.com/JuanGQCadavid/now-project/services/spotsOnlineService/internal/core/domain"
 	"github.com/neo4j/neo4j-go-driver/v4/neo4j"
 )
 
 type CreateDateAssociationCommand struct {
-	spot domain.OnlineSpot
+	spot   domain.OnlineSpot
+	status domain.SpotStatus
 }
 
 var (
@@ -17,9 +19,10 @@ var (
 	associateCypherQuery string
 )
 
-func NewCreateDateAssociationCommand(spot domain.OnlineSpot) *CreateDateAssociationCommand {
+func NewCreateDateAssociationCommand(spot domain.OnlineSpot, status domain.SpotStatus) *CreateDateAssociationCommand {
 	return &CreateDateAssociationCommand{
-		spot: spot,
+		spot:   spot,
+		status: status,
 	}
 }
 
@@ -33,6 +36,8 @@ func (cmd *CreateDateAssociationCommand) Run(tr neo4j.Transaction) (interface{},
 		"date_date":                 cmd.spot.DatesInfo[0].Date,
 		"date_confirmed":            cmd.spot.DatesInfo[0].Confirmed,
 		"date_maximun_capacity":     cmd.spot.DatesInfo[0].MaximunCapacty,
+		"status":                    cmd.status,
+		"timestamp":                 time.Now().Unix(),
 	}
 
 	_, err := tr.Run(associateCypherQuery, cyperParams)

@@ -90,6 +90,162 @@ func (hdl *HTTPHandler) Start(context *gin.Context) {
 	context.JSON(200, onlineSpot)
 }
 
+/*
+/spots/online/:spot_uuid/stop
+
+Input:
+
+	Path variable: spot uuid
+
+Output:
+
+	204 -> No content
+*/
+func (hdl *HTTPHandler) Stop(context *gin.Context) {
+	log.Println("HTTPHandler: Stop")
+	// Path Variables
+	spot_uudi, is_spot_uudi_present := context.Params.Get("spot_uuid")
+	userId := context.Request.Header.Get("Authorization")
+
+	if len(userId) == 0 {
+		log.Println("User id is missinbg in Authorization header")
+		context.AbortWithStatusJSON(401, ErrorMessage{
+			Message: "We could not found the user",
+		})
+		return
+	}
+
+	if !is_spot_uudi_present {
+		log.Println("Spot id is mising in the path")
+		context.AbortWithStatusJSON(400, ErrorMessage{
+			Message: "The spot id is missing",
+		})
+		// return not id sent
+		return
+	}
+	log.Printf("\nHandler: Stop \n\tSpot UUID: %s,\n\tuserId: %+v", spot_uudi, userId)
+
+	// context.JSON(200, date)
+
+	// spot, err := hdl.spotService.GoOnline(spot)
+	err := hdl.spotOnlineService.Stop(spot_uudi, userId)
+
+	if err != nil {
+		log.Println("We found an error while calling servide stop \n", err.Error())
+		context.AbortWithStatusJSON(400, ErrorMessage{
+			Message:       "We face an error while stopping the spot",
+			InternalError: err.Error(),
+		})
+		return
+	}
+
+	context.Status(204)
+}
+
+/*
+/spots/online/:spot_uuid/finalize
+
+Input:
+
+	Path variable: spot uuid
+
+Output:
+
+	204 -> No content
+*/
+func (hdl *HTTPHandler) Finalize(context *gin.Context) {
+	log.Println("HTTPHandler: Finalize")
+	// Path Variables
+	spot_uudi, is_spot_uudi_present := context.Params.Get("spot_uuid")
+	userId := context.Request.Header.Get("Authorization")
+
+	if len(userId) == 0 {
+		log.Println("User id is missinbg in Authorization header")
+		context.AbortWithStatusJSON(401, ErrorMessage{
+			Message: "We could not found the user",
+		})
+		return
+	}
+
+	if !is_spot_uudi_present {
+		log.Println("Spot id is mising in the path")
+		context.AbortWithStatusJSON(400, ErrorMessage{
+			Message: "The spot id is missing",
+		})
+		// return not id sent
+		return
+	}
+	log.Printf("\nHandler: Finalize \n\tSpot UUID: %s,\n\tuserId: %+v", spot_uudi, userId)
+
+	// context.JSON(200, date)
+
+	// spot, err := hdl.spotService.GoOnline(spot)
+	err := hdl.spotOnlineService.Finalize(spot_uudi, userId)
+
+	if err != nil {
+		log.Println("We found an error while calling servide Finalize \n", err.Error())
+		context.AbortWithStatusJSON(400, ErrorMessage{
+			Message:       "We face an error while finalizing the spot",
+			InternalError: err.Error(),
+		})
+		return
+	}
+
+	context.Status(204)
+}
+
+/*
+/spots/online/:spot_uuid/stop
+
+Input:
+
+	Path variable: spot uuid
+
+Output:
+
+	204 -> No content
+*/
+func (hdl *HTTPHandler) Resume(context *gin.Context) {
+	log.Println("HTTPHandler: Resume")
+	// Path Variables
+	spot_uudi, is_spot_uudi_present := context.Params.Get("spot_uuid")
+	userId := context.Request.Header.Get("Authorization")
+
+	if len(userId) == 0 {
+		log.Println("User id is missinbg in Authorization header")
+		context.AbortWithStatusJSON(401, ErrorMessage{
+			Message: "We could not found the user",
+		})
+		return
+	}
+
+	if !is_spot_uudi_present {
+		log.Println("Spot id is mising in the path")
+		context.AbortWithStatusJSON(400, ErrorMessage{
+			Message: "The spot id is missing",
+		})
+		// return not id sent
+		return
+	}
+	log.Printf("\nHandler: Resume \n\tSpot UUID: %s,\n\tuserId: %+v", spot_uudi, userId)
+
+	// context.JSON(200, date)
+
+	// spot, err := hdl.spotService.GoOnline(spot)
+	err := hdl.spotOnlineService.Resume(spot_uudi, userId)
+
+	if err != nil {
+		log.Println("We found an error while calling servide Resume \n", err.Error())
+		context.AbortWithStatusJSON(400, ErrorMessage{
+			Message:       "We face an error while resuming the spot",
+			InternalError: err.Error(),
+		})
+		return
+	}
+
+	context.Status(204)
+}
+
 // func (hdl *HTTPHandler) GetEvent(context *gin.Context) {
 
 // 	id := context.Param("id")

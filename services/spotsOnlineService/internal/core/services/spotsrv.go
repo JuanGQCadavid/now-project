@@ -19,9 +19,149 @@ func NewService(repository ports.Repository) *Service {
 	}
 }
 
-func (s *Service) Stop(spotId string, requestUserId string)     {}
-func (s *Service) Resume(spotId string, requestUserId string)   {}
-func (s *Service) Finalize(spotId string, requestUserId string) {}
+func (s *Service) fetchSpotsByStatus(spotId string, requestUserId string, flags domain.SpotStateFlags) (domain.OnlineSpot, error) {
+
+	spots, err := s.repository.FetchSpots(spotId)
+
+	if err != nil {
+		log.Println("We found an error while fetching the spot owner\n\t\t", err.Error())
+		return domain.OnlineSpot{}, err
+	}
+
+	if len(spots.SpotInfo.SpotId) == 0 {
+		log.Println("The spot does not exist")
+		return domain.OnlineSpot{}, ports.ErrSpotNotFound
+	}
+
+	if spots.SpotInfo.OwnerId != requestUserId {
+		log.Println("The owner id is differente than the spot owner")
+		return domain.OnlineSpot{}, ports.ErrUserIsNotTheOwner
+	}
+	datesToReturn := make([]domain.SpotDate, len(spots.DatesInfo))
+	appended_i := 0
+
+	for _, date := range spots.DatesInfo {
+		to_append := false
+		if (date.Status == domain.ONLINE_SPOT) && (flags&domain.FlagOnline == domain.FlagOnline) {
+			to_append = true
+		}
+		if (date.Status == domain.FINALIZED_SPOT) && (flags&domain.FlagFinalized == domain.FlagFinalized) {
+			to_append = true
+		}
+		if (date.Status == domain.PAUSED_SPOT) && (flags&domain.FlagPaused == domain.FlagPaused) {
+			to_append = true
+		}
+
+		if to_append {
+			datesToReturn[appended_i] = date
+			appended_i++
+		}
+	}
+
+	spots.DatesInfo = datesToReturn
+	return spots, nil
+}
+
+func (s *Service) Finalize(spotId string, requestUserId string) error {
+	log.Printf("Service Finalize: spotId %s, requestUserId: %s \n", spotId, requestUserId)
+
+	// 1. Verify that the user is the owner of the spot
+	spots, err := s.fetchSpotsByStatus(spotId, requestUserId, domain.FlagOnline|domain.FlagPaused)
+
+	if err != nil {
+		log.Println("We found an error while verifying the spot\n\t\t", err.Error())
+		return err
+	}
+
+	var dateIdToStop string
+	for _, date := range spots.DatesInfo {
+		if date.HostInfo.HostId == requestUserId {
+			dateIdToStop = date.DateId
+		}
+	}
+
+	if len(dateIdToStop) == 0 {
+		return ports.ErrUserIsNotHostingAnDate
+	}
+
+	if err = s.repository.FinalizeDateOnSpot(spotId, dateIdToStop); err != nil {
+		log.Printf("We foinf an error while finalizing the date %s on spot %s \n", spotId, dateIdToStop)
+		return err
+	}
+
+	return nil
+
+}
+func (s *Service) Resume(spotId string, requestUserId string) error {
+	log.Printf("Service Resume: spotId %s, requestUserId: %s \n", spotId, requestUserId)
+
+	// 1. Verify that the user is the owner of the spot
+	pausedSpot, err := s.fetchAndVerifySpot(spotId, requestUserId, domain.PAUSED_SPOT)
+
+	if err != nil {
+		log.Println("We found an error while verifying the spot\n\t\t", err.Error())
+		return err
+	}
+
+	var dateIdToStop string
+	for _, date := range pausedSpot.DatesInfo {
+		if date.HostInfo.HostId == requestUserId {
+			dateIdToStop = date.DateId
+		}
+	}
+
+	if len(dateIdToStop) == 0 {
+		return ports.ErrUserDoesNotHaveStoppedDate
+	}
+
+	if err = s.repository.ResumeDateOnSpo(spotId, dateIdToStop); err != nil {
+		log.Printf("We foinf an error while resuming the date %s on spot %s \n", spotId, dateIdToStop)
+		return err
+	}
+
+	return nil
+}
+
+/*
+	The user is going to stop the event he is hosting at the spot.
+
+	Procedure:
+
+	1. Verify that he is the owner of the spot
+
+	2. Check the dates associated, for now just stop the one
+		associated with is id.
+*/
+
+func (s *Service) Stop(spotId string, requestUserId string) error {
+	log.Printf("Service Stop: spotId %s, requestUserId: %s \n", spotId, requestUserId)
+
+	// 1. Verify that the user is the owner of the spot
+	onlineSpot, err := s.fetchAndVerifySpot(spotId, requestUserId, domain.ONLINE_SPOT)
+
+	if err != nil {
+		log.Println("We found an error while verifying the spot\n\t\t", err.Error())
+		return err
+	}
+
+	var dateIdToStop string
+	for _, date := range onlineSpot.DatesInfo {
+		if date.HostInfo.HostId == requestUserId {
+			dateIdToStop = date.DateId
+		}
+	}
+
+	if len(dateIdToStop) == 0 {
+		return ports.ErrUserIsNotHostingAnDate
+	}
+
+	if err = s.repository.StopDateOnSpot(spotId, dateIdToStop); err != nil {
+		log.Printf("We foinf an error while stoping the date %s on spot %s \n", spotId, dateIdToStop)
+		return err
+	}
+
+	return nil
+}
 
 /*
 	The user should not be hosting more than two events at the same time
@@ -37,11 +177,11 @@ func (s *Service) Finalize(spotId string, requestUserId string) {}
 
 */
 
-func (s *Service) Start(spotId string, requestUserId string, durationApproximated int64, maximunCapacity int) (domain.OnlineSpot, error) {
+func (s *Service) Start(spotId string, requestUserId string, durationApproximated int64, maximunCapacity int64) (domain.OnlineSpot, error) {
 	log.Printf("Service Start: spotId %s, requestUserId: %s \n", spotId, requestUserId)
 
 	// 1. Verify that the user is the owner of the spot
-	onlineSpot, err := s.fetchAndVerifySpot(spotId, requestUserId)
+	onlineSpot, err := s.fetchAndVerifySpot(spotId, requestUserId, domain.ONLINE_SPOT)
 
 	if err != nil {
 		log.Println("We found an error while verifying the spot\n\t\t", err.Error())
@@ -85,10 +225,10 @@ func (s *Service) Start(spotId string, requestUserId string, durationApproximate
 
 }
 
-func (s *Service) fetchAndVerifySpot(spotId string, requestUserId string) (domain.OnlineSpot, error) {
+func (s *Service) fetchAndVerifySpot(spotId string, requestUserId string, spotStatus domain.SpotStatus) (domain.OnlineSpot, error) {
 	log.Printf("Service fetchAndVerifySpot: spotId %s, requestUserId: %s \n", spotId, requestUserId)
 
-	onlineSpot, err := s.repository.FetchOnlineSpot(spotId)
+	onlineSpot, err := s.repository.FetchSpotWithStatus(spotId, spotStatus)
 
 	if err != nil {
 		log.Println("We found an error while fetching the spot owner\n\t\t", err.Error())
