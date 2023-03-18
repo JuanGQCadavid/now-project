@@ -101,8 +101,10 @@ func (command *FetchSpotWithDatesCommand) getSpotDataFromResult(record *db.Recor
 				DurationApproximatedInSeconds: date_duration_in_seconds,
 				StartTime:                     date_start_time,
 				Date:                          date_date,
-				Confirmed:                     date_confirmed,
-				MaximunCapacty:                date_maximun_capacity,
+				State: domain.SpotState{
+					Confirmed: date_confirmed,
+				},
+				MaximunCapacty: date_maximun_capacity,
 				HostInfo: domain.HostInfo{
 					HostId:   hosted_by["host_id"].(string),
 					HostName: hosted_by["host_name"].(string),

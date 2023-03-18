@@ -35,10 +35,7 @@ func init() {
 	httpHandler := httphdl.NewHTTPHandler(service)
 
 	router := gin.Default()
-	router.POST("/spots/online/:spot_uuid/start", httpHandler.Start)
-	router.POST("/spots/online/:spot_uuid/stop", httpHandler.Stop)
-	router.POST("/spots/online/:spot_uuid/resume", httpHandler.Resume)
-	router.POST("/spots/online/:spot_uuid/finalize", httpHandler.Finalize)
+	httpHandler.InjectDefaultPaths(router)
 
 	ginLambda = ginadapter.New(router)
 }

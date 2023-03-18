@@ -19,6 +19,28 @@ func NewService(repository ports.Repository) *Service {
 	}
 }
 
+func (s *Service) filterDates(spots domain.OnlineSpot, flags domain.SpotStateFlags) []domain.SpotDate {
+	datesToReturn := make([]domain.SpotDate, 0)
+
+	for _, date := range spots.DatesInfo {
+		to_append := false
+		if (date.State.Status == domain.ONLINE_SPOT) && (flags&domain.FlagOnline == domain.FlagOnline) {
+			to_append = true
+		}
+		if (date.State.Status == domain.FINALIZED_SPOT) && (flags&domain.FlagFinalized == domain.FlagFinalized) {
+			to_append = true
+		}
+		if (date.State.Status == domain.PAUSED_SPOT) && (flags&domain.FlagPaused == domain.FlagPaused) {
+			to_append = true
+		}
+
+		if to_append {
+			datesToReturn = append(datesToReturn, date)
+		}
+	}
+	return datesToReturn
+
+}
 func (s *Service) fetchSpotsByStatus(spotId string, requestUserId string, flags domain.SpotStateFlags) (domain.OnlineSpot, error) {
 
 	spots, err := s.repository.FetchSpots(spotId)
@@ -37,29 +59,27 @@ func (s *Service) fetchSpotsByStatus(spotId string, requestUserId string, flags 
 		log.Println("The owner id is differente than the spot owner")
 		return domain.OnlineSpot{}, ports.ErrUserIsNotTheOwner
 	}
-	datesToReturn := make([]domain.SpotDate, len(spots.DatesInfo))
-	appended_i := 0
 
-	for _, date := range spots.DatesInfo {
-		to_append := false
-		if (date.Status == domain.ONLINE_SPOT) && (flags&domain.FlagOnline == domain.FlagOnline) {
-			to_append = true
-		}
-		if (date.Status == domain.FINALIZED_SPOT) && (flags&domain.FlagFinalized == domain.FlagFinalized) {
-			to_append = true
-		}
-		if (date.Status == domain.PAUSED_SPOT) && (flags&domain.FlagPaused == domain.FlagPaused) {
-			to_append = true
-		}
+	spots.DatesInfo = s.filterDates(spots, flags)
+	return spots, nil
+}
 
-		if to_append {
-			datesToReturn[appended_i] = date
-			appended_i++
-		}
+func (s *Service) GetDates(spotId string, flags domain.SpotStateFlags) (domain.OnlineSpot, error) {
+	log.Printf("Service GetDates: spotId %s, flags: %+v \n", spotId, flags)
+	spots, err := s.repository.FetchSpots(spotId)
+
+	if err != nil {
+		log.Println("We found an error while fetching the spot owner\n\t\t", err.Error())
+		return domain.OnlineSpot{}, err
 	}
 
-	spots.DatesInfo = datesToReturn
-	return spots, nil
+	if len(spots.SpotInfo.SpotId) == 0 {
+		log.Println("The spot does not exist")
+		return domain.OnlineSpot{}, ports.ErrSpotNotFound
+	}
+
+	spots.DatesInfo = s.filterDates(spots, flags)
+	return spots, err
 }
 
 func (s *Service) Finalize(spotId string, requestUserId string) error {
@@ -200,9 +220,11 @@ func (s *Service) Start(spotId string, requestUserId string, durationApproximate
 		DateId:                        s.generateUUID(),
 		DurationApproximatedInSeconds: durationApproximated,
 		StartTime:                     creationTime,
-		Confirmed:                     true,
-		MaximunCapacty:                maximunCapacity,
-		Date:                          creationTime,
+		State: domain.SpotState{
+			Confirmed: true,
+		},
+		MaximunCapacty: maximunCapacity,
+		Date:           creationTime,
 		HostInfo: domain.HostInfo{
 			HostId: requestUserId,
 		},

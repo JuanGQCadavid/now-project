@@ -99,14 +99,18 @@ func (command *FetchSposCommand) getSpotDataFromResult(record *db.Record) *domai
 			}
 
 			date_to_append := domain.SpotDate{
-				Status:                        date_spot_status,
-				Since:                         date_since,
+				State: domain.SpotState{
+					Status:    date_spot_status,
+					Since:     date_since,
+					Confirmed: date_confirmed,
+				},
+
 				DateId:                        date_uuid,
 				DurationApproximatedInSeconds: date_duration_in_seconds,
 				StartTime:                     date_start_time,
 				Date:                          date_date,
-				Confirmed:                     date_confirmed,
-				MaximunCapacty:                date_maximun_capacity,
+
+				MaximunCapacty: date_maximun_capacity,
 				HostInfo: domain.HostInfo{
 					HostId:   hosted_by["host_id"].(string),
 					HostName: hosted_by["host_name"].(string),

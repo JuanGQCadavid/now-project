@@ -20,4 +20,5 @@ type SpotOnlineService interface {
 	Stop(spotId string, requestUserId string) error
 	Resume(spotId string, requestUserId string) error
 	Finalize(spotId string, requestUserId string) error
+	GetDates(spotId string, flags domain.SpotStateFlags) (domain.OnlineSpot, error)
 }

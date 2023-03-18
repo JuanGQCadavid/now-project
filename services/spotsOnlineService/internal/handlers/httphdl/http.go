@@ -3,6 +3,7 @@ package httphdl
 import (
 	"log"
 
+	"github.com/JuanGQCadavid/now-project/services/spotsOnlineService/internal/core/domain"
 	"github.com/JuanGQCadavid/now-project/services/spotsOnlineService/internal/core/ports"
 	"github.com/gin-gonic/gin"
 )
@@ -24,6 +25,41 @@ func NewHTTPHandler(spotOnlineService ports.SpotOnlineService) *HTTPHandler {
 	return &HTTPHandler{
 		spotOnlineService: spotOnlineService,
 	}
+}
+
+func (hdl *HTTPHandler) InjectDefaultPaths(router *gin.Engine) {
+	router.GET("/spots/online/:spot_uuid/", hdl.Get)
+	router.POST("/spots/online/:spot_uuid/start", hdl.Start)
+	router.POST("/spots/online/:spot_uuid/stop", hdl.Stop)
+	router.POST("/spots/online/:spot_uuid/resume", hdl.Resume)
+	router.POST("/spots/online/:spot_uuid/finalize", hdl.Finalize)
+}
+
+func (hdl *HTTPHandler) Get(context *gin.Context) {
+	// Path Variables
+	spot_uudi, is_spot_uudi_present := context.Params.Get("spot_uuid")
+
+	if !is_spot_uudi_present {
+		log.Println("Spot id is mising in the path")
+		context.AbortWithStatusJSON(400, ErrorMessage{
+			Message: "The spot id is missing",
+		})
+		// return not id sent
+		return
+	}
+
+	spotWitjDates, err := hdl.spotOnlineService.GetDates(spot_uudi, domain.FlagFinalized|domain.FlagOnline|domain.FlagPaused)
+
+	if err != nil {
+		log.Println("We found an error while calling servide start \n", err.Error())
+		context.AbortWithStatusJSON(400, ErrorMessage{
+			Message:       "We face an error while starting the spot online",
+			InternalError: err.Error(),
+		})
+		return
+	}
+
+	context.JSON(200, spotWitjDates)
 }
 
 /*
