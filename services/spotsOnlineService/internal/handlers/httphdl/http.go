@@ -30,9 +30,9 @@ func NewHTTPHandler(spotOnlineService ports.SpotOnlineService) *HTTPHandler {
 func (hdl *HTTPHandler) InjectDefaultPaths(router *gin.Engine) {
 	router.GET("/spots/online/:spot_uuid/", hdl.Get)
 	router.POST("/spots/online/:spot_uuid/start", hdl.Start)
-	router.POST("/spots/online/:spot_uuid/stop", hdl.Stop)
-	router.POST("/spots/online/:spot_uuid/resume", hdl.Resume)
-	router.POST("/spots/online/:spot_uuid/finalize", hdl.Finalize)
+	router.PUT("/spots/online/:spot_uuid/stop", hdl.Stop)
+	router.PUT("/spots/online/:spot_uuid/resume", hdl.Resume)
+	router.PUT("/spots/online/:spot_uuid/finalize", hdl.Finalize)
 }
 
 func (hdl *HTTPHandler) Get(context *gin.Context) {
