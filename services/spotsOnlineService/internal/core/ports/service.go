@@ -10,7 +10,7 @@ var (
 	ErrOnRepository               = errors.New("we found a problem while requesting to the repository")
 	ErrUserIsNotTheOwner          = errors.New("the user is not the owner of the spot")
 	ErrSpotNotFound               = errors.New("the spot does not exist")
-	ErrSpotIsAlreadyOnline        = errors.New("the spot is already online")
+	ErrSpotIsAlreadyOnline        = errors.New("the spot is already online or there is a paused spot")
 	ErrUserIsNotHostingAnDate     = errors.New("The user is not hosting an event in the spot")
 	ErrUserDoesNotHaveStoppedDate = errors.New("The user does not have a stopped date")
 )

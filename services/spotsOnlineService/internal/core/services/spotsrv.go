@@ -181,7 +181,7 @@ func (s *Service) Start(spotId string, requestUserId string, durationApproximate
 	log.Printf("Service Start: spotId %s, requestUserId: %s \n", spotId, requestUserId)
 
 	// 1. Verify that the user is the owner of the spot
-	onlineSpot, err := s.fetchAndVerifySpot(spotId, requestUserId, domain.ONLINE_SPOT)
+	onlineSpot, err := s.fetchSpotsByStatus(spotId, requestUserId, domain.FlagOnline|domain.FlagPaused)
 
 	if err != nil {
 		log.Println("We found an error while verifying the spot\n\t\t", err.Error())
