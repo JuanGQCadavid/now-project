@@ -43,7 +43,7 @@ func (service *ScheduledService) AppendSchedule(spotId string, userRequestId str
 	logs.Info.Printf("AppendSchedule: userRequestId: %s \n", userRequestId)
 
 	//  0. Verify that the incomming schedules does not have tinme conflict
-	service.createIdsForSchedulePatterns(schedulesPattern)
+	service.createIdsForSchedulePatterns(*schedulesPattern)
 	timeConflicts, err := service.verifyTimeConflics(schedulesPattern, schedulesPattern, true)
 
 	if err != nil {
@@ -152,8 +152,12 @@ func (service *ScheduledService) verifyTimeConflics(firstPatterns *[]domain.Sche
 	return nil, nil
 }
 
-func (service *ScheduledService) createIdsForSchedulePatterns(schedulePattern *[]domain.SchedulePattern) {
-	for _, scheculePattern := range *schedulePattern {
-		scheculePattern.Id = uuid.NewString()
+func (service *ScheduledService) createIdsForSchedulePatterns(schedulePattern []domain.SchedulePattern) {
+	logs.Info.Println("createIdsForSchedulePatterns")
+	for i, sp := range schedulePattern {
+		sp.Id = uuid.NewString()
+		schedulePattern[i] = sp
 	}
+	logs.Info.Println(schedulePattern)
+
 }

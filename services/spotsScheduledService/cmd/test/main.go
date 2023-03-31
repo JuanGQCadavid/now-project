@@ -22,7 +22,7 @@ func testService() {
 				HostId:   "JUAN",
 				HostName: "JUAN",
 			},
-			Day:       domain.Thursday, // domain.Monday | domain.Friday | domain.Saturday,
+			Day:       domain.Monday | domain.Friday | domain.Saturday, // domain.Thursday, //
 			FromDate:  "2007-03-01",
 			ToDate:    "2007-07-01",
 			StartTIme: "13:00:00",

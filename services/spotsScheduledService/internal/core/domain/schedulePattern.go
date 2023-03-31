@@ -78,7 +78,7 @@ type SchedulePattern struct {
 // result["endTime"] = endTimeTime
 
 func (sp *SchedulePattern) Overlaps(otherSchedulePattern SchedulePattern) (bool, error) {
-	//logs.Info.Printf("Overlaps, sp: %+v \n", otherSchedulePattern)
+	logs.Info.Printf("Overlaps, Self Id: %s, agains id: %s \n", sp.Id, otherSchedulePattern.Id)
 
 	slefTimes, err := sp.fromStringToTime(sp.FromDate, sp.ToDate, sp.StartTIme, sp.EndTime)
 
@@ -96,26 +96,19 @@ func (sp *SchedulePattern) Overlaps(otherSchedulePattern SchedulePattern) (bool,
 	if !sp.doesDatesOverlap(slefTimes["fromDate"], slefTimes["toDate"], otherTimes["fromDate"], otherTimes["toDate"]) {
 		return false, nil
 	}
-	//logs.Info.Printf("DAYSSSSS \n\n")
+
 	// As they overlap by dates we should go day by day and check it using the start and end time
-	//logs.Info.Printf("A Days: %07b", sp.Day)
-	//logs.Info.Printf("B Days: %07b", otherSchedulePattern.Day)
 	for _, day := range Days {
-		logs.Info.Printf("\n\n")
-		logs.Info.Printf("Day: %07b", day)
-		logs.Info.Printf("A on day: %07b", sp.Day&day)
-		logs.Info.Printf("B on day: %07b", otherSchedulePattern.Day&day)
 		if ((sp.Day & day) == day) && ((otherSchedulePattern.Day & day) == day) {
-			logs.Info.Println("They match")
 			// They share the same day, so we need to check the start and end time
 			if sp.doesTimesOverlap(slefTimes["startTime"], slefTimes["endTime"], otherTimes["startTime"], otherTimes["endTime"]) {
+				logs.Error.Println("Dates overlap and days match on a time fraction")
 				return true, nil
 			}
 		}
 	}
 
-	//logs.Info.Printf("\n\n END")
-
+	logs.Info.Println("Dates DONT overlap")
 	return false, nil
 }
 
@@ -138,12 +131,10 @@ func (sp *SchedulePattern) doesDatesOverlap(StartA time.Time, EndA time.Time, St
 
 	if StartA.Compare(StartB) < 1 {
 		if StartB.Compare(EndA) < 1 {
-			logs.Info.Println("Dates overlap")
 			return true
 		}
 	} else {
 		if StartA.Compare(EndB) < 1 {
-			logs.Info.Println("Dates overlap")
 			return true
 		}
 	}
