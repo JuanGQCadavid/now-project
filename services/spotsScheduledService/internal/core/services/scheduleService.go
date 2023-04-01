@@ -1,8 +1,6 @@
 package services
 
 import (
-	"log"
-
 	"github.com/JuanGQCadavid/now-project/services/spotsScheduledService/internal/core/domain"
 	"github.com/JuanGQCadavid/now-project/services/spotsScheduledService/internal/core/logs"
 	"github.com/JuanGQCadavid/now-project/services/spotsScheduledService/internal/core/ports"
@@ -19,9 +17,21 @@ func NewScheduledService(repository ports.Repository) *ScheduledService {
 	}
 }
 
-func (service *ScheduledService) GetSchedules(spotId string, userRequestId string) (*domain.ScheduledSpot, error) {
+func (service *ScheduledService) GetSchedules(spotId string, userRequestId string, flags domain.ScheduleStateFlags) (*domain.ScheduledSpot, error) {
+	logs.Info.Printf("GetSchedules: spotId: %s, userRequestId: %s, flags: %08b", spotId, userRequestId, flags)
+	spot, err := service.repository.GetScheduleSpot(spotId, flags)
 
-	return nil, nil
+	if err != nil {
+		logs.Error.Println("We found an error while fetching the spot \n\t\t", err.Error())
+		return nil, ports.ErrOnRepository
+	}
+
+	if len(spot.SpotInfo.SpotId) == 0 {
+		logs.Error.Println("The spot does not exist")
+		return nil, ports.ErrSpotNotFound
+	}
+
+	return spot, nil
 }
 
 /*
@@ -95,17 +105,17 @@ func (service *ScheduledService) getAndVerifyScheduleSpot(spotId string, userReq
 	spot, err := service.repository.GetScheduleSpot(spotId, flags)
 
 	if err != nil {
-		log.Println("We found an error while fetching the spot owner\n\t\t", err.Error())
-		return nil, err
+		logs.Error.Println("We found an error while fetching the spot \n\t\t", err.Error())
+		return nil, ports.ErrOnRepository
 	}
 
 	if len(spot.SpotInfo.SpotId) == 0 {
-		log.Println("The spot does not exist")
+		logs.Error.Println("The spot does not exist")
 		return nil, ports.ErrSpotNotFound
 	}
 
 	if spot.SpotInfo.OwnerId != userRequestId {
-		log.Println("The owner id is differente than the spot owner")
+		logs.Error.Println("The owner id is differente than the spot owner")
 		return nil, ports.ErrUserIsNotTheOwner
 	}
 
