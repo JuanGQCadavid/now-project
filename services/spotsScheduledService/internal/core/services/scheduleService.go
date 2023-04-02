@@ -1,6 +1,8 @@
 package services
 
 import (
+	"time"
+
 	"github.com/JuanGQCadavid/now-project/services/spotsScheduledService/internal/core/domain"
 	"github.com/JuanGQCadavid/now-project/services/spotsScheduledService/internal/core/logs"
 	"github.com/JuanGQCadavid/now-project/services/spotsScheduledService/internal/core/ports"
@@ -18,7 +20,7 @@ func NewScheduledService(repository ports.Repository) *ScheduledService {
 }
 
 func (service *ScheduledService) GetSchedules(spotId string, userRequestId string, flags domain.ScheduleStateFlags) (*domain.ScheduledSpot, error) {
-	logs.Info.Printf("GetSchedules: spotId: %s, userRequestId: %s, flags: %08b", spotId, userRequestId, flags)
+	logs.Info.Printf("GetSchedules: spotId: %s, userRequestId: %s, flags: %08b \n", spotId, userRequestId, flags)
 	spot, err := service.repository.GetScheduleSpot(spotId, flags)
 
 	if err != nil {
@@ -91,14 +93,110 @@ func (service *ScheduledService) AppendSchedule(spotId string, userRequestId str
 
 	return spot, nil, nil
 }
-func (service *ScheduledService) ResumeSchedule(spotId string, userRequestId string) error {
-	return nil
+
+func (service *ScheduledService) ResumeSchedule(spotId string, scheduleId string, userRequestId string) error {
+	logs.Info.Printf("ResumeSchedule: spotId: %s, userRequestId: %s \n", spotId, userRequestId)
+	spot, err := service.getAndVerifyScheduleSpot(spotId, userRequestId, domain.ActivateFlag|domain.FreezeFlag)
+
+	if err != nil {
+		return err
+	}
+
+	index := -1
+	for ii, schedulePattern := range spot.Patterns {
+		if schedulePattern.Id == scheduleId {
+			index = ii
+			if schedulePattern.State.Status == domain.ACTIVATE {
+				return ports.ErrScheduleIsAlreadyActivated
+			}
+		}
+	}
+
+	if index == -1 {
+		return ports.ErrScheduleIsDoesNotExist
+	}
+
+	newStatus := domain.State{
+		Status: domain.ACTIVATE,
+		Since:  time.Now().Unix(),
+	}
+
+	err = service.repository.UpdateScheculeStatus(spotId, scheduleId, newStatus)
+
+	if err != nil {
+		logs.Error.Println("We found an error whule Updating the schedule status, error: ", err.Error())
+	}
+
+	return err
 }
-func (service *ScheduledService) FreezeSchedule(spotId string, userRequestId string) error {
-	return nil
+
+func (service *ScheduledService) FreezeSchedule(spotId string, scheduleId string, userRequestId string) error {
+	logs.Info.Printf("FreezeSchedule: spotId: %s, userRequestId: %s \n", spotId, userRequestId)
+	spot, err := service.getAndVerifyScheduleSpot(spotId, userRequestId, domain.ActivateFlag|domain.FreezeFlag)
+
+	if err != nil {
+		return err
+	}
+
+	index := -1
+	for ii, schedulePattern := range spot.Patterns {
+		if schedulePattern.Id == scheduleId {
+			index = ii
+			if schedulePattern.State.Status == domain.FREEZE {
+				return ports.ErrScheduleIsAlreadyFreezed
+			}
+		}
+	}
+
+	if index == -1 {
+		return ports.ErrScheduleIsDoesNotExist
+	}
+
+	newStatus := domain.State{
+		Status: domain.FREEZE,
+		Since:  time.Now().Unix(),
+	}
+
+	err = service.repository.UpdateScheculeStatus(spotId, scheduleId, newStatus)
+
+	if err != nil {
+		logs.Error.Println("We found an error whule Updating the schedule status, error: ", err.Error())
+	}
+
+	return err
 }
-func (service *ScheduledService) ConcludeSchedule(spotId string, userRequestId string) error {
-	return nil
+
+func (service *ScheduledService) ConcludeSchedule(spotId string, scheduleId string, userRequestId string) error {
+	logs.Info.Printf("ConcludeSchedule: spotId: %s, userRequestId: %s \n", spotId, userRequestId)
+	spot, err := service.getAndVerifyScheduleSpot(spotId, userRequestId, domain.ActivateFlag|domain.FreezeFlag)
+
+	if err != nil {
+		return err
+	}
+
+	index := -1
+	for ii, schedulePattern := range spot.Patterns {
+		if schedulePattern.Id == scheduleId {
+			index = ii
+		}
+	}
+
+	if index == -1 {
+		return ports.ErrScheduleIsDoesNotExist
+	}
+
+	newStatus := domain.State{
+		Status: domain.CONCLUDE,
+		Since:  time.Now().Unix(),
+	}
+
+	err = service.repository.UpdateScheculeStatus(spotId, scheduleId, newStatus)
+
+	if err != nil {
+		logs.Error.Println("We found an error whule Updating the schedule status, error: ", err.Error())
+	}
+
+	return err
 }
 
 func (service *ScheduledService) getAndVerifyScheduleSpot(spotId string, userRequestId string, flags domain.ScheduleStateFlags) (*domain.ScheduledSpot, error) {

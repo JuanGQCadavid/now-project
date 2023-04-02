@@ -16,7 +16,7 @@ const (
 const (
 	ACTIVATE Status = "activate"
 	FREEZE   Status = "freeze"
-	Conclude Status = "conclude"
+	CONCLUDE Status = "conclude"
 )
 
 type Status string

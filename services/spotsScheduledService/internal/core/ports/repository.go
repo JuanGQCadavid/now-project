@@ -5,4 +5,5 @@ import "github.com/JuanGQCadavid/now-project/services/spotsScheduledService/inte
 type Repository interface {
 	GetScheduleSpot(spotId string, flags domain.ScheduleStateFlags) (*domain.ScheduledSpot, error)
 	AssociateSpotWithSchedulePatterns(spotId string, hostId string, schedulesPattern *[]domain.SchedulePattern) error
+	UpdateScheculeStatus(spotId string, scheduleId string, status domain.State) error
 }
