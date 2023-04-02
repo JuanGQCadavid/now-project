@@ -48,6 +48,7 @@ require (
 	github.com/microcosm-cc/bluemonday v1.0.18 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
+	github.com/neo4j/neo4j-go-driver/v4 v4.4.7 // indirect
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
 	github.com/schollz/closestmatch v2.1.0+incompatible // indirect
 	github.com/tdewolff/minify/v2 v2.11.10 // indirect
