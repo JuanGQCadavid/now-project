@@ -16,14 +16,12 @@ var (
 	ErrScheduleIsAlreadyFreezed                  = errors.New("The schedule id is already freezed")
 	ErrScheduleIsAlreadyActivated                = errors.New("The schedule id is already activated")
 	ErrScheduleIsDoesNotExist                    = errors.New("The schedule id does not exist or is concluded")
-	// ErrUserIsNotHostingAnDate     = errors.New("The user is not hosting an event in the spot")
-	// ErrUserDoesNotHaveStoppedDate = errors.New("The user does not have a stopped date")
 )
 
 type Service interface {
-	GetSchedules(spotId string, userRequestId string) (domain.ScheduledSpot, error)
-	AppendSchedule(spotId string, userRequestId string) error
-	ResumeSchedule(spotId string, userRequestId string) error
-	FreezeSchedule(spotId string, userRequestId string) error
-	ConcludeSchedule(spotId string, userRequestId string) error
+	GetSchedules(spotId string, userRequestId string, flags domain.ScheduleStateFlags) (*domain.ScheduledSpot, error)
+	AppendSchedule(spotId string, userRequestId string, schedulesPattern *[]domain.SchedulePattern) (*domain.ScheduledSpot, *[]domain.TimeConflict, error)
+	ResumeSchedule(spotId string, scheduleId string, userRequestId string) error
+	FreezeSchedule(spotId string, scheduleId string, userRequestId string) error
+	ConcludeSchedule(spotId string, scheduleId string, userRequestId string) error
 }

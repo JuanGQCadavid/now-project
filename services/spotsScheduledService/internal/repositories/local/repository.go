@@ -66,3 +66,7 @@ func (repo *LocalRepository) GetScheduleSpot(spotId string, flags domain.Schedul
 func (repo *LocalRepository) AssociateSpotWithSchedulePatterns(spotId string, hostId string, schedulesPattern *[]domain.SchedulePattern) error {
 	return nil
 }
+
+func (repo *LocalRepository) UpdateScheculeStatus(spotId string, scheduleId string, status domain.State) error {
+	return nil
+}
