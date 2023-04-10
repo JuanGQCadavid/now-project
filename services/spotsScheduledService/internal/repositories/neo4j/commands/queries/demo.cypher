@@ -6,7 +6,7 @@ ON CREATE
 	SET schedulePattern.days = 42
 	SET schedulePattern.fromDate = "2007-03-01"
 	SET schedulePattern.toDate = "2007-07-01"
-	SET schedulePattern.startTime = "13:00:00"
+	SET schedulePattern.StartTime = "13:00:00"
 	SET schedulePattern.endTime = "16:00:00"
 MERGE 
 (host)<-[:HOST_BY]-(schedulePattern)-[:AT {status: "activate", timestamp: 12220321 }]->(event)
@@ -27,7 +27,7 @@ RETURN
 			schedulePattern_days: schedulePattern.days,
 			schedulePattern_fromDate: schedulePattern.fromDate,
 			schedulePattern_toDate: schedulePattern.toDate,
-			schedulePattern_startTime: schedulePattern.startTime,
+			schedulePattern_StartTime: schedulePattern.StartTime,
 			schedulePattern_endTime: schedulePattern.endTime,
             state: {
                 status: at.status,

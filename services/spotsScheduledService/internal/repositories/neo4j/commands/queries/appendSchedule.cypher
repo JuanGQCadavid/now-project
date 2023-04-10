@@ -6,7 +6,7 @@ ON CREATE
 	SET schedulePattern.days = $schedulePattern_days
 	SET schedulePattern.fromDate = $schedulePattern_fromDate
 	SET schedulePattern.toDate = $schedulePattern_toDate
-	SET schedulePattern.startTime = $schedulePattern_startTime
+	SET schedulePattern.StartTime = $schedulePattern_StartTime
 	SET schedulePattern.endTime = $schedulePattern_endTime
 MERGE 
 (host)<-[:HOST_BY]-(schedulePattern)-[:AT {status: $status, timestamp: $timestamp }]->(event)

@@ -14,7 +14,7 @@ RETURN
 			schedulePattern_days: schedulePattern.days,
 			schedulePattern_fromDate: schedulePattern.fromDate,
 			schedulePattern_toDate: schedulePattern.toDate,
-			schedulePattern_startTime: schedulePattern.startTime,
+			schedulePattern_StartTime: schedulePattern.StartTime,
 			schedulePattern_endTime: schedulePattern.endTime,
             state: {
                 status: at.status,

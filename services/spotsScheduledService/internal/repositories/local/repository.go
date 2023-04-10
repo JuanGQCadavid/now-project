@@ -19,7 +19,7 @@ func (repo *LocalRepository) GetScheduleSpot(spotId string, flags domain.Schedul
 			Day:       domain.Monday,
 			FromDate:  "2007-03-01",
 			ToDate:    "2007-07-01",
-			StartTIme: "13:00:00",
+			StartTime: "13:00:00",
 			EndTime:   "16:00:00",
 		},
 
@@ -35,7 +35,7 @@ func (repo *LocalRepository) GetScheduleSpot(spotId string, flags domain.Schedul
 			Day:       domain.Friday,
 			FromDate:  "2007-03-01",
 			ToDate:    "2007-07-01",
-			StartTIme: "13:00:00",
+			StartTime: "13:00:00",
 			EndTime:   "16:00:00",
 		},
 
@@ -51,7 +51,7 @@ func (repo *LocalRepository) GetScheduleSpot(spotId string, flags domain.Schedul
 			Day:       domain.Saturday,
 			FromDate:  "2007-03-01",
 			ToDate:    "2007-07-01",
-			StartTIme: "13:00:00",
+			StartTime: "13:00:00",
 			EndTime:   "16:00:00",
 		},
 	}
@@ -64,6 +64,7 @@ func (repo *LocalRepository) GetScheduleSpot(spotId string, flags domain.Schedul
 	}, nil
 }
 func (repo *LocalRepository) AssociateSpotWithSchedulePatterns(spotId string, hostId string, schedulesPattern *[]domain.SchedulePattern) error {
+
 	return nil
 }
 

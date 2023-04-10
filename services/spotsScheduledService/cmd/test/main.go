@@ -7,10 +7,54 @@ import (
 	"github.com/JuanGQCadavid/now-project/services/spotsScheduledService/internal/core/logs"
 	"github.com/JuanGQCadavid/now-project/services/spotsScheduledService/internal/core/services"
 	"github.com/JuanGQCadavid/now-project/services/spotsScheduledService/internal/repositories/local"
+	"github.com/JuanGQCadavid/now-project/services/spotsScheduledService/internal/repositories/neo4j/commands"
 )
 
 func main() {
-	testService()
+	// testService()
+	testAppendCommand()
+
+}
+
+func testAppendCommand() {
+	sp := make([]domain.SchedulePattern, 2)
+
+	sp[0] = domain.SchedulePattern{
+		Id: "1_UUID",
+		State: domain.State{
+			Status: domain.ACTIVATE,
+			Since:  1004,
+		},
+		Day:       domain.Monday | domain.Wednesday | domain.Friday,
+		FromDate:  "2007-02-01",
+		ToDate:    "2007-06-01",
+		StartTime: "14:00:00",
+		EndTime:   "16:00:00",
+	}
+
+	sp[1] = domain.SchedulePattern{
+		Id: "2_UUID",
+		State: domain.State{
+			Status: domain.ACTIVATE,
+			Since:  1005,
+		},
+		Day:       domain.Thursday | domain.Saturday | domain.Sunday,
+		FromDate:  "2007-03-01",
+		ToDate:    "2007-07-01",
+		StartTime: "13:00:00",
+		EndTime:   "16:00:00",
+	}
+
+	scheduleSpot := domain.ScheduledSpot{
+		SpotInfo: domain.SpotInfo{
+			SpotId:  "1_SPOT_ID",
+			OwnerId: "1_OWNER_ID",
+		},
+		Patterns: sp,
+	}
+
+	cmd := commands.NewAppendScheduleCommand(scheduleSpot)
+	cmd.Run(nil)
 }
 
 func testService() {
@@ -25,7 +69,7 @@ func testService() {
 			Day:       domain.Monday | domain.Friday | domain.Saturday, // domain.Thursday, //
 			FromDate:  "2007-03-01",
 			ToDate:    "2007-07-01",
-			StartTIme: "13:00:00",
+			StartTime: "13:00:00",
 			EndTime:   "16:00:00",
 		},
 	}
@@ -49,7 +93,7 @@ func testOverlaps() {
 		Day:       domain.Monday | domain.Wednesday | domain.Friday,
 		FromDate:  "2007-02-01",
 		ToDate:    "2007-06-01",
-		StartTIme: "14:00:00",
+		StartTime: "14:00:00",
 		EndTime:   "16:00:00",
 	}
 
@@ -57,7 +101,7 @@ func testOverlaps() {
 		Day:       domain.Thursday | domain.Saturday | domain.Sunday,
 		FromDate:  "2007-03-01",
 		ToDate:    "2007-07-01",
-		StartTIme: "13:00:00",
+		StartTime: "13:00:00",
 		EndTime:   "16:00:00",
 	}
 

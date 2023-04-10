@@ -68,25 +68,25 @@ type SchedulePattern struct {
 	Day       Day    `json:"day"`
 	FromDate  string `json:"fromDate"`
 	ToDate    string `json:"toDate,omitempty"`
-	StartTIme string `json:"startTIme"`
+	StartTime string `json:"StartTime"`
 	EndTime   string `json:"endTime"`
 }
 
 // result["fromDate"] = fromDateTime
 // result["toDate"] = toDateTime
-// result["startTime"] = startTimeTime
+// result["StartTime"] = StartTimeTime
 // result["endTime"] = endTimeTime
 
 func (sp *SchedulePattern) Overlaps(otherSchedulePattern SchedulePattern) (bool, error) {
 	logs.Info.Printf("Overlaps, Self Id: %s, agains id: %s \n", sp.Id, otherSchedulePattern.Id)
 
-	slefTimes, err := sp.fromStringToTime(sp.FromDate, sp.ToDate, sp.StartTIme, sp.EndTime)
+	slefTimes, err := sp.fromStringToTime(sp.FromDate, sp.ToDate, sp.StartTime, sp.EndTime)
 
 	if err != nil {
 		return true, ErrParsingTimes
 	}
 
-	otherTimes, err := sp.fromStringToTime(otherSchedulePattern.FromDate, otherSchedulePattern.ToDate, otherSchedulePattern.StartTIme, otherSchedulePattern.EndTime)
+	otherTimes, err := sp.fromStringToTime(otherSchedulePattern.FromDate, otherSchedulePattern.ToDate, otherSchedulePattern.StartTime, otherSchedulePattern.EndTime)
 
 	if err != nil {
 		return true, ErrParsingTimes
@@ -101,7 +101,7 @@ func (sp *SchedulePattern) Overlaps(otherSchedulePattern SchedulePattern) (bool,
 	for _, day := range Days {
 		if ((sp.Day & day) == day) && ((otherSchedulePattern.Day & day) == day) {
 			// They share the same day, so we need to check the start and end time
-			if sp.doesTimesOverlap(slefTimes["startTime"], slefTimes["endTime"], otherTimes["startTime"], otherTimes["endTime"]) {
+			if sp.doesTimesOverlap(slefTimes["StartTime"], slefTimes["endTime"], otherTimes["StartTime"], otherTimes["endTime"]) {
 				logs.Error.Println("Dates overlap and days match on a time fraction")
 				return true, nil
 			}
@@ -151,7 +151,7 @@ func (sp *SchedulePattern) doesDatesOverlap(StartA time.Time, EndA time.Time, St
 	return false
 }
 
-func (sp *SchedulePattern) fromStringToTime(fromDate string, toDate string, startTime string, endTime string) (map[string]time.Time, error) {
+func (sp *SchedulePattern) fromStringToTime(fromDate string, toDate string, StartTime string, endTime string) (map[string]time.Time, error) {
 	result := make(map[string]time.Time, 4)
 
 	fromDateTime, err := time.Parse(time.DateOnly, fromDate)
@@ -165,7 +165,7 @@ func (sp *SchedulePattern) fromStringToTime(fromDate string, toDate string, star
 	if err != nil {
 		return nil, err
 	}
-	startTimeTime, err := time.Parse(time.TimeOnly, startTime)
+	StartTimeTime, err := time.Parse(time.TimeOnly, StartTime)
 
 	if err != nil {
 		return nil, err
@@ -178,9 +178,9 @@ func (sp *SchedulePattern) fromStringToTime(fromDate string, toDate string, star
 
 	result["fromDate"] = fromDateTime
 	result["toDate"] = toDateTime
-	result["startTime"] = startTimeTime
+	result["StartTime"] = StartTimeTime
 	result["endTime"] = endTimeTime
 
-	//logs.Info.Printf("fromStringToTime: \n\tfromDate: %+v, \n\ttoDate: %+v, \n\tstartTime: %+v, \n\tendTime: %+v \n", result["fromDate"], result["toDate"], result["startTime"], result["endTime"])
+	//logs.Info.Printf("fromStringToTime: \n\tfromDate: %+v, \n\ttoDate: %+v, \n\tStartTime: %+v, \n\tendTime: %+v \n", result["fromDate"], result["toDate"], result["StartTime"], result["endTime"])
 	return result, nil
 }
