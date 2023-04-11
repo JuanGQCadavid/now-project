@@ -33,6 +33,20 @@ func (service *ScheduledService) GetSchedules(spotId string, userRequestId strin
 		return nil, ports.ErrSpotNotFound
 	}
 
+	if spot.SpotInfo.OwnerId != userRequestId {
+		logs.Warning.Println("The owner id is differente than the spot owner, so changing the flags to only ACTIVE")
+
+		filteredSchedulePatterns := []domain.SchedulePattern{}
+
+		for _, schedulePattern := range spot.Patterns {
+			if schedulePattern.State.Status == domain.ACTIVATE {
+				filteredSchedulePatterns = append(filteredSchedulePatterns, schedulePattern)
+			}
+		}
+
+		spot.Patterns = filteredSchedulePatterns
+	}
+
 	return spot, nil
 }
 

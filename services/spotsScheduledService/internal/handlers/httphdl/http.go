@@ -1,12 +1,27 @@
 package httphdl
 
-import "github.com/gin-gonic/gin"
+import (
+	"errors"
+
+	"github.com/JuanGQCadavid/now-project/services/spotsScheduledService/internal/core/domain"
+	"github.com/JuanGQCadavid/now-project/services/spotsScheduledService/internal/core/logs"
+	"github.com/JuanGQCadavid/now-project/services/spotsScheduledService/internal/core/ports"
+	"github.com/gin-gonic/gin"
+)
 
 type HttpHandler struct {
+	service ports.Service
 }
 
-func NewHttpHandler() *HttpHandler {
-	return &HttpHandler{}
+var (
+	ErrMissingSpotIdOnParam                   = errors.New("Spot id is required but it is missing on path params")
+	ErrUserIsNotAllowedToPerformThisOperation = errors.New("The user is not allowed to perfom such uperation")
+)
+
+func NewHttpHandler(service ports.Service) *HttpHandler {
+	return &HttpHandler{
+		service: service,
+	}
 }
 
 func (hdl *HttpHandler) SetRouter(router *gin.Engine) {
@@ -22,6 +37,44 @@ func (hdl *HttpHandler) SetRouter(router *gin.Engine) {
 GET /spots/schedule/<spot_UUID>/
 */
 func (hdl *HttpHandler) GetSchedule(context *gin.Context) {
+	spotId := context.Param("spot_uuid")
+	requesterId := context.Request.Header.Get("Authorization")
+
+	if len(spotId) == 0 {
+		logs.Error.Println(ErrMissingSpotIdOnParam.Error())
+		context.AbortWithStatusJSON(400, ErrorMessage{
+			Message: ErrMissingSpotIdOnParam.Error(),
+		})
+		return
+	}
+
+	if len(requesterId) == 0 {
+		logs.Info.Println("Anonymous user")
+	}
+
+	spot, err := hdl.service.GetSchedules(spotId, requesterId, domain.ActivateFlag|domain.ConcludeFlag|domain.FreezeFlag)
+
+	if err != nil {
+		logs.Error.Println(err.Error())
+		switch err.Error() {
+		case ports.ErrOnRepository.Error():
+			context.AbortWithStatusJSON(500, ErrorMessage{
+				Message: err.Error(),
+			})
+			return
+		case ports.ErrSpotNotFound.Error():
+			context.AbortWithStatusJSON(404, ErrorMessage{
+				Message: err.Error(),
+			})
+			return
+		default:
+			context.AbortWithStatusJSON(500, ErrorMessage{
+				Message: err.Error(),
+			})
+			return
+		}
+	}
+	context.JSON(200, spot)
 
 }
 
