@@ -1,6 +1,6 @@
 
 MATCH
-	(owner:Person {id: $host_id})-[:OWNS]->(event:Event {UUID : $spot_uuid})
+	(owner:Person)-[:OWNS]->(event:Event {UUID : $spot_uuid})
 WHERE NOT 
 	(event)-[:IS_DELETED]->(event)
 OPTIONAL MATCH 

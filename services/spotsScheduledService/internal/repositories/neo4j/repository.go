@@ -2,6 +2,7 @@ package neo4j
 
 import (
 	"github.com/JuanGQCadavid/now-project/services/spotsScheduledService/internal/core/domain"
+	"github.com/JuanGQCadavid/now-project/services/spotsScheduledService/internal/core/logs"
 	"github.com/JuanGQCadavid/now-project/services/spotsScheduledService/internal/repositories/neo4j/commands"
 	"github.com/neo4j/neo4j-go-driver/v4/neo4j"
 )
@@ -18,13 +19,16 @@ func NewNeo4jRepoWithDriver(driver neo4j.Driver) *Neo4jRepository {
 
 func (repo *Neo4jRepository) GetScheduleSpot(spotId string, flags domain.ScheduleStateFlags) (*domain.ScheduledSpot, error) {
 
-	return &domain.ScheduledSpot{
-		SpotInfo: domain.SpotInfo{
-			SpotId:  spotId,
-			OwnerId: "JUAN",
-		},
-		Patterns: nil,
-	}, nil
+	var command commands.Command = commands.NewGetSchedulesCommand(spotId)
+	records, err := repo.executeReadCommand(command)
+
+	if err != nil {
+		logs.Error.Println("GetScheduleSpot: command getsFail erro: ", err.Error())
+		return nil, err
+	}
+
+	var scheduleSpot domain.ScheduledSpot = records.(domain.ScheduledSpot)
+	return &scheduleSpot, nil
 }
 func (repo *Neo4jRepository) AssociateSpotWithSchedulePatterns(spotId string, hostId string, schedulesPattern *[]domain.SchedulePattern) error {
 	return nil

@@ -10,8 +10,7 @@ import (
 )
 
 type GetSchedulesCommand struct {
-	ownerId string
-	spotId  string
+	spotId string
 }
 
 var (
@@ -19,17 +18,15 @@ var (
 	getSchedulePatternQueryCypher string
 )
 
-func NewGetSchedulesCommand(ownerId string, spotId string) *GetSchedulesCommand {
+func NewGetSchedulesCommand(spotId string) *GetSchedulesCommand {
 	return &GetSchedulesCommand{
-		ownerId: ownerId,
-		spotId:  spotId,
+		spotId: spotId,
 	}
 }
 
 func (cmd *GetSchedulesCommand) Run(tr neo4j.Transaction) (interface{}, error) {
 
 	var params map[string]interface{} = map[string]interface{}{
-		"host_id":   cmd.ownerId,
 		"spot_uuid": cmd.spotId,
 	}
 
@@ -66,7 +63,7 @@ func (cmd *GetSchedulesCommand) castOutput(record *neo4j.Record) (domain.Schedul
 				continue
 			}
 
-			patternDay := patternData["schedulePattern_days"].(uint)
+			patternDay := patternData["schedulePattern_days"].(int64)
 			patternFromDate := patternData["schedulePattern_fromDate"].(string)
 			patternToDate := patternData["schedulePattern_toDate"].(string)
 			patternStartTime := patternData["schedulePattern_StartTime"].(string)

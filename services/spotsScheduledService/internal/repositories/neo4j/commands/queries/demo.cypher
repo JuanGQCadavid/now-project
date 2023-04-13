@@ -1,7 +1,7 @@
 MATCH 
 (host:Person {id: "33ddab28-006b-4790-bf42-1832f90dc8d4"})-[:OWNS]->(event:Event {UUID: "0bf5182b-33b1-4ad1-b5e6-992d1c034609" })
 MERGE 
-(schedulePattern:SchedulePattern {UUID: "UUID_123"})
+(schedulePattern:SchedulePattern {UUID: "UUID_567"})
 ON CREATE
 	SET schedulePattern.days = 42
 	SET schedulePattern.fromDate = "2007-03-01"

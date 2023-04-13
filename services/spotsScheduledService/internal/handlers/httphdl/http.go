@@ -82,6 +82,44 @@ func (hdl *HttpHandler) GetSchedule(context *gin.Context) {
 POST /spots/schedule/<spot_UUID>/append
 */
 func (hdl *HttpHandler) AppendSchedule(context *gin.Context) {
+	spotId := context.Param("spot_uuid")
+	requesterId := context.Request.Header.Get("Authorization")
+
+	var schedulePattenrs []domain.SchedulePattern
+	context.BindJSON(schedulePattenrs)
+
+	if len(spotId) == 0 {
+		logs.Error.Println(ErrMissingSpotIdOnParam.Error())
+		context.AbortWithStatusJSON(400, ErrorMessage{
+			Message: ErrMissingSpotIdOnParam.Error(),
+		})
+		return
+	}
+
+	if len(requesterId) == 0 {
+		logs.Error.Println(ErrUserIsNotAllowedToPerformThisOperation.Error())
+		context.AbortWithStatusJSON(400, ErrorMessage{
+			Message: ErrUserIsNotAllowedToPerformThisOperation.Error(),
+		})
+		return
+	}
+
+	scheduleSpot, timeConflicts, err := hdl.service.AppendSchedule(spotId, requesterId, &schedulePattenrs)
+
+	if len(*timeConflicts) > 0 {
+		logs.Error.Println(err.Error())
+		context.AbortWithStatusJSON(400, TimeErrorsConflictsMessage{
+			Message:       err.Error(),
+			TimeConflicts: *timeConflicts,
+		})
+	} else if err != nil {
+		logs.Error.Println(err.Error())
+		context.AbortWithStatusJSON(400, ErrorMessage{
+			Message: err.Error(),
+		})
+	}
+
+	context.JSON(202, scheduleSpot)
 
 }
 
