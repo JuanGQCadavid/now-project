@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/JuanGQCadavid/now-project/services/spotsScheduledService/internal/core/domain"
 	"github.com/JuanGQCadavid/now-project/services/spotsScheduledService/internal/core/logs"
@@ -12,7 +13,18 @@ import (
 
 func main() {
 	// testService()
-	testAppendCommand()
+	//testAppendCommand()
+	log.Println(domain.Monday | domain.Wednesday | domain.Friday)
+	log.Println(domain.Thursday | domain.Saturday | domain.Sunday)
+
+	number := domain.Day(21)
+	log.Println("IsMonday ", domain.IsMonday(number))
+	log.Println("IsThursday ", domain.IsThursday(number))
+	log.Println("IsWednesday ", domain.IsWednesday(number))
+	log.Println("IsTuesday ", domain.IsTuesday(number))
+	log.Println("IsFriday ", domain.IsFriday(number))
+	log.Println("IsSaturday ", domain.IsSaturday(number))
+	log.Println("IsSunday ", domain.IsSunday(number))
 
 }
 

@@ -65,11 +65,11 @@ Steps:
     4.Associate new schedule
     5.Return the new schedule pattern with its UUID
 */
-func (service *ScheduledService) AppendSchedule(spotId string, userRequestId string, schedulesPattern *[]domain.SchedulePattern) (*domain.ScheduledSpot, *[]domain.TimeConflict, error) {
+func (service *ScheduledService) AppendSchedule(spotId string, userRequestId string, schedulesPattern []domain.SchedulePattern) (*domain.ScheduledSpot, *[]domain.TimeConflict, error) {
 	logs.Info.Printf("AppendSchedule: userRequestId: %s \n", userRequestId)
 
 	//  0. Verify that the incomming schedules does not have tinme conflict
-	service.createIdsForSchedulePatterns(*schedulesPattern)
+	service.createIdsForSchedulePatterns(schedulesPattern)
 	timeConflicts, err := service.verifyTimeConflics(schedulesPattern, schedulesPattern, true)
 
 	if err != nil {
@@ -88,7 +88,7 @@ func (service *ScheduledService) AppendSchedule(spotId string, userRequestId str
 		return nil, nil, err
 	}
 	// 3.Check time conflicts
-	timeConflicts, err = service.verifyTimeConflics(&spot.Patterns, schedulesPattern, false)
+	timeConflicts, err = service.verifyTimeConflics(spot.Patterns, schedulesPattern, false)
 
 	if err != nil {
 		return nil, nil, ports.ErrValidatingPatterns
@@ -98,6 +98,16 @@ func (service *ScheduledService) AppendSchedule(spotId string, userRequestId str
 		return nil, timeConflicts, ports.ErrTimeConflictWithActualSchedulePattenrs
 	}
 
+	// Update status for each schedule.
+
+	for i, scheduleSpot := range schedulesPattern {
+		scheduleSpot.State = domain.State{
+			Status: domain.ACTIVATE,
+			Since:  time.Now().Unix(),
+		}
+		schedulesPattern[i] = scheduleSpot
+	}
+
 	// 4.Associate new schedule
 	err = service.repository.AssociateSpotWithSchedulePatterns(spotId, userRequestId, schedulesPattern)
 
@@ -105,6 +115,7 @@ func (service *ScheduledService) AppendSchedule(spotId string, userRequestId str
 		return nil, nil, err
 	}
 
+	spot.Patterns = append(spot.Patterns, schedulesPattern...)
 	return spot, nil, nil
 }
 
@@ -234,16 +245,16 @@ func (service *ScheduledService) getAndVerifyScheduleSpot(spotId string, userReq
 	return spot, nil
 }
 
-func (service *ScheduledService) verifyTimeConflics(firstPatterns *[]domain.SchedulePattern, secondPatterns *[]domain.SchedulePattern, selfVerification bool) (*[]domain.TimeConflict, error) {
+func (service *ScheduledService) verifyTimeConflics(firstPatterns []domain.SchedulePattern, secondPatterns []domain.SchedulePattern, selfVerification bool) (*[]domain.TimeConflict, error) {
 
 	logs.Info.Printf("verifyTimeConflics: firstPattern %+v \n", firstPatterns)
 
-	result := make([]domain.TimeConflict, len(*firstPatterns))
+	result := make([]domain.TimeConflict, len(firstPatterns))
 	var conflictFound bool
 
-	for index, pattern := range *firstPatterns {
+	for index, pattern := range firstPatterns {
 
-		for ii, subPattern := range *secondPatterns {
+		for ii, subPattern := range secondPatterns {
 
 			if selfVerification && ii <= index {
 				continue

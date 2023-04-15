@@ -16,6 +16,7 @@ type HttpHandler struct {
 var (
 	ErrMissingSpotIdOnParam                   = errors.New("Spot id is required but it is missing on path params")
 	ErrUserIsNotAllowedToPerformThisOperation = errors.New("The user is not allowed to perfom such uperation")
+	ErrEmptySchedulePatterns                  = errors.New("Avoiding process as the schedule patterns is empty")
 )
 
 func NewHttpHandler(service ports.Service) *HttpHandler {
@@ -85,8 +86,8 @@ func (hdl *HttpHandler) AppendSchedule(context *gin.Context) {
 	spotId := context.Param("spot_uuid")
 	requesterId := context.Request.Header.Get("Authorization")
 
-	var schedulePattenrs []domain.SchedulePattern
-	context.BindJSON(schedulePattenrs)
+	var scheduleSpotRequest domain.ScheduledSpot = domain.ScheduledSpot{}
+	context.BindJSON(&scheduleSpotRequest)
 
 	if len(spotId) == 0 {
 		logs.Error.Println(ErrMissingSpotIdOnParam.Error())
@@ -104,19 +105,31 @@ func (hdl *HttpHandler) AppendSchedule(context *gin.Context) {
 		return
 	}
 
-	scheduleSpot, timeConflicts, err := hdl.service.AppendSchedule(spotId, requesterId, &schedulePattenrs)
+	if len(scheduleSpotRequest.Patterns) == 0 {
+		logs.Error.Println(ErrEmptySchedulePatterns.Error())
+		context.AbortWithStatusJSON(202, ErrorMessage{
+			Message: ErrEmptySchedulePatterns.Error(),
+		})
+		return
+	}
 
-	if len(*timeConflicts) > 0 {
+	scheduleSpot, timeConflicts, err := hdl.service.AppendSchedule(spotId, requesterId, scheduleSpotRequest.Patterns)
+
+	if timeConflicts != nil && len(*timeConflicts) > 0 {
 		logs.Error.Println(err.Error())
 		context.AbortWithStatusJSON(400, TimeErrorsConflictsMessage{
 			Message:       err.Error(),
 			TimeConflicts: *timeConflicts,
 		})
+
+		return
 	} else if err != nil {
 		logs.Error.Println(err.Error())
 		context.AbortWithStatusJSON(400, ErrorMessage{
 			Message: err.Error(),
 		})
+
+		return
 	}
 
 	context.JSON(202, scheduleSpot)

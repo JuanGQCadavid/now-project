@@ -20,7 +20,7 @@ var (
 
 type Service interface {
 	GetSchedules(spotId string, userRequestId string, flags domain.ScheduleStateFlags) (*domain.ScheduledSpot, error)
-	AppendSchedule(spotId string, userRequestId string, schedulesPattern *[]domain.SchedulePattern) (*domain.ScheduledSpot, *[]domain.TimeConflict, error)
+	AppendSchedule(spotId string, userRequestId string, schedulesPattern []domain.SchedulePattern) (*domain.ScheduledSpot, *[]domain.TimeConflict, error)
 	ResumeSchedule(spotId string, scheduleId string, userRequestId string) error
 	FreezeSchedule(spotId string, scheduleId string, userRequestId string) error
 	ConcludeSchedule(spotId string, scheduleId string, userRequestId string) error

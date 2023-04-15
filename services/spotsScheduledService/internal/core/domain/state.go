@@ -1,8 +1,8 @@
 package domain
 
 type State struct {
-	Status Status `json:"status"`
-	Since  int64  `json:"since"`
+	Status Status `json:"status,omitempty"`
+	Since  int64  `json:"since,omitempty"`
 }
 
 type ScheduleStateFlags uint

@@ -63,7 +63,7 @@ func (repo *LocalRepository) GetScheduleSpot(spotId string, flags domain.Schedul
 		Patterns: patterns,
 	}, nil
 }
-func (repo *LocalRepository) AssociateSpotWithSchedulePatterns(spotId string, hostId string, schedulesPattern *[]domain.SchedulePattern) error {
+func (repo *LocalRepository) AssociateSpotWithSchedulePatterns(spotId string, hostId string, schedulesPattern []domain.SchedulePattern) error {
 
 	return nil
 }

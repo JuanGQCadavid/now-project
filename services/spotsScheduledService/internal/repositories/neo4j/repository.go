@@ -30,8 +30,15 @@ func (repo *Neo4jRepository) GetScheduleSpot(spotId string, flags domain.Schedul
 	var scheduleSpot domain.ScheduledSpot = records.(domain.ScheduledSpot)
 	return &scheduleSpot, nil
 }
-func (repo *Neo4jRepository) AssociateSpotWithSchedulePatterns(spotId string, hostId string, schedulesPattern *[]domain.SchedulePattern) error {
-	return nil
+func (repo *Neo4jRepository) AssociateSpotWithSchedulePatterns(spotId string, hostId string, schedulesPattern []domain.SchedulePattern) error {
+
+	return repo.executeWriteCommand(commands.NewAppendScheduleCommand(domain.ScheduledSpot{
+		SpotInfo: domain.SpotInfo{
+			SpotId:  spotId,
+			OwnerId: hostId,
+		},
+		Patterns: schedulesPattern,
+	}))
 }
 
 func (repo *Neo4jRepository) UpdateScheculeStatus(spotId string, scheduleId string, status domain.State) error {

@@ -57,6 +57,10 @@ func (cmd *GetSchedulesCommand) castOutput(record *neo4j.Record) (domain.Schedul
 		for _, pattern := range schedulePatterns.([]interface{}) {
 			patternData := pattern.(map[string]interface{})
 
+			if patternData["schedulePattern_id"] == nil {
+				continue
+			}
+
 			patternId := patternData["schedulePattern_id"].(string)
 
 			if len(patternId) == 0 {

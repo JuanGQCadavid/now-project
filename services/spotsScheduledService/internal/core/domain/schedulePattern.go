@@ -62,14 +62,14 @@ func IsSunday(day Day) bool {
 }
 
 type SchedulePattern struct {
-	Id        string `json:"patternId"`
-	State     State  `json:"state"`
-	Host      Host   `json:"host"`
-	Day       Day    `json:"day"`
-	FromDate  string `json:"fromDate"`
-	ToDate    string `json:"toDate,omitempty"`
-	StartTime string `json:"StartTime"`
-	EndTime   string `json:"endTime"`
+	Id        string `json:"patternId,omitempty"`
+	State     State  `json:"state,omitempty"`
+	Host      Host   `json:"host,omitempty"`
+	Day       Day    `json:"day,omitempty"`
+	FromDate  string `json:"fromDate,omitempty"`
+	ToDate    string `json:"toDate,omitempty,omitempty"`
+	StartTime string `json:"StartTime,omitempty"`
+	EndTime   string `json:"endTime,omitempty"`
 }
 
 // result["fromDate"] = fromDateTime
