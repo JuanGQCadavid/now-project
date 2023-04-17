@@ -19,9 +19,9 @@ jobs:
           go-version: 1.20
 
       - name: Build spotsScheduledService service to run on lambda
-        run: | 
-          export GOMOD="${{ github.workspace }}/services/spotsScheduledService/go.mod"
-          cd ${{ github.workspace }}/services/spotsScheduledService ; sh build.sh ;
+        env: 
+          GOMOD: ${{ github.workspace }}/services/spotsScheduledService/go.mod
+        run: cd ${{ github.workspace }}/services/spotsScheduledService ; sh build.sh ;
       
       - name: Zip code
         run: cd ${{ github.workspace }}/services/spotsScheduledService ; zip main.zip main
