@@ -27,11 +27,11 @@ func NewHttpHandler(service ports.Service) *HttpHandler {
 }
 
 func (hdl *HttpHandler) SetRouter(router *gin.Engine) {
-	router.POST("/spots/schedule/:spot_uuid/append", hdl.AppendSchedule)
-	router.GET("/spots/schedule/:spot_uuid/", hdl.GetSchedule)
-	router.PUT("/spots/schedule/:spot_uuid/scheduled/:scheduled_uuid/resume", hdl.Resume)
-	router.PUT("/spots/schedule/:spot_uuid/scheduled/:scheduled_uuid/freeze", hdl.Freeze)
-	router.PUT("/spots/schedule/:spot_uuid/scheduled/:scheduled_uuid/conclude", hdl.Conclude)
+	router.POST("/spots/scheduled/:spot_uuid/append", hdl.AppendSchedule)
+	router.GET("/spots/scheduled/:spot_uuid/", hdl.GetSchedule)
+	router.PUT("/spots/scheduled/:spot_uuid/scheduled/:scheduled_uuid/resume", hdl.Resume)
+	router.PUT("/spots/scheduled/:spot_uuid/scheduled/:scheduled_uuid/freeze", hdl.Freeze)
+	router.PUT("/spots/scheduled/:spot_uuid/scheduled/:scheduled_uuid/conclude", hdl.Conclude)
 
 }
 
