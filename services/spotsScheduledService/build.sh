@@ -10,5 +10,8 @@ go version
 echo "Golang envs"
 go env
 
+# echo "Installing dependencies"
+# go get 
+
 echo "Building service"
 go build -o main ./cmd/lambda/main.go
