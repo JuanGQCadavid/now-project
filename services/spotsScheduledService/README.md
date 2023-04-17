@@ -1,3 +1,2 @@
-SpotsCoreService
-
+SpotsSchedule
 github.com/JuanGQCadavid/now-project/services/spotsShcheduleService
