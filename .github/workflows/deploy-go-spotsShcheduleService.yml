@@ -21,6 +21,7 @@ jobs:
       - name: Build spotsScheduledService service to run on lambda
         env: 
           GOMOD: ${{ github.workspace }}/services/spotsScheduledService/go.mod
+          GOPATH:  ${{ github.workspace }}/services/spotsScheduledService/
         run: cd ${{ github.workspace }}/services/spotsScheduledService ; sh build.sh ;
       
       - name: Zip code
