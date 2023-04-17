@@ -28,6 +28,29 @@ func (repo *Neo4jRepository) GetScheduleSpot(spotId string, flags domain.Schedul
 	}
 
 	var scheduleSpot domain.ScheduledSpot = records.(domain.ScheduledSpot)
+
+	var filteredPatterns []domain.SchedulePattern
+
+	for _, pattern := range scheduleSpot.Patterns {
+
+		actualStatus := domain.ActivateFlag
+
+		switch pattern.State.Status {
+		case domain.ACTIVATE:
+			actualStatus = domain.ActivateFlag
+		case domain.CONCLUDE:
+			actualStatus = domain.ConcludeFlag
+		case domain.FREEZE:
+			actualStatus = domain.FreezeFlag
+		}
+
+		if (flags & actualStatus) == actualStatus {
+			filteredPatterns = append(filteredPatterns, pattern)
+		}
+	}
+
+	scheduleSpot.Patterns = filteredPatterns
+
 	return &scheduleSpot, nil
 }
 func (repo *Neo4jRepository) AssociateSpotWithSchedulePatterns(spotId string, hostId string, schedulesPattern []domain.SchedulePattern) error {

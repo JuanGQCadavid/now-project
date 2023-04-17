@@ -115,7 +115,7 @@ func (service *ScheduledService) AppendSchedule(spotId string, userRequestId str
 		return nil, nil, err
 	}
 
-	spot.Patterns = append(spot.Patterns, schedulesPattern...)
+	spot.Patterns = schedulesPattern
 	return spot, nil, nil
 }
 
