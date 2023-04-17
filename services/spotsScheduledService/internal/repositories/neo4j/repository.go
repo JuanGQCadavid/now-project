@@ -42,7 +42,11 @@ func (repo *Neo4jRepository) AssociateSpotWithSchedulePatterns(spotId string, ho
 }
 
 func (repo *Neo4jRepository) UpdateScheculeStatus(spotId string, scheduleId string, status domain.State) error {
-	return nil
+	return repo.executeWriteCommand(commands.NewUpdateScheduleStatusCommand(
+		scheduleId,
+		spotId,
+		status,
+	))
 }
 
 func (repo *Neo4jRepository) executeWriteCommand(cmd commands.Command) error {

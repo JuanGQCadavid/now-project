@@ -14,6 +14,7 @@ var (
 	ErrTimeConflictWithActualSchedulePattenrs    = errors.New("There is one or more time conflicts with the requrested schedule patterns against the actual ones")
 	ErrValidatingPatterns                        = errors.New("We face an error while validating the patterns, could be due to the format")
 	ErrScheduleIsAlreadyFreezed                  = errors.New("The schedule id is already freezed")
+	ErrScheduleIsConclude                        = errors.New("The schedule id is concluded")
 	ErrScheduleIsAlreadyActivated                = errors.New("The schedule id is already activated")
 	ErrScheduleIsDoesNotExist                    = errors.New("The schedule id does not exist or is concluded")
 )

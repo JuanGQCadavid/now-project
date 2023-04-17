@@ -15,6 +15,7 @@ type HttpHandler struct {
 
 var (
 	ErrMissingSpotIdOnParam                   = errors.New("Spot id is required but it is missing on path params")
+	ErrMissingScheduleIdOnParam               = errors.New("Schedule id is required but it is missing on path params")
 	ErrUserIsNotAllowedToPerformThisOperation = errors.New("The user is not allowed to perfom such uperation")
 	ErrEmptySchedulePatterns                  = errors.New("Avoiding process as the schedule patterns is empty")
 )
@@ -140,19 +141,124 @@ func (hdl *HttpHandler) AppendSchedule(context *gin.Context) {
 PUT /spots/schedule/<spot_UUID>/sheduled/<scheduled_uuid>/resume
 */
 func (hdl *HttpHandler) Resume(context *gin.Context) {
+	spotId := context.Param("spot_uuid")
+	scheduleId := context.Param("scheduled_uuid")
+	requesterId := context.Request.Header.Get("Authorization")
 
+	if len(spotId) == 0 {
+		logs.Error.Println(ErrMissingSpotIdOnParam.Error())
+		context.AbortWithStatusJSON(400, ErrorMessage{
+			Message: ErrMissingSpotIdOnParam.Error(),
+		})
+		return
+	} else if len(scheduleId) == 0 {
+		logs.Error.Println(ErrMissingScheduleIdOnParam.Error())
+		context.AbortWithStatusJSON(400, ErrorMessage{
+			Message: ErrMissingScheduleIdOnParam.Error(),
+		})
+		return
+	} else if len(scheduleId) == 0 {
+		logs.Error.Println(ErrUserIsNotAllowedToPerformThisOperation.Error())
+		context.AbortWithStatusJSON(400, ErrorMessage{
+			Message: ErrUserIsNotAllowedToPerformThisOperation.Error(),
+		})
+		return
+	}
+
+	err := hdl.service.ResumeSchedule(spotId, scheduleId, requesterId)
+
+	if err != nil {
+		logs.Error.Println(err.Error())
+		context.AbortWithStatusJSON(400, ErrorMessage{
+			Message: err.Error(),
+		})
+
+		return
+	}
+
+	context.Status(204)
 }
 
 /*
 PUT /spots/schedule/<spot_UUID>/sheduled/<scheduled_uuid>/freeze
 */
 func (hdl *HttpHandler) Freeze(context *gin.Context) {
+	spotId := context.Param("spot_uuid")
+	scheduleId := context.Param("scheduled_uuid")
+	requesterId := context.Request.Header.Get("Authorization")
 
+	if len(spotId) == 0 {
+		logs.Error.Println(ErrMissingSpotIdOnParam.Error())
+		context.AbortWithStatusJSON(400, ErrorMessage{
+			Message: ErrMissingSpotIdOnParam.Error(),
+		})
+		return
+	} else if len(scheduleId) == 0 {
+		logs.Error.Println(ErrMissingScheduleIdOnParam.Error())
+		context.AbortWithStatusJSON(400, ErrorMessage{
+			Message: ErrMissingScheduleIdOnParam.Error(),
+		})
+		return
+	} else if len(scheduleId) == 0 {
+		logs.Error.Println(ErrUserIsNotAllowedToPerformThisOperation.Error())
+		context.AbortWithStatusJSON(400, ErrorMessage{
+			Message: ErrUserIsNotAllowedToPerformThisOperation.Error(),
+		})
+		return
+	}
+
+	err := hdl.service.FreezeSchedule(spotId, scheduleId, requesterId)
+
+	if err != nil {
+		logs.Error.Println(err.Error())
+		context.AbortWithStatusJSON(400, ErrorMessage{
+			Message: err.Error(),
+		})
+
+		return
+	}
+
+	context.Status(204)
 }
 
 /*
 PUT /spots/schedule/<spot_UUID>/sheduled/<scheduled_uuid>/conclude
 */
 func (hdl *HttpHandler) Conclude(context *gin.Context) {
+	spotId := context.Param("spot_uuid")
+	scheduleId := context.Param("scheduled_uuid")
+	requesterId := context.Request.Header.Get("Authorization")
 
+	if len(spotId) == 0 {
+		logs.Error.Println(ErrMissingSpotIdOnParam.Error())
+		context.AbortWithStatusJSON(400, ErrorMessage{
+			Message: ErrMissingSpotIdOnParam.Error(),
+		})
+		return
+	} else if len(scheduleId) == 0 {
+		logs.Error.Println(ErrMissingScheduleIdOnParam.Error())
+		context.AbortWithStatusJSON(400, ErrorMessage{
+			Message: ErrMissingScheduleIdOnParam.Error(),
+		})
+		return
+	} else if len(scheduleId) == 0 {
+		logs.Error.Println(ErrUserIsNotAllowedToPerformThisOperation.Error())
+		context.AbortWithStatusJSON(400, ErrorMessage{
+			Message: ErrUserIsNotAllowedToPerformThisOperation.Error(),
+		})
+		return
+	}
+
+	err := hdl.service.ConcludeSchedule(spotId, scheduleId, requesterId)
+
+	if err != nil {
+		logs.Error.Println(err.Error())
+		context.AbortWithStatusJSON(400, ErrorMessage{
+			Message: err.Error(),
+		})
+
+		return
+	}
+
+	context.Status(204)
 }

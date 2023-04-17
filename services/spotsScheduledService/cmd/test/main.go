@@ -85,7 +85,7 @@ func testService() {
 			EndTime:   "16:00:00",
 		},
 	}
-	sp, conflicts, err := service.AppendSchedule("123", "JUAN", &patterns)
+	sp, conflicts, err := service.AppendSchedule("123", "JUAN", patterns)
 
 	if err != nil {
 		logs.Error.Println(err.Error())

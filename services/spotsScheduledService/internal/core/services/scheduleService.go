@@ -133,6 +133,8 @@ func (service *ScheduledService) ResumeSchedule(spotId string, scheduleId string
 			index = ii
 			if schedulePattern.State.Status == domain.ACTIVATE {
 				return ports.ErrScheduleIsAlreadyActivated
+			} else if schedulePattern.State.Status == domain.CONCLUDE {
+				return ports.ErrScheduleIsConclude
 			}
 		}
 	}
@@ -169,6 +171,8 @@ func (service *ScheduledService) FreezeSchedule(spotId string, scheduleId string
 			index = ii
 			if schedulePattern.State.Status == domain.FREEZE {
 				return ports.ErrScheduleIsAlreadyFreezed
+			} else if schedulePattern.State.Status == domain.CONCLUDE {
+				return ports.ErrScheduleIsConclude
 			}
 		}
 	}
