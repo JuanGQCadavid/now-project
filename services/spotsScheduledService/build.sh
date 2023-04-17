@@ -3,8 +3,8 @@
 export GOOS="linux"
 export CGO_ENABLED="0"
 export GOARCH="amd64"
-export GOPATH="$(pwd)"
-export GOMOD="$(pwd)/go.mod"
+# export GOPATH="$(pwd)"
+# export GOMOD="$(pwd)/go.mod"
 
 echo "Golang version"
 go version
