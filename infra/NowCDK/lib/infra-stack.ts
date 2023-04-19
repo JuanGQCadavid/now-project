@@ -152,15 +152,36 @@ export class InfraStack extends Stack {
       queueName: "updateLocationDataSQS",
     });
 
+    const defaultSubscriptionConfiguration = {
+      rawMessageDelivery: true,
+    }
+
     spotActivityTopic.addSubscription(
-      new subscriptions.SqsSubscription(updateLocationDataSQS)
+      new subscriptions.SqsSubscription(updateLocationDataSQS, {
+        ...defaultSubscriptionConfiguration,
+        filterPolicy: 
+          {
+            Operation: sns.SubscriptionFilter.stringFilter({
+              allowlist: ["spotCreated", "spotEdited", "spotDeleted"]
+            })
+          }
+      })
     );
 
     const schedulePatternSQS = new sqs.Queue(this, "schedulePatternSQS", {
       queueName: "schedulePatternSQS",
     });
+
     spotActivityTopic.addSubscription(
-      new subscriptions.SqsSubscription(schedulePatternSQS)
+      new subscriptions.SqsSubscription(schedulePatternSQS, {
+        ...defaultSubscriptionConfiguration,
+        filterPolicy: 
+          {
+            Operation: sns.SubscriptionFilter.stringFilter({
+              matchPrefixes: ["schedule"]
+            })
+          }
+      })
     );
 
     // LAMBDAS
