@@ -1,6 +1,8 @@
 package domain
 
-import "log"
+import (
+	"github.com/JuanGQCadavid/now-project/services/pkgs/common/logs"
+)
 
 type Event struct {
 	Name           string `json:"name,omitempty"`
@@ -29,12 +31,12 @@ func (e *Event) IsEquals(ee *Event) bool {
 		return true
 	}
 
-	log.Println(e.Description == ee.Description)
-	log.Println(e.Emoji == ee.Emoji)
-	log.Println(e.Name == ee.Name)
-	log.Println(e.UUID == ee.UUID)
+	logs.Info.Println(e.Description == ee.Description)
+	logs.Info.Println(e.Emoji == ee.Emoji)
+	logs.Info.Println(e.Name == ee.Name)
+	logs.Info.Println(e.UUID == ee.UUID)
 
-	log.Println(e.UUID, ee.UUID)
+	logs.Info.Println(e.UUID, ee.UUID)
 
 	return false
 }

@@ -1,8 +1,7 @@
 package commands
 
 import (
-	"log"
-
+	"github.com/JuanGQCadavid/now-project/services/pkgs/common/logs"
 	"github.com/JuanGQCadavid/now-project/services/spotsCoreService/internal/core/domain"
 	"github.com/neo4j/neo4j-go-driver/v4/neo4j"
 	"github.com/neo4j/neo4j-go-driver/v4/neo4j/db"
@@ -44,7 +43,7 @@ func (cmd *UpdateSpotEventCommand) Run(trx neo4j.Transaction) (interface{}, erro
 	result, err := trx.Run(cypherQ, params)
 
 	if err != nil {
-		log.Println("commands - UpdateSpotEventCommand - Run: We face an error when updating the spot event, err: ", err.Error())
+		logs.Error.Println("commands - UpdateSpotEventCommand - Run: We face an error when updating the spot event, err: ", err.Error())
 		return nil, err
 	}
 

@@ -2,9 +2,9 @@ package httphdl
 
 import (
 	"fmt"
-	"log"
 	"strings"
 
+	"github.com/JuanGQCadavid/now-project/services/pkgs/common/logs"
 	"github.com/JuanGQCadavid/now-project/services/spotsCoreService/internal/core/domain"
 	"github.com/JuanGQCadavid/now-project/services/spotsCoreService/internal/core/ports"
 	"github.com/gin-gonic/gin"
@@ -34,12 +34,12 @@ func (hdl *HTTPHandler) GetSpot(context *gin.Context) {
 
 	format := hdl.getOuputFormat(context.DefaultQuery("format", "empty"))
 
-	log.Printf("\nHandler: GetEvent \n\tId: %s, \n\tFormat: %s", id, string(format))
+	logs.Info.Printf("\nHandler: GetEvent \n\tId: %s, \n\tFormat: %s", id, string(format))
 
 	event, err := hdl.spotService.Get(id, format)
 
 	if err != nil {
-		log.Println(err)
+		logs.Error.Println(err)
 
 		if err == ports.ErrSpotNotFounded {
 			context.AbortWithStatusJSON(404, ErrorMessage{
@@ -68,12 +68,12 @@ func (hdl *HTTPHandler) GetMultipleSpots(context *gin.Context) {
 
 	format := hdl.getOuputFormat(context.DefaultQuery("format", "empty"))
 
-	log.Printf("\nHandler: GetEvents \n\tSpotIds: %+v, \n\tFormat: %s", spotIds, string(format))
+	logs.Info.Printf("\nHandler: GetEvents \n\tSpotIds: %+v, \n\tFormat: %s", spotIds, string(format))
 
 	multipleSpots, err := hdl.spotService.GetSpots(spotIds.SpotIds, format)
 
 	if err != nil {
-		log.Println(err)
+		logs.Error.Println(err)
 		context.AbortWithStatusJSON(400, ErrorMessage{
 			Message:       "We face an error while fethcing the data",
 			InternalError: err.Error(),
@@ -90,7 +90,7 @@ func (hdl *HTTPHandler) CreateSpot(context *gin.Context) {
 	spot := domain.Spot{}
 	context.BindJSON(&spot)
 
-	log.Printf("\nHandler: CreateSpot \n\tSpot: %+v", spot)
+	logs.Info.Printf("\nHandler: CreateSpot \n\tSpot: %+v", spot)
 
 	if !hdl.isSpotCorrect(spot) {
 		context.AbortWithStatusJSON(400, ErrorMessage{
@@ -102,7 +102,7 @@ func (hdl *HTTPHandler) CreateSpot(context *gin.Context) {
 	spot, err := hdl.spotService.CreateSpot(spot)
 
 	if err != nil {
-		log.Println(err.Error())
+		logs.Error.Println(err.Error())
 		context.AbortWithStatusJSON(400, ErrorMessage{
 			Message:       "We face an error while creating spot",
 			InternalError: err.Error(),
@@ -120,10 +120,10 @@ func (hdl *HTTPHandler) UpdateSpotEvent(context *gin.Context) {
 	spotEvent := domain.Spot{}
 	context.BindJSON(&spotEvent)
 
-	log.Printf("Handler - UpdateSpotEvent: UserId %s,  Id %s, spotEvent %+v\n", userId, id, fmt.Sprintf("%+v", spotEvent.EventInfo))
+	logs.Info.Printf("Handler - UpdateSpotEvent: UserId %s,  Id %s, spotEvent %+v\n", userId, id, fmt.Sprintf("%+v", spotEvent.EventInfo))
 
 	if err := hdl.spotService.UpdateSpotEvent(id, userId, &spotEvent.EventInfo); err != nil {
-		log.Println("Hanlder - UpdateSpotEvent - Error", err.Error())
+		logs.Info.Println("Hanlder - UpdateSpotEvent - Error", err.Error())
 
 		if err == ports.ErrSpotToUpdateIsTheSameAsTheDb {
 			context.Status(204)
@@ -161,10 +161,10 @@ func (hdl *HTTPHandler) UpdateSpotTopic(context *gin.Context) {
 func (hdl *HTTPHandler) DeleteSpot(context *gin.Context) {
 	id := context.Param("id")
 	userRequestedId := context.Request.Header.Get("Authorization")
-	log.Printf("Handler - DeleteSpot: userRequestedId %s,  Id %s", userRequestedId, id)
+	logs.Info.Printf("Handler - DeleteSpot: userRequestedId %s,  Id %s", userRequestedId, id)
 
 	if err := hdl.spotService.DeleteSpot(id, userRequestedId); err != nil {
-		log.Println("Hanlder - DeleteSpot - Error", err.Error())
+		logs.Info.Println("Hanlder - DeleteSpot - Error", err.Error())
 
 		if err == ports.ErrSpotUserNotOwnerWhenUpdatingSpot {
 			context.AbortWithStatusJSON(401, ErrorMessage{

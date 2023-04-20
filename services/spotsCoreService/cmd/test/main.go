@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"log"
 
+	"github.com/JuanGQCadavid/now-project/services/pkgs/common/logs"
 	"github.com/JuanGQCadavid/now-project/services/spotsCoreService/internal/core/domain"
 	"github.com/JuanGQCadavid/now-project/services/spotsCoreService/internal/core/services/spotsrv"
 	"github.com/JuanGQCadavid/now-project/services/spotsCoreService/internal/repositories/neo4jRepository"
@@ -33,8 +33,8 @@ func main() {
 	domainSpotResult, err := service.CreateSpot(spotToCreate)
 
 	if err != nil {
-		log.Fatalln(err)
+		logs.Error.Fatal(err)
 	}
 
-	log.Println(fmt.Sprintf("%+v", domainSpotResult))
+	logs.Info.Println(fmt.Sprintf("%+v", domainSpotResult))
 }

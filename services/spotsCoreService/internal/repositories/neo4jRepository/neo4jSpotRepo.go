@@ -2,8 +2,8 @@ package neo4jRepository
 
 import (
 	"fmt"
-	"log"
 
+	"github.com/JuanGQCadavid/now-project/services/pkgs/common/logs"
 	"github.com/JuanGQCadavid/now-project/services/spotsCoreService/internal/core/domain"
 	"github.com/JuanGQCadavid/now-project/services/spotsCoreService/internal/core/ports"
 	"github.com/JuanGQCadavid/now-project/services/spotsCoreService/internal/repositories/neo4jRepository/commands"
@@ -30,7 +30,7 @@ func NewNeo4jSpotRepoWithDriver(driver neo4j.Driver) *Neo4jSpotRepo {
 }
 
 func (r Neo4jSpotRepo) Get(id string, format ports.OutputFormat) (domain.Spot, error) {
-	println("Get id -> ", id)
+	logs.Info.Println("Get id -> ", id)
 
 	var command commands.Command
 
@@ -58,7 +58,7 @@ func (r Neo4jSpotRepo) Get(id string, format ports.OutputFormat) (domain.Spot, e
 }
 
 func (r Neo4jSpotRepo) GetSpots(spotIds []string, format ports.OutputFormat) (domain.MultipleSpots, error) {
-	log.Println("Repository: GetSpots", fmt.Sprintf("%+v", spotIds))
+	logs.Info.Println("Repository: GetSpots", fmt.Sprintf("%+v", spotIds))
 
 	var command commands.Command
 
@@ -86,7 +86,7 @@ func (r Neo4jSpotRepo) GetSpots(spotIds []string, format ports.OutputFormat) (do
 }
 
 func (r Neo4jSpotRepo) CreateSpot(spot domain.Spot) error {
-	log.Printf("Repository: CreateSpot %+v \n", spot)
+	logs.Info.Printf("Repository: CreateSpot %+v \n", spot)
 
 	var command commands.Command = commands.NewCreateSpotCommand(&spot)
 
@@ -98,7 +98,7 @@ func (r Neo4jSpotRepo) CreateSpot(spot domain.Spot) error {
 	})
 
 	if err != nil {
-		log.Println(err)
+		logs.Error.Println(err)
 		return err
 	}
 
@@ -110,7 +110,7 @@ func (r Neo4jSpotRepo) GetSpotByUserId(personId string) (domain.Spot, error) {
 }
 
 func (r Neo4jSpotRepo) DeleteSpot(spotId string) error {
-	log.Println("Repository: DeleteSpot:", spotId)
+	logs.Info.Println("Repository: DeleteSpot:", spotId)
 
 	session := r.driver.NewSession(neo4j.SessionConfig{})
 	defer session.Close()
@@ -125,10 +125,10 @@ func (r Neo4jSpotRepo) DeleteSpot(spotId string) error {
 }
 
 func (r Neo4jSpotRepo) CreateSpotTags(spotId string, principalTag domain.Optional, secondaryTags []string) error {
-	log.Println("Repository: CreateSpotTags", "\nspotId: ", spotId, "\nprincipalTag: ", fmt.Sprintf("%+v", principalTag), "\nsecondaryTags: ", fmt.Sprintf("%+v", secondaryTags))
+	logs.Info.Println("Repository: CreateSpotTags", "\nspotId: ", spotId, "\nprincipalTag: ", fmt.Sprintf("%+v", principalTag), "\nsecondaryTags: ", fmt.Sprintf("%+v", secondaryTags))
 
 	if !principalTag.IsPresent() && (secondaryTags == nil || len(secondaryTags) == 0) {
-		log.Println("Avoiding process as both Principal and secondary tags are empty.")
+		logs.Info.Println("Avoiding process as both Principal and secondary tags are empty.")
 		return nil
 	}
 
@@ -140,12 +140,12 @@ func (r Neo4jSpotRepo) CreateSpotTags(spotId string, principalTag domain.Optiona
 	output, err := session.WriteTransaction(func(tx neo4j.Transaction) (interface{}, error) {
 		return cmd.Run(tx)
 	})
-	log.Println(fmt.Sprintf("%+v", output))
+	logs.Info.Println(fmt.Sprintf("%+v", output))
 	return err
 }
 
 func (r *Neo4jSpotRepo) UpdateSpotEvent(spotEvent domain.Event, spotId string) error {
-	log.Printf("Repository: UpdateSpotEvent %+v \n", spotEvent)
+	logs.Info.Printf("Repository: UpdateSpotEvent %+v \n", spotEvent)
 
 	var command commands.Command = commands.NewUpdateSpotEventCommand(&spotEvent, spotId)
 
@@ -157,7 +157,7 @@ func (r *Neo4jSpotRepo) UpdateSpotEvent(spotEvent domain.Event, spotId string) e
 	})
 
 	if err != nil {
-		log.Println(err)
+		logs.Error.Println(err)
 		return err
 	}
 

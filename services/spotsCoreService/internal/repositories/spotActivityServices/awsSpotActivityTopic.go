@@ -3,9 +3,9 @@ package spotactivityservices
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"os"
 
+	"github.com/JuanGQCadavid/now-project/services/pkgs/common/logs"
 	"github.com/JuanGQCadavid/now-project/services/spotsCoreService/internal/core/domain"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -25,7 +25,7 @@ func NewAWSSpotActivityTopic() *AWSSpotActivityTopic {
 	snsArn, isPresent := os.LookupEnv("snsArn")
 
 	if !isPresent {
-		log.Fatal("snsArn is not configured in the env.")
+		logs.Error.Fatal("snsArn is not configured in the env.")
 	}
 
 	svc := sns.New(sess)
@@ -36,10 +36,10 @@ func NewAWSSpotActivityTopic() *AWSSpotActivityTopic {
 }
 
 func (r AWSSpotActivityTopic) NotifySpotCreated(spot domain.Spot) error {
-	log.Println("NotifySpotCreated: ", "\n\t", " spot: ", fmt.Sprintf("%+v", spot))
+	logs.Info.Println("NotifySpotCreated: ", "\n\t", " spot: ", fmt.Sprintf("%+v", spot))
 
 	body, err := json.Marshal(&spot)
-	log.Println("body -> ", fmt.Sprintf("%+v", body))
+	logs.Info.Println("body -> ", fmt.Sprintf("%+v", body))
 	if err != nil {
 		return err
 	}
@@ -47,15 +47,15 @@ func (r AWSSpotActivityTopic) NotifySpotCreated(spot domain.Spot) error {
 	return r.sendMessageToTopic(string(body), "spot_created")
 }
 func (r AWSSpotActivityTopic) NotifySpotStopped(spotId string) error {
-	log.Println("NotifySpotStopped: ", "\n\t", " spotId: ", spotId)
+	logs.Info.Println("NotifySpotStopped: ", "\n\t", " spotId: ", spotId)
 
 	return r.sendMessageToTopic(spotId, "spot_removed")
 }
 
 func (r AWSSpotActivityTopic) sendMessageToTopic(messageBody string, operation string) error {
-	log.Println("sendMessageToTopic: ", "\n\t", " Operation: ", operation, "\n\t", " messageBody:", messageBody)
+	logs.Info.Println("sendMessageToTopic: ", "\n\t", " Operation: ", operation, "\n\t", " messageBody:", messageBody)
 
-	log.Println("Target arn: ", r.targetArn)
+	logs.Info.Println("Target arn: ", r.targetArn)
 	operationResult, err := r.snsService.Publish(&sns.PublishInput{
 		Message: &messageBody,
 		Subject: aws.String(operation),
@@ -69,10 +69,10 @@ func (r AWSSpotActivityTopic) sendMessageToTopic(messageBody string, operation s
 	})
 
 	if err != nil {
-		log.Print(err)
-		log.Print(err.Error())
+		logs.Error.Println(err)
+		logs.Error.Println(err.Error())
 	} else {
-		log.Printf("%+v", operationResult)
+		logs.Info.Printf("%+v", operationResult)
 	}
 
 	return err

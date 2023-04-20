@@ -1,10 +1,10 @@
 package neo4jRepository
 
 import (
-	"log"
 	"os"
 	"sync"
 
+	"github.com/JuanGQCadavid/now-project/services/pkgs/common/logs"
 	"github.com/neo4j/neo4j-go-driver/v4/neo4j"
 )
 
@@ -23,10 +23,10 @@ func GetNeo4jRepoDriver() *Neo4jRepoDriver {
 		neo4jPassword, isPresentPass := os.LookupEnv("neo4jPassword")
 
 		if !isPresentURL || !isPresentUser || !isPresentPass {
-			log.Println("neo4jUri: ", neo4jUri)
-			log.Println("neo4jUser: ", neo4jUser)
-			log.Println("neo4jPassword: ", neo4jPassword)
-			log.Fatalln("The ULR, Password or Username is not present in the env.")
+			logs.Warning.Println("neo4jUri: ", neo4jUri)
+			logs.Warning.Println("neo4jUser: ", neo4jUser)
+			logs.Warning.Println("neo4jPassword: ", neo4jPassword)
+			logs.Error.Fatalln("The ULR, Password or Username is not present in the env.")
 		}
 
 		auth := neo4j.BasicAuth(neo4jUser, neo4jPassword, "")

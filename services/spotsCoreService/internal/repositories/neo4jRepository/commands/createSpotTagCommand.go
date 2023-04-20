@@ -2,8 +2,8 @@ package commands
 
 import (
 	"fmt"
-	"log"
 
+	"github.com/JuanGQCadavid/now-project/services/pkgs/common/logs"
 	"github.com/JuanGQCadavid/now-project/services/spotsCoreService/internal/core/domain"
 	"github.com/neo4j/neo4j-go-driver/v4/neo4j"
 )
@@ -46,7 +46,7 @@ func (cmd *CreateSpotTagsCommand) Run(tx neo4j.Transaction) (interface{}, error)
 		}
 	}
 
-	log.Println(cypherBaseCommand)
+	logs.Info.Println(cypherBaseCommand)
 
 	return tx.Run(cypherBaseCommand, params)
 }

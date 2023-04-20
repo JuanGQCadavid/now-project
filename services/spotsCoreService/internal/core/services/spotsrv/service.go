@@ -2,9 +2,9 @@ package spotsrv
 
 import (
 	"fmt"
-	"log"
 	"strings"
 
+	"github.com/JuanGQCadavid/now-project/services/pkgs/common/logs"
 	"github.com/JuanGQCadavid/now-project/services/spotsCoreService/internal/core/domain"
 	"github.com/JuanGQCadavid/now-project/services/spotsCoreService/internal/core/ports"
 	"github.com/JuanGQCadavid/now-project/services/spotsCoreService/pkg/uuidgen"
@@ -29,16 +29,16 @@ func New(spotRepository ports.SpotRepository, spotActivityTopic ports.SpotActivi
 }
 
 func (s *service) Get(spotId string, format ports.OutputFormat) (domain.Spot, error) {
-	log.Println("Service: Get ->", spotId)
+	logs.Info.Println("Service: Get ->", spotId)
 	spotFounded, err := s.spotRepository.Get(spotId, format)
 
 	if err != nil {
-		log.Println("We get an error while getting the spot with id", spotId)
+		logs.Error.Println("We get an error while getting the spot with id", spotId)
 		return domain.Spot{}, err
 	}
 
 	if len(spotFounded.EventInfo.UUID) == 0 {
-		log.Println("Spot not founded with id", spotId)
+		logs.Error.Println("Spot not founded with id", spotId)
 		return domain.Spot{}, ports.ErrSpotNotFounded
 	}
 
@@ -47,7 +47,7 @@ func (s *service) Get(spotId string, format ports.OutputFormat) (domain.Spot, er
 
 func (s *service) GetSpots(spotIds []string, format ports.OutputFormat) (domain.MultipleSpots, error) {
 	// TODO -> Should we check that all elements are not empy ?
-	log.Println("Service: GetSpots ->", fmt.Sprintf("%+v", spotIds))
+	logs.Info.Println("Service: GetSpots ->", fmt.Sprintf("%+v", spotIds))
 	return s.spotRepository.GetSpots(spotIds, format)
 }
 
@@ -68,7 +68,7 @@ func (s *service) GetSpots(spotIds []string, format ports.OutputFormat) (domain.
 
 func (s *service) CreateSpot(spot domain.Spot) (domain.Spot, error) {
 
-	log.Println("Service: CreateSpot -> ", fmt.Sprintf("%+v", spot))
+	logs.Info.Println("Service: CreateSpot -> ", fmt.Sprintf("%+v", spot))
 	//TODO -> Missing body validation
 
 	spotUuid := s.uuidGen.New()
@@ -134,7 +134,7 @@ func (s *service) GetSpotByUserId(userId string) (domain.Spot, error) {
 
 	// TODO -> Improve this.
 	if returnedError != nil {
-		log.Println("Error on GetSpotByUserId: ", returnedError)
+		logs.Error.Println("Error on GetSpotByUserId: ", returnedError)
 		return domain.Spot{}, returnedError
 	}
 
@@ -142,25 +142,25 @@ func (s *service) GetSpotByUserId(userId string) (domain.Spot, error) {
 }
 
 func (s *service) DeleteSpot(spotId string, requestUserId string) error {
-	log.Printf("Service - DeleteSpot: Id: %s, requestUserId: %s \n", spotId, requestUserId)
+	logs.Info.Printf("Service - DeleteSpot: Id: %s, requestUserId: %s \n", spotId, requestUserId)
 
 	// 1. Fetch the event that the spot id belongs to.
 	originalSpot, err := s.spotRepository.Get(spotId, ports.FULL_FORMAT)
 
 	if err != nil {
-		log.Println("ERROR: Service - DeleteSpot - Fetch actual spot fail: ", err.Error())
+		logs.Error.Println("ERROR: Service - DeleteSpot - Fetch actual spot fail: ", err.Error())
 		return err
 	}
 
 	if len(originalSpot.EventInfo.UUID) == 0 {
-		log.Println("Spot not founded, it is empty")
+		logs.Error.Println("Spot not founded, it is empty")
 		return ports.ErrSpotNotFounded
 	}
 
 	// 2. Verify that the owner id is the same as the one that is making the request
 	if originalSpot.HostInfo.Id != requestUserId {
-		log.Println("HostInfo", originalSpot.HostInfo.Id)
-		log.Println("requestUserId", requestUserId)
+		logs.Error.Println("HostInfo", originalSpot.HostInfo.Id)
+		logs.Error.Println("requestUserId", requestUserId)
 		return ports.ErrSpotUserNotOwnerWhenUpdatingSpot
 	}
 
@@ -169,7 +169,7 @@ func (s *service) DeleteSpot(spotId string, requestUserId string) error {
 	err = s.spotRepository.DeleteSpot(spotId)
 
 	if err != nil {
-		log.Println("ERROR: Service - DeleteSpot - Delete command fail: ", err.Error())
+		logs.Error.Println("ERROR: Service - DeleteSpot - Delete command fail: ", err.Error())
 		return err
 	}
 
@@ -179,12 +179,12 @@ func (s *service) DeleteSpot(spotId string, requestUserId string) error {
 func (s *service) FinalizeSpot(spotId string, requestUserId string) error {
 	/*
 		if returnedError := s.spotRepository.EndSpot(spotId); returnedError != nil {
-			log.Println("Error on EndSpot: ", returnedError)
+			logs.Error.Println("Error on EndSpot: ", returnedError)
 			return returnedError
 		}
 
 		if returnedError := s.spotActivityTopic.RemoveSpot(spotId); returnedError != nil {
-			log.Println("Error on EndSpot: ", returnedError)
+			logs.Error.Println("Error on EndSpot: ", returnedError)
 			return returnedError
 		}
 
@@ -218,13 +218,13 @@ Procedure:
     FALSE -> Just return
 */
 func (s *service) UpdateSpotEvent(spotId string, ownerId string, spotEvent *domain.Event) error {
-	log.Printf("Service - UpdateSpotEvent: Id: %s, SpotEvent: %+v \n", spotId, spotEvent)
+	logs.Info.Printf("Service - UpdateSpotEvent: Id: %s, SpotEvent: %+v \n", spotId, spotEvent)
 
 	// 1. Fetch the event that the spot id belongs to.
 	originalSpot, err := s.spotRepository.Get(spotId, ports.FULL_FORMAT)
 
 	if err != nil {
-		log.Println("ERROR: Service - UpdateSpotEvent: ", err.Error())
+		logs.Error.Println("ERROR: Service - UpdateSpotEvent: ", err.Error())
 		return err
 	}
 

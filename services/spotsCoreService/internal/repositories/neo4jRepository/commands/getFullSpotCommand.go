@@ -1,8 +1,7 @@
 package commands
 
 import (
-	"log"
-
+	"github.com/JuanGQCadavid/now-project/services/pkgs/common/logs"
 	"github.com/JuanGQCadavid/now-project/services/spotsCoreService/internal/core/domain"
 	"github.com/neo4j/neo4j-go-driver/v4/neo4j"
 	"github.com/neo4j/neo4j-go-driver/v4/neo4j/db"
@@ -39,18 +38,18 @@ func (command *GetFullSpotCommand) Run(tr neo4j.Transaction) (interface{}, error
 
 	cyperParams := map[string]interface{}{"spotId": command.spotId}
 
-	log.Println(cypherQ)
+	logs.Info.Println(cypherQ)
 	result, err := tr.Run(cypherQ, cyperParams)
 
 	if err != nil {
-		println("Error at running!", err)
+		logs.Error.Println("Error at running!", err)
 		return &domain.Spot{}, err
 	}
 	var spot domain.Spot = domain.Spot{}
 	for result.Next() {
 		record := result.Record()
 		spot = command.getSpotDataFromResult(record)
-		log.Printf("%+v", spot)
+		logs.Info.Printf("%+v", spot)
 	}
 	return &spot, nil
 
@@ -91,7 +90,7 @@ func (command *GetFullSpotCommand) getSpotDataFromResult(record *db.Record) doma
 
 	}
 
-	log.Printf("%+v", record)
+	logs.Info.Printf("%+v", record)
 
 	return domain.Spot{
 		EventInfo: domain.Event{

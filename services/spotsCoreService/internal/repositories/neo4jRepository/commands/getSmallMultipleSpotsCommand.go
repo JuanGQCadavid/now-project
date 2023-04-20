@@ -1,8 +1,7 @@
 package commands
 
 import (
-	"log"
-
+	"github.com/JuanGQCadavid/now-project/services/pkgs/common/logs"
 	"github.com/JuanGQCadavid/now-project/services/spotsCoreService/internal/core/domain"
 	"github.com/neo4j/neo4j-go-driver/v4/neo4j"
 	"github.com/neo4j/neo4j-go-driver/v4/neo4j/db"
@@ -32,7 +31,7 @@ func (command *GetSmallMultipleSpotsCommand) Run(tr neo4j.Transaction) (interfac
 		collect(tagged.isPrincipal) as tag_principals
 	`
 
-	println(cypherQ)
+	logs.Info.Println(cypherQ)
 
 	cyperParams := map[string]interface{}{"spotIds": command.spotIds}
 
@@ -41,7 +40,7 @@ func (command *GetSmallMultipleSpotsCommand) Run(tr neo4j.Transaction) (interfac
 	var spotsToReturn []domain.Spot = []domain.Spot{}
 
 	if err != nil {
-		println("Error at running!", err)
+		logs.Error.Println("Error at running!", err)
 		return &domain.MultipleSpots{}, err
 	}
 
@@ -85,7 +84,7 @@ func (command *GetSmallMultipleSpotsCommand) getSpotDataFromResult(record *db.Re
 
 	}
 
-	log.Printf("%+v", record)
+	logs.Info.Printf("%+v", record)
 
 	return domain.Spot{
 		EventInfo: domain.Event{

@@ -3,13 +3,13 @@ module github.com/JuanGQCadavid/now-project/services/spotsCoreService
 go 1.17
 
 require (
+	github.com/JuanGQCadavid/now-project/services/pkgs/common v0.0.0-00010101000000-000000000000
 	github.com/JuanGQCadavid/now-project/services/pkgs/credentialsFinder v0.0.0-00010101000000-000000000000
 	github.com/aws/aws-lambda-go v1.28.0
-	github.com/aws/aws-sdk-go v1.44.142
+	github.com/aws/aws-sdk-go v1.44.245
 	github.com/awslabs/aws-lambda-go-api-proxy v0.12.0
 	github.com/gin-gonic/gin v1.7.7
 	github.com/google/uuid v1.3.0
-	github.com/matiasvarela/errors v1.3.0
 	github.com/neo4j/neo4j-go-driver/v4 v4.4.4
 )
 
@@ -34,3 +34,5 @@ require (
 )
 
 replace github.com/JuanGQCadavid/now-project/services/pkgs/credentialsFinder => ../pkgs/credentialsFinder
+
+replace github.com/JuanGQCadavid/now-project/services/pkgs/common => ../pkgs/common
