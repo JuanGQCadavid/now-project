@@ -1,8 +1,8 @@
 package neo4j
 
 import (
+	"github.com/JuanGQCadavid/now-project/services/pkgs/common/logs"
 	"github.com/JuanGQCadavid/now-project/services/spotsScheduledService/internal/core/domain"
-	"github.com/JuanGQCadavid/now-project/services/spotsScheduledService/internal/core/logs"
 	"github.com/JuanGQCadavid/now-project/services/spotsScheduledService/internal/repositories/neo4j/commands"
 	"github.com/neo4j/neo4j-go-driver/v4/neo4j"
 )

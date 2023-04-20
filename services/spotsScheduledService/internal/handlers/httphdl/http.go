@@ -3,8 +3,8 @@ package httphdl
 import (
 	"errors"
 
+	"github.com/JuanGQCadavid/now-project/services/pkgs/common/logs"
 	"github.com/JuanGQCadavid/now-project/services/spotsScheduledService/internal/core/domain"
-	"github.com/JuanGQCadavid/now-project/services/spotsScheduledService/internal/core/logs"
 	"github.com/JuanGQCadavid/now-project/services/spotsScheduledService/internal/core/ports"
 	"github.com/gin-gonic/gin"
 )

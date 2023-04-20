@@ -4,9 +4,10 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/JuanGQCadavid/now-project/services/pkgs/common/logs"
 	"github.com/JuanGQCadavid/now-project/services/spotsScheduledService/internal/core/domain"
-	"github.com/JuanGQCadavid/now-project/services/spotsScheduledService/internal/core/logs"
 	"github.com/JuanGQCadavid/now-project/services/spotsScheduledService/internal/core/services"
+	"github.com/JuanGQCadavid/now-project/services/spotsScheduledService/internal/notifiers/dummy"
 	"github.com/JuanGQCadavid/now-project/services/spotsScheduledService/internal/repositories/local"
 	"github.com/JuanGQCadavid/now-project/services/spotsScheduledService/internal/repositories/neo4j/commands"
 )
@@ -71,7 +72,7 @@ func testAppendCommand() {
 
 func testService() {
 	repo := &local.LocalRepository{}
-	service := services.NewScheduledService(repo)
+	service := services.NewScheduledService(repo, &dummy.Notifier{})
 	patterns := []domain.SchedulePattern{
 		{
 			Host: domain.Host{

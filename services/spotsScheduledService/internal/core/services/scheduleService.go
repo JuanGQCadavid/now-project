@@ -3,19 +3,21 @@ package services
 import (
 	"time"
 
+	"github.com/JuanGQCadavid/now-project/services/pkgs/common/logs"
 	"github.com/JuanGQCadavid/now-project/services/spotsScheduledService/internal/core/domain"
-	"github.com/JuanGQCadavid/now-project/services/spotsScheduledService/internal/core/logs"
 	"github.com/JuanGQCadavid/now-project/services/spotsScheduledService/internal/core/ports"
 	"github.com/google/uuid"
 )
 
 type ScheduledService struct {
 	repository ports.Repository
+	notifier   ports.Notify
 }
 
-func NewScheduledService(repository ports.Repository) *ScheduledService {
+func NewScheduledService(repository ports.Repository, notifier ports.Notify) *ScheduledService {
 	return &ScheduledService{
 		repository: repository,
+		notifier:   notifier,
 	}
 }
 
@@ -116,6 +118,13 @@ func (service *ScheduledService) AppendSchedule(spotId string, userRequestId str
 	}
 
 	spot.Patterns = schedulesPattern
+
+	service.notifier.SchedulePatternActivity(ports.SchedulePatternAppended, domain.Notification{
+		SpotId:           spotId,
+		UserId:           userRequestId,
+		Aditionalpayload: spot,
+	})
+
 	return spot, nil, nil
 }
 
@@ -153,6 +162,13 @@ func (service *ScheduledService) ResumeSchedule(spotId string, scheduleId string
 	if err != nil {
 		logs.Error.Println("We found an error whule Updating the schedule status, error: ", err.Error())
 	}
+
+	service.notifier.SchedulePatternActivity(ports.SchedulePatternResumed, domain.Notification{
+		SpotId:           spotId,
+		ScheduleId:       scheduleId,
+		UserId:           userRequestId,
+		Aditionalpayload: newStatus,
+	})
 
 	return err
 }
@@ -192,6 +208,13 @@ func (service *ScheduledService) FreezeSchedule(spotId string, scheduleId string
 		logs.Error.Println("We found an error whule Updating the schedule status, error: ", err.Error())
 	}
 
+	service.notifier.SchedulePatternActivity(ports.SchedulePatternFreezed, domain.Notification{
+		SpotId:           spotId,
+		ScheduleId:       scheduleId,
+		UserId:           userRequestId,
+		Aditionalpayload: newStatus,
+	})
+
 	return err
 }
 
@@ -224,6 +247,13 @@ func (service *ScheduledService) ConcludeSchedule(spotId string, scheduleId stri
 	if err != nil {
 		logs.Error.Println("We found an error whule Updating the schedule status, error: ", err.Error())
 	}
+
+	service.notifier.SchedulePatternActivity(ports.SchedulePatternConcluded, domain.Notification{
+		SpotId:           spotId,
+		ScheduleId:       scheduleId,
+		UserId:           userRequestId,
+		Aditionalpayload: newStatus,
+	})
 
 	return err
 }

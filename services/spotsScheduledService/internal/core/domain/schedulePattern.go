@@ -4,7 +4,7 @@ import (
 	"errors"
 	"time"
 
-	"github.com/JuanGQCadavid/now-project/services/spotsScheduledService/internal/core/logs"
+	"github.com/JuanGQCadavid/now-project/services/pkgs/common/logs"
 )
 
 var (
