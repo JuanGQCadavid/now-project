@@ -3,7 +3,6 @@ package snstopic
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"os"
 
 	"github.com/JuanGQCadavid/now-project/services/pkgs/common/logs"
@@ -49,7 +48,6 @@ func (r SNSTopicActions) NotifyWithBody(action string, body interface{}) error {
 	logs.Info.Printf("NotifyWithBody: action ->  %s", action)
 
 	bodyMarshaled, err := json.Marshal(&body)
-	logs.Info.Println("body -> ", fmt.Sprintf("%+v", bodyMarshaled))
 
 	if err != nil {
 		logs.Error.Println(err.Error())
