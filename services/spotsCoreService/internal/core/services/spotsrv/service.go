@@ -15,16 +15,16 @@ When implementin a interface is just creating a struct with all
 the methods that the interface defined.
 */
 type service struct {
-	spotRepository    ports.SpotRepository
-	spotActivityTopic ports.SpotActivityTopic
-	uuidGen           uuidgen.UUIDGen
+	spotRepository ports.SpotRepository
+	notifier       ports.Notify
+	uuidGen        uuidgen.UUIDGen
 }
 
-func New(spotRepository ports.SpotRepository, spotActivityTopic ports.SpotActivityTopic, uuidGen uuidgen.UUIDGen) *service {
+func New(spotRepository ports.SpotRepository, notifier ports.Notify, uuidGen uuidgen.UUIDGen) *service {
 	return &service{
-		spotRepository:    spotRepository,
-		spotActivityTopic: spotActivityTopic,
-		uuidGen:           uuidGen,
+		spotRepository: spotRepository,
+		notifier:       notifier,
+		uuidGen:        uuidGen,
 	}
 }
 
@@ -84,8 +84,10 @@ func (s *service) CreateSpot(spot domain.Spot) (domain.Spot, error) {
 		return domain.Spot{}, returnedError
 	}
 
-	if returnedError := s.spotActivityTopic.NotifySpotCreated(spot); returnedError != nil {
-		return domain.Spot{}, returnedError
+	if returnedError := s.notifier.Send(ports.SpotCreated, domain.Notification{
+		Aditionalpayload: spot,
+	}); returnedError != nil {
+		logs.Error.Println("We fail sending notification, but we keep the process")
 	}
 
 	// Check if method contains tags for the event
@@ -173,6 +175,13 @@ func (s *service) DeleteSpot(spotId string, requestUserId string) error {
 		return err
 	}
 
+	if returnedError := s.notifier.Send(ports.SpotDeleted, domain.Notification{
+		SpotId: spotId,
+		UserId: requestUserId,
+	}); returnedError != nil {
+		logs.Error.Println("We fail sending notification, but we keep the process")
+	}
+
 	return nil
 }
 
@@ -240,7 +249,22 @@ func (s *service) UpdateSpotEvent(spotId string, ownerId string, spotEvent *doma
 	}
 
 	// Updated the event
-	return s.spotRepository.UpdateSpotEvent(*spotEvent, spotId)
+	err = s.spotRepository.UpdateSpotEvent(*spotEvent, spotId)
+
+	if err != nil {
+		logs.Error.Println("We fail updading the event, err:", err.Error())
+		return err
+	}
+
+	if returnedError := s.notifier.Send(ports.SpotUpdated, domain.Notification{
+		SpotId:           spotId,
+		UserId:           ownerId,
+		Aditionalpayload: spotEvent,
+	}); returnedError != nil {
+		logs.Error.Println("We fail sending notification, but we keep the process")
+	}
+
+	return nil
 }
 
 /*
