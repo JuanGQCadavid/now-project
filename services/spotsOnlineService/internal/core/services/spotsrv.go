@@ -11,11 +11,13 @@ import (
 
 type Service struct {
 	repository ports.Repository
+	notifer    ports.Notify
 }
 
-func NewService(repository ports.Repository) *Service {
+func NewService(repository ports.Repository, notifer ports.Notify) *Service {
 	return &Service{
 		repository: repository,
+		notifer:    notifer,
 	}
 }
 
@@ -109,6 +111,11 @@ func (s *Service) Finalize(spotId string, requestUserId string) error {
 		return err
 	}
 
+	s.notifer.SchedulePatternActivity(ports.OnlineFinalize, domain.Notification{
+		SpotId: spotId,
+		UserId: requestUserId,
+	})
+
 	return nil
 
 }
@@ -138,6 +145,11 @@ func (s *Service) Resume(spotId string, requestUserId string) error {
 		log.Printf("We foinf an error while resuming the date %s on spot %s \n", spotId, dateIdToStop)
 		return err
 	}
+
+	s.notifer.SchedulePatternActivity(ports.OnlineResume, domain.Notification{
+		SpotId: spotId,
+		UserId: requestUserId,
+	})
 
 	return nil
 }
@@ -179,6 +191,11 @@ func (s *Service) Stop(spotId string, requestUserId string) error {
 		log.Printf("We foinf an error while stoping the date %s on spot %s \n", spotId, dateIdToStop)
 		return err
 	}
+
+	s.notifer.SchedulePatternActivity(ports.OnlineStop, domain.Notification{
+		SpotId: spotId,
+		UserId: requestUserId,
+	})
 
 	return nil
 }
@@ -242,6 +259,12 @@ func (s *Service) Start(spotId string, requestUserId string, durationApproximate
 		// log.Printf("OnlineSpot: %+v \n")
 		return domain.OnlineSpot{}, err
 	}
+
+	s.notifer.SchedulePatternActivity(ports.OnlineStart, domain.Notification{
+		SpotId:           spotId,
+		UserId:           requestUserId,
+		Aditionalpayload: onlineSpot,
+	})
 
 	return onlineSpot, nil
 

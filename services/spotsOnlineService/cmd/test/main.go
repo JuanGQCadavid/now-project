@@ -7,6 +7,7 @@ import (
 
 	"github.com/JuanGQCadavid/now-project/services/pkgs/credentialsFinder/cmd/ssm"
 	"github.com/JuanGQCadavid/now-project/services/spotsOnlineService/internal/core/services"
+	"github.com/JuanGQCadavid/now-project/services/spotsOnlineService/internal/notifiers/dummy"
 	"github.com/JuanGQCadavid/now-project/services/spotsOnlineService/internal/repositories/neo4j"
 )
 
@@ -24,7 +25,7 @@ func main() {
 	}
 
 	neoRepo := neo4j.NewNeo4jRepoWithDriver(neo4jDriver)
-	service := services.NewService(neoRepo)
+	service := services.NewService(neoRepo, &dummy.Notifier{})
 
 	out, err := service.Start("UID_C-1234", "1234556778899", 300, 10)
 
