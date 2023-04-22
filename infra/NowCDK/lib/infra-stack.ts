@@ -265,6 +265,14 @@ export class InfraStack extends Stack {
 
     spotsOnlineLambdaRole.addToPolicy(
       new iam.PolicyStatement({
+        actions: ["sns:*"],
+        effect: iam.Effect.ALLOW,
+        resources: [spotActivityTopic.topicArn],
+      })
+    );
+
+    spotsOnlineLambdaRole.addToPolicy(
+      new iam.PolicyStatement({
         actions: ["ssm:GetParameters"],
         effect: iam.Effect.ALLOW,
         resources: ["*"],
@@ -312,6 +320,14 @@ export class InfraStack extends Stack {
         roleName: "spotsScheduledLambdaRole",
         description: "Spots Shchedule Lambda Role",
       }
+    );
+
+    spotsScheduledLambdaRole.addToPolicy(
+      new iam.PolicyStatement({
+        actions: ["sns:*"],
+        effect: iam.Effect.ALLOW,
+        resources: [spotActivityTopic.topicArn],
+      })
     );
 
     spotsScheduledLambdaRole.addToPolicy(
