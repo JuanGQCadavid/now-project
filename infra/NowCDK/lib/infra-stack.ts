@@ -437,17 +437,16 @@ export class InfraStack extends Stack {
       })
     );
 
-    const confirmationSpotLambda = new lambda.Function(
+    const confirmationSpotRESTLambda = new lambda.Function(
       this,
-      "confirmationSpotLambda",
+      "confirmationSpotRESTLambda",
       {
         runtime: lambda.Runtime.GO_1_X,
         handler: "main",
         role: confirmationSpotLambdaRole,
         code: lambda.Code.fromAsset(path),
-        functionName: "ConfirmationSpotService",
+        functionName: "ConfirmationSpotRESTService",
         environment: {
-          // TODO -> How can we manage this env variables ?
           neo4jUser: neo4jUserParameter.parameterName,
           neo4jPassword: neo4jPasswordParameter.parameterName,
           neo4jUri: neo4jUriParameter.parameterName,
@@ -456,13 +455,49 @@ export class InfraStack extends Stack {
       }
     );
 
-    Tags.of(confirmationSpotLambda).add("Type", SERVICE_TYPE);
-    Tags.of(confirmationSpotLambda).add("Family", CONFIRMATION_FAMILY);
+    Tags.of(confirmationSpotRESTLambda).add("Type", SERVICE_TYPE);
+    Tags.of(confirmationSpotRESTLambda).add("Family", CONFIRMATION_FAMILY);
+
     addMethodToApiGateway(
-      confirmationSpotLambda,
+      confirmationSpotRESTLambda,
       mainApiGateway,
       "confirmation"
     );
+
+    const confirmationSpotSQSLambda = new lambda.Function(
+      this,
+      "confirmationSpotSQSLambda",
+      {
+        runtime: lambda.Runtime.GO_1_X,
+        handler: "main",
+        role: confirmationSpotLambdaRole,
+        code: lambda.Code.fromAsset(path),
+        functionName: "ConfirmationSpotSQS",
+        environment: {
+          neo4jUser: neo4jUserParameter.parameterName,
+          neo4jPassword: neo4jPasswordParameter.parameterName,
+          neo4jUri: neo4jUriParameter.parameterName,
+          snsArn: spotActivityTopic.topicArn,
+        },
+      }
+    );
+
+    Tags.of(confirmationSpotSQSLambda).add("Type", SERVICE_TYPE);
+    Tags.of(confirmationSpotSQSLambda).add("Family", CONFIRMATION_FAMILY);
+
+    const sendConfirmationSQS = new sqs.Queue(this, "sendConfirmationSQS", {
+      queueName: "sendConfirmationSQS",
+    });
+
+    const sendConfirmationSQSEvent = new lambdaEvent.SqsEventSource(
+      sendConfirmationSQS,
+      {
+        enabled: true,
+        batchSize: 10,
+      }
+    );
+
+    confirmationSpotSQSLambda.addEventSource(sendConfirmationSQSEvent);
 
     // Filter
 
@@ -604,6 +639,22 @@ export class InfraStack extends Stack {
       }
     );
 
+    scheduledPatternsCheckerRole.addToPolicy(
+      new iam.PolicyStatement({
+        actions: ["ssm:GetParameters"],
+        effect: iam.Effect.ALLOW,
+        resources: ["*"],
+      })
+    );
+
+    scheduledPatternsCheckerRole.addToPolicy(
+      new iam.PolicyStatement({
+        actions: ["sqs:DeleteMessage", "sqs:ChangeMessageVisibility", "sqs:SendMessage"],
+        effect: iam.Effect.ALLOW,
+        resources: [sendConfirmationSQS.queueArn],
+      })
+    );
+
     const scheduledPatternsChecker = new lambda.Function(
       this,
       "scheduledPatternsChecker",
@@ -614,16 +665,19 @@ export class InfraStack extends Stack {
         code: lambda.Code.fromAsset(path),
         functionName: "ScheduledPatternsChecker",
         environment: {
-          // TODO -> How can we manage this env variables ?
+          defaultTimeWindow: "604800", // 7 days in seconds
           neo4jUser: neo4jUserParameter.parameterName,
           neo4jPassword: neo4jPasswordParameter.parameterName,
           neo4jUri: neo4jUriParameter.parameterName,
+          queueUrl: sendConfirmationSQS.queueUrl
         },
       }
     );
 
     Tags.of(scheduledPatternsChecker).add("Type", FUNCTION_TYPE);
     Tags.of(scheduledPatternsChecker).add("Family", SPOT_FAMILY);
+
+    
 
     const scheduledPatternsCheckerEvent = new lambdaEvent.SqsEventSource(
       schedulePatternSQS,
@@ -635,14 +689,16 @@ export class InfraStack extends Stack {
     scheduledPatternsChecker.addEventSource(scheduledPatternsCheckerEvent);
 
     const checkerObject = {
-      action: "CreateScheduledSpots",
+      operation: "generateDatesFromSchedulePatterns",
+      timeWindow: 604800 // 7 days in seconds
     };
 
     const scheduledPatternsCheckerLambdatarget = new eventsTargets.SqsQueue(
       schedulePatternSQS,
       {
         message: RuleTargetInput.fromObject(checkerObject),
-      }
+      },
+
     );
 
     const scheduledPatternsCheckerCron = new events.Rule(
