@@ -663,6 +663,7 @@ export class InfraStack extends Stack {
         handler: "main",
         role: scheduledPatternsCheckerRole,
         code: lambda.Code.fromAsset(path),
+        memorySize: 5308,
         functionName: "ScheduledPatternsChecker",
         environment: {
           defaultTimeWindow: "604800", // 7 days in seconds
