@@ -85,7 +85,7 @@ func (srv *CheckerService) GenerateDatesFromRepository(timeWindow int) error {
 
 			logs.Info.Println("Response ", i, " of ", srv.coresNumber)
 			if response.Error != nil {
-				logs.Error.Println("We got an error while processing the dates")
+				logs.Error.Println("We got an error while processing the dates. Error: ", response.Error.Error())
 				return ports.ErrProcessingDates
 			}
 
@@ -121,6 +121,14 @@ func (srv *CheckerService) splitDatesPerCore(spots []domain.SpotPatternsDeep, co
 
 func (srv *CheckerService) generateDatesParallel(spots []domain.Spot, timeWindow int, ch chan GenerateDatesResponse) {
 
+	result, err := srv.generateDates(spots, timeWindow)
+
+	response := GenerateDatesResponse{
+		Error:  err,
+		Result: result,
+	}
+
+	ch <- response
 }
 
 func (srv *CheckerService) generateDates(spots []domain.Spot, timeWindow int) ([]domain.Spot, error) {
