@@ -2,6 +2,7 @@ package service
 
 import (
 	"runtime"
+	"sort"
 
 	"github.com/JuanGQCadavid/now-project/services/pkgs/common/logs"
 	"github.com/JuanGQCadavid/now-project/services/scheduledPatternsChecker/internal/core/domain"
@@ -61,7 +62,7 @@ func (srv *CheckerService) GenerateDatesFromRepository(timeWindow int) error {
 
 	if srv.coresNumber == 1 {
 		logs.Info.Println("Going with only one core, avoiding parallel process.")
-		spotsWithDates, err = srv.generateDates(activeSchedulePatterns, timeWindow)
+		spotsWithDates, err = srv.GenerateDates(activeSchedulePatterns, timeWindow)
 
 		if err != nil {
 			logs.Error.Println("We got an error while processing the dates")
@@ -70,12 +71,12 @@ func (srv *CheckerService) GenerateDatesFromRepository(timeWindow int) error {
 
 	} else if srv.coresNumber > 1 {
 		logs.Info.Println("Parallel proces for ", srv.coresNumber, " cores")
-		datesPerCore := srv.splitDatesPerCore(srv.getSortedSpotsPatternsByDeep(activeSchedulePatterns), srv.coresNumber)
+		datesPerCore := srv.SplitDatesPerCore(srv.GetSortedSpotsPatternsByDeep(activeSchedulePatterns), srv.coresNumber)
 
 		logs.Info.Println("Creating process")
 		ch := make(chan GenerateDatesResponse)
 		for _, spot := range datesPerCore {
-			go srv.generateDatesParallel(spot, timeWindow, ch)
+			go srv.GenerateDatesParallel(spot, timeWindow, ch)
 		}
 		logs.Info.Println("Done")
 
@@ -110,18 +111,57 @@ func (srv *CheckerService) GenerateDatesFromRepository(timeWindow int) error {
 	return nil
 }
 
-func (srv *CheckerService) getSortedSpotsPatternsByDeep(spots []domain.Spot) []domain.SpotPatternsDeep {
+// TODO: Put private
+// Working!
+func (srv *CheckerService) GetSortedSpotsPatternsByDeep(spots []domain.Spot) []domain.SpotPatternsDeep {
 
-	return nil
+	result := make([]domain.SpotPatternsDeep, len(spots))
+
+	for i, spot := range spots {
+		result[i] = domain.SpotPatternsDeep{
+			Spot: spot,
+			Deep: len(spot.SchedulePatterns),
+		}
+	}
+
+	if len(result) < 2 {
+		logs.Warning.Println("Avoiding sort as len is ", len(result))
+		return result
+	}
+
+	sort.Slice(result, func(i, j int) bool {
+		return result[i].Deep <= result[j].Deep
+	})
+
+	return result
 }
 
-func (srv *CheckerService) splitDatesPerCore(spots []domain.SpotPatternsDeep, coreNumber int) [][]domain.Spot {
-	return nil
+// TODO: Put private
+// Working!
+func (srv *CheckerService) SplitDatesPerCore(spots []domain.SpotPatternsDeep, coreNumber int) [][]domain.Spot {
+	result := make([][]domain.Spot, coreNumber)
+	counter := make([]int, coreNumber)
+
+	// counterI := 0
+
+	for left := len(spots) - 1; left >= 0; left-- {
+		spot := spots[left]
+		minIndex := 0
+		for counterI := 0; counterI < coreNumber; counterI++ {
+			if counter[counterI] < counter[minIndex] {
+				minIndex = counterI
+			}
+		}
+
+		result[minIndex] = append(result[minIndex], spot.Spot)
+		counter[minIndex] += spot.Deep
+	}
+	return result
 }
 
-func (srv *CheckerService) generateDatesParallel(spots []domain.Spot, timeWindow int, ch chan GenerateDatesResponse) {
+func (srv *CheckerService) GenerateDatesParallel(spots []domain.Spot, timeWindow int, ch chan GenerateDatesResponse) {
 
-	result, err := srv.generateDates(spots, timeWindow)
+	result, err := srv.GenerateDates(spots, timeWindow)
 
 	response := GenerateDatesResponse{
 		Error:  err,
@@ -131,6 +171,7 @@ func (srv *CheckerService) generateDatesParallel(spots []domain.Spot, timeWindow
 	ch <- response
 }
 
-func (srv *CheckerService) generateDates(spots []domain.Spot, timeWindow int) ([]domain.Spot, error) {
+// TODO: Put private
+func (srv *CheckerService) GenerateDates(spots []domain.Spot, timeWindow int) ([]domain.Spot, error) {
 	return nil, nil
 }

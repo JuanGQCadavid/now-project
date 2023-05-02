@@ -41,7 +41,7 @@ type Day uint
 
 type SpotPatternsDeep struct {
 	Spot Spot
-	Deep int16
+	Deep int
 }
 
 type Dates struct {
