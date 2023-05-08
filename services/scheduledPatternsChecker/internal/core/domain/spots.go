@@ -3,7 +3,7 @@ package domain
 type Spot struct {
 	SpotId           string            `json:"spotId,omitempty"`
 	SchedulePatterns []SchedulePattern `json:"schedulePatterns,omitempty"`
-	Dates            Dates             `json:"dates,omitempty"`
+	Dates            []Dates           `json:"dates,omitempty"`
 }
 
 type SchedulePattern struct {
@@ -51,4 +51,32 @@ type Dates struct {
 	Date                          string `json:"date,omitempty"`
 	MaximunCapacty                int64  `json:"maximunCapacty,omitempty"`
 	HostId                        string `json:"hostId,omitempty"`
+}
+
+func IsMonday(day Day) bool {
+	return (day & Monday) == Monday
+}
+
+func IsTuesday(day Day) bool {
+	return (day & Tuesday) == Tuesday
+}
+
+func IsWednesday(day Day) bool {
+	return (day & Wednesday) == Wednesday
+}
+
+func IsThursday(day Day) bool {
+	return (day & Thursday) == Thursday
+}
+
+func IsFriday(day Day) bool {
+	return (day & Friday) == Friday
+}
+
+func IsSaturday(day Day) bool {
+	return (day & Saturday) == Saturday
+}
+
+func IsSunday(day Day) bool {
+	return (day & Sunday) == Sunday
 }

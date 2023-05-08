@@ -1,12 +1,15 @@
 package service
 
 import (
+	"fmt"
 	"runtime"
 	"sort"
+	"time"
 
 	"github.com/JuanGQCadavid/now-project/services/pkgs/common/logs"
 	"github.com/JuanGQCadavid/now-project/services/scheduledPatternsChecker/internal/core/domain"
 	"github.com/JuanGQCadavid/now-project/services/scheduledPatternsChecker/internal/core/ports"
+	"github.com/google/uuid"
 )
 
 type GenerateDatesResponse struct {
@@ -48,13 +51,13 @@ func NewCheckerService(repository ports.Repository, confirmation ports.Confirmat
 
 // 	4. Send spot id x dates Id x hostId to confirmation SQS
 
-func (srv *CheckerService) GenerateDatesFromRepository(timeWindow int) error {
+func (srv *CheckerService) GenerateDatesFromRepository(timeWindow int64) ([]domain.Spot, error) {
 
 	activeSchedulePatterns, err := srv.repository.FetchActiveSchedulePatterns()
 
 	if err != nil {
 		logs.Error.Println("Process fail to fecth active spots")
-		return ports.ErrOnRepository
+		return nil, ports.ErrOnRepository
 	}
 
 	// 	2. Map the request btw the active vCPU
@@ -66,7 +69,7 @@ func (srv *CheckerService) GenerateDatesFromRepository(timeWindow int) error {
 
 		if err != nil {
 			logs.Error.Println("We got an error while processing the dates")
-			return ports.ErrProcessingDates
+			return nil, ports.ErrProcessingDates
 		}
 
 	} else if srv.coresNumber > 1 {
@@ -87,7 +90,7 @@ func (srv *CheckerService) GenerateDatesFromRepository(timeWindow int) error {
 			logs.Info.Println("Response ", i, " of ", srv.coresNumber)
 			if response.Error != nil {
 				logs.Error.Println("We got an error while processing the dates. Error: ", response.Error.Error())
-				return ports.ErrProcessingDates
+				return nil, ports.ErrProcessingDates
 			}
 
 			spotsWithDates = append(spotsWithDates, response.Result...)
@@ -97,7 +100,7 @@ func (srv *CheckerService) GenerateDatesFromRepository(timeWindow int) error {
 
 	} else {
 		logs.Error.Println("There is a problem with the cors number ", srv.coresNumber)
-		return ports.ErrInvalidCors
+		return nil, ports.ErrInvalidCors
 	}
 
 	// 	4. Send spot id x dates Id x hostId to confirmation SQS
@@ -105,10 +108,10 @@ func (srv *CheckerService) GenerateDatesFromRepository(timeWindow int) error {
 
 	if err != nil {
 		logs.Error.Println("Confirmation service fail")
-		return ports.ErrSendingConfirmation
+		return nil, ports.ErrSendingConfirmation
 	}
 
-	return nil
+	return spotsWithDates, nil
 }
 
 // TODO: Put private
@@ -159,7 +162,7 @@ func (srv *CheckerService) SplitDatesPerCore(spots []domain.SpotPatternsDeep, co
 	return result
 }
 
-func (srv *CheckerService) GenerateDatesParallel(spots []domain.Spot, timeWindow int, ch chan GenerateDatesResponse) {
+func (srv *CheckerService) GenerateDatesParallel(spots []domain.Spot, timeWindow int64, ch chan GenerateDatesResponse) {
 
 	result, err := srv.GenerateDates(spots, timeWindow)
 
@@ -172,6 +175,61 @@ func (srv *CheckerService) GenerateDatesParallel(spots []domain.Spot, timeWindow
 }
 
 // TODO: Put private
-func (srv *CheckerService) GenerateDates(spots []domain.Spot, timeWindow int) ([]domain.Spot, error) {
-	return nil, nil
+func (srv *CheckerService) GenerateDates(spots []domain.Spot, timeWindow int64) ([]domain.Spot, error) {
+
+	limitTime := time.Unix(time.Now().Unix()+timeWindow, 0)
+	dayJump := 24 * time.Hour
+	dates := make([]domain.Dates, 0)
+
+	for i, spot := range spots {
+		fmt.Printf("\n")
+
+		fmt.Printf("spot: %+v, sp len %d \n", spot, len(spot.SchedulePatterns))
+		fmt.Printf("limitTime: %s \nlimitTime: %s \n", limitTime.String(), dayJump.String())
+
+		for _, schedulePattern := range spot.SchedulePatterns {
+			var startCheckingTime time.Time
+
+			startTime, _ := time.Parse(time.DateOnly, schedulePattern.FromDate)
+			endTime, _ := time.Parse(time.DateOnly, schedulePattern.ToDate)
+
+			startHour, _ := time.Parse(time.TimeOnly, schedulePattern.StartTime)
+			endHour, _ := time.Parse(time.TimeOnly, schedulePattern.EndTime)
+			durationBtw := endHour.Sub(startHour)
+
+			if schedulePattern.CheckedUpTo != 0 {
+				startCheckingTime = time.Unix(schedulePattern.CheckedUpTo, 0)
+			} else {
+				startCheckingTime = time.Now()
+			}
+
+			for startCheckingTime.Compare(limitTime) <= 0 && startCheckingTime.Compare(startTime) >= 0 && startCheckingTime.Compare(endTime) <= 0 {
+				weekDay := startCheckingTime.Weekday()
+
+				if domain.IsMonday(schedulePattern.Day) && weekDay == time.Monday ||
+					domain.IsTuesday(schedulePattern.Day) && weekDay == time.Tuesday ||
+					domain.IsWednesday(schedulePattern.Day) && weekDay == time.Wednesday ||
+					domain.IsThursday(schedulePattern.Day) && weekDay == time.Thursday ||
+					domain.IsFriday(schedulePattern.Day) && weekDay == time.Friday ||
+					domain.IsSaturday(schedulePattern.Day) && weekDay == time.Saturday ||
+					domain.IsSunday(schedulePattern.Day) && weekDay == time.Sunday {
+
+					newDate := domain.Dates{
+						DateId:                        uuid.NewString(),
+						DurationApproximatedInSeconds: int64(durationBtw.Seconds()),
+						StartTime:                     schedulePattern.StartTime,
+						Date:                          startCheckingTime.Format(time.DateOnly),
+						HostId:                        schedulePattern.HostId,
+					}
+					dates = append(dates, newDate)
+				}
+				startCheckingTime = startCheckingTime.Add(dayJump)
+			}
+
+			spot.Dates = dates
+			spots[i] = spot
+
+		}
+	}
+	return spots, nil
 }

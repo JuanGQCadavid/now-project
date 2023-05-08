@@ -1,6 +1,7 @@
 package localrepository
 
 import (
+	"fmt"
 	"math/rand"
 
 	"github.com/JuanGQCadavid/now-project/services/scheduledPatternsChecker/internal/core/domain"
@@ -30,19 +31,33 @@ func (r *LocalRepository) generateSpots(upTo int16, maxDeep int16) []domain.Spot
 		patternsCount := rand.Intn(int(maxDeep))
 		schedulePatterns := make([]domain.SchedulePattern, patternsCount)
 		for i := 0; i < patternsCount; i++ {
-			schedulePatterns[i] = domain.SchedulePattern{
-				Id:        string(i),
-				HostId:    "JUAN123",
-				Day:       domain.Saturday,
-				FromDate:  "2007-03-01",
-				ToDate:    "2007-07-01",
-				StartTime: "13:00:00",
-				EndTime:   "16:00:00",
+
+			if i%2 == 0 {
+				schedulePatterns[i] = domain.SchedulePattern{
+					Id:        fmt.Sprintf("%d", i),
+					HostId:    "JUAN123",
+					Day:       domain.Saturday,
+					FromDate:  "2023-03-01",
+					ToDate:    "2023-07-01",
+					StartTime: "13:00:00",
+					EndTime:   "16:00:00",
+				}
+			} else {
+				schedulePatterns[i] = domain.SchedulePattern{
+					Id:        fmt.Sprintf("%d", i),
+					HostId:    "JUAN123",
+					Day:       domain.Sunday,
+					FromDate:  "2023-03-01",
+					ToDate:    "2023-07-01",
+					StartTime: "13:00:00",
+					EndTime:   "16:00:00",
+				}
 			}
+
 		}
 
 		result[i] = domain.Spot{
-			SpotId:           string(i),
+			SpotId:           fmt.Sprintf("%d", i),
 			SchedulePatterns: schedulePatterns,
 		}
 

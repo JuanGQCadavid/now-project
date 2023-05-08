@@ -1,8 +1,9 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
-	"runtime"
+	"os"
 
 	"github.com/JuanGQCadavid/now-project/services/pkgs/common/logs"
 	"github.com/JuanGQCadavid/now-project/services/scheduledPatternsChecker/internal/confirmation/localconfirmation"
@@ -11,20 +12,51 @@ import (
 	"github.com/JuanGQCadavid/now-project/services/scheduledPatternsChecker/internal/repository/localrepository"
 )
 
+type Result struct {
+	Result []domain.Spot `json:"result,omitempty"`
+}
+
 func main() {
-	localRepo := localrepository.NewLocalRepository(15, 30)
+	localRepo := localrepository.NewLocalRepository(10, 10)
+	localconfirmation := localconfirmation.NewLocalConfirmation()
+
+	srv := service.NewCheckerService(localRepo, localconfirmation)
+
+	result, err := srv.GenerateDatesFromRepository(604800)
+
+	if err != nil {
+		fmt.Println("There is a error! ", err.Error())
+		os.Exit(1)
+	}
+
+	f, _ := os.Create("/Users/personal/Pululapp/now-project/services/scheduledPatternsChecker/cmd/http/ouput.json")
+
+	resultOutput := Result{
+		Result: result,
+	}
+
+	defer f.Close()
+
+	json, _ := json.MarshalIndent(resultOutput, "", "    ")
+	fmt.Println(string(json))
+	f.Write(json)
+
+}
+
+func manualCheck() {
+	localRepo := localrepository.NewLocalRepository(10, 10)
 	localconfirmation := localconfirmation.NewLocalConfirmation()
 
 	srv := service.NewCheckerService(localRepo, localconfirmation)
 
 	patterns, _ := localRepo.FetchActiveSchedulePatterns()
 
-	logs.Info.Println("BEFORE")
-	fmt.Print("[")
-	for _, spot := range patterns {
-		fmt.Print(len(spot.SchedulePatterns), ", ")
-	}
-	fmt.Println("]")
+	// logs.Info.Println("BEFORE")
+	// fmt.Print("[")
+	// for _, spot := range patterns {
+	// 	fmt.Print(len(spot.SchedulePatterns), ", ")
+	// }
+	// fmt.Println("]")
 
 	result := srv.GetSortedSpotsPatternsByDeep(patterns)
 
@@ -34,7 +66,7 @@ func main() {
 		fmt.Print(len(spot.Spot.SchedulePatterns), ", ")
 	}
 	fmt.Println("]")
-	cores := runtime.NumCPU()
+	cores := 4
 	fmt.Println("cores -> ", cores)
 	result2 := srv.SplitDatesPerCore(result, cores)
 
@@ -48,6 +80,51 @@ func main() {
 		fmt.Print(counter, ", ")
 	}
 	fmt.Println()
+
+	manualPatterns := make([]domain.Spot, 1)
+
+	firstSP := make([]domain.SchedulePattern, 2)
+	firstSP[0] = domain.SchedulePattern{
+		Id:        "1",
+		HostId:    "JUAN123",
+		Day:       domain.Saturday,
+		FromDate:  "2023-03-01",
+		ToDate:    "2023-07-01",
+		StartTime: "13:00:00",
+		EndTime:   "16:00:00",
+	}
+
+	firstSP[1] = domain.SchedulePattern{
+		Id:        "2",
+		HostId:    "JUAN123",
+		Day:       domain.Sunday | domain.Monday,
+		FromDate:  "2023-03-01",
+		ToDate:    "2023-07-01",
+		StartTime: "13:00:00",
+		EndTime:   "16:00:00",
+	}
+
+	// secondSP = make([]domain.Spot, 2)
+
+	manualPatterns[0] = domain.Spot{
+		SpotId:           "SpotId_1",
+		SchedulePatterns: firstSP,
+	}
+
+	result3, _ := srv.GenerateDates(manualPatterns, 604800)
+	// result3, _ := srv.GenerateDatesParallel()
+	f, _ := os.Create("/Users/personal/Pululapp/now-project/services/scheduledPatternsChecker/cmd/http/ouput.json")
+
+	resultOutput := Result{
+		Result: result3,
+	}
+
+	defer f.Close()
+
+	json, _ := json.MarshalIndent(resultOutput, "", "    ")
+	fmt.Println(string(json))
+	f.Write(json)
+
 }
 
 func printLent(patterns []domain.Spot) {
