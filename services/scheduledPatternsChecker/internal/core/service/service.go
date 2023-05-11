@@ -65,7 +65,7 @@ func (srv *CheckerService) GenerateDatesFromRepository(timeWindow int64) ([]doma
 
 	if srv.coresNumber == 1 {
 		logs.Info.Println("Going with only one core, avoiding parallel process.")
-		spotsWithDates, err = srv.GenerateDates(activeSchedulePatterns, timeWindow)
+		spotsWithDates, err = srv.generateDates(activeSchedulePatterns, timeWindow)
 
 		if err != nil {
 			logs.Error.Println("We got an error while processing the dates")
@@ -74,12 +74,12 @@ func (srv *CheckerService) GenerateDatesFromRepository(timeWindow int64) ([]doma
 
 	} else if srv.coresNumber > 1 {
 		logs.Info.Println("Parallel proces for ", srv.coresNumber, " cores")
-		datesPerCore := srv.SplitDatesPerCore(srv.GetSortedSpotsPatternsByDeep(activeSchedulePatterns), srv.coresNumber)
+		datesPerCore := srv.splitDatesPerCore(srv.getSortedSpotsPatternsByDeep(activeSchedulePatterns), srv.coresNumber)
 
 		logs.Info.Println("Creating process")
 		ch := make(chan GenerateDatesResponse)
 		for _, spot := range datesPerCore {
-			go srv.GenerateDatesParallel(spot, timeWindow, ch)
+			go srv.generateDatesParallel(spot, timeWindow, ch)
 		}
 		logs.Info.Println("Done")
 
@@ -114,9 +114,7 @@ func (srv *CheckerService) GenerateDatesFromRepository(timeWindow int64) ([]doma
 	return spotsWithDates, nil
 }
 
-// TODO: Put private
-// Working!
-func (srv *CheckerService) GetSortedSpotsPatternsByDeep(spots []domain.Spot) []domain.SpotPatternsDeep {
+func (srv *CheckerService) getSortedSpotsPatternsByDeep(spots []domain.Spot) []domain.SpotPatternsDeep {
 
 	result := make([]domain.SpotPatternsDeep, len(spots))
 
@@ -139,9 +137,7 @@ func (srv *CheckerService) GetSortedSpotsPatternsByDeep(spots []domain.Spot) []d
 	return result
 }
 
-// TODO: Put private
-// Working!
-func (srv *CheckerService) SplitDatesPerCore(spots []domain.SpotPatternsDeep, coreNumber int) [][]domain.Spot {
+func (srv *CheckerService) splitDatesPerCore(spots []domain.SpotPatternsDeep, coreNumber int) [][]domain.Spot {
 	result := make([][]domain.Spot, coreNumber)
 	counter := make([]int, coreNumber)
 
@@ -162,9 +158,9 @@ func (srv *CheckerService) SplitDatesPerCore(spots []domain.SpotPatternsDeep, co
 	return result
 }
 
-func (srv *CheckerService) GenerateDatesParallel(spots []domain.Spot, timeWindow int64, ch chan GenerateDatesResponse) {
+func (srv *CheckerService) generateDatesParallel(spots []domain.Spot, timeWindow int64, ch chan GenerateDatesResponse) {
 
-	result, err := srv.GenerateDates(spots, timeWindow)
+	result, err := srv.generateDates(spots, timeWindow)
 
 	response := GenerateDatesResponse{
 		Error:  err,
@@ -174,37 +170,35 @@ func (srv *CheckerService) GenerateDatesParallel(spots []domain.Spot, timeWindow
 	ch <- response
 }
 
-// TODO: Put private
-func (srv *CheckerService) GenerateDates(spots []domain.Spot, timeWindow int64) ([]domain.Spot, error) {
+func (srv *CheckerService) generateDates(spots []domain.Spot, timeWindow int64) ([]domain.Spot, error) {
 
-	limitTime := time.Unix(time.Now().Unix()+timeWindow, 0)
+	startProcessTime := time.Now()
+	limitTime := time.Unix(startProcessTime.Unix()+timeWindow, 0)
 	dayJump := 24 * time.Hour
-	dates := make([]domain.Dates, 0)
+
+	logs.Info.Printf("startProcessTime: %s, limitTime: %s, daysBtw: %s, dayJump: %s", startProcessTime.Format(time.DateTime), limitTime.Format(time.DateTime), limitTime.Sub(startProcessTime), dayJump)
 
 	for i, spot := range spots {
-		fmt.Printf("\n")
+		dates := make(map[string]domain.Dates, 0)
 
-		fmt.Printf("spot: %+v, sp len %d \n", spot, len(spot.SchedulePatterns))
-		fmt.Printf("limitTime: %s \nlimitTime: %s \n", limitTime.String(), dayJump.String())
+		fmt.Printf("Checking spot id %+v with a schedulePatterns len of %d \n", spot.SpotId, len(spot.SchedulePatterns))
 
-		for _, schedulePattern := range spot.SchedulePatterns {
-			var startCheckingTime time.Time
+		for ii, schedulePattern := range spot.SchedulePatterns {
+			var checkingTime time.Time = startProcessTime // Maybe this could bring troubles
 
-			startTime, _ := time.Parse(time.DateOnly, schedulePattern.FromDate)
-			endTime, _ := time.Parse(time.DateOnly, schedulePattern.ToDate)
+			startDate, _ := time.Parse(time.DateOnly, schedulePattern.FromDate)
+			endDate, _ := time.Parse(time.DateOnly, schedulePattern.ToDate)
 
-			startHour, _ := time.Parse(time.TimeOnly, schedulePattern.StartTime)
+			startTime, _ := time.Parse(time.TimeOnly, schedulePattern.StartTime)
 			endHour, _ := time.Parse(time.TimeOnly, schedulePattern.EndTime)
-			durationBtw := endHour.Sub(startHour)
+			durationBtw := endHour.Sub(startTime)
 
 			if schedulePattern.CheckedUpTo != 0 {
-				startCheckingTime = time.Unix(schedulePattern.CheckedUpTo, 0)
-			} else {
-				startCheckingTime = time.Now()
+				checkingTime = time.Unix(schedulePattern.CheckedUpTo, 0)
 			}
 
-			for startCheckingTime.Compare(limitTime) <= 0 && startCheckingTime.Compare(startTime) >= 0 && startCheckingTime.Compare(endTime) <= 0 {
-				weekDay := startCheckingTime.Weekday()
+			for checkingTime.Compare(limitTime) <= 0 && checkingTime.Compare(startDate) >= 0 && checkingTime.Compare(endDate) <= 0 {
+				weekDay := checkingTime.Weekday()
 
 				if domain.IsMonday(schedulePattern.Day) && weekDay == time.Monday ||
 					domain.IsTuesday(schedulePattern.Day) && weekDay == time.Tuesday ||
@@ -218,15 +212,27 @@ func (srv *CheckerService) GenerateDates(spots []domain.Spot, timeWindow int64) 
 						DateId:                        uuid.NewString(),
 						DurationApproximatedInSeconds: int64(durationBtw.Seconds()),
 						StartTime:                     schedulePattern.StartTime,
-						Date:                          startCheckingTime.Format(time.DateOnly),
+						Date:                          checkingTime.Format(time.DateOnly),
 						HostId:                        schedulePattern.HostId,
 					}
-					dates = append(dates, newDate)
+					schedulePattern.CheckedUpTo = checkingTime.Unix()
+
+					spot.SchedulePatterns[ii] = schedulePattern
+
+					logs.Info.Printf("Date %s create for sp %s on %s \n", newDate.DateId, schedulePattern.Id, newDate.Date)
+					dates[newDate.DateId] = newDate
 				}
-				startCheckingTime = startCheckingTime.Add(dayJump)
+				checkingTime = checkingTime.Add(dayJump)
 			}
 
-			spot.Dates = dates
+			spot.Dates = make([]domain.Dates, len(dates))
+			index := 0
+
+			for _, date := range dates {
+				spot.Dates[index] = date
+				index++
+			}
+
 			spots[i] = spot
 
 		}

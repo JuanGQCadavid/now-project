@@ -17,6 +17,11 @@ type Result struct {
 }
 
 func main() {
+	//manualCheck()
+	paralleCheck()
+}
+
+func paralleCheck() {
 	localRepo := localrepository.NewLocalRepository(10, 10)
 	localconfirmation := localconfirmation.NewLocalConfirmation()
 
@@ -40,7 +45,6 @@ func main() {
 	json, _ := json.MarshalIndent(resultOutput, "", "    ")
 	fmt.Println(string(json))
 	f.Write(json)
-
 }
 
 func manualCheck() {
