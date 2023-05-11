@@ -1,12 +1,15 @@
 package main
 
 import (
+	"fmt"
+
 	"github.com/JuanGQCadavid/now-project/services/pkgs/common/logs"
 	snstopic "github.com/JuanGQCadavid/now-project/services/pkgs/common/snstopic"
+	"github.com/JuanGQCadavid/now-project/services/pkgs/common/sqsqueue"
 )
 
 func main() {
-	testSns()
+	testSQS()
 }
 
 func testSns() {
@@ -21,4 +24,41 @@ func testSns() {
 	}
 
 	actions.NotifyWithBody("spotScheduleAdded", body)
+}
+
+func testSQS() {
+	actions, err := sqsqueue.NewSQSTopicActionsFromArn("sendConfirmationSQS")
+
+	if err != nil {
+		logs.Error.Fatalln(err.Error())
+	}
+
+	limit := 0
+
+	bodies := make([]interface{}, limit)
+
+	for i := 0; i < limit; i++ {
+		body := map[string]string{
+			"spotId":  "Dude!",
+			"counter": fmt.Sprintf("%d", i),
+		}
+
+		bodies[i] = body
+	}
+
+	actions.SendBulkMessages(bodies)
+}
+
+func testSingleSQS() {
+	actions, err := sqsqueue.NewSQSTopicActionsFromArn("sendConfirmationSQS")
+
+	if err != nil {
+		logs.Error.Fatalln(err.Error())
+	}
+
+	body := map[string]string{
+		"spotId": "Dude!",
+	}
+
+	actions.SendMessage(body)
 }
