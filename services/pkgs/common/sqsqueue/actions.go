@@ -80,10 +80,11 @@ func (action *SQSQueueActions) SendMessage(payload interface{}) error {
 	return nil
 }
 
-func (action *SQSQueueActions) SendBulkMessages(payload []interface{}) error {
+func (action *SQSQueueActions) SendBulkMessages(payload []interface{}) map[interface{}]error {
 
 	var startPointer int
 	var threshold int
+	errors := make(map[interface{}]error)
 
 	if len(payload) == 0 {
 		logs.Info.Println("Empty payload, aborting job")
@@ -92,7 +93,8 @@ func (action *SQSQueueActions) SendBulkMessages(payload []interface{}) error {
 
 	for {
 		threshold = startPointer + action.bulkJumper
-		var err error = nil
+		var err map[interface{}]error = nil
+
 		if threshold < len(payload) {
 			err = action.sendBuklMessage(payload[startPointer:threshold])
 			startPointer = threshold
@@ -103,28 +105,42 @@ func (action *SQSQueueActions) SendBulkMessages(payload []interface{}) error {
 			break
 		}
 
-		// What should we do here ?
-		if err != nil {
-			logs.Error.Println("We got an error while processing the bulk operation ")
-			return err
+		if err != nil && len(err) > 0 {
+			logs.Error.Println("We got an error while processing the bulk operation on bacth")
+			for key, errrordata := range err {
+				errors[key] = errrordata
+			}
 		}
 	}
 
-	logs.Info.Println("All messages where sent successfully")
+	if errors != nil && len(errors) > 0 {
+		logs.Error.Println("We found erros while processing the bacth request!")
+		for key, err := range errors {
+			logs.Error.Printf("%+v - %s \n", key, err.Error())
+		}
+		return errors
+	}
 
+	logs.Info.Println("All messages where sent successfully")
 	return nil
 }
 
 // How should we handle this kind of errors ?
-func (action *SQSQueueActions) sendBuklMessage(payload []interface{}) error {
+func (action *SQSQueueActions) sendBuklMessage(payload []interface{}) map[interface{}]error {
 	entries := make([]*sqs.SendMessageBatchRequestEntry, len(payload))
 	date := strings.ReplaceAll(time.Now().Format(time.DateTime), " ", "_")
 	date = strings.ReplaceAll(date, ":", "_")
-	for index, entry := range payload {
+
+	errors := make(map[interface{}]error)
+
+	index := 0
+	for _, entry := range payload {
 		bodyMarshaled, err := json.Marshal(&entry)
 
 		if err != nil {
-			return ErrParsingMessage
+			logs.Error.Printf("We face an error while marshaling the interface for payload %+v \n", entry)
+			errors[entry] = ErrParsingMessage
+			continue
 		}
 
 		id := fmt.Sprintf("%d_%s", index, date)
@@ -133,7 +149,12 @@ func (action *SQSQueueActions) sendBuklMessage(payload []interface{}) error {
 			Id:          aws.String(id),
 			MessageBody: aws.String(string(bodyMarshaled)),
 		}
+		index++
+	}
 
+	if index < (len(payload) - 1) {
+		logs.Error.Println("As we found some messages with errors then we shrink the array to ", index)
+		entries = entries[0:index]
 	}
 
 	input := &sqs.SendMessageBatchInput{
@@ -145,10 +166,11 @@ func (action *SQSQueueActions) sendBuklMessage(payload []interface{}) error {
 
 	if err != nil {
 		logs.Error.Println("We found a problem while sending the message: ", err.Error())
-		return ErrOnSQSPublishMessage
+
+		errors[out] = ErrOnSQSPublishMessage
 	}
 
 	logs.Info.Printf("Send bulk message response: %+v \n", out)
 
-	return nil
+	return errors
 }

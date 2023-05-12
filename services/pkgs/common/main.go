@@ -33,7 +33,7 @@ func testSQS() {
 		logs.Error.Fatalln(err.Error())
 	}
 
-	limit := 0
+	limit := 2
 
 	bodies := make([]interface{}, limit)
 
@@ -46,7 +46,14 @@ func testSQS() {
 		bodies[i] = body
 	}
 
-	actions.SendBulkMessages(bodies)
+	errs := actions.SendBulkMessages(bodies)
+
+	if errs != nil && len(errs) > 0 {
+		logs.Error.Println("There is erros dude!")
+		for key, err := range errs {
+			logs.Error.Printf("%+v - %s \n", key, err.Error())
+		}
+	}
 }
 
 func testSingleSQS() {
