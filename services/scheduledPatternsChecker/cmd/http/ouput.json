@@ -1,99 +1,7 @@
 {
     "result": [
         {
-            "spotId": "9"
-        },
-        {
-            "spotId": "0",
-            "schedulePatterns": [
-                {
-                    "patternId": "0",
-                    "hostId": "JUAN123",
-                    "day": 32,
-                    "fromDate": "2023-03-01",
-                    "toDate": "2023-07-01",
-                    "StartTime": "13:00:00",
-                    "endTime": "16:00:00",
-                    "checkedUntil": 1684032221
-                },
-                {
-                    "patternId": "1",
-                    "hostId": "JUAN123",
-                    "day": 64,
-                    "fromDate": "2023-03-01",
-                    "toDate": "2023-07-01",
-                    "StartTime": "13:00:00",
-                    "endTime": "16:00:00",
-                    "checkedUntil": 1684118621
-                },
-                {
-                    "patternId": "2",
-                    "hostId": "JUAN123",
-                    "day": 32,
-                    "fromDate": "2023-03-01",
-                    "toDate": "2023-07-01",
-                    "StartTime": "13:00:00",
-                    "endTime": "16:00:00",
-                    "checkedUntil": 1684032221
-                },
-                {
-                    "patternId": "3",
-                    "hostId": "JUAN123",
-                    "day": 64,
-                    "fromDate": "2023-03-01",
-                    "toDate": "2023-07-01",
-                    "StartTime": "13:00:00",
-                    "endTime": "16:00:00",
-                    "checkedUntil": 1684118621
-                },
-                {
-                    "patternId": "4",
-                    "hostId": "JUAN123",
-                    "day": 32,
-                    "fromDate": "2023-03-01",
-                    "toDate": "2023-07-01",
-                    "StartTime": "13:00:00",
-                    "endTime": "16:00:00",
-                    "checkedUntil": 1684032221
-                }
-            ],
-            "dates": [
-                {
-                    "dateId": "46c1c72d-2d8b-4a3e-8961-84e5bd48ec81",
-                    "durationApproximated": 10800,
-                    "startTime": "13:00:00",
-                    "date": "2023-05-13",
-                    "hostId": "JUAN123"
-                },
-                {
-                    "dateId": "61bcb3cd-a6aa-429c-8001-cb328b0d3205",
-                    "durationApproximated": 10800,
-                    "startTime": "13:00:00",
-                    "date": "2023-05-14",
-                    "hostId": "JUAN123"
-                },
-                {
-                    "dateId": "5a8a5311-1b7b-4abf-9897-62c8fe1f5acf",
-                    "durationApproximated": 10800,
-                    "startTime": "13:00:00",
-                    "date": "2023-05-13",
-                    "hostId": "JUAN123"
-                },
-                {
-                    "dateId": "16f03db5-b572-4b35-9d8c-b9192f8423d8",
-                    "durationApproximated": 10800,
-                    "startTime": "13:00:00",
-                    "date": "2023-05-14",
-                    "hostId": "JUAN123"
-                },
-                {
-                    "dateId": "a906044a-d365-4430-bc8c-915ef78f8327",
-                    "durationApproximated": 10800,
-                    "startTime": "13:00:00",
-                    "date": "2023-05-13",
-                    "hostId": "JUAN123"
-                }
-            ]
+            "spotId": "0"
         },
         {
             "spotId": "1",
@@ -106,7 +14,7 @@
                     "toDate": "2023-07-01",
                     "StartTime": "13:00:00",
                     "endTime": "16:00:00",
-                    "checkedUntil": 1684032221
+                    "checkedUntil": 1684008736
                 },
                 {
                     "patternId": "1",
@@ -116,48 +24,7 @@
                     "toDate": "2023-07-01",
                     "StartTime": "13:00:00",
                     "endTime": "16:00:00",
-                    "checkedUntil": 1684118621
-                }
-            ],
-            "dates": [
-                {
-                    "dateId": "3a7974be-6007-4206-945d-efbe73481e8b",
-                    "durationApproximated": 10800,
-                    "startTime": "13:00:00",
-                    "date": "2023-05-13",
-                    "hostId": "JUAN123"
-                },
-                {
-                    "dateId": "9d3ef3bd-0db0-4eb3-aea1-d2e90191b671",
-                    "durationApproximated": 10800,
-                    "startTime": "13:00:00",
-                    "date": "2023-05-14",
-                    "hostId": "JUAN123"
-                }
-            ]
-        },
-        {
-            "spotId": "7",
-            "schedulePatterns": [
-                {
-                    "patternId": "0",
-                    "hostId": "JUAN123",
-                    "day": 32,
-                    "fromDate": "2023-03-01",
-                    "toDate": "2023-07-01",
-                    "StartTime": "13:00:00",
-                    "endTime": "16:00:00",
-                    "checkedUntil": 1684032221
-                },
-                {
-                    "patternId": "1",
-                    "hostId": "JUAN123",
-                    "day": 64,
-                    "fromDate": "2023-03-01",
-                    "toDate": "2023-07-01",
-                    "StartTime": "13:00:00",
-                    "endTime": "16:00:00",
-                    "checkedUntil": 1684118621
+                    "checkedUntil": 1684095136
                 },
                 {
                     "patternId": "2",
@@ -167,7 +34,7 @@
                     "toDate": "2023-07-01",
                     "StartTime": "13:00:00",
                     "endTime": "16:00:00",
-                    "checkedUntil": 1684032221
+                    "checkedUntil": 1684008736
                 },
                 {
                     "patternId": "3",
@@ -177,7 +44,7 @@
                     "toDate": "2023-07-01",
                     "StartTime": "13:00:00",
                     "endTime": "16:00:00",
-                    "checkedUntil": 1684118621
+                    "checkedUntil": 1684095136
                 },
                 {
                     "patternId": "4",
@@ -187,7 +54,7 @@
                     "toDate": "2023-07-01",
                     "StartTime": "13:00:00",
                     "endTime": "16:00:00",
-                    "checkedUntil": 1684032221
+                    "checkedUntil": 1684008736
                 },
                 {
                     "patternId": "5",
@@ -197,283 +64,7 @@
                     "toDate": "2023-07-01",
                     "StartTime": "13:00:00",
                     "endTime": "16:00:00",
-                    "checkedUntil": 1684118621
-                }
-            ],
-            "dates": [
-                {
-                    "dateId": "fc3f520d-5066-4e16-81e5-bd6f53be42a4",
-                    "durationApproximated": 10800,
-                    "startTime": "13:00:00",
-                    "date": "2023-05-13",
-                    "hostId": "JUAN123"
-                },
-                {
-                    "dateId": "03cc04dd-e77e-4738-a24e-6485ea4478f2",
-                    "durationApproximated": 10800,
-                    "startTime": "13:00:00",
-                    "date": "2023-05-14",
-                    "hostId": "JUAN123"
-                },
-                {
-                    "dateId": "21e9946e-81c9-4f92-9624-1e38eec0986d",
-                    "durationApproximated": 10800,
-                    "startTime": "13:00:00",
-                    "date": "2023-05-13",
-                    "hostId": "JUAN123"
-                },
-                {
-                    "dateId": "97b066fd-25dd-4448-9f31-2ef3122a5c55",
-                    "durationApproximated": 10800,
-                    "startTime": "13:00:00",
-                    "date": "2023-05-14",
-                    "hostId": "JUAN123"
-                },
-                {
-                    "dateId": "a0b694ab-807c-472a-a0d0-69228848b9f0",
-                    "durationApproximated": 10800,
-                    "startTime": "13:00:00",
-                    "date": "2023-05-13",
-                    "hostId": "JUAN123"
-                },
-                {
-                    "dateId": "506b287f-6c4a-4aa4-9c08-7f382ae00dbd",
-                    "durationApproximated": 10800,
-                    "startTime": "13:00:00",
-                    "date": "2023-05-14",
-                    "hostId": "JUAN123"
-                }
-            ]
-        },
-        {
-            "spotId": "6",
-            "schedulePatterns": [
-                {
-                    "patternId": "0",
-                    "hostId": "JUAN123",
-                    "day": 32,
-                    "fromDate": "2023-03-01",
-                    "toDate": "2023-07-01",
-                    "StartTime": "13:00:00",
-                    "endTime": "16:00:00",
-                    "checkedUntil": 1684032221
-                },
-                {
-                    "patternId": "1",
-                    "hostId": "JUAN123",
-                    "day": 64,
-                    "fromDate": "2023-03-01",
-                    "toDate": "2023-07-01",
-                    "StartTime": "13:00:00",
-                    "endTime": "16:00:00",
-                    "checkedUntil": 1684118621
-                },
-                {
-                    "patternId": "2",
-                    "hostId": "JUAN123",
-                    "day": 32,
-                    "fromDate": "2023-03-01",
-                    "toDate": "2023-07-01",
-                    "StartTime": "13:00:00",
-                    "endTime": "16:00:00",
-                    "checkedUntil": 1684032221
-                },
-                {
-                    "patternId": "3",
-                    "hostId": "JUAN123",
-                    "day": 64,
-                    "fromDate": "2023-03-01",
-                    "toDate": "2023-07-01",
-                    "StartTime": "13:00:00",
-                    "endTime": "16:00:00",
-                    "checkedUntil": 1684118621
-                }
-            ],
-            "dates": [
-                {
-                    "dateId": "4b01aa89-9145-4459-b96c-57c30b6e8fd3",
-                    "durationApproximated": 10800,
-                    "startTime": "13:00:00",
-                    "date": "2023-05-13",
-                    "hostId": "JUAN123"
-                },
-                {
-                    "dateId": "f6dc86d7-6433-4dd1-acb7-99cb08be8fc2",
-                    "durationApproximated": 10800,
-                    "startTime": "13:00:00",
-                    "date": "2023-05-14",
-                    "hostId": "JUAN123"
-                },
-                {
-                    "dateId": "64b514f4-8974-4952-a227-64241936ff85",
-                    "durationApproximated": 10800,
-                    "startTime": "13:00:00",
-                    "date": "2023-05-13",
-                    "hostId": "JUAN123"
-                },
-                {
-                    "dateId": "6d018783-87d8-4971-a902-57a628300343",
-                    "durationApproximated": 10800,
-                    "startTime": "13:00:00",
-                    "date": "2023-05-14",
-                    "hostId": "JUAN123"
-                }
-            ]
-        },
-        {
-            "spotId": "5",
-            "schedulePatterns": [
-                {
-                    "patternId": "0",
-                    "hostId": "JUAN123",
-                    "day": 32,
-                    "fromDate": "2023-03-01",
-                    "toDate": "2023-07-01",
-                    "StartTime": "13:00:00",
-                    "endTime": "16:00:00",
-                    "checkedUntil": 1684032221
-                },
-                {
-                    "patternId": "1",
-                    "hostId": "JUAN123",
-                    "day": 64,
-                    "fromDate": "2023-03-01",
-                    "toDate": "2023-07-01",
-                    "StartTime": "13:00:00",
-                    "endTime": "16:00:00",
-                    "checkedUntil": 1684118621
-                },
-                {
-                    "patternId": "2",
-                    "hostId": "JUAN123",
-                    "day": 32,
-                    "fromDate": "2023-03-01",
-                    "toDate": "2023-07-01",
-                    "StartTime": "13:00:00",
-                    "endTime": "16:00:00",
-                    "checkedUntil": 1684032221
-                },
-                {
-                    "patternId": "3",
-                    "hostId": "JUAN123",
-                    "day": 64,
-                    "fromDate": "2023-03-01",
-                    "toDate": "2023-07-01",
-                    "StartTime": "13:00:00",
-                    "endTime": "16:00:00",
-                    "checkedUntil": 1684118621
-                },
-                {
-                    "patternId": "4",
-                    "hostId": "JUAN123",
-                    "day": 32,
-                    "fromDate": "2023-03-01",
-                    "toDate": "2023-07-01",
-                    "StartTime": "13:00:00",
-                    "endTime": "16:00:00",
-                    "checkedUntil": 1684032221
-                }
-            ],
-            "dates": [
-                {
-                    "dateId": "86469fa5-dfbc-43fb-874f-0bbb69beb21e",
-                    "durationApproximated": 10800,
-                    "startTime": "13:00:00",
-                    "date": "2023-05-13",
-                    "hostId": "JUAN123"
-                },
-                {
-                    "dateId": "8d73d172-0362-459f-b864-2b719940307d",
-                    "durationApproximated": 10800,
-                    "startTime": "13:00:00",
-                    "date": "2023-05-14",
-                    "hostId": "JUAN123"
-                },
-                {
-                    "dateId": "00145342-cb41-4d7b-bdb8-21e2a32e79e7",
-                    "durationApproximated": 10800,
-                    "startTime": "13:00:00",
-                    "date": "2023-05-13",
-                    "hostId": "JUAN123"
-                },
-                {
-                    "dateId": "52ad57af-bd01-4481-8f80-7384c1a99830",
-                    "durationApproximated": 10800,
-                    "startTime": "13:00:00",
-                    "date": "2023-05-14",
-                    "hostId": "JUAN123"
-                },
-                {
-                    "dateId": "f7f898bb-12ce-49b6-ba3a-8b27fa4020d8",
-                    "durationApproximated": 10800,
-                    "startTime": "13:00:00",
-                    "date": "2023-05-13",
-                    "hostId": "JUAN123"
-                }
-            ]
-        },
-        {
-            "spotId": "8",
-            "schedulePatterns": [
-                {
-                    "patternId": "0",
-                    "hostId": "JUAN123",
-                    "day": 32,
-                    "fromDate": "2023-03-01",
-                    "toDate": "2023-07-01",
-                    "StartTime": "13:00:00",
-                    "endTime": "16:00:00",
-                    "checkedUntil": 1684032221
-                },
-                {
-                    "patternId": "1",
-                    "hostId": "JUAN123",
-                    "day": 64,
-                    "fromDate": "2023-03-01",
-                    "toDate": "2023-07-01",
-                    "StartTime": "13:00:00",
-                    "endTime": "16:00:00",
-                    "checkedUntil": 1684118621
-                },
-                {
-                    "patternId": "2",
-                    "hostId": "JUAN123",
-                    "day": 32,
-                    "fromDate": "2023-03-01",
-                    "toDate": "2023-07-01",
-                    "StartTime": "13:00:00",
-                    "endTime": "16:00:00",
-                    "checkedUntil": 1684032221
-                },
-                {
-                    "patternId": "3",
-                    "hostId": "JUAN123",
-                    "day": 64,
-                    "fromDate": "2023-03-01",
-                    "toDate": "2023-07-01",
-                    "StartTime": "13:00:00",
-                    "endTime": "16:00:00",
-                    "checkedUntil": 1684118621
-                },
-                {
-                    "patternId": "4",
-                    "hostId": "JUAN123",
-                    "day": 32,
-                    "fromDate": "2023-03-01",
-                    "toDate": "2023-07-01",
-                    "StartTime": "13:00:00",
-                    "endTime": "16:00:00",
-                    "checkedUntil": 1684032221
-                },
-                {
-                    "patternId": "5",
-                    "hostId": "JUAN123",
-                    "day": 64,
-                    "fromDate": "2023-03-01",
-                    "toDate": "2023-07-01",
-                    "StartTime": "13:00:00",
-                    "endTime": "16:00:00",
-                    "checkedUntil": 1684118621
+                    "checkedUntil": 1684095136
                 },
                 {
                     "patternId": "6",
@@ -483,7 +74,7 @@
                     "toDate": "2023-07-01",
                     "StartTime": "13:00:00",
                     "endTime": "16:00:00",
-                    "checkedUntil": 1684032221
+                    "checkedUntil": 1684008736
                 },
                 {
                     "patternId": "7",
@@ -493,7 +84,7 @@
                     "toDate": "2023-07-01",
                     "StartTime": "13:00:00",
                     "endTime": "16:00:00",
-                    "checkedUntil": 1684118621
+                    "checkedUntil": 1684095136
                 },
                 {
                     "patternId": "8",
@@ -503,68 +94,163 @@
                     "toDate": "2023-07-01",
                     "StartTime": "13:00:00",
                     "endTime": "16:00:00",
-                    "checkedUntil": 1684032221
+                    "checkedUntil": 1684008736
                 }
             ],
             "dates": [
                 {
-                    "dateId": "ccf713a6-2d68-42aa-8a94-56d55cb8b522",
+                    "dateId": "b3d2d9b9-9bd1-4aa7-a62a-65b9e1844998",
                     "durationApproximated": 10800,
                     "startTime": "13:00:00",
                     "date": "2023-05-13",
                     "hostId": "JUAN123"
                 },
                 {
-                    "dateId": "d198c899-0f94-43b0-9bd0-ddfce299b2a1",
+                    "dateId": "8a3b51ff-7ad9-4638-aa95-6ff366e71ba1",
                     "durationApproximated": 10800,
                     "startTime": "13:00:00",
                     "date": "2023-05-14",
                     "hostId": "JUAN123"
                 },
                 {
-                    "dateId": "474d559c-25ad-44c7-baf6-0ab9193a22b7",
+                    "dateId": "eea7bd91-8434-4cc4-9c5c-30dafa65a376",
                     "durationApproximated": 10800,
                     "startTime": "13:00:00",
                     "date": "2023-05-13",
                     "hostId": "JUAN123"
                 },
                 {
-                    "dateId": "12d5125b-223b-415c-8c89-6d63e571a08c",
+                    "dateId": "e96e76f1-182c-479a-9425-f655db2d11db",
                     "durationApproximated": 10800,
                     "startTime": "13:00:00",
                     "date": "2023-05-13",
                     "hostId": "JUAN123"
                 },
                 {
-                    "dateId": "2a339b25-b840-4e5c-accd-91e0bc64688e",
+                    "dateId": "b8a21e79-3073-4d9c-a86e-1746dc383378",
                     "durationApproximated": 10800,
                     "startTime": "13:00:00",
                     "date": "2023-05-14",
                     "hostId": "JUAN123"
                 },
                 {
-                    "dateId": "d00db2a6-8fc8-46cf-b08f-221ba6e12e73",
+                    "dateId": "b03f34ea-109d-46de-8cb1-cb9c32b577a4",
+                    "durationApproximated": 10800,
+                    "startTime": "13:00:00",
+                    "date": "2023-05-14",
+                    "hostId": "JUAN123"
+                },
+                {
+                    "dateId": "b5fa698b-34d7-44c8-8cc2-71bb502f0e70",
                     "durationApproximated": 10800,
                     "startTime": "13:00:00",
                     "date": "2023-05-13",
                     "hostId": "JUAN123"
                 },
                 {
-                    "dateId": "7a54dd93-2ce3-49d0-9412-1ed35096b5e6",
+                    "dateId": "c4117cfc-4b39-40e4-a372-2de4668cc6a2",
                     "durationApproximated": 10800,
                     "startTime": "13:00:00",
                     "date": "2023-05-14",
                     "hostId": "JUAN123"
                 },
                 {
-                    "dateId": "8a84ba8b-2192-477f-8766-dbd546b59b11",
+                    "dateId": "348bd1c3-43a1-4793-8c1b-3f5b23d9b45a",
+                    "durationApproximated": 10800,
+                    "startTime": "13:00:00",
+                    "date": "2023-05-13",
+                    "hostId": "JUAN123"
+                }
+            ]
+        },
+        {
+            "spotId": "2"
+        },
+        {
+            "spotId": "3",
+            "schedulePatterns": [
+                {
+                    "patternId": "0",
+                    "hostId": "JUAN123",
+                    "day": 32,
+                    "fromDate": "2023-03-01",
+                    "toDate": "2023-07-01",
+                    "StartTime": "13:00:00",
+                    "endTime": "16:00:00",
+                    "checkedUntil": 1684008736
+                },
+                {
+                    "patternId": "1",
+                    "hostId": "JUAN123",
+                    "day": 64,
+                    "fromDate": "2023-03-01",
+                    "toDate": "2023-07-01",
+                    "StartTime": "13:00:00",
+                    "endTime": "16:00:00",
+                    "checkedUntil": 1684095136
+                },
+                {
+                    "patternId": "2",
+                    "hostId": "JUAN123",
+                    "day": 32,
+                    "fromDate": "2023-03-01",
+                    "toDate": "2023-07-01",
+                    "StartTime": "13:00:00",
+                    "endTime": "16:00:00",
+                    "checkedUntil": 1684008736
+                },
+                {
+                    "patternId": "3",
+                    "hostId": "JUAN123",
+                    "day": 64,
+                    "fromDate": "2023-03-01",
+                    "toDate": "2023-07-01",
+                    "StartTime": "13:00:00",
+                    "endTime": "16:00:00",
+                    "checkedUntil": 1684095136
+                },
+                {
+                    "patternId": "4",
+                    "hostId": "JUAN123",
+                    "day": 32,
+                    "fromDate": "2023-03-01",
+                    "toDate": "2023-07-01",
+                    "StartTime": "13:00:00",
+                    "endTime": "16:00:00",
+                    "checkedUntil": 1684008736
+                }
+            ],
+            "dates": [
+                {
+                    "dateId": "1901d658-3088-4462-bf9a-010461d3ae3d",
                     "durationApproximated": 10800,
                     "startTime": "13:00:00",
                     "date": "2023-05-14",
                     "hostId": "JUAN123"
                 },
                 {
-                    "dateId": "b34f7fc2-d804-48d2-868f-b1dba59df585",
+                    "dateId": "179a5b95-37e6-4efd-8ed4-888ecc0f457a",
+                    "durationApproximated": 10800,
+                    "startTime": "13:00:00",
+                    "date": "2023-05-13",
+                    "hostId": "JUAN123"
+                },
+                {
+                    "dateId": "b1d9db78-12fd-489d-b12c-88c1b843d3dc",
+                    "durationApproximated": 10800,
+                    "startTime": "13:00:00",
+                    "date": "2023-05-14",
+                    "hostId": "JUAN123"
+                },
+                {
+                    "dateId": "c4a1d387-ca4d-4281-b3a2-5df5463dbcd9",
+                    "durationApproximated": 10800,
+                    "startTime": "13:00:00",
+                    "date": "2023-05-13",
+                    "hostId": "JUAN123"
+                },
+                {
+                    "dateId": "e02261ef-3529-4caa-b83a-9ef595f925ec",
                     "durationApproximated": 10800,
                     "startTime": "13:00:00",
                     "date": "2023-05-13",
@@ -583,7 +269,7 @@
                     "toDate": "2023-07-01",
                     "StartTime": "13:00:00",
                     "endTime": "16:00:00",
-                    "checkedUntil": 1684032221
+                    "checkedUntil": 1684008736
                 },
                 {
                     "patternId": "1",
@@ -593,7 +279,7 @@
                     "toDate": "2023-07-01",
                     "StartTime": "13:00:00",
                     "endTime": "16:00:00",
-                    "checkedUntil": 1684118621
+                    "checkedUntil": 1684095136
                 },
                 {
                     "patternId": "2",
@@ -603,7 +289,7 @@
                     "toDate": "2023-07-01",
                     "StartTime": "13:00:00",
                     "endTime": "16:00:00",
-                    "checkedUntil": 1684032221
+                    "checkedUntil": 1684008736
                 },
                 {
                     "patternId": "3",
@@ -613,7 +299,7 @@
                     "toDate": "2023-07-01",
                     "StartTime": "13:00:00",
                     "endTime": "16:00:00",
-                    "checkedUntil": 1684118621
+                    "checkedUntil": 1684095136
                 },
                 {
                     "patternId": "4",
@@ -623,108 +309,40 @@
                     "toDate": "2023-07-01",
                     "StartTime": "13:00:00",
                     "endTime": "16:00:00",
-                    "checkedUntil": 1684032221
-                },
-                {
-                    "patternId": "5",
-                    "hostId": "JUAN123",
-                    "day": 64,
-                    "fromDate": "2023-03-01",
-                    "toDate": "2023-07-01",
-                    "StartTime": "13:00:00",
-                    "endTime": "16:00:00",
-                    "checkedUntil": 1684118621
-                },
-                {
-                    "patternId": "6",
-                    "hostId": "JUAN123",
-                    "day": 32,
-                    "fromDate": "2023-03-01",
-                    "toDate": "2023-07-01",
-                    "StartTime": "13:00:00",
-                    "endTime": "16:00:00",
-                    "checkedUntil": 1684032221
-                },
-                {
-                    "patternId": "7",
-                    "hostId": "JUAN123",
-                    "day": 64,
-                    "fromDate": "2023-03-01",
-                    "toDate": "2023-07-01",
-                    "StartTime": "13:00:00",
-                    "endTime": "16:00:00",
-                    "checkedUntil": 1684118621
-                },
-                {
-                    "patternId": "8",
-                    "hostId": "JUAN123",
-                    "day": 32,
-                    "fromDate": "2023-03-01",
-                    "toDate": "2023-07-01",
-                    "StartTime": "13:00:00",
-                    "endTime": "16:00:00",
-                    "checkedUntil": 1684032221
+                    "checkedUntil": 1684008736
                 }
             ],
             "dates": [
                 {
-                    "dateId": "f976dd08-3c3d-474c-abf6-c588279eba22",
-                    "durationApproximated": 10800,
-                    "startTime": "13:00:00",
-                    "date": "2023-05-14",
-                    "hostId": "JUAN123"
-                },
-                {
-                    "dateId": "3441db80-96d9-4525-8979-351cd1620d54",
+                    "dateId": "f211d079-4f1b-48d4-8da9-ae24d5b277c9",
                     "durationApproximated": 10800,
                     "startTime": "13:00:00",
                     "date": "2023-05-13",
                     "hostId": "JUAN123"
                 },
                 {
-                    "dateId": "ef70af7a-8ad8-4aa9-8494-5eac9a11a8a7",
+                    "dateId": "bc2b949b-d3da-4143-8e65-a7af56954f52",
                     "durationApproximated": 10800,
                     "startTime": "13:00:00",
                     "date": "2023-05-14",
                     "hostId": "JUAN123"
                 },
                 {
-                    "dateId": "001b91eb-8fb5-4610-9f17-5bd7ebd82971",
+                    "dateId": "a060c0cd-bfa8-45b6-bfd3-0a1d39f4acb3",
+                    "durationApproximated": 10800,
+                    "startTime": "13:00:00",
+                    "date": "2023-05-13",
+                    "hostId": "JUAN123"
+                },
+                {
+                    "dateId": "011be7ba-5692-4e89-8e9d-69b97e288787",
                     "durationApproximated": 10800,
                     "startTime": "13:00:00",
                     "date": "2023-05-14",
                     "hostId": "JUAN123"
                 },
                 {
-                    "dateId": "93b7aeb3-77c5-4b98-8a1e-837780edba6d",
-                    "durationApproximated": 10800,
-                    "startTime": "13:00:00",
-                    "date": "2023-05-13",
-                    "hostId": "JUAN123"
-                },
-                {
-                    "dateId": "c3fdc7a5-015e-47cb-9414-ff9e71aad913",
-                    "durationApproximated": 10800,
-                    "startTime": "13:00:00",
-                    "date": "2023-05-13",
-                    "hostId": "JUAN123"
-                },
-                {
-                    "dateId": "653492f1-60d7-45df-bde4-e168c665a4a9",
-                    "durationApproximated": 10800,
-                    "startTime": "13:00:00",
-                    "date": "2023-05-13",
-                    "hostId": "JUAN123"
-                },
-                {
-                    "dateId": "995828c0-98b7-4f3e-9afe-19559175e2ea",
-                    "durationApproximated": 10800,
-                    "startTime": "13:00:00",
-                    "date": "2023-05-14",
-                    "hostId": "JUAN123"
-                },
-                {
-                    "dateId": "f8d6d2c7-8e33-4886-a2dc-5de7efcb9189",
+                    "dateId": "6306aaac-dd8f-4632-a691-39b5567b2239",
                     "durationApproximated": 10800,
                     "startTime": "13:00:00",
                     "date": "2023-05-13",
@@ -733,7 +351,7 @@
             ]
         },
         {
-            "spotId": "2",
+            "spotId": "5",
             "schedulePatterns": [
                 {
                     "patternId": "0",
@@ -743,38 +361,21 @@
                     "toDate": "2023-07-01",
                     "StartTime": "13:00:00",
                     "endTime": "16:00:00",
-                    "checkedUntil": 1684032221
-                },
-                {
-                    "patternId": "1",
-                    "hostId": "JUAN123",
-                    "day": 64,
-                    "fromDate": "2023-03-01",
-                    "toDate": "2023-07-01",
-                    "StartTime": "13:00:00",
-                    "endTime": "16:00:00",
-                    "checkedUntil": 1684118621
+                    "checkedUntil": 1684008736
                 }
             ],
             "dates": [
                 {
-                    "dateId": "92d31b1d-432b-4d26-a8b2-28a90f8f5c7b",
+                    "dateId": "8601cab1-df64-4943-9243-027357391254",
                     "durationApproximated": 10800,
                     "startTime": "13:00:00",
                     "date": "2023-05-13",
-                    "hostId": "JUAN123"
-                },
-                {
-                    "dateId": "01adbb41-87ef-47c3-971a-6a7f9564d472",
-                    "durationApproximated": 10800,
-                    "startTime": "13:00:00",
-                    "date": "2023-05-14",
                     "hostId": "JUAN123"
                 }
             ]
         },
         {
-            "spotId": "3",
+            "spotId": "6",
             "schedulePatterns": [
                 {
                     "patternId": "0",
@@ -784,7 +385,7 @@
                     "toDate": "2023-07-01",
                     "StartTime": "13:00:00",
                     "endTime": "16:00:00",
-                    "checkedUntil": 1684032221
+                    "checkedUntil": 1684008736
                 },
                 {
                     "patternId": "1",
@@ -794,7 +395,48 @@
                     "toDate": "2023-07-01",
                     "StartTime": "13:00:00",
                     "endTime": "16:00:00",
-                    "checkedUntil": 1684118621
+                    "checkedUntil": 1684095136
+                }
+            ],
+            "dates": [
+                {
+                    "dateId": "78ff4fcd-fa48-4d2c-a381-9760fce77ff1",
+                    "durationApproximated": 10800,
+                    "startTime": "13:00:00",
+                    "date": "2023-05-13",
+                    "hostId": "JUAN123"
+                },
+                {
+                    "dateId": "51132f90-d563-406b-aa1f-bd6d37f47563",
+                    "durationApproximated": 10800,
+                    "startTime": "13:00:00",
+                    "date": "2023-05-14",
+                    "hostId": "JUAN123"
+                }
+            ]
+        },
+        {
+            "spotId": "7",
+            "schedulePatterns": [
+                {
+                    "patternId": "0",
+                    "hostId": "JUAN123",
+                    "day": 32,
+                    "fromDate": "2023-03-01",
+                    "toDate": "2023-07-01",
+                    "StartTime": "13:00:00",
+                    "endTime": "16:00:00",
+                    "checkedUntil": 1684008736
+                },
+                {
+                    "patternId": "1",
+                    "hostId": "JUAN123",
+                    "day": 64,
+                    "fromDate": "2023-03-01",
+                    "toDate": "2023-07-01",
+                    "StartTime": "13:00:00",
+                    "endTime": "16:00:00",
+                    "checkedUntil": 1684095136
                 },
                 {
                     "patternId": "2",
@@ -804,7 +446,7 @@
                     "toDate": "2023-07-01",
                     "StartTime": "13:00:00",
                     "endTime": "16:00:00",
-                    "checkedUntil": 1684032221
+                    "checkedUntil": 1684008736
                 },
                 {
                     "patternId": "3",
@@ -814,33 +456,149 @@
                     "toDate": "2023-07-01",
                     "StartTime": "13:00:00",
                     "endTime": "16:00:00",
-                    "checkedUntil": 1684118621
+                    "checkedUntil": 1684095136
                 }
             ],
             "dates": [
                 {
-                    "dateId": "3711e078-3802-4aab-8123-d2d76e9debb5",
-                    "durationApproximated": 10800,
-                    "startTime": "13:00:00",
-                    "date": "2023-05-14",
-                    "hostId": "JUAN123"
-                },
-                {
-                    "dateId": "3046829e-0b09-4b70-a008-9c870b6dbe9d",
+                    "dateId": "e17dbc0c-463c-4f5b-8cc6-44f3c2f72342",
                     "durationApproximated": 10800,
                     "startTime": "13:00:00",
                     "date": "2023-05-13",
                     "hostId": "JUAN123"
                 },
                 {
-                    "dateId": "c9aea320-f61d-44d9-941b-715b1706b827",
+                    "dateId": "5e56d8ee-98b9-4e13-8078-7d37df66ac65",
                     "durationApproximated": 10800,
                     "startTime": "13:00:00",
                     "date": "2023-05-14",
                     "hostId": "JUAN123"
                 },
                 {
-                    "dateId": "18ba72d3-bd25-4585-8baa-abad928cb869",
+                    "dateId": "a9f9d0a6-97e6-43f6-97e3-9eb45de9327b",
+                    "durationApproximated": 10800,
+                    "startTime": "13:00:00",
+                    "date": "2023-05-13",
+                    "hostId": "JUAN123"
+                },
+                {
+                    "dateId": "d15d336b-e272-46a4-bfcb-dfdc20b8eaeb",
+                    "durationApproximated": 10800,
+                    "startTime": "13:00:00",
+                    "date": "2023-05-14",
+                    "hostId": "JUAN123"
+                }
+            ]
+        },
+        {
+            "spotId": "8",
+            "schedulePatterns": [
+                {
+                    "patternId": "0",
+                    "hostId": "JUAN123",
+                    "day": 32,
+                    "fromDate": "2023-03-01",
+                    "toDate": "2023-07-01",
+                    "StartTime": "13:00:00",
+                    "endTime": "16:00:00",
+                    "checkedUntil": 1684008736
+                },
+                {
+                    "patternId": "1",
+                    "hostId": "JUAN123",
+                    "day": 64,
+                    "fromDate": "2023-03-01",
+                    "toDate": "2023-07-01",
+                    "StartTime": "13:00:00",
+                    "endTime": "16:00:00",
+                    "checkedUntil": 1684095136
+                },
+                {
+                    "patternId": "2",
+                    "hostId": "JUAN123",
+                    "day": 32,
+                    "fromDate": "2023-03-01",
+                    "toDate": "2023-07-01",
+                    "StartTime": "13:00:00",
+                    "endTime": "16:00:00",
+                    "checkedUntil": 1684008736
+                }
+            ],
+            "dates": [
+                {
+                    "dateId": "6a3c639b-d799-4d05-8ba8-ec944159f422",
+                    "durationApproximated": 10800,
+                    "startTime": "13:00:00",
+                    "date": "2023-05-14",
+                    "hostId": "JUAN123"
+                },
+                {
+                    "dateId": "8a88e027-c297-4163-bc64-0d28b451ec21",
+                    "durationApproximated": 10800,
+                    "startTime": "13:00:00",
+                    "date": "2023-05-13",
+                    "hostId": "JUAN123"
+                },
+                {
+                    "dateId": "a658e49d-1114-4e57-a89a-b7f11a304f59",
+                    "durationApproximated": 10800,
+                    "startTime": "13:00:00",
+                    "date": "2023-05-13",
+                    "hostId": "JUAN123"
+                }
+            ]
+        },
+        {
+            "spotId": "9",
+            "schedulePatterns": [
+                {
+                    "patternId": "0",
+                    "hostId": "JUAN123",
+                    "day": 32,
+                    "fromDate": "2023-03-01",
+                    "toDate": "2023-07-01",
+                    "StartTime": "13:00:00",
+                    "endTime": "16:00:00",
+                    "checkedUntil": 1684008736
+                },
+                {
+                    "patternId": "1",
+                    "hostId": "JUAN123",
+                    "day": 64,
+                    "fromDate": "2023-03-01",
+                    "toDate": "2023-07-01",
+                    "StartTime": "13:00:00",
+                    "endTime": "16:00:00",
+                    "checkedUntil": 1684095136
+                },
+                {
+                    "patternId": "2",
+                    "hostId": "JUAN123",
+                    "day": 32,
+                    "fromDate": "2023-03-01",
+                    "toDate": "2023-07-01",
+                    "StartTime": "13:00:00",
+                    "endTime": "16:00:00",
+                    "checkedUntil": 1684008736
+                }
+            ],
+            "dates": [
+                {
+                    "dateId": "60c8b011-6cb8-429b-9e3b-8ef470c83793",
+                    "durationApproximated": 10800,
+                    "startTime": "13:00:00",
+                    "date": "2023-05-13",
+                    "hostId": "JUAN123"
+                },
+                {
+                    "dateId": "d20b28be-4900-47e7-8c1c-70d9b90abb1f",
+                    "durationApproximated": 10800,
+                    "startTime": "13:00:00",
+                    "date": "2023-05-14",
+                    "hostId": "JUAN123"
+                },
+                {
+                    "dateId": "9cafba99-6fe1-4016-8d33-12d6a134c4ce",
                     "durationApproximated": 10800,
                     "startTime": "13:00:00",
                     "date": "2023-05-13",

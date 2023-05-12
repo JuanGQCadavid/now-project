@@ -4,9 +4,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"runtime"
 
 	"github.com/JuanGQCadavid/now-project/services/pkgs/common/logs"
 	"github.com/JuanGQCadavid/now-project/services/scheduledPatternsChecker/internal/confirmation/localconfirmation"
+	"github.com/JuanGQCadavid/now-project/services/scheduledPatternsChecker/internal/confirmation/queue"
 	"github.com/JuanGQCadavid/now-project/services/scheduledPatternsChecker/internal/core/domain"
 	"github.com/JuanGQCadavid/now-project/services/scheduledPatternsChecker/internal/core/service"
 	"github.com/JuanGQCadavid/now-project/services/scheduledPatternsChecker/internal/repository/localrepository"
@@ -17,15 +19,22 @@ type Result struct {
 }
 
 func main() {
+
 	//manualCheck()
-	paralleCheck()
+	//paralleCheck()
+	serviceManualTest()
 }
 
-func paralleCheck() {
+func serviceManualTest() {
 	localRepo := localrepository.NewLocalRepository(10, 10)
-	localconfirmation := localconfirmation.NewLocalConfirmation()
+	queueConfirmation, err := queue.NewSQSConfirmationFromEnv("sqsConfirmationArn")
 
-	srv := service.NewCheckerService(localRepo, localconfirmation)
+	if err != nil {
+		logs.Error.Fatalln("error while creatin repo", err.Error())
+	}
+
+	// cores := runtime.NumCPU()
+	srv := service.NewCheckerService(localRepo, queueConfirmation, 1)
 
 	result, err := srv.GenerateDatesFromRepository(604800)
 
@@ -47,80 +56,23 @@ func paralleCheck() {
 	f.Write(json)
 }
 
-func manualCheck() {
+func paralleCheck() {
 	localRepo := localrepository.NewLocalRepository(10, 10)
 	localconfirmation := localconfirmation.NewLocalConfirmation()
+	cores := runtime.NumCPU()
+	srv := service.NewCheckerService(localRepo, localconfirmation, cores)
 
-	srv := service.NewCheckerService(localRepo, localconfirmation)
+	result, err := srv.GenerateDatesFromRepository(604800)
 
-	patterns, _ := localRepo.FetchActiveSchedulePatterns()
-
-	// logs.Info.Println("BEFORE")
-	// fmt.Print("[")
-	// for _, spot := range patterns {
-	// 	fmt.Print(len(spot.SchedulePatterns), ", ")
-	// }
-	// fmt.Println("]")
-
-	result := srv.GetSortedSpotsPatternsByDeep(patterns)
-
-	logs.Info.Println("After")
-	fmt.Print("[")
-	for _, spot := range result {
-		fmt.Print(len(spot.Spot.SchedulePatterns), ", ")
-	}
-	fmt.Println("]")
-	cores := 4
-	fmt.Println("cores -> ", cores)
-	result2 := srv.SplitDatesPerCore(result, cores)
-
-	fmt.Println("---")
-	for _, spots := range result2 {
-		counter := 0
-
-		for _, spot := range spots {
-			counter += len(spot.SchedulePatterns)
-		}
-		fmt.Print(counter, ", ")
-	}
-	fmt.Println()
-
-	manualPatterns := make([]domain.Spot, 1)
-
-	firstSP := make([]domain.SchedulePattern, 2)
-	firstSP[0] = domain.SchedulePattern{
-		Id:        "1",
-		HostId:    "JUAN123",
-		Day:       domain.Saturday,
-		FromDate:  "2023-03-01",
-		ToDate:    "2023-07-01",
-		StartTime: "13:00:00",
-		EndTime:   "16:00:00",
+	if err != nil {
+		fmt.Println("There is a error! ", err.Error())
+		os.Exit(1)
 	}
 
-	firstSP[1] = domain.SchedulePattern{
-		Id:        "2",
-		HostId:    "JUAN123",
-		Day:       domain.Sunday | domain.Monday,
-		FromDate:  "2023-03-01",
-		ToDate:    "2023-07-01",
-		StartTime: "13:00:00",
-		EndTime:   "16:00:00",
-	}
-
-	// secondSP = make([]domain.Spot, 2)
-
-	manualPatterns[0] = domain.Spot{
-		SpotId:           "SpotId_1",
-		SchedulePatterns: firstSP,
-	}
-
-	result3, _ := srv.GenerateDates(manualPatterns, 604800)
-	// result3, _ := srv.GenerateDatesParallel()
 	f, _ := os.Create("/Users/personal/Pululapp/now-project/services/scheduledPatternsChecker/cmd/http/ouput.json")
 
 	resultOutput := Result{
-		Result: result3,
+		Result: result,
 	}
 
 	defer f.Close()
@@ -128,8 +80,91 @@ func manualCheck() {
 	json, _ := json.MarshalIndent(resultOutput, "", "    ")
 	fmt.Println(string(json))
 	f.Write(json)
-
 }
+
+// func manualCheck() {
+// 	localRepo := localrepository.NewLocalRepository(10, 10)
+// 	localconfirmation := localconfirmation.NewLocalConfirmation()
+
+// 	srv := service.NewCheckerService(localRepo, localconfirmation)
+
+// 	patterns, _ := localRepo.FetchActiveSchedulePatterns()
+
+// 	// logs.Info.Println("BEFORE")
+// 	// fmt.Print("[")
+// 	// for _, spot := range patterns {
+// 	// 	fmt.Print(len(spot.SchedulePatterns), ", ")
+// 	// }
+// 	// fmt.Println("]")
+
+// 	result := srv.GetSortedSpotsPatternsByDeep(patterns)
+
+// 	logs.Info.Println("After")
+// 	fmt.Print("[")
+// 	for _, spot := range result {
+// 		fmt.Print(len(spot.Spot.SchedulePatterns), ", ")
+// 	}
+// 	fmt.Println("]")
+// 	cores := 4
+// 	fmt.Println("cores -> ", cores)
+// 	result2 := srv.SplitDatesPerCore(result, cores)
+
+// 	fmt.Println("---")
+// 	for _, spots := range result2 {
+// 		counter := 0
+
+// 		for _, spot := range spots {
+// 			counter += len(spot.SchedulePatterns)
+// 		}
+// 		fmt.Print(counter, ", ")
+// 	}
+// 	fmt.Println()
+
+// 	manualPatterns := make([]domain.Spot, 1)
+
+// 	firstSP := make([]domain.SchedulePattern, 2)
+// 	firstSP[0] = domain.SchedulePattern{
+// 		Id:        "1",
+// 		HostId:    "JUAN123",
+// 		Day:       domain.Saturday,
+// 		FromDate:  "2023-03-01",
+// 		ToDate:    "2023-07-01",
+// 		StartTime: "13:00:00",
+// 		EndTime:   "16:00:00",
+// 	}
+
+// 	firstSP[1] = domain.SchedulePattern{
+// 		Id:        "2",
+// 		HostId:    "JUAN123",
+// 		Day:       domain.Sunday | domain.Monday,
+// 		FromDate:  "2023-03-01",
+// 		ToDate:    "2023-07-01",
+// 		StartTime: "13:00:00",
+// 		EndTime:   "16:00:00",
+// 	}
+
+// 	// secondSP = make([]domain.Spot, 2)
+
+// 	manualPatterns[0] = domain.Spot{
+// 		SpotId:           "SpotId_1",
+// 		SchedulePatterns: firstSP,
+// 	}
+
+// 	result3, _ := srv.GenerateDates(manualPatterns, 604800)
+// 	// result3, _ := srv.GenerateDatesParallel()
+// 	f, _ := os.Create("/Users/personal/Pululapp/now-project/services/scheduledPatternsChecker/cmd/http/ouput.json")
+
+// 	resultOutput := Result{
+// 		Result: result3,
+// 	}
+
+// 	defer f.Close()
+
+// 	json, _ := json.MarshalIndent(resultOutput, "", "    ")
+// 	fmt.Println(string(json))
+// 	f.Write(json)
+
+// }
 
 func printLent(patterns []domain.Spot) {
 	logs.Info.Print("[")

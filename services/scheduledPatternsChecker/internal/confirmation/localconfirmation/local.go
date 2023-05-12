@@ -12,7 +12,7 @@ func NewLocalConfirmation() *LocalConfirmation {
 	return &LocalConfirmation{}
 }
 
-func (l *LocalConfirmation) SendConfirmationRequestOnBatch(payload []domain.Spot, batchSize int8) error {
+func (l *LocalConfirmation) SendConfirmationRequestOnBatch(payload []domain.Spot, batchSize int8) map[string]error {
 	logs.Info.Println("Sending data: ", payload)
 	return nil
 }

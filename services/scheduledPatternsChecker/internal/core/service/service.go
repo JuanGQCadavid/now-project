@@ -2,7 +2,6 @@ package service
 
 import (
 	"fmt"
-	"runtime"
 	"sort"
 	"time"
 
@@ -24,14 +23,12 @@ type CheckerService struct {
 	confirmationBatchSize int8
 }
 
-func NewCheckerService(repository ports.Repository, confirmation ports.Confirmation) *CheckerService {
-
-	cores := runtime.NumCPU()
+func NewCheckerService(repository ports.Repository, confirmation ports.Confirmation, coresNumber int) *CheckerService {
 
 	return &CheckerService{
 		repository:            repository,
 		confirmation:          confirmation,
-		coresNumber:           cores,
+		coresNumber:           coresNumber,
 		confirmationBatchSize: 25,
 	}
 }
@@ -104,9 +101,10 @@ func (srv *CheckerService) GenerateDatesFromRepository(timeWindow int64) ([]doma
 	}
 
 	// 	4. Send spot id x dates Id x hostId to confirmation SQS
-	err = srv.confirmation.SendConfirmationRequestOnBatch(spotsWithDates, srv.confirmationBatchSize)
+	sendMessageErrors := srv.confirmation.SendConfirmationRequestOnBatch(spotsWithDates, srv.confirmationBatchSize)
 
-	if err != nil {
+	// TODO What should we do in this case ?
+	if sendMessageErrors != nil {
 		logs.Error.Println("Confirmation service fail")
 		return nil, ports.ErrSendingConfirmation
 	}
