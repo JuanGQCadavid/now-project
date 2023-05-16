@@ -100,6 +100,9 @@ func (srv *CheckerService) GenerateDatesFromRepository(timeWindow int64) ([]doma
 		return nil, ports.ErrInvalidCors
 	}
 
+	// TODO -> We are missing updating schedule patterns checkeduntil
+	// TODO -> We are missing dates creation!! jajajaja
+
 	// 	4. Send spot id x dates Id x hostId to confirmation SQS
 	sendMessageErrors := srv.confirmation.SendConfirmationRequestOnBatch(spotsWithDates, srv.confirmationBatchSize)
 

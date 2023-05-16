@@ -7,11 +7,13 @@ import (
 	"runtime"
 
 	"github.com/JuanGQCadavid/now-project/services/pkgs/common/logs"
+	"github.com/JuanGQCadavid/now-project/services/pkgs/credentialsFinder/cmd/ssm"
 	"github.com/JuanGQCadavid/now-project/services/scheduledPatternsChecker/internal/confirmation/localconfirmation"
 	"github.com/JuanGQCadavid/now-project/services/scheduledPatternsChecker/internal/confirmation/queue"
 	"github.com/JuanGQCadavid/now-project/services/scheduledPatternsChecker/internal/core/domain"
 	"github.com/JuanGQCadavid/now-project/services/scheduledPatternsChecker/internal/core/service"
 	"github.com/JuanGQCadavid/now-project/services/scheduledPatternsChecker/internal/repository/localrepository"
+	"github.com/JuanGQCadavid/now-project/services/scheduledPatternsChecker/internal/repository/neo4jrepo"
 )
 
 type Result struct {
@@ -22,7 +24,32 @@ func main() {
 
 	//manualCheck()
 	//paralleCheck()
-	serviceManualTest()
+	// serviceManualTest()
+
+	// testRepo()
+	serviceManualTest2()
+}
+
+func testRepo() {
+	credsFinder := ssm.NewSSMCredentialsFinder()
+
+	neo4jDriver, err := credsFinder.FindNeo4jCredentialsFromDefaultEnv()
+
+	if err != nil {
+		logs.Error.Println("There were an error while attempting to create drivers")
+		logs.Error.Fatalln(err.Error())
+	}
+	repo := neo4jrepo.NewNeo4jRepoWithDriver(neo4jDriver)
+
+	reponse, err := repo.FetchActiveSchedulePatterns()
+
+	if err != nil {
+		logs.Error.Fatalln(err.Error())
+	}
+
+	for _, spot := range reponse {
+		logs.Info.Printf("%+v \n", spot)
+	}
 }
 
 func serviceManualTest() {
@@ -35,6 +62,45 @@ func serviceManualTest() {
 
 	// cores := runtime.NumCPU()
 	srv := service.NewCheckerService(localRepo, queueConfirmation, 1)
+
+	result, err := srv.GenerateDatesFromRepository(604800)
+
+	if err != nil {
+		fmt.Println("There is a error! ", err.Error())
+		os.Exit(1)
+	}
+
+	f, _ := os.Create("/Users/personal/Pululapp/now-project/services/scheduledPatternsChecker/cmd/http/ouput.json")
+
+	resultOutput := Result{
+		Result: result,
+	}
+
+	defer f.Close()
+
+	json, _ := json.MarshalIndent(resultOutput, "", "    ")
+	fmt.Println(string(json))
+	f.Write(json)
+}
+
+func serviceManualTest2() {
+	credsFinder := ssm.NewSSMCredentialsFinder()
+
+	neo4jDriver, err := credsFinder.FindNeo4jCredentialsFromDefaultEnv()
+
+	if err != nil {
+		logs.Error.Println("There were an error while attempting to create drivers")
+		logs.Error.Fatalln(err.Error())
+	}
+	repo := neo4jrepo.NewNeo4jRepoWithDriver(neo4jDriver)
+	queueConfirmation, err := queue.NewSQSConfirmationFromEnv("sqsConfirmationArn")
+
+	if err != nil {
+		logs.Error.Fatalln("error while creatin repo", err.Error())
+	}
+
+	// cores := runtime.NumCPU()
+	srv := service.NewCheckerService(repo, queueConfirmation, 1)
 
 	result, err := srv.GenerateDatesFromRepository(604800)
 
