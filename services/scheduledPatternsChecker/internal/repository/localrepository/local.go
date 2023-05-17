@@ -24,6 +24,10 @@ func (r *LocalRepository) FetchActiveSchedulePatterns() ([]domain.Spot, error) {
 	return r.generateSpots(r.upTo, r.maxDeep), nil
 }
 
+func (r *LocalRepository) UpdateSpotsByBatch(spots []domain.Spot, batchSize int) map[*domain.Spot]error {
+	return nil
+}
+
 func (r *LocalRepository) generateSpots(upTo int16, maxDeep int16) []domain.Spot {
 	result := make([]domain.Spot, upTo)
 
