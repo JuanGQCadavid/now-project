@@ -4,7 +4,6 @@ import (
 	"bytes"
 	_ "embed"
 	"fmt"
-	"strings"
 	"time"
 
 	"github.com/JuanGQCadavid/now-project/services/pkgs/common/logs"
@@ -36,89 +35,74 @@ var (
 func (cmd *UpdateSpotsCommand) Run(tr neo4j.Transaction) (interface{}, error) {
 
 	var updateQuery bytes.Buffer
-	var queryParams map[string]interface{}
+	queryParams := make(map[string]interface{})
 	var now int64 = time.Now().Unix()
 
-	for _, spot := range cmd.spots {
+	for spotIndex, spot := range cmd.spots {
+
+		scheduleCommand := `
+			MATCH (schedulePattern_%[1]d:SchedulePattern {UUID: $schedule_pattern_id_%[1]d})
+			SET schedulePattern_%[1]d.checkedUpTo = $checkedUpTo_%[1]d
+			WITH schedulePattern_%[1]d
+		`
 
 		for scheduleIndex, schedulePattern := range spot.SchedulePatterns {
+			fmt.Fprintf(&updateQuery, scheduleCommand, scheduleIndex)
 
-			// MATCH (event:Event {UUID: $%s } )<-[at:AT]-(schedulePattern:SchedulePattern {UUID: $%s})
-			// SET schedulePattern.checkedUpTo = $%d
-
-			spotId := fmt.Sprintf("event_id_%d", scheduleIndex)
-			spId := fmt.Sprintf("schedule_pattern_id_%d", scheduleIndex)
-			checkedUpTo := fmt.Sprintf("checked_up_to_%d", scheduleIndex)
-
-			fmt.Fprintf(&updateQuery, updateSchedulePattern, spotId, spId, checkedUpTo)
-
-			queryParams[spotId] = spot.SpotId
-			queryParams[spId] = schedulePattern.Id
-			queryParams[checkedUpTo] = schedulePattern.CheckedUpTo
+			queryParams[fmt.Sprintf("schedule_pattern_id_%[1]d", scheduleIndex)] = schedulePattern.Id
+			queryParams[fmt.Sprintf("checkedUpTo_%[1]d", scheduleIndex)] = schedulePattern.CheckedUpTo
 		}
 
+		matchCommand := `
+			MATCH (host_%[1]d:Person {id: $host_id_%[1]d})-[host_relation_%[1]d:OWNS]->(event_%[1]d:Event {UUID: $event_uuid_%[1]d } )
+		`
+		dateCreationCommand := `
+			MERGE (date_%[1]d:Date {UUID: $date_uuid_%[1]d})
+			ON CREATE
+				SET date_%[1]d.DurationApproximatedInSeconds = $date_approximated_seconds_%[1]d
+				SET date_%[1]d.StartTime = $date_start_time_%[1]d
+				SET date_%[1]d.Date = $date_date_%[1]d
+				SET date_%[1]d.Confirmed = $date_confirmed_%[1]d
+				SET date_%[1]d.MaximunCapacty = $date_maximun_capacity_%[1]d
+		`
+		joinCommand := `
+			MERGE (host_%[1]d)-[:HOST]->(date_%[2]d)-[:AT {status: $status, timestamp: $timestamp }]->(event_%[1]d)
+		`
+
+		if len(spot.Dates) > 0 {
+
+			fmt.Fprintf(&updateQuery, matchCommand, spotIndex)
+			queryParams[fmt.Sprintf("event_uuid_%[1]d", spotIndex)] = spot.SpotId
+			queryParams["status"] = cmd.datesStatus
+			queryParams["timestamp"] = now
+
+		}
+
+		var hostAdded bool = false
+
 		for dateIndex, date := range spot.Dates {
-			baseCommand := addDatesToSpot
 
-			// MATCH
-			// 	(host:Person {id: $host_id})-[host_relation:OWNS]->(event:Event {UUID: $event_uuid } )
-			// MERGE
-			// (date:Date {UUID: $date_uuid})
-			// ON CREATE
-			// 	SET date.DurationApproximatedInSeconds = $date_approximated_seconds
-			// 	SET date.StartTime = $date_start_time
-			// 	SET date.Date = $date_date
-			// 	SET date.Confirmed = $date_confirmed
-			// 	SET date.MaximunCapacty = $date_maximun_capacity
-			// MERGE
-			// (host)-[:HOST]->(date)-[:AT {status: $status, timestamp: $timestamp }]->(event)
+			if !hostAdded {
+				queryParams[fmt.Sprintf("host_id_%[1]d", spotIndex)] = date.HostId
+				hostAdded = true
+			}
 
-			spotId := fmt.Sprintf("$event_uuid_%d", dateIndex)
-			baseCommand = strings.ReplaceAll(baseCommand, "$event_uuid", spotId)
-			queryParams[spotId] = spot.SpotId
+			baseCommand := fmt.Sprintf(dateCreationCommand, dateIndex)
 
-			hostId := fmt.Sprintf("$host_id_%d", dateIndex)
-			baseCommand = strings.ReplaceAll(baseCommand, "$host_id", hostId)
-			queryParams[hostId] = date.HostId
+			queryParams[fmt.Sprintf("date_uuid_%d", dateIndex)] = date.DateId
+			queryParams[fmt.Sprintf("date_approximated_seconds_%d", dateIndex)] = date.DurationApproximatedInSeconds
+			queryParams[fmt.Sprintf("date_start_time_%d", dateIndex)] = date.StartTime
+			queryParams[fmt.Sprintf("date_date_%d", dateIndex)] = date.Date
+			queryParams[fmt.Sprintf("date_confirmed_%d", dateIndex)] = false
+			queryParams[fmt.Sprintf("date_maximun_capacity_%d", dateIndex)] = date.MaximunCapacty
 
-			dateId := fmt.Sprintf("$date_uuid_%d", dateIndex)
-			baseCommand = strings.ReplaceAll(baseCommand, "$date_uuid", dateId)
-			queryParams[dateId] = date.DateId
-
-			approxSeconds := fmt.Sprintf("$date_approximated_seconds_%d", dateIndex)
-			baseCommand = strings.ReplaceAll(baseCommand, "$date_approximated_seconds", approxSeconds)
-			queryParams[approxSeconds] = date.DurationApproximatedInSeconds
-
-			startTime := fmt.Sprintf("$date_start_time_%d", dateIndex)
-			baseCommand = strings.ReplaceAll(baseCommand, "$date_start_time", startTime)
-			queryParams[startTime] = date.StartTime
-
-			dateDate := fmt.Sprintf("$date_date_%d", dateIndex)
-			baseCommand = strings.ReplaceAll(baseCommand, "$date_date", dateDate)
-			queryParams[dateDate] = date.Date
-
-			dateConfirmed := fmt.Sprintf("$date_confirmed_%d", dateIndex)
-			baseCommand = strings.ReplaceAll(baseCommand, "$date_confirmed", dateConfirmed)
-			queryParams[dateConfirmed] = false
-
-			maximunCapacity := fmt.Sprintf("$date_maximun_capacity_%d", dateIndex)
-			baseCommand = strings.ReplaceAll(baseCommand, "$date_maximun_capacity", maximunCapacity)
-			queryParams[maximunCapacity] = date.MaximunCapacty
-
-			dateStatus := fmt.Sprintf("$status_%d", dateIndex)
-			baseCommand = strings.ReplaceAll(baseCommand, "$status", dateStatus)
-			queryParams[dateStatus] = cmd.datesStatus
-
-			dateTimeStamp := fmt.Sprintf("$timestamp_%d", dateIndex)
-			baseCommand = strings.ReplaceAll(baseCommand, "$timestamp", dateTimeStamp)
-			queryParams[dateTimeStamp] = now
-
-			updateQuery.WriteString(baseCommand)
+			fmt.Fprintln(&updateQuery, baseCommand)
+			fmt.Fprintf(&updateQuery, joinCommand, spotIndex, dateIndex)
 		}
 
 	}
 
-	logs.Info.Printf("Command -> %s \nParams -> %+v", updateQuery.String(), queryParams)
+	logs.Info.Printf("Command -> \n%s \nParams -> %+v", updateQuery.String(), queryParams)
 
 	_, err := tr.Run(updateQuery.String(), queryParams)
 

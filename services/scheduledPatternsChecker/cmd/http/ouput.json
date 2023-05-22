@@ -11,29 +11,15 @@
                     "toDate": "2023-07-01",
                     "StartTime": "13:00:00",
                     "endTime": "16:00:00",
-                    "checkedUntil": 1684722833
+                    "checkedUntil": 1685311511
                 }
             ],
             "dates": [
                 {
-                    "dateId": "9abc1571-c246-4a0b-a47d-19161dc5f3c7",
-                    "durationApproximated": 10800,
+                    "dateId": "477a7b20-7151-4b55-b27c-4dd8e3eea79b",
+                    "durationApproximated": 180,
                     "startTime": "13:00:00",
-                    "date": "2023-05-18",
-                    "hostId": "33ddab28-006b-4790-bf42-1832f90dc8d4"
-                },
-                {
-                    "dateId": "c99c6d66-97cc-4340-afb0-f887fa1015cc",
-                    "durationApproximated": 10800,
-                    "startTime": "13:00:00",
-                    "date": "2023-05-20",
-                    "hostId": "33ddab28-006b-4790-bf42-1832f90dc8d4"
-                },
-                {
-                    "dateId": "cde13335-393f-483f-a40d-624398d36ac3",
-                    "durationApproximated": 10800,
-                    "startTime": "13:00:00",
-                    "date": "2023-05-21",
+                    "date": "2023-05-28",
                     "hostId": "33ddab28-006b-4790-bf42-1832f90dc8d4"
                 }
             ]

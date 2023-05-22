@@ -100,17 +100,28 @@ func (srv *CheckerService) GenerateDatesFromRepository(timeWindow int64) ([]doma
 		return nil, ports.ErrInvalidCors
 	}
 
-	// TODO -> We are missing updating schedule patterns checkeduntil
-	// TODO -> We are missing dates creation!! jajajaja
+	errors := srv.repository.UpdateSpotsByBatch(spotsWithDates, int(srv.confirmationBatchSize))
+
+	if errors != nil {
+		logs.Error.Println("We face a error while creating the spots on batch")
+
+		// TODO -> lets iterare over all erros, if the number of erros is less than the total spots then we could keep with a
+		// partial error
+
+		for spotId, spotError := range errors {
+			logs.Error.Printf("%s fail with %s error", spotId.SpotId, spotError)
+		}
+		return nil, ports.ErrServiceParcialOutage
+	}
 
 	// 	4. Send spot id x dates Id x hostId to confirmation SQS
-	sendMessageErrors := srv.confirmation.SendConfirmationRequestOnBatch(spotsWithDates, srv.confirmationBatchSize)
+	// sendMessageErrors := srv.confirmation.SendConfirmationRequestOnBatch(spotsWithDates, srv.confirmationBatchSize)
 
-	// TODO What should we do in this case ?
-	if sendMessageErrors != nil {
-		logs.Error.Println("Confirmation service fail")
-		return nil, ports.ErrSendingConfirmation
-	}
+	// // TODO What should we do in this case ?
+	// if sendMessageErrors != nil {
+	// 	logs.Error.Println("Confirmation service fail")
+	// 	return nil, ports.ErrSendingConfirmation
+	// }
 
 	return spotsWithDates, nil
 }
@@ -194,8 +205,9 @@ func (srv *CheckerService) generateDates(spots []domain.Spot, timeWindow int64) 
 			endHour, _ := time.Parse(time.TimeOnly, schedulePattern.EndTime)
 			durationBtw := endHour.Sub(startTime)
 
-			if schedulePattern.CheckedUpTo != 0 {
+			if schedulePattern.CheckedUpTo != 0 && schedulePattern.CheckedUpTo >= startProcessTime.Unix() {
 				checkingTime = time.Unix(schedulePattern.CheckedUpTo, 0)
+
 			}
 
 			for checkingTime.Compare(limitTime) <= 0 && checkingTime.Compare(startDate) >= 0 && checkingTime.Compare(endDate) <= 0 {
@@ -211,7 +223,7 @@ func (srv *CheckerService) generateDates(spots []domain.Spot, timeWindow int64) 
 
 					newDate := domain.Dates{
 						DateId:                        uuid.NewString(),
-						DurationApproximatedInSeconds: int64(durationBtw.Seconds()),
+						DurationApproximatedInSeconds: int64(durationBtw.Seconds() / 60),
 						StartTime:                     schedulePattern.StartTime,
 						Date:                          checkingTime.Format(time.DateOnly),
 						HostId:                        schedulePattern.HostId,
