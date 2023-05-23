@@ -57,16 +57,17 @@ func (cmd *UpdateSpotsCommand) Run(tr neo4j.Transaction) (interface{}, error) {
 			MATCH (host_%[1]d:Person {id: $host_id_%[1]d})-[host_relation_%[1]d:OWNS]->(event_%[1]d:Event {UUID: $event_uuid_%[1]d } )
 		`
 		dateCreationCommand := `
-			MERGE (date_%[1]d:Date {UUID: $date_uuid_%[1]d})
+			MERGE (date_%[1]d:Date {StartTime: $date_start_time_%[1]d, Date: $date_date_%[1]d })
 			ON CREATE
+				SET date_%[1]d.UUID = $date_uuid_%[1]d
 				SET date_%[1]d.DurationApproximatedInSeconds = $date_approximated_seconds_%[1]d
-				SET date_%[1]d.StartTime = $date_start_time_%[1]d
-				SET date_%[1]d.Date = $date_date_%[1]d
 				SET date_%[1]d.Confirmed = $date_confirmed_%[1]d
 				SET date_%[1]d.MaximunCapacty = $date_maximun_capacity_%[1]d
 		`
 		joinCommand := `
-			MERGE (host_%[1]d)-[:HOST]->(date_%[2]d)-[:AT {status: $status, timestamp: $timestamp }]->(event_%[1]d)
+			MERGE (host_%[1]d)-[:HOST]->(date_%[2]d)-[at_%[1]d:AT {status: $status}]->(event_%[1]d)
+			ON CREATE
+				SET at_%[1]d.timestamp = $timestamp 
 		`
 
 		if len(spot.Dates) > 0 {
