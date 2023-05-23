@@ -57,9 +57,9 @@ func (cmd *UpdateSpotsCommand) Run(tr neo4j.Transaction) (interface{}, error) {
 				SET date_%[1]d.MaximunCapacty = $date_maximun_capacity_%[1]d
 		`
 		joinCommand := `
-			MERGE (host_%[1]d)-[:HOST]->(date_%[2]d)-[at_%[1]d:AT {status: $status}]->(event_%[1]d)
+			MERGE (host_%[1]d)-[:HOST]->(date_%[2]d)-[at_%[2]d:AT {status: $status}]->(event_%[1]d)
 			ON CREATE
-				SET at_%[1]d.timestamp = $timestamp 
+				SET at_%[2]d.timestamp = $timestamp 
 		`
 
 		if len(spot.Dates) > 0 {
