@@ -111,17 +111,18 @@ func (srv *CheckerService) GenerateDatesFromRepository(timeWindow int64) ([]doma
 		for spotId, spotError := range errors {
 			logs.Error.Printf("%s fail with %s error", spotId.SpotId, spotError)
 		}
+
 		return nil, ports.ErrServiceParcialOutage
 	}
 
 	// 	4. Send spot id x dates Id x hostId to confirmation SQS
-	// sendMessageErrors := srv.confirmation.SendConfirmationRequestOnBatch(spotsWithDates, srv.confirmationBatchSize)
+	sendMessageErrors := srv.confirmation.SendConfirmationRequestOnBatch(spotsWithDates, srv.confirmationBatchSize)
 
-	// // TODO What should we do in this case ?
-	// if sendMessageErrors != nil {
-	// 	logs.Error.Println("Confirmation service fail")
-	// 	return nil, ports.ErrSendingConfirmation
-	// }
+	// TODO What should we do in this case ?
+	if sendMessageErrors != nil {
+		logs.Error.Println("Confirmation service fail")
+		return nil, ports.ErrSendingConfirmation
+	}
 
 	return spotsWithDates, nil
 }

@@ -24,14 +24,6 @@ func NewUpdateSpotsCommand(spots []domain.Spot, datesStatus string) *UpdateSpots
 	}
 }
 
-var (
-	//go:embed queries/updateSchedulePattern.cypher
-	updateSchedulePattern string
-
-	//go:embed queries/addDatesToSpot.cypher
-	addDatesToSpot string
-)
-
 func (cmd *UpdateSpotsCommand) Run(tr neo4j.Transaction) (interface{}, error) {
 
 	var updateQuery bytes.Buffer
