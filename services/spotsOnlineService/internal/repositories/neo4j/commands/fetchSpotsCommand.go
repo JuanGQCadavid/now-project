@@ -74,7 +74,7 @@ func (command *FetchSposCommand) getSpotDataFromResult(record *db.Record) *domai
 			date := dateInterface.(map[string]interface{})
 			date_uuid, _ := date["date_uuid"].(string)
 			date_status, _ := date["date_at_status"].(string)
-			date_spot_status := domain.ONLINE_SPOT
+			date_spot_status := domain.UNKNOWN
 
 			if date_status == string(domain.ONLINE_SPOT) {
 				date_spot_status = domain.ONLINE_SPOT
