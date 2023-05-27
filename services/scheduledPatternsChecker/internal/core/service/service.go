@@ -33,6 +33,10 @@ func NewCheckerService(repository ports.Repository, confirmation ports.Confirmat
 	}
 }
 
+func (srv *CheckerService) OnSchedulePatternAppended(spots []domain.Spot, timeWindow int64) {
+
+}
+
 // Procedure:
 
 // 	1. Bring all schedule patterns that are in the repository that:
