@@ -3,18 +3,18 @@ package domain
 type Spot struct {
 	SpotId           string            `json:"spotId,omitempty"`
 	SchedulePatterns []SchedulePattern `json:"schedulePatterns,omitempty"`
-	Dates            []Dates           `json:"dates,omitempty"`
 }
 
 type SchedulePattern struct {
-	Id          string `json:"patternId,omitempty"`
-	HostId      string `json:"hostId,omitempty"`
-	Day         Day    `json:"day,omitempty"`
-	FromDate    string `json:"fromDate,omitempty"`
-	ToDate      string `json:"toDate,omitempty,omitempty"`
-	StartTime   string `json:"StartTime,omitempty"`
-	EndTime     string `json:"endTime,omitempty"`
-	CheckedUpTo int64  `json:"checkedUntil,omitempty"`
+	Id          string  `json:"patternId,omitempty"`
+	HostId      string  `json:"hostId,omitempty"`
+	Day         Day     `json:"day,omitempty"`
+	FromDate    string  `json:"fromDate,omitempty"`
+	ToDate      string  `json:"toDate,omitempty,omitempty"`
+	StartTime   string  `json:"StartTime,omitempty"`
+	EndTime     string  `json:"endTime,omitempty"`
+	CheckedUpTo int64   `json:"checkedUntil,omitempty"`
+	Dates       []Dates `json:"dates,omitempty"`
 }
 
 const (
@@ -51,6 +51,7 @@ type Dates struct {
 	Date                          string `json:"date,omitempty"`
 	MaximunCapacty                int64  `json:"maximunCapacty,omitempty"`
 	HostId                        string `json:"hostId,omitempty"`
+	CreatedFromSchedulePatternId  string `json:"createdFromSchedulePatternId,omitempty"`
 }
 
 func IsMonday(day Day) bool {

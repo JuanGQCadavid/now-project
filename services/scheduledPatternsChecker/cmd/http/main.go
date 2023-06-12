@@ -27,9 +27,34 @@ func main() {
 	// serviceManualTest()
 
 	// testRepo()
-	serviceManualTest2()
+	// serviceManualTest2()
+	generateDaysString(104)
 }
-
+func generateDaysString(dayInt int) {
+	day := domain.Day(dayInt)
+	fmt.Println(dayInt)
+	if domain.IsMonday(day) {
+		fmt.Println("IsMonday")
+	}
+	if domain.IsTuesday(day) {
+		fmt.Println("IsTuesday")
+	}
+	if domain.IsWednesday(day) {
+		fmt.Println("IsWednesday")
+	}
+	if domain.IsThursday(day) {
+		fmt.Println("IsThursday")
+	}
+	if domain.IsFriday(day) {
+		fmt.Println("IsFriday")
+	}
+	if domain.IsSaturday(day) {
+		fmt.Println("IsSaturday")
+	}
+	if domain.IsSunday(day) {
+		fmt.Println("IsSunday")
+	}
+}
 func testRepo() {
 	credsFinder := ssm.NewSSMCredentialsFinder()
 

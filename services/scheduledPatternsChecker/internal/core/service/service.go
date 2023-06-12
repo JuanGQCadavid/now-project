@@ -33,7 +33,40 @@ func NewCheckerService(repository ports.Repository, confirmation ports.Confirmat
 	}
 }
 
-func (srv *CheckerService) OnSchedulePatternAppended(spots []domain.Spot, timeWindow int64) {
+func (srv *CheckerService) OnSchedulePatternAppended(spots []domain.Spot, timeWindow int64) ([]domain.Spot, error) {
+
+	spotsWithDates, err := srv.generateDates(spots, timeWindow)
+
+	if err != nil {
+		logs.Error.Println("We got an error while processing the dates")
+		return nil, ports.ErrProcessingDates
+	}
+
+	errors := srv.repository.UpdateSpotsByBatch(spotsWithDates, int(srv.confirmationBatchSize))
+
+	if errors != nil {
+		logs.Error.Println("We face a error while creating the spots on batch")
+
+		// TODO -> lets iterare over all erros, if the number of erros is less than the total spots then we could keep with a
+		// partial error
+
+		for spotId, spotError := range errors {
+			logs.Error.Printf("%s fail with %s error", spotId.SpotId, spotError)
+		}
+
+		return nil, ports.ErrServiceParcialOutage
+	}
+
+	// 	4. Send spot id x dates Id x hostId to confirmation SQS
+	sendMessageErrors := srv.confirmation.SendConfirmationRequestOnBatch(spotsWithDates, srv.confirmationBatchSize)
+
+	// TODO What should we do in this case ?
+	if sendMessageErrors != nil {
+		logs.Error.Println("Confirmation service fail")
+		return nil, ports.ErrSendingConfirmation
+	}
+
+	return spotsWithDates, nil
 
 }
 
@@ -196,11 +229,11 @@ func (srv *CheckerService) generateDates(spots []domain.Spot, timeWindow int64) 
 	logs.Info.Printf("startProcessTime: %s, limitTime: %s, daysBtw: %s, dayJump: %s", startProcessTime.Format(time.DateTime), limitTime.Format(time.DateTime), limitTime.Sub(startProcessTime), dayJump)
 
 	for i, spot := range spots {
-		dates := make(map[string]domain.Dates, 0)
 
 		fmt.Printf("Checking spot id %+v with a schedulePatterns len of %d \n", spot.SpotId, len(spot.SchedulePatterns))
 
 		for ii, schedulePattern := range spot.SchedulePatterns {
+			dates := make(map[string]domain.Dates, 0)
 			var checkingTime time.Time = startProcessTime // Maybe this could bring troubles
 
 			startDate, _ := time.Parse(time.DateOnly, schedulePattern.FromDate)
@@ -234,25 +267,20 @@ func (srv *CheckerService) generateDates(spots []domain.Spot, timeWindow int64) 
 						HostId:                        schedulePattern.HostId,
 					}
 					schedulePattern.CheckedUpTo = checkingTime.Unix()
-
-					spot.SchedulePatterns[ii] = schedulePattern
-
 					logs.Info.Printf("Date %s create for sp %s on %s \n", newDate.DateId, schedulePattern.Id, newDate.Date)
 					dates[newDate.DateId] = newDate
 				}
 				checkingTime = checkingTime.Add(dayJump)
 			}
 
-			spot.Dates = make([]domain.Dates, len(dates))
+			schedulePattern.Dates = make([]domain.Dates, len(dates))
 			index := 0
-
 			for _, date := range dates {
-				spot.Dates[index] = date
+				schedulePattern.Dates[index] = date
 				index++
 			}
-
+			spot.SchedulePatterns[ii] = schedulePattern
 			spots[i] = spot
-
 		}
 	}
 	return spots, nil

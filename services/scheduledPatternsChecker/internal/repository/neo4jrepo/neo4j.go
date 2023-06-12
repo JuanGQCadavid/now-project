@@ -21,6 +21,10 @@ func NewNeo4jRepoWithDriver(driver neo4j.Driver) *Neo4jRepository {
 	}
 }
 
+func (repo *Neo4jRepository) ConditionalDatesCreation(spot []domain.Spot) error {
+	return nil
+}
+
 // 1. Bring all schedule patterns that are in the repository that:
 //   - Pattern is active
 //   - Spot Id is not eliminated
