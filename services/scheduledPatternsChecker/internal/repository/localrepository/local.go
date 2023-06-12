@@ -69,6 +69,6 @@ func (r *LocalRepository) generateSpots(upTo int16, maxDeep int16) []domain.Spot
 	return result
 }
 
-func (r *LocalRepository) ConditionalDatesCreation(spot []domain.Spot) error {
+func (r *LocalRepository) ConditionalDatesCreation(spot domain.Spot) error {
 	return nil
 }

@@ -13,5 +13,5 @@ var (
 type Repository interface {
 	FetchActiveSchedulePatterns() ([]domain.Spot, error)
 	UpdateSpotsByBatch(spots []domain.Spot, batchSize int) map[*domain.Spot]error
-	ConditionalDatesCreation(spot []domain.Spot) error
+	ConditionalDatesCreation(spot domain.Spot) error
 }

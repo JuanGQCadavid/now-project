@@ -33,41 +33,62 @@ func NewCheckerService(repository ports.Repository, confirmation ports.Confirmat
 	}
 }
 
-func (srv *CheckerService) OnSchedulePatternAppended(spots []domain.Spot, timeWindow int64) ([]domain.Spot, error) {
+func (srv *CheckerService) OnSchedulePatternAppended(spots []domain.Spot, timeWindow int64) ([]domain.Spot, map[error][]domain.Spot) {
 
 	spotsWithDates, err := srv.generateDates(spots, timeWindow)
 
+	errors := make(map[error][]domain.Spot)
+
 	if err != nil {
 		logs.Error.Println("We got an error while processing the dates")
-		return nil, ports.ErrProcessingDates
+		errors[ports.ErrProcessingDates] = spots
+
+		return nil, errors
 	}
 
-	errors := srv.repository.UpdateSpotsByBatch(spotsWithDates, int(srv.confirmationBatchSize))
+	for spotIndex, spot := range spots {
+		logs.Info.Printf("Updating %d/%d, spot id: %s \n", spotIndex, len(spots), spot.SpotId)
 
-	if errors != nil {
-		logs.Error.Println("We face a error while creating the spots on batch")
+		err = srv.repository.ConditionalDatesCreation(spot)
 
-		// TODO -> lets iterare over all erros, if the number of erros is less than the total spots then we could keep with a
-		// partial error
-
-		for spotId, spotError := range errors {
-			logs.Error.Printf("%s fail with %s error", spotId.SpotId, spotError)
+		if err != nil {
+			logs.Error.Printf("We fail generating the dates for the spot %s, error: %s \n", spot.SpotId, err.Error())
+			if errors[err] != nil {
+				errors[err] = append(errors[err], spot)
+			}
 		}
 
-		return nil, ports.ErrServiceParcialOutage
 	}
 
-	// 	4. Send spot id x dates Id x hostId to confirmation SQS
-	sendMessageErrors := srv.confirmation.SendConfirmationRequestOnBatch(spotsWithDates, srv.confirmationBatchSize)
+	if errors != nil && len(errors) > 0 {
+		logs.Error.Println("We face a error while creating the spots on batch")
 
-	// TODO What should we do in this case ?
-	if sendMessageErrors != nil {
-		logs.Error.Println("Confirmation service fail")
-		return nil, ports.ErrSendingConfirmation
+		totalErros := 0
+		for spotError, spotsFailed := range errors {
+			for _, spotFailed := range spotsFailed {
+				totalErros++
+				logs.Error.Printf("%s fail with %s error", spotFailed.SpotId, spotError)
+			}
+		}
+
+		logs.Error.Printf("Total erros %d \n", totalErros)
+
+		// We should send them to a DLQ or to avoid confirm them
+		return nil, errors
 	}
+
+	// // 	4. Send spot id x dates Id x hostId to confirmation SQS
+	// sendMessageErrors := srv.confirmation.SendConfirmationRequestOnBatch(spotsWithDates, srv.confirmationBatchSize)
+
+	// // TODO What should we do in this case ?
+	// if sendMessageErrors != nil {
+	// 	logs.Error.Println("Confirmation service fail")
+	// 	errors[ports.ErrSendingConfirmation] = spots
+
+	// 	return nil, errors
+	// }
 
 	return spotsWithDates, nil
-
 }
 
 // Procedure:

@@ -21,8 +21,10 @@ func NewNeo4jRepoWithDriver(driver neo4j.Driver) *Neo4jRepository {
 	}
 }
 
-func (repo *Neo4jRepository) ConditionalDatesCreation(spot []domain.Spot) error {
-	return nil
+func (repo *Neo4jRepository) ConditionalDatesCreation(spot domain.Spot) error {
+	logs.Info.Printf("ConditionalDatesCreation: Spot id %s, total ScheduePatterns: %d \n", spot.SpotId, len(spot.SchedulePatterns))
+	cmd := commands.NewConditionalWritterCommand(spot, DATES_STATUS)
+	return repo.executeWriteCommand(cmd)
 }
 
 // 1. Bring all schedule patterns that are in the repository that:
