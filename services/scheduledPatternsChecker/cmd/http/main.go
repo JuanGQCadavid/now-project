@@ -27,9 +27,12 @@ func main() {
 	// serviceManualTest()
 
 	// testRepo()
-	// serviceManualTest2()
 	// generateDaysString(104)
-	testScheduleAdded()
+	// testScheduleAdded()
+
+	geneateDatesFromRepoWithDrivers()
+
+	// logs.Info.Println(domain.Monday | domain.Wednesday)
 }
 func generateDaysString(dayInt int) {
 	day := domain.Day(dayInt)
@@ -79,6 +82,7 @@ func getDrivers() (*neo4jrepo.Neo4jRepository, *queue.SQSConfirmation) {
 func testScheduleAdded() {
 	repo, confirmation := getDrivers()
 	srv := service.NewCheckerService(repo, confirmation, 1)
+	spots := make([]domain.Spot, 2)
 
 	sp := make([]domain.SchedulePattern, 1)
 	sp[0] = domain.SchedulePattern{
@@ -90,27 +94,71 @@ func testScheduleAdded() {
 		FromDate:  "2023-05-10",
 		ToDate:    "2023-07-01",
 	}
+
 	spot := domain.Spot{
 		SpotId:           "2248c84c-bb69-4aeb-85bc-5f6414260c6e",
 		SchedulePatterns: sp,
 	}
 
-	spots := make([]domain.Spot, 1)
 	spots[0] = spot
+
+	sp2 := make([]domain.SchedulePattern, 1)
+	sp2[0] = domain.SchedulePattern{
+		Id:        "3ac21e4e-14d2-416e-9597-ce1cbb29d9fe",
+		HostId:    "33ddab28-006b-4790-bf42-1832f90dc8d4",
+		StartTime: "13:00:00",
+		Day:       domain.Day(104),
+		EndTime:   "16:00:00",
+		FromDate:  "2023-05-10",
+		ToDate:    "2023-07-01",
+	}
+
+	spot2 := domain.Spot{
+		SpotId:           "93b3cd3c-1694-4a3f-aa92-ecb4effd79e7",
+		SchedulePatterns: sp2,
+	}
+
+	spots[1] = spot2
 	srv.OnSchedulePatternAppended(spots, 604800)
 
 }
 
-func testRepo() {
-	credsFinder := ssm.NewSSMCredentialsFinder()
+func testScheduleAdded2() {
+	repo, confirmation := getDrivers()
+	srv := service.NewCheckerService(repo, confirmation, 1)
+	spots := make([]domain.Spot, 1)
 
-	neo4jDriver, err := credsFinder.FindNeo4jCredentialsFromDefaultEnv()
-
-	if err != nil {
-		logs.Error.Println("There were an error while attempting to create drivers")
-		logs.Error.Fatalln(err.Error())
+	sp := make([]domain.SchedulePattern, 2)
+	sp[0] = domain.SchedulePattern{
+		Id:        "15ceaa61-a7f0-461b-b629-d4c88ba9b469",
+		HostId:    "33ddab28-006b-4790-bf42-1832f90dc8d4",
+		StartTime: "15:00:00",
+		Day:       domain.Day(5),
+		EndTime:   "18:00:00",
+		FromDate:  "2023-05-10",
+		ToDate:    "2023-07-01",
 	}
-	repo := neo4jrepo.NewNeo4jRepoWithDriver(neo4jDriver)
+	sp[1] = domain.SchedulePattern{
+		Id:        "3ac21e4e-14d2-416e-9597-ce1cbb29d9fe",
+		HostId:    "33ddab28-006b-4790-bf42-1832f90dc8d4",
+		StartTime: "13:00:00",
+		Day:       domain.Day(104),
+		EndTime:   "16:00:00",
+		FromDate:  "2023-05-10",
+		ToDate:    "2023-07-01",
+	}
+
+	spot := domain.Spot{
+		SpotId:           "93b3cd3c-1694-4a3f-aa92-ecb4effd79e7",
+		SchedulePatterns: sp,
+	}
+
+	spots[0] = spot
+	srv.OnSchedulePatternAppended(spots, 604800)
+}
+
+func testRepo() {
+	repo, _ := getDrivers()
 
 	reponse, err := repo.FetchActiveSchedulePatterns()
 
@@ -154,21 +202,8 @@ func serviceManualTest() {
 	f.Write(json)
 }
 
-func serviceManualTest2() {
-	credsFinder := ssm.NewSSMCredentialsFinder()
-
-	neo4jDriver, err := credsFinder.FindNeo4jCredentialsFromDefaultEnv()
-
-	if err != nil {
-		logs.Error.Println("There were an error while attempting to create drivers")
-		logs.Error.Fatalln(err.Error())
-	}
-	repo := neo4jrepo.NewNeo4jRepoWithDriver(neo4jDriver)
-	queueConfirmation, err := queue.NewSQSConfirmationFromEnv("sqsConfirmationArn")
-
-	if err != nil {
-		logs.Error.Fatalln("error while creatin repo", err.Error())
-	}
+func geneateDatesFromRepoWithDrivers() {
+	repo, queueConfirmation := getDrivers()
 
 	// cores := runtime.NumCPU()
 	srv := service.NewCheckerService(repo, queueConfirmation, 1)

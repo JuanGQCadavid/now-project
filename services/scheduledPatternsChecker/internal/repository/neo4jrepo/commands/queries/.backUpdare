@@ -1,0 +1,40 @@
+MATCH (schedulePattern_0:SchedulePattern {UUID: $schedule_pattern_id_0})
+SET schedulePattern_0.checkedUpTo = $checkedUpTo_0
+WITH schedulePattern_0
+
+MATCH (host_0:Person {id: $host_id_0})-[host_relation_0:OWNS]->(event_0:Event {UUID: $event_uuid_0 } )
+
+MERGE (date_0:Date {StartTime: $date_start_time_0, Date: $date_date_0 })
+ON CREATE
+        SET date_0.UUID = $date_uuid_0
+        SET date_0.DurationApproximatedInSeconds = $date_approximated_seconds_0
+        SET date_0.Confirmed = $date_confirmed_0
+        SET date_0.MaximunCapacty = $date_maximun_capacity_0
+MERGE (host_0)-[:HOST]->(date_0)-[at_0:AT {status: $status}]->(event_0)
+ON CREATE
+        SET at_0.timestamp = $timestamp
+
+
+
+
+
+
+// Per Schedule Pattern
+MATCH (schedulePattern:SchedulePattern {UUID: $schedule_pattern_id})
+SET schedulePattern.checkedUpTo = $checkedUpTo
+WITH schedulePattern
+
+// Per spot
+MATCH (host:Person {id: $host_id})-[host_relation:OWNS]->(event:Event {UUID: $event_uuid } )
+
+// Per dates
+MERGE (date:Date {StartTime: $date_start_time, Date: $date_date })
+ON CREATE
+    SET date.UUID = $date_uuid
+    SET date.DurationApproximatedInSeconds = $date_approximated_seconds
+    SET date.Confirmed = $date_confirmed
+    SET date.MaximunCapacty = $date_maximun_capacity
+MERGE (host)-[:HOST]->(date)-[at:AT {status: $status}]->(event)
+ON CREATE
+    SET at.timestamp = $timestamp
+		`
