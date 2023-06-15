@@ -28,9 +28,8 @@ func main() {
 
 	// testRepo()
 	// generateDaysString(104)
-	// testScheduleAdded()
-
-	geneateDatesFromRepoWithDrivers()
+	testScheduleAdded2()
+	// geneateDatesFromRepoWithDrivers()
 
 	// logs.Info.Println(domain.Monday | domain.Wednesday)
 }

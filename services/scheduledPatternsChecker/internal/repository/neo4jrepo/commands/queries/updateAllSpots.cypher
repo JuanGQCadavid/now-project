@@ -9,4 +9,5 @@ FOREACH (dateProp IN sp.Dates |
         SET date.Confirmed = dateProp.Confirmed
         SET date.MaximunCapacty = dateProp.MaximunCapacty
         SET at.timestamp = dateProp.Timestamp
+    MERGE (schedulePattern)<-[:CREATED_FROM]-(date)
 )

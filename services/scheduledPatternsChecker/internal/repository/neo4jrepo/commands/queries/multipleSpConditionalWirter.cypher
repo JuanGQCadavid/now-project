@@ -5,15 +5,14 @@ FOREACH (i in CASE WHEN sp.days = spProp.days AND sp.endTime = spProp.endTime AN
     SET sp.checkedUpTo = spProp.checkedUpTo
     FOREACH (prop IN spProp.datesProps | 
 
-        MERGE (date:Date {StartTime: prop.StartTime, Date: prop.Date })
+        MERGE (host)-[:HOST]->(date:Date {StartTime: prop.StartTime, Date: prop.Date })-[atDate:AT {status: prop.Status}]->(event)
         ON CREATE
         SET date.UUID = prop.UUID
         SET date.DurationApproximatedInSeconds = prop.DurationApproximatedInSeconds
         SET date.Confirmed = prop.Confirmed
         SET date.MaximunCapacty = prop.MaximunCapacty
-
-        MERGE (host)-[:HOST]->(date)-[atDate:AT {status: prop.Status}]->(event)
-        ON CREATE
         SET atDate.timestamp = prop.Timestamp
+
+        MERGE (sp)<-[:CREATED_FROM]-(date)
     )
 )
