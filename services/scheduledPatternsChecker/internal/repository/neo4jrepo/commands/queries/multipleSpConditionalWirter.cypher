@@ -1,7 +1,7 @@
 
 UNWIND $schedulePatterns AS spProp
 MATCH (event:Event {UUID: $spotId})<-[at:AT]-(sp:SchedulePattern {UUID: spProp.id } )-[:HOST_BY]->(host {id: spProp.hostId})
-FOREACH (i in CASE WHEN sp.days = spProp.days AND sp.endTime = spProp.endTime AND sp.StartTime = spProp.startTime AND sp.fromDate = spProp.fromDate AND sp.toDate = spProp.toDate THEN [sp] ELSE [] END |
+FOREACH (i in CASE WHEN at.status = "activate" AND  sp.days = spProp.days AND sp.endTime = spProp.endTime AND sp.StartTime = spProp.startTime AND sp.fromDate = spProp.fromDate AND sp.toDate = spProp.toDate THEN [sp] ELSE [] END |
     SET sp.checkedUpTo = spProp.checkedUpTo
     FOREACH (prop IN spProp.datesProps | 
 

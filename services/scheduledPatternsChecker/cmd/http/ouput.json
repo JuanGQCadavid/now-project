@@ -11,24 +11,24 @@
                     "toDate": "2023-07-01",
                     "StartTime": "13:00:00",
                     "endTime": "16:00:00",
-                    "checkedUntil": 1687134225,
+                    "checkedUntil": 1687148087,
                     "dates": [
                         {
-                            "dateId": "68897440-1b94-4b6d-8776-e843eb3dda1a",
+                            "dateId": "593a33a8-87dc-491b-9c6a-276fb99a77ad",
                             "durationApproximated": 180,
                             "startTime": "13:00:00",
                             "date": "2023-06-15",
                             "hostId": "33ddab28-006b-4790-bf42-1832f90dc8d4"
                         },
                         {
-                            "dateId": "c88d3de9-80ec-41ae-ad08-7e422d6f7169",
+                            "dateId": "f9c68433-867b-4668-a429-284de9216d2b",
                             "durationApproximated": 180,
                             "startTime": "13:00:00",
                             "date": "2023-06-17",
                             "hostId": "33ddab28-006b-4790-bf42-1832f90dc8d4"
                         },
                         {
-                            "dateId": "ae28b5d0-ed13-442c-b0bb-db9c6920242d",
+                            "dateId": "d08ef175-aca0-4bef-871d-337ab433bce2",
                             "durationApproximated": 180,
                             "startTime": "13:00:00",
                             "date": "2023-06-18",
@@ -49,53 +49,27 @@
                     "toDate": "2023-07-01",
                     "StartTime": "13:00:00",
                     "endTime": "16:00:00",
-                    "checkedUntil": 1687134225,
+                    "checkedUntil": 1687148087,
                     "dates": [
                         {
-                            "dateId": "a7663255-d035-44b9-9947-1d959aded543",
+                            "dateId": "7c15efd4-04e4-4b8f-8960-4f9bc9d3499e",
+                            "durationApproximated": 180,
+                            "startTime": "13:00:00",
+                            "date": "2023-06-18",
+                            "hostId": "33ddab28-006b-4790-bf42-1832f90dc8d4"
+                        },
+                        {
+                            "dateId": "4351ed89-e646-472f-9f0d-6b4868e31727",
                             "durationApproximated": 180,
                             "startTime": "13:00:00",
                             "date": "2023-06-15",
                             "hostId": "33ddab28-006b-4790-bf42-1832f90dc8d4"
                         },
                         {
-                            "dateId": "768fad9f-8dc3-4761-9c80-fff13f316646",
+                            "dateId": "adc3a759-130e-4f10-97a3-cedf6137e4f7",
                             "durationApproximated": 180,
                             "startTime": "13:00:00",
                             "date": "2023-06-17",
-                            "hostId": "33ddab28-006b-4790-bf42-1832f90dc8d4"
-                        },
-                        {
-                            "dateId": "16975ece-3ec8-4488-8c4c-c5c8311523a9",
-                            "durationApproximated": 180,
-                            "startTime": "13:00:00",
-                            "date": "2023-06-18",
-                            "hostId": "33ddab28-006b-4790-bf42-1832f90dc8d4"
-                        }
-                    ]
-                },
-                {
-                    "patternId": "15ceaa61-a7f0-461b-b629-d4c88ba9b469",
-                    "hostId": "33ddab28-006b-4790-bf42-1832f90dc8d4",
-                    "day": 5,
-                    "fromDate": "2023-05-10",
-                    "toDate": "2023-07-01",
-                    "StartTime": "15:00:00",
-                    "endTime": "18:00:00",
-                    "checkedUntil": 1687359304,
-                    "dates": [
-                        {
-                            "dateId": "5479ff54-2277-40f6-a7c6-f89d052d1592",
-                            "durationApproximated": 180,
-                            "startTime": "15:00:00",
-                            "date": "2023-06-19",
-                            "hostId": "33ddab28-006b-4790-bf42-1832f90dc8d4"
-                        },
-                        {
-                            "dateId": "10a198b9-d859-4590-86bc-f47fb57ff075",
-                            "durationApproximated": 180,
-                            "startTime": "15:00:00",
-                            "date": "2023-06-21",
                             "hostId": "33ddab28-006b-4790-bf42-1832f90dc8d4"
                         }
                     ]
