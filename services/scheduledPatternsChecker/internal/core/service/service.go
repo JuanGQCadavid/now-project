@@ -19,18 +19,39 @@ type GenerateDatesResponse struct {
 type CheckerService struct {
 	repository            ports.Repository
 	confirmation          ports.Confirmation
+	notification          ports.Notify
 	coresNumber           int
 	confirmationBatchSize int8
 }
 
-func NewCheckerService(repository ports.Repository, confirmation ports.Confirmation, coresNumber int) *CheckerService {
+func NewCheckerService(repository ports.Repository, confirmation ports.Confirmation, notification ports.Notify, coresNumber int) *CheckerService {
 
 	return &CheckerService{
 		repository:            repository,
 		confirmation:          confirmation,
+		notification:          notification,
 		coresNumber:           coresNumber,
 		confirmationBatchSize: 25,
 	}
+}
+
+// Steps:
+//  1. Call Repository to find the sc ids and then delete them with all relationshipts
+//  2. Send the deleted Ids to a Spot Activity SNS
+func (srv *CheckerService) DeleteScheduleDatesFromSchedulePattern(schedulePatternIds []string) error {
+	logs.Info.Printf("DeleteScheduleDatesFromSchedulePattern: schedulePatternIds: %+v \n", schedulePatternIds)
+
+	datesIds, err := srv.repository.DeleteScheduleDatesFromSchedulePattern(schedulePatternIds)
+	if err != nil {
+		return err
+	}
+
+	for _, dateId := range datesIds {
+		srv.notification.SchedulePatternActivity(ports.DateIdDeleted, domain.Notification{
+			DateId: dateId,
+		})
+	}
+	return nil
 }
 
 func (srv *CheckerService) OnSchedulePatternAppended(spots []domain.Spot, timeWindow int64) ([]domain.Spot, map[error][]domain.Spot) {

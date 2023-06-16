@@ -3,6 +3,7 @@ package neo4jrepo
 import (
 	"github.com/JuanGQCadavid/now-project/services/pkgs/common/logs"
 	"github.com/JuanGQCadavid/now-project/services/scheduledPatternsChecker/internal/core/domain"
+	"github.com/JuanGQCadavid/now-project/services/scheduledPatternsChecker/internal/core/ports"
 	"github.com/JuanGQCadavid/now-project/services/scheduledPatternsChecker/internal/repository/neo4jrepo/commands"
 	"github.com/neo4j/neo4j-go-driver/v4/neo4j"
 )
@@ -25,6 +26,23 @@ func (repo *Neo4jRepository) ConditionalDatesCreation(spot domain.Spot) error {
 	logs.Info.Printf("ConditionalDatesCreation: Spot id %s, total ScheduePatterns: %d \n", spot.SpotId, len(spot.SchedulePatterns))
 	cmd := commands.NewConditionalWritterCommand(spot, DATES_STATUS)
 	return repo.executeWriteCommand(cmd)
+}
+
+func (r *Neo4jRepository) DeleteScheduleDatesFromSchedulePattern(schedulePatternIds []string) ([]string, error) {
+	logs.Info.Printf("DeleteScheduleDatesFromSchedulePattern: %+v \n", schedulePatternIds)
+
+	cmd := commands.NewDeleteDatesFromSchedulePatternCommand(schedulePatternIds, DATES_STATUS)
+	result, err := r.executeReadCommand(cmd)
+
+	if err != nil {
+		return nil, ports.ErrDeletingSpotsFormSp
+	}
+
+	if result != nil {
+		return result.([]string), nil
+	}
+
+	return nil, nil
 }
 
 // 1. Bring all schedule patterns that are in the repository that:

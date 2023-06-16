@@ -12,6 +12,8 @@ import (
 	"github.com/JuanGQCadavid/now-project/services/scheduledPatternsChecker/internal/confirmation/queue"
 	"github.com/JuanGQCadavid/now-project/services/scheduledPatternsChecker/internal/core/domain"
 	"github.com/JuanGQCadavid/now-project/services/scheduledPatternsChecker/internal/core/service"
+	"github.com/JuanGQCadavid/now-project/services/scheduledPatternsChecker/internal/notifiers/dummy"
+	"github.com/JuanGQCadavid/now-project/services/scheduledPatternsChecker/internal/notifiers/topics"
 	"github.com/JuanGQCadavid/now-project/services/scheduledPatternsChecker/internal/repository/localrepository"
 	"github.com/JuanGQCadavid/now-project/services/scheduledPatternsChecker/internal/repository/neo4jrepo"
 )
@@ -19,6 +21,10 @@ import (
 type Result struct {
 	Result []domain.Spot `json:"result,omitempty"`
 }
+
+const (
+	TopicArnEnvName = "snsArn"
+)
 
 func main() {
 
@@ -28,7 +34,9 @@ func main() {
 
 	// testRepo()
 	// generateDaysString(104)
-	testScheduleAdded2()
+
+	// testScheduleAdded2()
+	testDeleteSchedulePattern()
 	// geneateDatesFromRepoWithDrivers()
 
 	// logs.Info.Println(domain.Monday | domain.Wednesday)
@@ -59,7 +67,7 @@ func generateDaysString(dayInt int) {
 	}
 }
 
-func getDrivers() (*neo4jrepo.Neo4jRepository, *queue.SQSConfirmation) {
+func getDrivers() (*neo4jrepo.Neo4jRepository, *queue.SQSConfirmation, *topics.Notifier) {
 	credsFinder := ssm.NewSSMCredentialsFinder()
 
 	neo4jDriver, err := credsFinder.FindNeo4jCredentialsFromDefaultEnv()
@@ -75,12 +83,14 @@ func getDrivers() (*neo4jrepo.Neo4jRepository, *queue.SQSConfirmation) {
 		logs.Error.Fatalln("error while creatin repo", err.Error())
 	}
 
-	return repo, queueConfirmation
+	notifier, err := topics.NewNotifierFromEnv(TopicArnEnvName)
+
+	return repo, queueConfirmation, notifier
 }
 
 func testScheduleAdded() {
-	repo, confirmation := getDrivers()
-	srv := service.NewCheckerService(repo, confirmation, 1)
+	repo, confirmation, notifier := getDrivers()
+	srv := service.NewCheckerService(repo, confirmation, notifier, 1)
 	spots := make([]domain.Spot, 2)
 
 	sp := make([]domain.SchedulePattern, 1)
@@ -123,8 +133,8 @@ func testScheduleAdded() {
 }
 
 func testScheduleAdded2() {
-	repo, confirmation := getDrivers()
-	srv := service.NewCheckerService(repo, confirmation, 1)
+	repo, confirmation, notifier := getDrivers()
+	srv := service.NewCheckerService(repo, confirmation, notifier, 1)
 	spots := make([]domain.Spot, 1)
 
 	sp := make([]domain.SchedulePattern, 2)
@@ -156,8 +166,23 @@ func testScheduleAdded2() {
 	srv.OnSchedulePatternAppended(spots, 604800)
 }
 
+func testDeleteSchedulePattern() {
+	repo, confirmation, notifier := getDrivers()
+	srv := service.NewCheckerService(repo, confirmation, notifier, 1)
+
+	sp := make([]string, 2)
+	sp[0] = "3ac21e4e-14d2-416e-9597-ce1cbb29d9fe"
+	sp[1] = "15ceaa61-a7f0-461b-b629-d4c88ba9b469"
+
+	err := srv.DeleteScheduleDatesFromSchedulePattern(sp)
+
+	if err != nil {
+		logs.Error.Println("Errr ->", err.Error())
+	}
+}
+
 func testRepo() {
-	repo, _ := getDrivers()
+	repo, _, _ := getDrivers()
 
 	reponse, err := repo.FetchActiveSchedulePatterns()
 
@@ -173,13 +198,14 @@ func testRepo() {
 func serviceManualTest() {
 	localRepo := localrepository.NewLocalRepository(10, 10)
 	queueConfirmation, err := queue.NewSQSConfirmationFromEnv("sqsConfirmationArn")
+	snsLocal := &dummy.Notifier{}
 
 	if err != nil {
 		logs.Error.Fatalln("error while creatin repo", err.Error())
 	}
 
 	// cores := runtime.NumCPU()
-	srv := service.NewCheckerService(localRepo, queueConfirmation, 1)
+	srv := service.NewCheckerService(localRepo, queueConfirmation, snsLocal, 1)
 
 	result, err := srv.GenerateDatesFromRepository(604800)
 
@@ -202,10 +228,9 @@ func serviceManualTest() {
 }
 
 func geneateDatesFromRepoWithDrivers() {
-	repo, queueConfirmation := getDrivers()
-
+	repo, confirmation, notifier := getDrivers()
 	// cores := runtime.NumCPU()
-	srv := service.NewCheckerService(repo, queueConfirmation, 1)
+	srv := service.NewCheckerService(repo, confirmation, notifier, 1)
 
 	result, err := srv.GenerateDatesFromRepository(604800)
 
@@ -230,8 +255,9 @@ func geneateDatesFromRepoWithDrivers() {
 func paralleCheck() {
 	localRepo := localrepository.NewLocalRepository(10, 10)
 	localconfirmation := localconfirmation.NewLocalConfirmation()
+	notifier := &dummy.Notifier{}
 	cores := runtime.NumCPU()
-	srv := service.NewCheckerService(localRepo, localconfirmation, cores)
+	srv := service.NewCheckerService(localRepo, localconfirmation, notifier, cores)
 
 	result, err := srv.GenerateDatesFromRepository(604800)
 

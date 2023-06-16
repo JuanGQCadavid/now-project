@@ -19,6 +19,10 @@ func NewLocalRepository(upTo int16, maxDeep int16) *LocalRepository {
 	}
 }
 
+func (r *LocalRepository) DeleteScheduleDatesFromSchedulePattern(schedulePatternIds []string) ([]string, error) {
+	return nil, nil
+}
+
 func (r *LocalRepository) FetchActiveSchedulePatterns() ([]domain.Spot, error) {
 
 	return r.generateSpots(r.upTo, r.maxDeep), nil
