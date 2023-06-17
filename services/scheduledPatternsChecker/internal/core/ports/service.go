@@ -1,6 +1,10 @@
 package ports
 
-import "errors"
+import (
+	"errors"
+
+	"github.com/JuanGQCadavid/now-project/services/scheduledPatternsChecker/internal/core/domain"
+)
 
 var (
 	ErrOnRepository         = errors.New("err on repository")
@@ -11,4 +15,7 @@ var (
 )
 
 type Service interface {
+	DeleteScheduleDatesFromSchedulePattern(schedulePatternIds []string) error
+	CreateScheduledDatesFromSchedulePattern(spots []domain.Spot, timeWindow int64) ([]domain.Spot, map[error][]domain.Spot)
+	GenerateDatesFromRepository(timeWindow int64) ([]domain.Spot, error)
 }
