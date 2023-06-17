@@ -98,16 +98,16 @@ func (srv *CheckerService) CreateScheduledDatesFromSchedulePattern(spots []domai
 		return nil, errors
 	}
 
-	// // 	4. Send spot id x dates Id x hostId to confirmation SQS
-	// sendMessageErrors := srv.confirmation.SendConfirmationRequestOnBatch(spotsWithDates, srv.confirmationBatchSize)
+	// 	4. Send spot id x dates Id x hostId to confirmation SQS
+	sendMessageErrors := srv.confirmation.SendConfirmationRequestOnBatch(spotsWithDates, srv.confirmationBatchSize)
 
-	// // TODO What should we do in this case ?
-	// if sendMessageErrors != nil {
-	// 	logs.Error.Println("Confirmation service fail")
-	// 	errors[ports.ErrSendingConfirmation] = spots
+	// TODO What should we do in this case ?
+	if sendMessageErrors != nil {
+		logs.Error.Println("Confirmation service fail")
+		errors[ports.ErrSendingConfirmation] = spots
 
-	// 	return nil, errors
-	// }
+		return nil, errors
+	}
 
 	return spotsWithDates, nil
 }
