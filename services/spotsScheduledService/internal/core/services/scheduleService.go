@@ -208,11 +208,15 @@ func (service *ScheduledService) FreezeSchedule(spotId string, scheduleId string
 		logs.Error.Println("We found an error whule Updating the schedule status, error: ", err.Error())
 	}
 
+	spot.Patterns = []domain.SchedulePattern{
+		spot.Patterns[index],
+	}
+
 	service.notifier.SchedulePatternActivity(ports.SchedulePatternFreezed, domain.Notification{
 		SpotId:           spotId,
 		ScheduleId:       scheduleId,
 		UserId:           userRequestId,
-		Aditionalpayload: newStatus,
+		Aditionalpayload: spot,
 	})
 
 	return err
