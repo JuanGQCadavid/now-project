@@ -128,7 +128,7 @@ func testScheduleAdded() {
 	}
 
 	spots[1] = spot2
-	srv.OnSchedulePatternAppended(spots, 604800)
+	srv.CreateScheduledDatesFromSchedulePattern(spots, 604800)
 
 }
 
@@ -163,7 +163,7 @@ func testScheduleAdded2() {
 	}
 
 	spots[0] = spot
-	srv.OnSchedulePatternAppended(spots, 604800)
+	srv.CreateScheduledDatesFromSchedulePattern(spots, 604800)
 }
 
 func testDeleteSchedulePattern() {

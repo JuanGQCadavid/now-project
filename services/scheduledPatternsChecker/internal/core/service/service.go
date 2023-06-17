@@ -54,7 +54,7 @@ func (srv *CheckerService) DeleteScheduleDatesFromSchedulePattern(schedulePatter
 	return nil
 }
 
-func (srv *CheckerService) OnSchedulePatternAppended(spots []domain.Spot, timeWindow int64) ([]domain.Spot, map[error][]domain.Spot) {
+func (srv *CheckerService) CreateScheduledDatesFromSchedulePattern(spots []domain.Spot, timeWindow int64) ([]domain.Spot, map[error][]domain.Spot) {
 
 	spotsWithDates, err := srv.generateDates(spots, timeWindow)
 
