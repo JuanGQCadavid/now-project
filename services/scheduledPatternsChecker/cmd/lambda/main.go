@@ -10,7 +10,12 @@ import (
 )
 
 func Handler(ctx context.Context, body *events.SQSEvent) (string, error) {
-	log.Println("HiiiI!")
+
+	for _, record := range body.Records {
+		log.Printf("%+v \n", record)
+		log.Println("------------")
+		log.Printf("%+v \n", record.Body)
+	}
 
 	log.Println("Number of CPU", runtime.NumCPU())
 	return "Done", nil
