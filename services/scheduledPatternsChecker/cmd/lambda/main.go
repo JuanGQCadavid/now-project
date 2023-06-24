@@ -15,6 +15,10 @@ func Handler(ctx context.Context, body *events.SQSEvent) (string, error) {
 		log.Printf("%+v \n", record)
 		log.Println("------------")
 		log.Printf("%+v \n", record.Body)
+
+		operation := record.MessageAttributes["operation"]
+		log.Println(" ********** ")
+		log.Println(operation.StringValue)
 	}
 
 	log.Println("Number of CPU", runtime.NumCPU())
