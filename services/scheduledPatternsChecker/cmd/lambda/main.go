@@ -16,7 +16,7 @@ func Handler(ctx context.Context, body *events.SQSEvent) (string, error) {
 		log.Println("------------")
 		log.Printf("%+v \n", record.Body)
 
-		operation := record.MessageAttributes["operation"]
+		operation := record.MessageAttributes["Operation"]
 		log.Println(" ********** ")
 		log.Println(operation.StringValue)
 	}
