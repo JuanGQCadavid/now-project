@@ -1,4 +1,4 @@
-package main
+package utils
 
 import (
 	"errors"
@@ -10,7 +10,7 @@ var (
 	ErrEmptySpot = errors.New("err empty spot to transform")
 )
 
-func fromSpotRequestToSpot(spotRequest SpotRequest) domain.Spot {
+func FromSpotRequestToSpot(spotRequest SpotRequest) domain.Spot {
 	var spot domain.Spot
 
 	spot.SpotId = spotRequest.SpotInfo.SpotId

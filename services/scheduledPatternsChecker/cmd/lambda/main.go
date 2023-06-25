@@ -7,6 +7,7 @@ import (
 	"runtime"
 
 	"github.com/JuanGQCadavid/now-project/services/pkgs/common/logs"
+	"github.com/JuanGQCadavid/now-project/services/scheduledPatternsChecker/cmd/lambda/utils"
 	"github.com/JuanGQCadavid/now-project/services/scheduledPatternsChecker/internal/core/domain"
 	"github.com/JuanGQCadavid/now-project/services/scheduledPatternsChecker/internal/core/ports"
 	"github.com/aws/aws-lambda-go/events"
@@ -46,7 +47,7 @@ func Handler(ctx context.Context, body *events.SQSEvent) (string, error) {
 		operation := GetOperationName(record)
 		log.Println(operation)
 
-		var body Body
+		var body utils.Body
 		err := json.Unmarshal([]byte(record.Body), &body)
 
 		if err != nil {
@@ -61,7 +62,7 @@ func Handler(ctx context.Context, body *events.SQSEvent) (string, error) {
 				continue
 			}
 
-			toCreate = append(toCreate, fromSpotRequestToSpot(body.SpotRequest))
+			toCreate = append(toCreate, utils.FromSpotRequestToSpot(body.SpotRequest))
 
 		} else if operation == SchedulePatternConcluded || operation == SchedulePatternFreezed {
 

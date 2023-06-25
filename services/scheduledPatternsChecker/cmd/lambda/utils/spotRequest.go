@@ -1,4 +1,4 @@
-package main
+package utils
 
 type Body struct {
 	ScheduleId  string      `json:"scheduleId"`
