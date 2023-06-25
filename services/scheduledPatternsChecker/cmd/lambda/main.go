@@ -7,9 +7,14 @@ import (
 	"runtime"
 
 	"github.com/JuanGQCadavid/now-project/services/pkgs/common/logs"
+	"github.com/JuanGQCadavid/now-project/services/pkgs/credentialsFinder/cmd/ssm"
 	"github.com/JuanGQCadavid/now-project/services/scheduledPatternsChecker/cmd/lambda/utils"
+	"github.com/JuanGQCadavid/now-project/services/scheduledPatternsChecker/internal/confirmation/queue"
 	"github.com/JuanGQCadavid/now-project/services/scheduledPatternsChecker/internal/core/domain"
 	"github.com/JuanGQCadavid/now-project/services/scheduledPatternsChecker/internal/core/ports"
+	"github.com/JuanGQCadavid/now-project/services/scheduledPatternsChecker/internal/core/service"
+	"github.com/JuanGQCadavid/now-project/services/scheduledPatternsChecker/internal/notifiers/topics"
+	"github.com/JuanGQCadavid/now-project/services/scheduledPatternsChecker/internal/repository/neo4jrepo"
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
 )
@@ -24,10 +29,11 @@ const (
 	SchedulePatternFreezed   Operations = "schedulePatternFreezed"
 	Other                    Operations = "other"
 	DefaultTimeWindow        int64      = 604800
+	TopicArnEnvName          string     = "snsArn"
 )
 
 var (
-	service ports.Service
+	srv ports.Service
 )
 
 func Handler(ctx context.Context, body *events.SQSEvent) (string, error) {
@@ -79,15 +85,13 @@ func Handler(ctx context.Context, body *events.SQSEvent) (string, error) {
 		}
 	}
 
-	log.Println("Number of CPU", runtime.NumCPU())
-
 	if len(toDelete) > 0 {
 		logs.Info.Println("Dates to delete from schedules Id:")
 		for _, spot := range toDelete {
 			logs.Info.Printf("Scheudle Id %s \n", spot)
 		}
 
-		err := service.DeleteScheduleDatesFromSchedulePattern(toDelete)
+		err := srv.DeleteScheduleDatesFromSchedulePattern(toDelete)
 
 		if err != nil {
 			logs.Error.Println("We found the next error ", err.Error())
@@ -101,7 +105,7 @@ func Handler(ctx context.Context, body *events.SQSEvent) (string, error) {
 			logs.Info.Printf("Scheudle Id %+v \n", spot)
 		}
 
-		_, errs := service.CreateScheduledDatesFromSchedulePattern(toCreate, DefaultTimeWindow)
+		_, errs := srv.CreateScheduledDatesFromSchedulePattern(toCreate, DefaultTimeWindow)
 
 		if errs != nil {
 			for err, errSpot := range errs {
@@ -136,6 +140,32 @@ func GetOperationName(record events.SQSMessage) Operations {
 
 	logs.Warning.Println("Operation parameter is missing")
 	return Other
+}
+
+func init() {
+	logs.Info.Println("On init")
+
+	credsFinder := ssm.NewSSMCredentialsFinder()
+
+	neo4jDriver, err := credsFinder.FindNeo4jCredentialsFromDefaultEnv()
+
+	if err != nil {
+		logs.Error.Println("There were an error while attempting to create drivers")
+		logs.Error.Fatalln(err.Error())
+	}
+	repo := neo4jrepo.NewNeo4jRepoWithDriver(neo4jDriver)
+	queueConfirmation, err := queue.NewSQSConfirmationFromEnv("sqsConfirmationArn")
+
+	if err != nil {
+		logs.Error.Fatalln("error while creatin repo", err.Error())
+	}
+
+	notifier, err := topics.NewNotifierFromEnv(TopicArnEnvName)
+
+	log.Println("Number of CPU", runtime.NumCPU())
+
+	srv = service.NewCheckerService(repo, queueConfirmation, notifier, runtime.NumCPU())
+	logs.Info.Println("Service created")
 }
 
 func main() {
