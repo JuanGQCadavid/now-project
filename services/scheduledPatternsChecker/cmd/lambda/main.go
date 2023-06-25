@@ -2,27 +2,118 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"log"
 	"runtime"
 
+	"github.com/JuanGQCadavid/now-project/services/pkgs/common/logs"
+	"github.com/JuanGQCadavid/now-project/services/scheduledPatternsChecker/internal/core/domain"
+	"github.com/JuanGQCadavid/now-project/services/scheduledPatternsChecker/internal/core/ports"
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
 )
 
+type Operations string
+
+const (
+	Operation                string     = "Operation"
+	SchedulePatternAppended  Operations = "schedulePatternAppended"
+	SchedulePatternConcluded Operations = "schedulePatternConcluded"
+	SchedulePatternResumed   Operations = "schedulePatternResumed"
+	SchedulePatternFreezed   Operations = "schedulePatternFreezed"
+	Other                    Operations = "other"
+)
+
+var (
+	service ports.Service
+)
+
 func Handler(ctx context.Context, body *events.SQSEvent) (string, error) {
 
+	// DeleteScheduleDatesFromSchedulePattern(schedulePatternIds []string) error
+	// CreateScheduledDatesFromSchedulePattern(spots []domain.Spot, timeWindow int64) ([]domain.Spot, map[error][]domain.Spot)
+
+	toDelete := make([]string, 0, 10)
+	toCreate := make([]domain.Spot, 0, 10)
+
 	for _, record := range body.Records {
+
 		log.Printf("%+v \n", record)
 		log.Println("------------")
 		log.Printf("%+v \n", record.Body)
 
-		operation := record.MessageAttributes["Operation"]
 		log.Println(" ********** ")
-		log.Println(*operation.StringValue)
+		operation := GetOperationName(record)
+		log.Println(operation)
+
+		var body Body
+		err := json.Unmarshal([]byte(record.Body), &body)
+
+		if err != nil {
+			logs.Error.Println("Oh shit, aborting this record due to:", err.Error())
+			continue
+		}
+
+		if operation == SchedulePatternAppended || operation == SchedulePatternResumed {
+
+			if (len(body.SpotRequest.SpotInfo.SpotId) + len(body.SpotRequest.SpotPatterns)) == 0 {
+				logs.Error.Println("SpotRequest is empty")
+				continue
+			}
+
+			toCreate = append(toCreate, fromSpotRequestToSpot(body.SpotRequest))
+
+		} else if operation == SchedulePatternConcluded || operation == SchedulePatternFreezed {
+
+			if len(body.ScheduleId) == 0 {
+				logs.Error.Println("ScheduleId is empty")
+				continue
+			}
+
+			toDelete = append(toDelete, body.ScheduleId)
+		} else {
+			logs.Warning.Println("Operation not recognized, aborting message")
+
+		}
 	}
 
 	log.Println("Number of CPU", runtime.NumCPU())
+
+	logs.Info.Println("Dates to delete from schedules Id:")
+	for _, spot := range toDelete {
+		logs.Info.Printf("Scheudle Id %s \n", spot)
+	}
+
+	logs.Info.Println("Dates to create from schedules Id:")
+	for _, spot := range toCreate {
+		logs.Info.Printf("Scheudle Id %+v \n", spot)
+	}
+
 	return "Done", nil
+}
+func GetOperationName(record events.SQSMessage) Operations {
+	operation := record.MessageAttributes[Operation]
+
+	if operation.StringValue != nil {
+		value := *operation.StringValue
+
+		switch value {
+		case string(SchedulePatternAppended):
+			return SchedulePatternAppended
+		case string(SchedulePatternConcluded):
+			return SchedulePatternConcluded
+		case string(SchedulePatternResumed):
+			return SchedulePatternResumed
+		case string(SchedulePatternFreezed):
+			return SchedulePatternFreezed
+		default:
+			logs.Warning.Printf("Operation %s is not recognized \n", value)
+			return Other
+		}
+	}
+
+	logs.Warning.Println("Operation parameter is missing")
+	return Other
 }
 
 func main() {
