@@ -670,7 +670,8 @@ export class InfraStack extends Stack {
           neo4jUser: neo4jUserParameter.parameterName,
           neo4jPassword: neo4jPasswordParameter.parameterName,
           neo4jUri: neo4jUriParameter.parameterName,
-          queueUrl: sendConfirmationSQS.queueUrl
+          sqsConfirmationArn: sendConfirmationSQS.queueName,
+          snsArn: spotActivityTopic.topicArn,
         },
       }
     );

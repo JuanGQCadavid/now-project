@@ -33,10 +33,10 @@ func main() {
 	// serviceManualTest()
 
 	// testRepo()
-	// generateDaysString(104)
+	generateDaysString(5)
 
 	// testScheduleAdded2()
-	testDeleteSchedulePattern()
+	// testDeleteSchedulePattern()
 	// geneateDatesFromRepoWithDrivers()
 
 	// logs.Info.Println(domain.Monday | domain.Wednesday)

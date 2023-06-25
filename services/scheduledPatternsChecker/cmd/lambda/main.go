@@ -30,6 +30,7 @@ const (
 	Other                    Operations = "other"
 	DefaultTimeWindow        int64      = 604800
 	TopicArnEnvName          string     = "snsArn"
+	SqsConfirmationArn       string     = "sqsConfirmationArn"
 )
 
 var (
@@ -154,7 +155,7 @@ func init() {
 		logs.Error.Fatalln(err.Error())
 	}
 	repo := neo4jrepo.NewNeo4jRepoWithDriver(neo4jDriver)
-	queueConfirmation, err := queue.NewSQSConfirmationFromEnv("sqsConfirmationArn")
+	queueConfirmation, err := queue.NewSQSConfirmationFromEnv(SqsConfirmationArn)
 
 	if err != nil {
 		logs.Error.Fatalln("error while creatin repo", err.Error())
