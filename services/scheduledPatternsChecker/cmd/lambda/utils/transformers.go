@@ -27,6 +27,7 @@ func FromSpotRequestToSpot(spotRequest SpotRequest) domain.Spot {
 			EndTime:   sp.EndTime,
 		}
 	}
+	spot.SchedulePatterns = schedulePatterns
 
 	return spot
 }

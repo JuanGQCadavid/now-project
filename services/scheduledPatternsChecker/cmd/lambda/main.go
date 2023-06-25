@@ -23,6 +23,7 @@ const (
 	SchedulePatternResumed   Operations = "schedulePatternResumed"
 	SchedulePatternFreezed   Operations = "schedulePatternFreezed"
 	Other                    Operations = "other"
+	DefaultTimeWindow        int64      = 604800
 )
 
 var (
@@ -80,14 +81,34 @@ func Handler(ctx context.Context, body *events.SQSEvent) (string, error) {
 
 	log.Println("Number of CPU", runtime.NumCPU())
 
-	logs.Info.Println("Dates to delete from schedules Id:")
-	for _, spot := range toDelete {
-		logs.Info.Printf("Scheudle Id %s \n", spot)
+	if len(toDelete) > 0 {
+		logs.Info.Println("Dates to delete from schedules Id:")
+		for _, spot := range toDelete {
+			logs.Info.Printf("Scheudle Id %s \n", spot)
+		}
+
+		err := service.DeleteScheduleDatesFromSchedulePattern(toDelete)
+
+		if err != nil {
+			logs.Error.Println("We found the next error ", err.Error())
+		}
+
 	}
 
-	logs.Info.Println("Dates to create from schedules Id:")
-	for _, spot := range toCreate {
-		logs.Info.Printf("Scheudle Id %+v \n", spot)
+	if len(toCreate) > 0 {
+		logs.Info.Println("Dates to create from schedules Id:")
+		for _, spot := range toCreate {
+			logs.Info.Printf("Scheudle Id %+v \n", spot)
+		}
+
+		_, errs := service.CreateScheduledDatesFromSchedulePattern(toCreate, DefaultTimeWindow)
+
+		if errs != nil {
+			for err, errSpot := range errs {
+				logs.Error.Println("To create Error ", err.Error(), " on ", errSpot)
+			}
+		}
+
 	}
 
 	return "Done", nil
