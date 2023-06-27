@@ -17,6 +17,9 @@ const (
 	ACTIVATE Status = "activate"
 	FREEZE   Status = "freeze"
 	CONCLUDE Status = "conclude"
+
+	// Dates Status
+	SCHEDULED Status = "SCHEDULED"
 )
 
 type Status string
