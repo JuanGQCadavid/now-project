@@ -72,6 +72,26 @@ func (repo *Neo4jRepository) UpdateScheculeStatus(spotId string, scheduleId stri
 	))
 }
 
+func (repo *Neo4jRepository) GetDatesFromSpot(spotId string) ([]domain.Date, error) {
+	records, err := repo.executeReadCommand(commands.NewGetDatesFromSpotCommand(
+		spotId,
+	))
+
+	if err != nil {
+		logs.Error.Println("GetDatesFromSpot: command GetDatesFromSpot error: ", err.Error())
+		return nil, err
+	}
+
+	if records == nil {
+		logs.Info.Println("Empty records where found, returning empty dates")
+		return make([]domain.Date, 0, 0), nil
+	}
+
+	result := records.([]domain.Date)
+
+	return result, nil
+}
+
 func (repo *Neo4jRepository) executeWriteCommand(cmd commands.Command) error {
 	session := repo.driver.NewSession(neo4j.SessionConfig{})
 	defer session.Close()

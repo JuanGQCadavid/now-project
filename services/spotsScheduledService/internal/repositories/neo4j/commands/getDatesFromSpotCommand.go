@@ -38,9 +38,20 @@ func (cmd *GetDatesFromSpotCommand) Run(tr neo4j.Transaction) (interface{}, erro
 		return nil, err
 	}
 
+	results := make([]domain.Date, 0, 10)
 	for output.Next() {
 		record := output.Record()
-		return cmd.castOutput(record)
+		res, err := cmd.castOutput(record)
+
+		if err != nil {
+			return nil, err
+		}
+
+		results = append(results, res...)
+	}
+
+	if len(results) > 0 {
+		return results, nil
 	}
 
 	return nil, ports.ErrNotRecordsToProcess
@@ -85,7 +96,13 @@ func (cmd *GetDatesFromSpotCommand) castOutput(record *neo4j.Record) ([]domain.D
 
 			switch status {
 			case string(domain.SCHEDULED):
+				dateStatus = domain.SCHEDULED
+			case string(domain.ACTIVATE):
 				dateStatus = domain.ACTIVATE
+			case string(domain.FREEZE):
+				dateStatus = domain.FREEZE
+			case string(domain.CONCLUDE):
+				dateStatus = domain.CONCLUDE
 			default:
 				return nil, ports.ErrSpotStatusUndefined
 			}

@@ -1,6 +1,8 @@
 package local
 
-import "github.com/JuanGQCadavid/now-project/services/spotsScheduledService/internal/core/domain"
+import (
+	"github.com/JuanGQCadavid/now-project/services/spotsScheduledService/internal/core/domain"
+)
 
 type LocalRepository struct {
 }
@@ -70,4 +72,8 @@ func (repo *LocalRepository) AssociateSpotWithSchedulePatterns(spotId string, ho
 
 func (repo *LocalRepository) UpdateScheculeStatus(spotId string, scheduleId string, status domain.State) error {
 	return nil
+}
+
+func (repo *LocalRepository) GetDatesFromSpot(spotId string) ([]domain.Date, error) {
+	return nil, nil
 }

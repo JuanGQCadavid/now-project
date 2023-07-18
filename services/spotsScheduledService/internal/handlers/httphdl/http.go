@@ -29,6 +29,7 @@ func NewHttpHandler(service ports.Service) *HttpHandler {
 func (hdl *HttpHandler) SetRouter(router *gin.Engine) {
 	router.POST("/spots/scheduled/:spot_uuid/append", hdl.AppendSchedule)
 	router.GET("/spots/scheduled/:spot_uuid/", hdl.GetSchedule)
+	router.GET("/spots/scheduled/:spot_uuid/dates", hdl.GetDates)
 	router.PUT("/spots/scheduled/:spot_uuid/scheduled/:scheduled_uuid/resume", hdl.Resume)
 	router.PUT("/spots/scheduled/:spot_uuid/scheduled/:scheduled_uuid/freeze", hdl.Freeze)
 	router.PUT("/spots/scheduled/:spot_uuid/scheduled/:scheduled_uuid/conclude", hdl.Conclude)
@@ -77,6 +78,51 @@ func (hdl *HttpHandler) GetSchedule(context *gin.Context) {
 		}
 	}
 	context.JSON(200, spot)
+
+}
+
+/*
+GET /spots/schedule/<spot_UUID>/
+*/
+func (hdl *HttpHandler) GetDates(context *gin.Context) {
+	spotId := context.Param("spot_uuid")
+	requesterId := context.Request.Header.Get("Authorization")
+
+	if len(spotId) == 0 {
+		logs.Error.Println(ErrMissingSpotIdOnParam.Error())
+		context.AbortWithStatusJSON(400, ErrorMessage{
+			Message: ErrMissingSpotIdOnParam.Error(),
+		})
+		return
+	}
+
+	if len(requesterId) == 0 {
+		logs.Info.Println("Anonymous user")
+	}
+
+	dates, err := hdl.service.GetDates(spotId, requesterId)
+
+	if err != nil {
+		logs.Error.Println(err.Error())
+		switch err.Error() {
+		case ports.ErrOnRepository.Error():
+			context.AbortWithStatusJSON(500, ErrorMessage{
+				Message: err.Error(),
+			})
+			return
+		case ports.ErrSpotNotFound.Error():
+			context.AbortWithStatusJSON(404, ErrorMessage{
+				Message: err.Error(),
+			})
+			return
+		default:
+			context.AbortWithStatusJSON(500, ErrorMessage{
+				Message: err.Error(),
+			})
+			return
+		}
+	}
+	context.JSON(200, dates)
 
 }
 

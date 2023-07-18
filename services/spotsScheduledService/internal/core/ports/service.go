@@ -25,4 +25,5 @@ type Service interface {
 	ResumeSchedule(spotId string, scheduleId string, userRequestId string) error
 	FreezeSchedule(spotId string, scheduleId string, userRequestId string) error
 	ConcludeSchedule(spotId string, scheduleId string, userRequestId string) error
+	GetDates(spotId string, userRequestId string) ([]domain.Date, error)
 }

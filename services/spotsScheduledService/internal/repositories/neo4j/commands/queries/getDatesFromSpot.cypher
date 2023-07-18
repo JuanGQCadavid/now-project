@@ -1,4 +1,5 @@
 MATCH (:Event {UUID: $spot_uuid})<-[at:AT]-(date:Date)-[:CREATED_FROM]->(sp:SchedulePattern)-[:HOST_BY]->(host:Person)
+WHERE date(date.Date) >= date()
 return collect(
     {
         dateMaximunCapacity: date.MaximunCapacty,

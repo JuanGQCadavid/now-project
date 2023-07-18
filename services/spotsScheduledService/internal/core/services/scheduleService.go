@@ -52,6 +52,18 @@ func (service *ScheduledService) GetSchedules(spotId string, userRequestId strin
 	return spot, nil
 }
 
+func (service *ScheduledService) GetDates(spotId string, userRequestId string) ([]domain.Date, error) {
+	logs.Info.Printf("GetDates: spotId: %s, userRequestId: %s\n", spotId, userRequestId)
+	dates, err := service.repository.GetDatesFromSpot(spotId)
+
+	if err != nil {
+		logs.Error.Println("We found an error while fetching the spot \n\t\t", err.Error())
+		return nil, ports.ErrOnRepository
+	}
+
+	return dates, nil
+}
+
 /*
 This service will append a schedule patter to a spot.
 Constrains:
