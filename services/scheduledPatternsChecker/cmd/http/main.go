@@ -33,7 +33,9 @@ func main() {
 	// serviceManualTest()
 
 	// testRepo()
-	generateDaysString(5)
+	// generateDaysString(5)
+
+	geneateDatesFromRepoWithDrivers()
 
 	// testScheduleAdded2()
 	// testDeleteSchedulePattern()
