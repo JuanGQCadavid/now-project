@@ -8,6 +8,7 @@ type Date struct {
 	OnPlace   Place  `json:"place,omitempty"`
 	DateStamp string `json:"dateStamp,omitempty"`
 	Host      Host   `json:"host,omitempty"`
+	Status    string `json:"status,omitempty"`
 }
 
 type Host struct {

@@ -12,13 +12,13 @@ type ConfirmationService struct {
 }
 
 func (srv *ConfirmationService) ConfirmDate(dateId string, userRequesterId string) error {
-	return srv.confirmDate(dateId, userRequesterId, true, ports.DateConfirmed)
+	return srv.changeDateStatus(dateId, userRequesterId, true, ports.DateConfirmed)
 }
 func (srv *ConfirmationService) UnconfirmDate(dateId string, userRequesterId string) error {
-	return srv.confirmDate(dateId, userRequesterId, false, ports.DateUnconfirmed)
+	return srv.changeDateStatus(dateId, userRequesterId, false, ports.DateUnconfirmed)
 }
 
-func (srv *ConfirmationService) confirmDate(dateId string, userRequesterId string, confirmed bool, spotActiviy ports.NotifyOperator) error {
+func (srv *ConfirmationService) changeDateStatus(dateId string, userRequesterId string, confirmed bool, spotActiviy ports.NotifyOperator) error {
 	logs.Info.Printf("ConfirmDate: Date Id = %s, User Requets = %s \n", dateId, userRequesterId)
 
 	date, err := srv.repository.FetchDate(dateId, userRequesterId)
