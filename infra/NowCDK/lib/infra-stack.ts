@@ -162,7 +162,7 @@ export class InfraStack extends Stack {
         filterPolicy: 
           {
             Operation: sns.SubscriptionFilter.stringFilter({
-              allowlist: ["spotCreated", "spotEdited", "spotDeleted"]
+              matchPrefixes: ["date", "online"]
             })
           }
       })
@@ -302,6 +302,18 @@ export class InfraStack extends Stack {
       rootMethod,
       "online"
     );
+
+    // const onlineSubscription  = new subscriptions.SqsSubscription(updateLocationDataSQS, {
+    //   ...defaultSubscriptionConfiguration,
+    //   filterPolicy: 
+    //     {
+    //       Operation: sns.SubscriptionFilter.stringFilter({
+    //         matchPrefixes: ["online"]
+    //       })
+    //     }
+    // });
+
+    // spotActivityTopic.addSubscription(onlineSubscription);
 
     // Spot schedule lambda
     const spotsScheduledLambdaRole = new iam.Role(
