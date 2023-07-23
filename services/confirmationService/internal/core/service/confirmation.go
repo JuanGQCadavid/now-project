@@ -11,6 +11,14 @@ type ConfirmationService struct {
 	notifyer   ports.Notify
 }
 
+func NewConfirmationService(repository ports.Repository, notifyer ports.Notify) *ConfirmationService {
+	return &ConfirmationService{
+		repository: repository,
+		notifyer:   notifyer,
+	}
+
+}
+
 func (srv *ConfirmationService) ConfirmDate(dateId string, userRequesterId string) error {
 	return srv.changeDateStatus(dateId, userRequesterId, true, ports.DateConfirmed)
 }
@@ -21,7 +29,7 @@ func (srv *ConfirmationService) UnconfirmDate(dateId string, userRequesterId str
 func (srv *ConfirmationService) changeDateStatus(dateId string, userRequesterId string, confirmed bool, spotActiviy ports.NotifyOperator) error {
 	logs.Info.Printf("ConfirmDate: Date Id = %s, User Requets = %s \n", dateId, userRequesterId)
 
-	date, err := srv.repository.FetchDate(dateId, userRequesterId)
+	date, err := srv.repository.FetchDate(dateId)
 
 	if err != nil {
 		logs.Error.Printf("We face an error on the repository")
@@ -29,16 +37,27 @@ func (srv *ConfirmationService) changeDateStatus(dateId string, userRequesterId 
 	}
 
 	if date == nil {
-		logs.Warning.Println("Empty date, could be wrong date id or invalid user requestId")
+		logs.Warning.Println("Empty date wrong date id")
 		return ports.ErrEmptyDate
 	}
 
-	if date.Confirmed {
-		logs.Info.Printf("The date %s is already confirmed, aborting job.\n", date.Id)
+	if date.Host.HostId != userRequesterId {
+		logs.Warning.Println("invalid user requestId, user is not the host")
+		return ports.ErrUserIsNotTheHost
+	}
+
+	if date.Status == "ONLINE" {
+		logs.Warning.Println("You could not change the state of a date that are online")
+		return ports.ErrDateIsOnline
+	}
+
+	if date.Confirmed == confirmed {
+		logs.Info.Printf("The date %s is already %v, aborting job.\n", date.Id, confirmed)
 		return nil
 	}
+
 	date.Confirmed = confirmed
-	err = srv.repository.UpdateDateOnConfirmed(date.Id, date.Confirmed)
+	err = srv.repository.UpdateDateOnConfirmed(date.Id, confirmed)
 
 	if err != nil {
 		logs.Error.Println("We could not update the date status due to a failure in the repository")

@@ -17,7 +17,7 @@ func NewNeo4jRepoWithDriver(driver neo4j.Driver) *Neo4jRepository {
 	}
 }
 
-func (repo *Neo4jRepository) FetchDate(dateId string, hostId string) (*domain.Date, error) {
+func (repo *Neo4jRepository) FetchDate(dateId string) (*domain.Date, error) {
 	records, err := repo.executeReadCommand(commands.NewFetchDateCommand(
 		dateId,
 	))
@@ -37,6 +37,13 @@ func (repo *Neo4jRepository) FetchDate(dateId string, hostId string) (*domain.Da
 
 func (repo *Neo4jRepository) UpdateDateOnConfirmed(dateId string, confirmed bool) error {
 	logs.Info.Printf("UpdateDateOnConfirmed -> dateId: %s confirmed: %v \n", dateId, confirmed)
+	err := repo.executeWriteCommand(commands.NewUpdateDateStatusCommand(dateId, confirmed))
+
+	if err != nil {
+		logs.Error.Println("executeWriteCommand Fail")
+		return err
+	}
+
 	return nil
 }
 
