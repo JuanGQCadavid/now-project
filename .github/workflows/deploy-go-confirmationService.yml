@@ -32,7 +32,7 @@ jobs:
           aws-region: us-east-2
 
       - name: Deploy confirmationService lambda
-        run: aws --version ;  aws lambda update-function-code --function-name confirmationSpotRESTLambda --zip-file fileb://${{ github.workspace }}/services/confirmationService/main.zip
+        run: aws --version ;  aws lambda update-function-code --function-name ConfirmationSpotRESTService --zip-file fileb://${{ github.workspace }}/services/confirmationService/main.zip
 
   confirmationService-SQS-Deployment:
     runs-on: ubuntu-latest
@@ -59,4 +59,4 @@ jobs:
           aws-region: us-east-2
 
       - name: Deploy confirmationService lambda
-        run: aws --version ;  aws lambda update-function-code --function-name confirmationSpotSQSLambda --zip-file fileb://${{ github.workspace }}/services/confirmationService/main.zip
+        run: aws --version ;  aws lambda update-function-code --function-name ConfirmationSpotSQS --zip-file fileb://${{ github.workspace }}/services/confirmationService/main.zip
