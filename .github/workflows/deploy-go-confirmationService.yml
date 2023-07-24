@@ -1,0 +1,62 @@
+name: Deploy confirmationService service
+on:
+  push: # https://docs.github.com/en/actions/using-workflows/triggering-a-workflow
+    branches: 
+      - main
+    paths:
+      - services/confirmationService/** 
+
+jobs:
+  confirmationService-Service-Deployment:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+      
+      - name: Set up go
+        uses: actions/setup-go@v4
+        with:
+          go-version: 1.20.2
+
+      - name: Build confirmationService service to run on lambda
+        run: cd ${{ github.workspace }}/services/confirmationService ; sh build-service.sh ;
+      
+      - name: Zip code
+        run: cd ${{ github.workspace }}/services/confirmationService ; zip main.zip main
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-2
+
+      - name: Deploy confirmationService lambda
+        run: aws --version ;  aws lambda update-function-code --function-name confirmationSpotRESTLambda --zip-file fileb://${{ github.workspace }}/services/confirmationService/main.zip
+
+  confirmationService-SQS-Deployment:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+      
+      - name: Set up go
+        uses: actions/setup-go@v4
+        with:
+          go-version: 1.20.2
+
+      - name: Build confirmationService service to run on lambda
+        run: cd ${{ github.workspace }}/services/confirmationService ; sh build-sqs.sh ;
+      
+      - name: Zip code
+        run: cd ${{ github.workspace }}/services/confirmationService ; zip main.zip main
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-2
+
+      - name: Deploy confirmationService lambda
+        run: aws --version ;  aws lambda update-function-code --function-name confirmationSpotSQSLambda --zip-file fileb://${{ github.workspace }}/services/confirmationService/main.zip
