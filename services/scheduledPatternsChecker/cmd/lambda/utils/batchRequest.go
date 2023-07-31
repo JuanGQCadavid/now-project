@@ -1,5 +1,6 @@
 package utils
 
 type BatchRequest struct {
-	TimeWindow int64 `json:"TimeWindow"`
+	Operation  string `json:"Operation"`
+	TimeWindow int64  `json:"TimeWindow"`
 }

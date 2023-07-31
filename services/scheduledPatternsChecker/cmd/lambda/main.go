@@ -53,7 +53,14 @@ func Handler(ctx context.Context, body *events.SQSEvent) (string, error) {
 		log.Printf("%+v \n", record.Body)
 
 		log.Println(" ********** ")
-		operation := GetOperationName(record)
+
+		operation := GetOperationNameFromAttributes(record)
+
+		if operation == Other {
+			logs.Warning.Println("Operation not founded, looking on the body")
+			operation = GetOperationNameFromBody(record)
+		}
+
 		log.Println(operation)
 
 		if operation == GenrateDatesFromSchedulePatterns {
@@ -152,33 +159,46 @@ func Handler(ctx context.Context, body *events.SQSEvent) (string, error) {
 
 	return "Done", nil
 }
+func GetOperationNameFromBody(record events.SQSMessage) Operations {
+	var body utils.BatchRequest
+	err := json.Unmarshal([]byte(record.Body), &body)
 
-func GetOperationName(record events.SQSMessage) Operations {
+	if err != nil {
+		logs.Error.Println("There where an error while unmarshaling the body ", err.Error())
+		return Other
+	}
+
+	return stringToOperation(body.Operation)
+}
+
+func GetOperationNameFromAttributes(record events.SQSMessage) Operations {
 
 	operation := record.MessageAttributes[Operation]
 
 	if operation.StringValue != nil {
-		value := *operation.StringValue
-
-		switch value {
-		case string(SchedulePatternAppended):
-			return SchedulePatternAppended
-		case string(SchedulePatternConcluded):
-			return SchedulePatternConcluded
-		case string(SchedulePatternResumed):
-			return SchedulePatternResumed
-		case string(SchedulePatternFreezed):
-			return SchedulePatternFreezed
-		case string(GenrateDatesFromSchedulePatterns):
-			return GenrateDatesFromSchedulePatterns
-		default:
-			logs.Warning.Printf("Operation %s is not recognized \n", value)
-			return Other
-		}
+		return stringToOperation(*operation.StringValue)
 	}
 
 	logs.Warning.Println("Operation parameter is missing")
 	return Other
+}
+
+func stringToOperation(value string) Operations {
+	switch value {
+	case string(SchedulePatternAppended):
+		return SchedulePatternAppended
+	case string(SchedulePatternConcluded):
+		return SchedulePatternConcluded
+	case string(SchedulePatternResumed):
+		return SchedulePatternResumed
+	case string(SchedulePatternFreezed):
+		return SchedulePatternFreezed
+	case string(GenrateDatesFromSchedulePatterns):
+		return GenrateDatesFromSchedulePatterns
+	default:
+		logs.Warning.Printf("Operation %s is not recognized \n", value)
+		return Other
+	}
 }
 
 func init() {
