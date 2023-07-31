@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"log"
 	"runtime"
-	"strings"
 
 	"github.com/JuanGQCadavid/now-project/services/pkgs/common/logs"
 	"github.com/JuanGQCadavid/now-project/services/pkgs/credentialsFinder/cmd/ssm"
@@ -157,17 +156,6 @@ func Handler(ctx context.Context, body *events.SQSEvent) (string, error) {
 func GetOperationName(record events.SQSMessage) Operations {
 
 	operation := record.MessageAttributes[Operation]
-
-	if operation.StringValue == nil {
-		logs.Warning.Println("The key is not the default one, looking by searching all keys case-insensitivity")
-		for key, value := range record.MessageAttributes {
-			logs.Info.Println(key, Operation)
-			if strings.EqualFold(Operation, key) {
-				logs.Warning.Println("Founded.")
-				operation = value
-			}
-		}
-	}
 
 	if operation.StringValue != nil {
 		value := *operation.StringValue
