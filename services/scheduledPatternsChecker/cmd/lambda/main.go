@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"log"
 	"runtime"
+	"strings"
 
 	"github.com/JuanGQCadavid/now-project/services/pkgs/common/logs"
 	"github.com/JuanGQCadavid/now-project/services/pkgs/credentialsFinder/cmd/ssm"
@@ -22,15 +23,16 @@ import (
 type Operations string
 
 const (
-	Operation                string     = "Operation"
-	SchedulePatternAppended  Operations = "schedulePatternAppended"
-	SchedulePatternConcluded Operations = "schedulePatternConcluded"
-	SchedulePatternResumed   Operations = "schedulePatternResumed"
-	SchedulePatternFreezed   Operations = "schedulePatternFreezed"
-	Other                    Operations = "other"
-	DefaultTimeWindow        int64      = 604800
-	TopicArnEnvName          string     = "snsArn"
-	SqsConfirmationArn       string     = "sqsConfirmationArn"
+	Operation                        string     = "Operation"
+	SchedulePatternAppended          Operations = "schedulePatternAppended"
+	SchedulePatternConcluded         Operations = "schedulePatternConcluded"
+	SchedulePatternResumed           Operations = "schedulePatternResumed"
+	SchedulePatternFreezed           Operations = "schedulePatternFreezed"
+	GenrateDatesFromSchedulePatterns Operations = "generateDatesFromSchedulePatterns"
+	Other                            Operations = "other"
+	DefaultTimeWindow                int64      = 604800
+	TopicArnEnvName                  string     = "snsArn"
+	SqsConfirmationArn               string     = "sqsConfirmationArn"
 )
 
 var (
@@ -54,6 +56,39 @@ func Handler(ctx context.Context, body *events.SQSEvent) (string, error) {
 		log.Println(" ********** ")
 		operation := GetOperationName(record)
 		log.Println(operation)
+
+		if operation == GenrateDatesFromSchedulePatterns {
+			logs.Info.Println("Operation: ", GenrateDatesFromSchedulePatterns)
+
+			var body utils.BatchRequest
+			err := json.Unmarshal([]byte(record.Body), &body)
+
+			if err != nil {
+				logs.Error.Println("Oh shit, aborting this record due to:", err.Error())
+				continue
+			}
+
+			timeWindow := body.TimeWindow
+
+			if timeWindow == 0 {
+				logs.Warning.Println("Time window is 0, using defautl time window of ", DefaultTimeWindow)
+				timeWindow = DefaultTimeWindow
+			}
+
+			result, err := srv.GenerateDatesFromRepository(timeWindow)
+
+			if err != nil {
+				logs.Error.Println("Service faile on error :", err.Error())
+			}
+
+			if result != nil {
+				logs.Info.Println("Result total length:", len(result))
+			} else {
+				logs.Info.Println("Empty result")
+			}
+
+			continue
+		}
 
 		var body utils.Body
 		err := json.Unmarshal([]byte(record.Body), &body)
@@ -118,8 +153,20 @@ func Handler(ctx context.Context, body *events.SQSEvent) (string, error) {
 
 	return "Done", nil
 }
+
 func GetOperationName(record events.SQSMessage) Operations {
+
 	operation := record.MessageAttributes[Operation]
+
+	if operation.StringValue == nil {
+		logs.Warning.Println("The key is not the default one, looking by searching all keys case-insensitivity")
+		for key, value := range record.MessageAttributes {
+			if strings.EqualFold(Operation, key) {
+				logs.Warning.Println("Founded.")
+				operation = value
+			}
+		}
+	}
 
 	if operation.StringValue != nil {
 		value := *operation.StringValue
@@ -133,6 +180,8 @@ func GetOperationName(record events.SQSMessage) Operations {
 			return SchedulePatternResumed
 		case string(SchedulePatternFreezed):
 			return SchedulePatternFreezed
+		case string(GenrateDatesFromSchedulePatterns):
+			return GenrateDatesFromSchedulePatterns
 		default:
 			logs.Warning.Printf("Operation %s is not recognized \n", value)
 			return Other
