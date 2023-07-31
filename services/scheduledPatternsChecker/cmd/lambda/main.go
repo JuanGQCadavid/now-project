@@ -161,8 +161,8 @@ func GetOperationName(record events.SQSMessage) Operations {
 	if operation.StringValue == nil {
 		logs.Warning.Println("The key is not the default one, looking by searching all keys case-insensitivity")
 		for key, value := range record.MessageAttributes {
+			logs.Info.Println(key, Operation)
 			if strings.EqualFold(Operation, key) {
-				logs.Info.Println(key, Operation)
 				logs.Warning.Println("Founded.")
 				operation = value
 			}
