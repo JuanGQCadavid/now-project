@@ -703,8 +703,8 @@ export class InfraStack extends Stack {
     scheduledPatternsChecker.addEventSource(scheduledPatternsCheckerEvent);
 
     const checkerObject = {
-      operation: "generateDatesFromSchedulePatterns",
-      timeWindow: 604800 // 7 days in seconds
+      Operation: "generateDatesFromSchedulePatterns",
+      TimeWindow: 604800 // 7 days in seconds
     };
 
     const scheduledPatternsCheckerLambdatarget = new eventsTargets.SqsQueue(
