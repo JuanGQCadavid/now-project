@@ -7,7 +7,8 @@ import (
 
 	"github.com/JuanGQCadavid/now-project/services/locationDataUpdater/internal/core/domain"
 	"github.com/JuanGQCadavid/now-project/services/locationDataUpdater/internal/core/ports"
-	"github.com/JuanGQCadavid/now-project/services/locationDataUpdater/internal/service"
+	"github.com/JuanGQCadavid/now-project/services/locationDataUpdater/internal/core/service"
+	"github.com/JuanGQCadavid/now-project/services/pkgs/common/logs"
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
 )
@@ -22,6 +23,7 @@ const (
 )
 
 func HandleRequest(ctx context.Context, body *events.SQSEvent) (string, error) {
+	logs.Info.Println("Gin cold start")
 	records := body.Records
 
 	var service ports.Service = service.NewLocationService()
