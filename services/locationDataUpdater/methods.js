@@ -1,0 +1,7 @@
+
+onlineStart
+onlineResume
+onlineStop
+onlineFinalize
+dateConfirmed
+dateUnconfirmed

@@ -4,13 +4,21 @@ import (
 	"context"
 	"encoding/json"
 	"log"
-	"strings"
 
 	"github.com/JuanGQCadavid/now-project/services/locationDataUpdater/internal/core/domain"
 	"github.com/JuanGQCadavid/now-project/services/locationDataUpdater/internal/core/ports"
 	"github.com/JuanGQCadavid/now-project/services/locationDataUpdater/internal/service"
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
+)
+
+const (
+	onlineStart     = "onlineStart"
+	onlineResume    = "onlineResume"
+	onlineStop      = "onlineStop"
+	onlineFinalize  = "onlineFinalize"
+	dateConfirmed   = "dateConfirmed"
+	dateUnconfirmed = "dateUnconfirmed"
 )
 
 func HandleRequest(ctx context.Context, body *events.SQSEvent) (string, error) {
@@ -30,11 +38,12 @@ func HandleRequest(ctx context.Context, body *events.SQSEvent) (string, error) {
 	return "Base", nil
 }
 
-func methodsMap(subject string, body string, service ports.Service) error {
-	log.Printf("methodsMap: \t\nSubject -> %s, \t\nBody -> %s", subject, body)
+func methodsMap(method string, body string, service ports.Service) error {
+	log.Printf("methodsMap: \t\nmethod -> %s, \t\nBody -> %s", method, body)
 
-	switch strings.ToLower(subject) {
-	case "spot_created":
+	switch method {
+
+	case onlineStart:
 		spot := domain.Spot{}
 		json.Unmarshal([]byte(body), &spot)
 
@@ -44,12 +53,17 @@ func methodsMap(subject string, body string, service ports.Service) error {
 			return err
 		}
 
-	case "spot_removed":
+	case onlineFinalize:
 		// TODO -> perform some checks
 		if err := service.OnSpotDeletion(body); err != nil {
 			log.Println("And error! : ", err)
 			return err
 		}
+	case onlineResume:
+	case onlineStop:
+	case dateConfirmed:
+	case dateUnconfirmed:
+
 	}
 
 	return nil
