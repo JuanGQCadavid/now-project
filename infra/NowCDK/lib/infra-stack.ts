@@ -449,6 +449,14 @@ export class InfraStack extends Stack {
       })
     );
 
+    confirmationSpotLambdaRole.addToPolicy(
+      new iam.PolicyStatement({
+        actions: ["sns:*"],
+        effect: iam.Effect.ALLOW,
+        resources: [spotActivityTopic.topicArn],
+      })
+    );
+
     const confirmationSpotRESTLambda = new lambda.Function(
       this,
       "confirmationSpotRESTLambda",
