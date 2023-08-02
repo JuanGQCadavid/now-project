@@ -18,10 +18,10 @@ func NewLocationRepo() *locationRepository {
 	}
 }
 
-func (repo *locationRepository) CrateLocation(spot domain.Spot) error {
-	log.Printf("CrateLocation: \n\tUUID: %s,\n\tLat: %f,\n\tLon: %f", spot.EventInfo.UUID, spot.PlaceInfo.Lat, spot.PlaceInfo.Lon)
+func (repo *locationRepository) CrateLocation(date domain.Date) error {
+	log.Printf("CrateLocation: Date: %v\n", date)
 
-	db, err := repo.connector.CreateSession()
+	db, err := repo.connector.GetSession()
 	defer db.Close()
 
 	if err != nil {
@@ -37,7 +37,7 @@ func (repo *locationRepository) CrateLocation(spot domain.Spot) error {
 	println(query)
 
 	// TODO -> check the lat and lon, they should no be empty
-	result, err := db.Exec(query, spot.EventInfo.UUID, spot.PlaceInfo.Lat, spot.PlaceInfo.Lon)
+	result, err := db.Exec(query, date.DateId, date.Lat, date.Lon)
 
 	if err != nil {
 		log.Println("An error ocoured!: ", err)
@@ -46,5 +46,14 @@ func (repo *locationRepository) CrateLocation(spot domain.Spot) error {
 
 	log.Printf("%+v", result)
 
+	return nil
+
+}
+
+func (repo *locationRepository) RemoveLocation(string) error {
+	return nil
+}
+
+func (repo *locationRepository) UpdateLocationStatus(string, domain.DateStatus) error {
 	return nil
 }

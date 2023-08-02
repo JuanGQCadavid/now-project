@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 
+	"github.com/JuanGQCadavid/now-project/services/pkgs/common/logs"
 	_ "github.com/go-sql-driver/mysql"
 )
 
@@ -15,6 +16,7 @@ type MysqlConnector struct {
 	dbPassword   string
 	dbName       string
 	dbUrl        string
+	session      *sql.DB
 }
 
 func NewConector(conectorType string, dbUser string, dbPassword string, dbName string, dbUrl string) *MysqlConnector {
@@ -45,6 +47,23 @@ func NewConectorFromEnv() *MysqlConnector {
 	return NewConector("mysql", dbUser, dbPassword, dbName, dbUrl)
 }
 
-func (con *MysqlConnector) CreateSession() (*sql.DB, error) {
+func (con *MysqlConnector) createSession() (*sql.DB, error) {
 	return sql.Open(con.conectorType, fmt.Sprintf("%s:%s@tcp(%s:3306)/%s", con.dbUser, con.dbPassword, con.dbUrl, con.dbName))
+}
+
+func (con *MysqlConnector) GetSession() (*sql.DB, error) {
+
+	if con.session == nil {
+		logs.Info.Println("Creating session")
+		session, err := con.createSession()
+
+		if err != nil {
+			logs.Error.Println("We fail creating the session, error: ", err.Error())
+			return nil, err
+		}
+
+		con.session = session
+	}
+
+	return con.session, nil
 }

@@ -3,6 +3,11 @@ package ports
 import "github.com/JuanGQCadavid/now-project/services/locationDataUpdater/internal/core/domain"
 
 type Service interface {
-	OnSpotCreation(domain.Spot) error
-	OnSpotDeletion(string) error
+	OnDateCreation(domain.Date) error
+	OnDateRemoved(string) error
+	OnDateStatusChanged(string, domain.DateStatus) error
 }
+
+// onlineStart, dateConfirmed -> Create  on DB
+// onlineResume onlineStop -> Change status
+// onlineFinalize, dateUnconfirmed -> Remove from DB

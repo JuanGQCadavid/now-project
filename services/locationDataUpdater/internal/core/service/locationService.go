@@ -1,30 +1,32 @@
 package service
 
 import (
-	"log"
-
 	"github.com/JuanGQCadavid/now-project/services/locationDataUpdater/internal/core/domain"
 	"github.com/JuanGQCadavid/now-project/services/locationDataUpdater/internal/core/ports"
-	locationrepositories "github.com/JuanGQCadavid/now-project/services/locationDataUpdater/internal/repositories/locationRepositories"
+	"github.com/JuanGQCadavid/now-project/services/pkgs/common/logs"
 )
 
 type LocationService struct {
-	LocationRepo ports.LocationRepository
+	locationRepo ports.LocationRepository
 }
 
-func (srv *LocationService) OnSpotCreation(spot domain.Spot) error {
-	log.Printf("OnSpotCreation ->  %+v", spot)
-
-	return srv.LocationRepo.CrateLocation(spot)
-}
-
-func (srv *LocationService) OnSpotDeletion(spotId string) error {
-	log.Println("OnSpotDeletion -> ", spotId)
-	return nil
-}
-
-func NewLocationService() *LocationService {
+func NewLocationService(locationRepo ports.LocationRepository) *LocationService {
 	return &LocationService{
-		LocationRepo: locationrepositories.NewLocationRepo(),
+		locationRepo: locationRepo,
 	}
+}
+
+func (srv *LocationService) OnDateCreation(date domain.Date) error {
+	logs.Info.Printf("OnDateCreation: date: %v\n", date)
+	return srv.locationRepo.CrateLocation(date)
+}
+
+func (srv *LocationService) OnDateRemoved(dateId string) error {
+	logs.Info.Printf("OnDateRemoved: date: %v\n", dateId)
+	return srv.locationRepo.RemoveLocation(dateId)
+}
+
+func (srv *LocationService) OnDateStatusChanged(dateId string, newStatus domain.DateStatus) error {
+	logs.Info.Printf("OnDateStatusChanged: date: %v, new status: %v\n", dateId, string(newStatus))
+	return srv.locationRepo.UpdateLocationStatus(dateId, newStatus)
 }
