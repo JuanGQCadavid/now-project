@@ -57,6 +57,11 @@ func (cmd *FetchDateCommand) transformRecord(record *db.Record) (*domain.Date, e
 		return nil, nil
 	}
 
+	spotId, isThere := record.Get("eventUUID")
+	if !isThere || spotId == nil {
+		logs.Warning.Println("Missing dateStartTime")
+	}
+
 	dateStartTime, isThere := record.Get("dateStartTime")
 	if !isThere || dateStartTime == nil {
 		logs.Warning.Println("Missing dateStartTime")
@@ -111,7 +116,7 @@ func (cmd *FetchDateCommand) transformRecord(record *db.Record) (*domain.Date, e
 		StartTime: dateStartTime.(string),
 		Confirmed: dateConfirmed.(bool),
 		Id:        dateId.(string),
-		SpotId:    dateId.(string),
+		SpotId:    spotId.(string),
 		OnPlace: domain.Place{
 			Name:          placeName.(string),
 			Lat:           placeLat.(float64),
