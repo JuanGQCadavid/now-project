@@ -6,11 +6,11 @@ import (
 	"gorm.io/gorm"
 )
 
-type DateStatus string
+type DateState string
 
 const (
-	OnlineDateStatus  DateStatus = "online"
-	StoppedDateStatus DateStatus = "stopped"
+	OnlineDateStatus  DateState = "online"
+	StoppedDateStatus DateState = "stopped"
 )
 
 type DateType string
@@ -38,7 +38,7 @@ type DatesLocation struct {
 }
 
 type States struct {
-	StateID     string `gorm:"primaryKey"`
+	StateID     DateState `gorm:"primaryKey"`
 	Description string
 
 	// GORM Variables
@@ -48,7 +48,7 @@ type States struct {
 }
 
 type Types struct {
-	TypeID      string `gorm:"primaryKey"`
+	TypeID      DateType `gorm:"primaryKey"`
 	Description string
 
 	// GORM Variables

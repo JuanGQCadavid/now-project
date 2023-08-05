@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 
+	"github.com/JuanGQCadavid/now-project/services/locationDataUpdater/internal/core/domain"
 	"github.com/JuanGQCadavid/now-project/services/pkgs/common/logs"
 	_ "github.com/go-sql-driver/mysql"
 	"gorm.io/driver/mysql"
@@ -16,7 +17,7 @@ type MysqlConnector struct {
 }
 
 func NewConector(dbUser string, dbPassword string, dbName string, dbUrl string) (*MysqlConnector, error) {
-	session, err := gorm.Open(mysql.Open(fmt.Sprintf("%s:%s@tcp(%s:3306)/%s?charset=utf8", dbUser, dbPassword, dbUrl, dbName)), &gorm.Config{})
+	session, err := gorm.Open(mysql.Open(fmt.Sprintf("%s:%s@tcp(%s:3306)/%s?charset=utf8&parseTime=true", dbUser, dbPassword, dbUrl, dbName)), &gorm.Config{})
 
 	if err != nil {
 		logs.Error.Println("We fail to create the connection to the DB, error: ", err.Error())
@@ -42,4 +43,8 @@ func NewConectorFromEnv() (*MysqlConnector, error) {
 	}
 
 	return NewConector(dbUser, dbPassword, dbName, dbUrl)
+}
+
+func (conn *MysqlConnector) Migrate() {
+	conn.session.AutoMigrate(&domain.DatesLocation{}, &domain.States{}, &domain.Types{})
 }

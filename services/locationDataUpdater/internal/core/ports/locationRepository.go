@@ -5,5 +5,5 @@ import "github.com/JuanGQCadavid/now-project/services/locationDataUpdater/intern
 type LocationRepository interface {
 	CrateLocation(domain.DatesLocation) error
 	RemoveLocation(string) error
-	UpdateLocationStatus(string, domain.DateStatus) error
+	UpdateLocationStatus(string, domain.DateState) error
 }
