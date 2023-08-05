@@ -34,6 +34,34 @@ Body:
     }
  }
 
+ Attributes:
+Operation String dateUnconfirmed
+
+Body:
+{
+   "dateId":"23b70dcd-14a9-4607-9740-7f6bf889e5de",
+   "spotId":"23b70dcd-14a9-4607-9740-7f6bf889e5de",
+   "userId":"33ddab28-006b-4790-bf42-1832f90dc8d4",
+   "aditionalpayload":{
+      "startTime":"15:00:00",
+      "confirmed":false,
+      "id":"23b70dcd-14a9-4607-9740-7f6bf889e5de",
+      "spotId":"23b70dcd-14a9-4607-9740-7f6bf889e5de",
+      "place":{
+         "name":"Place Laureles",
+         "lat":6.245887,
+         "lon":-75.589868,
+         "mapProviderId":"Place_Laureles"
+      },
+      "dateStamp":"2023-08-06",
+      "host":{
+         "hostId":"33ddab28-006b-4790-bf42-1832f90dc8d4",
+         "hostName":"karol G"
+      },
+      "status":"SCHEDULED"
+   }
+}
+
 
 Attributes: 
 Operation String onlineResume

@@ -1,4 +1,4 @@
-package locationrepositories
+package rds
 
 import (
 	"fmt"

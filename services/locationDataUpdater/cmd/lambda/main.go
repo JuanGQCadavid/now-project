@@ -5,9 +5,12 @@ import (
 	"encoding/json"
 	"log"
 
+	"errors"
+
 	"github.com/JuanGQCadavid/now-project/services/locationDataUpdater/internal/core/domain"
 	"github.com/JuanGQCadavid/now-project/services/locationDataUpdater/internal/core/ports"
 	"github.com/JuanGQCadavid/now-project/services/locationDataUpdater/internal/core/service"
+	"github.com/JuanGQCadavid/now-project/services/locationDataUpdater/internal/repositories/rds"
 	"github.com/JuanGQCadavid/now-project/services/pkgs/common/logs"
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
@@ -22,53 +25,132 @@ const (
 	dateUnconfirmed = "dateUnconfirmed"
 )
 
-func HandleRequest(ctx context.Context, body *events.SQSEvent) (string, error) {
+func HandleRequest(ctx context.Context, body *events.SQSEvent) (*string, error) {
 	logs.Info.Println("Gin cold start")
 	records := body.Records
 
-	var service ports.Service = service.NewLocationService()
+	location, err := rds.NewRDSRepoFromEnv()
+
+	if err != nil {
+		logs.Error.Println("we fail to create the repository")
+		return nil, err
+	}
+
+	var service ports.Service = service.NewLocationService(location)
+
+	var onError bool = false
 
 	for _, record := range records {
 
 		snsMessage := events.SNSEntity{}
-		json.Unmarshal([]byte(record.Body), &snsMessage)
+		err := json.Unmarshal([]byte(record.Body), &snsMessage)
 
-		methodsMap(snsMessage.Subject, snsMessage.Message, service)
+		if err != nil {
+			logs.Error.Println("We found an error while marshalling the sns message: ", err.Error())
+			continue
+		}
+
+		if len(snsMessage.Message) == 0 {
+			logs.Error.Println("Message is empty ")
+			onError = true
+			continue
+		}
+
+		notification := domain.Notification{}
+		err = json.Unmarshal([]byte(snsMessage.Message), &notification)
+
+		if err != nil {
+			logs.Error.Println("We found an error while marshalling the notification: ", err.Error())
+			onError = true
+			continue
+		}
+
+		err = methodsMap(snsMessage.Subject, notification, service)
+
+		if err != nil {
+			logs.Error.Println("We found an error while running the methods map:", err.Error())
+			onError = true
+			continue
+		}
 
 	}
 
-	return "Base", nil
+	if onError {
+		return nil, errors.New("A error happen during handling the records")
+	}
+
+	return nil, nil
 }
 
-func methodsMap(method string, body string, service ports.Service) error {
-	log.Printf("methodsMap: \t\nmethod -> %s, \t\nBody -> %s", method, body)
+func methodsMap(subject string, notification domain.Notification, service ports.Service) error {
+	log.Printf("methodsMap: \t\nsubject -> %s, \t\nnotification -> %s", subject, notification)
 
-	switch method {
+	switch subject {
 
 	case onlineStart:
-		spot := domain.Spot{}
-		json.Unmarshal([]byte(body), &spot)
+		date, err := castNotificationToDatesLocation(notification, domain.OnlineDateStatus, domain.Online)
 
-		// TODO -> perform some checks
-		if err := service.OnSpotCreation(spot); err != nil {
-			log.Println("And error! : ", err)
+		if err != nil {
 			return err
 		}
 
-	case onlineFinalize:
-		// TODO -> perform some checks
-		if err := service.OnSpotDeletion(body); err != nil {
-			log.Println("And error! : ", err)
-			return err
-		}
-	case onlineResume:
-	case onlineStop:
+		return service.OnDateCreation(*date)
 	case dateConfirmed:
+		date, err := castNotificationToDatesLocation(notification, domain.OnlineDateStatus, domain.Scheduled)
+
+		if err != nil {
+			return err
+		}
+
+		return service.OnDateCreation(*date)
+	case onlineFinalize:
+		return service.OnDateRemoved(notification.DateId)
+	case onlineResume:
+		return service.OnDateStateChanged(notification.DateId, domain.OnlineDateStatus)
+	case onlineStop:
+		return service.OnDateStateChanged(notification.DateId, domain.StoppedDateStatus)
 	case dateUnconfirmed:
+		return service.OnDateRemoved(notification.DateId)
 
 	}
 
 	return nil
+}
+
+func castNotificationToDatesLocation(
+	notification domain.Notification,
+	dateState domain.DateState,
+	dateType domain.DateType,
+) (*domain.DatesLocation, error) {
+
+	var placeMap map[string]interface{}
+
+	if notification.Aditionalpayload["place"] != nil {
+		placeMap = notification.Aditionalpayload["place"].(map[string]interface{})
+	} else if notification.Aditionalpayload["placeInfo"] != nil {
+		placeMap = notification.Aditionalpayload["placeInfo"].(map[string]interface{})
+	} else {
+		return nil, errors.New("Missing place in body")
+	}
+
+	lat := placeMap["lat"].(float64)
+	lon := placeMap["lon"].(float64)
+
+	return &domain.DatesLocation{
+		StateID: notification.DateId,
+		Lat:     lat,
+		Lon:     lon,
+		State: domain.States{
+			StateID: dateState,
+		},
+		Type: domain.Types{
+			TypeID: dateType,
+		},
+	}, nil
+
+}
+func init() {
+
 }
 
 func main() {

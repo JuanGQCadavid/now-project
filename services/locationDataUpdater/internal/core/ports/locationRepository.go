@@ -6,4 +6,5 @@ type LocationRepository interface {
 	CrateLocation(domain.DatesLocation) error
 	RemoveLocation(string) error
 	UpdateLocationStatus(string, domain.DateState) error
+	UpdateLocationType(dateID string, dateType domain.DateType) error
 }

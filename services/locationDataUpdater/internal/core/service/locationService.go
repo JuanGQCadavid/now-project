@@ -26,7 +26,12 @@ func (srv *LocationService) OnDateRemoved(dateId string) error {
 	return srv.locationRepo.RemoveLocation(dateId)
 }
 
-func (srv *LocationService) OnDateStatusChanged(dateId string, newStatus domain.DateState) error {
-	logs.Info.Printf("OnDateStatusChanged: date: %v, new status: %v\n", dateId, string(newStatus))
+func (srv *LocationService) OnDateStateChanged(dateId string, newStatus domain.DateState) error {
+	logs.Info.Printf("OnDateStatusChanged: date: %v, new status: %v\n", dateId, newStatus)
 	return srv.locationRepo.UpdateLocationStatus(dateId, newStatus)
+}
+
+func (srv *LocationService) OnDateTypeChanged(dateId string, newType domain.DateType) error {
+	logs.Info.Printf("OnDateStatusChanged: date: %v, newType: %v\n", dateId, newType)
+	return srv.locationRepo.UpdateLocationType(dateId, newType)
 }
