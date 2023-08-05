@@ -16,7 +16,7 @@ func NewLocationService(locationRepo ports.LocationRepository) *LocationService 
 	}
 }
 
-func (srv *LocationService) OnDateCreation(date domain.Date) error {
+func (srv *LocationService) OnDateCreation(date domain.DatesLocation) error {
 	logs.Info.Printf("OnDateCreation: date: %v\n", date)
 	return srv.locationRepo.CrateLocation(date)
 }

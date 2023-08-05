@@ -3,7 +3,7 @@ package ports
 import "github.com/JuanGQCadavid/now-project/services/locationDataUpdater/internal/core/domain"
 
 type Service interface {
-	OnDateCreation(domain.Date) error
+	OnDateCreation(domain.DatesLocation) error
 	OnDateRemoved(string) error
 	OnDateStatusChanged(string, domain.DateStatus) error
 }

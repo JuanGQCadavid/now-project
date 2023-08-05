@@ -1,7 +1,6 @@
 package locationrepositories
 
 import (
-	"fmt"
 	"log"
 
 	"github.com/JuanGQCadavid/now-project/services/locationDataUpdater/internal/core/domain"
@@ -11,41 +10,37 @@ type locationRepository struct {
 	connector *MysqlConnector
 }
 
-func NewLocationRepo() *locationRepository {
+func NewLocationRepoFromEnv() (*locationRepository, error) {
+
+	connector, err := NewConectorFromEnv()
+
+	if err != nil {
+		return nil, err
+	}
 
 	return &locationRepository{
-		connector: NewConectorFromEnv(),
-	}
+		connector: connector,
+	}, nil
 }
 
-func (repo *locationRepository) CrateLocation(date domain.Date) error {
+func NewLocationRepo(connector *MysqlConnector) (*locationRepository, error) {
+
+	return &locationRepository{
+		connector: connector,
+	}, nil
+}
+
+func (repo *locationRepository) CrateLocation(date domain.DatesLocation) error {
 	log.Printf("CrateLocation: Date: %v\n", date)
 
-	db, err := repo.connector.GetSession()
-	defer db.Close()
+	result := repo.connector.session.Create(&date)
 
-	if err != nil {
-		panic(err)
-	}
-
-	query := fmt.Sprintf(`
-	INSERT INTO
-		locations (spotId, lat, lng) 
-	VALUES
-		(?,?,?)`)
-
-	println(query)
-
-	// TODO -> check the lat and lon, they should no be empty
-	result, err := db.Exec(query, date.DateId, date.Lat, date.Lon)
-
-	if err != nil {
-		log.Println("An error ocoured!: ", err)
-		return err
+	if result.Error != nil {
+		log.Println("An error ocoured!: ", result.Error)
+		return result.Error
 	}
 
 	log.Printf("%+v", result)
-
 	return nil
 
 }

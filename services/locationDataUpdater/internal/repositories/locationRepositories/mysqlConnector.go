@@ -1,36 +1,33 @@
 package locationrepositories
 
 import (
-	"database/sql"
 	"fmt"
 	"log"
 	"os"
 
 	"github.com/JuanGQCadavid/now-project/services/pkgs/common/logs"
 	_ "github.com/go-sql-driver/mysql"
+	"gorm.io/driver/mysql"
+	"gorm.io/gorm"
 )
 
 type MysqlConnector struct {
-	conectorType string
-	dbUser       string
-	dbPassword   string
-	dbName       string
-	dbUrl        string
-	session      *sql.DB
+	session *gorm.DB
 }
 
-func NewConector(conectorType string, dbUser string, dbPassword string, dbName string, dbUrl string) *MysqlConnector {
-	return &MysqlConnector{
-		conectorType: conectorType,
-		dbUser:       dbUser,
-		dbPassword:   dbPassword,
-		dbName:       dbName,
-		dbUrl:        dbUrl,
+func NewConector(dbUser string, dbPassword string, dbName string, dbUrl string) (*MysqlConnector, error) {
+	session, err := gorm.Open(mysql.Open(fmt.Sprintf("%s:%s@tcp(%s:3306)/%s?charset=utf8", dbUser, dbPassword, dbUrl, dbName)), &gorm.Config{})
+
+	if err != nil {
+		logs.Error.Println("We fail to create the connection to the DB, error: ", err.Error())
 	}
+	return &MysqlConnector{
+		session: session,
+	}, nil
 
 }
 
-func NewConectorFromEnv() *MysqlConnector {
+func NewConectorFromEnv() (*MysqlConnector, error) {
 	dbUser, isPresentUser := os.LookupEnv("dbUser")
 	dbPassword, isPresentPass := os.LookupEnv("dbPassword")
 	dbName, isPresentName := os.LookupEnv("dbName")
@@ -44,26 +41,5 @@ func NewConectorFromEnv() *MysqlConnector {
 		log.Fatalln("The ULR, Password or Username, dbName is not present in the env.")
 	}
 
-	return NewConector("mysql", dbUser, dbPassword, dbName, dbUrl)
-}
-
-func (con *MysqlConnector) createSession() (*sql.DB, error) {
-	return sql.Open(con.conectorType, fmt.Sprintf("%s:%s@tcp(%s:3306)/%s", con.dbUser, con.dbPassword, con.dbUrl, con.dbName))
-}
-
-func (con *MysqlConnector) GetSession() (*sql.DB, error) {
-
-	if con.session == nil {
-		logs.Info.Println("Creating session")
-		session, err := con.createSession()
-
-		if err != nil {
-			logs.Error.Println("We fail creating the session, error: ", err.Error())
-			return nil, err
-		}
-
-		con.session = session
-	}
-
-	return con.session, nil
+	return NewConector(dbUser, dbPassword, dbName, dbUrl)
 }
