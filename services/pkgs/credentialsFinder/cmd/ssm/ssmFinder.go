@@ -115,6 +115,40 @@ func (cf *SSMCredentialsFinder) FindDBCredentials(dbUserSSMParam string, dbPassw
 	return service.FindDBDriver(&neo4jCreds)
 }
 
+func (cf *SSMCredentialsFinder) GetDBCredentialsFromDefaultEnv() (*domain.DBCredentials, error) {
+	dbName, isPresentName := os.LookupEnv(standardDbNameEnvName)
+	dbPassword, isPresentPass := os.LookupEnv(standardDbPasswordEnvName)
+	dbUrl, isPresentUrl := os.LookupEnv(standardDbUrlEnvName)
+	dbUser, isPresentUser := os.LookupEnv(standardDbUserEnvName)
+
+	if !isPresentName || !isPresentPass || !isPresentUrl || !isPresentUser {
+		log.Println("dbName: ", dbName)
+		log.Println("dbPassword: ", dbPassword)
+		log.Println("dbUrl: ", dbUrl)
+		log.Println("dbUser: ", dbUser)
+		log.Println("The ULR, Password or Username is not present in the env.")
+
+		return nil, ErrMissingEnvs
+	}
+
+	return cf.GetDBCredentials(dbUser, dbPassword, dbName, dbUrl)
+
+}
+
+func (cf *SSMCredentialsFinder) GetDBCredentials(dbUserSSMParam string, dbPasswordSSMParam string, dbNameSSMParam string, dbUrlSSMParam string) (*domain.DBCredentials, error) {
+	log.Printf("FindNeo4jCredentials -> dbUserSSMParam: %s, dbPasswordSSMParam: %s, dbNameSSMParam: %s, dbUrlSSMParam: %s", dbUserSSMParam, dbPasswordSSMParam, dbNameSSMParam, dbUrlSSMParam)
+	response := cf.fetchSSMParams(&dbUserSSMParam, &dbPasswordSSMParam, &dbNameSSMParam, &dbUrlSSMParam)
+
+	neo4jCreds := domain.DBCredentials{
+		User:     response[dbUserSSMParam],
+		Password: response[dbPasswordSSMParam],
+		Url:      response[dbUrlSSMParam],
+		Name:     response[dbNameSSMParam],
+	}
+
+	return &neo4jCreds, nil
+}
+
 func (cf *SSMCredentialsFinder) fetchSSMParams(params ...*string) map[string]string {
 
 	response := make(map[string]string)

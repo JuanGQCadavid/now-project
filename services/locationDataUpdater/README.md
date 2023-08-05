@@ -16,4 +16,6 @@ This service is responsable for updating filter database base on new spots that 
 ## Useful links
 * TBD
 
+
+## Local test
 docker run --name mysql -p 3306:3306 -p 33006:33006 -e MYSQL_ROOT_PASSWORD=admin  -e MYSQL_PASSWORD=admin -e MYSQL_USER=admin -e MYSQL_DATABASE=pululapp -d mysql
