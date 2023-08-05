@@ -22,9 +22,9 @@ func NewRDSRepoFromEnv() (*RDSRepository, error) {
 	}, nil
 }
 
-func NewRDSRepo(connector *MysqlConnector) (RDSRepository, error) {
+func NewRDSRepo(connector *MysqlConnector) (*RDSRepository, error) {
 
-	return RDSRepository{
+	return &RDSRepository{
 		connector: connector,
 	}, nil
 }

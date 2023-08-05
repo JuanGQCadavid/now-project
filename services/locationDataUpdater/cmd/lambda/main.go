@@ -12,6 +12,7 @@ import (
 	"github.com/JuanGQCadavid/now-project/services/locationDataUpdater/internal/core/service"
 	"github.com/JuanGQCadavid/now-project/services/locationDataUpdater/internal/repositories/rds"
 	"github.com/JuanGQCadavid/now-project/services/pkgs/common/logs"
+	"github.com/JuanGQCadavid/now-project/services/pkgs/credentialsFinder/cmd/ssm"
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
 )
@@ -29,7 +30,22 @@ func HandleRequest(ctx context.Context, body *events.SQSEvent) (*string, error) 
 	logs.Info.Println("Gin cold start")
 	records := body.Records
 
-	location, err := rds.NewRDSRepoFromEnv()
+	credsFinder := ssm.NewSSMCredentialsFinder()
+	credentials, err := credsFinder.GetDBCredentialsFromDefaultEnv()
+
+	if err != nil {
+		logs.Error.Println("we fail to Fetch the envs")
+		return nil, err
+	}
+
+	connector, err := rds.NewConector(credentials.User, credentials.Password, credentials.Name, credentials.Url)
+
+	if err != nil {
+		logs.Error.Println("we fail to create the connector")
+		return nil, err
+	}
+
+	location, err := rds.NewRDSRepo(connector)
 
 	if err != nil {
 		logs.Error.Println("we fail to create the repository")
