@@ -44,12 +44,21 @@ func (repo *locationRepository) CrateLocation(date domain.DatesLocation) error {
 
 }
 
-func (repo *locationRepository) RemoveLocation(string) error {
+func (repo *locationRepository) RemoveLocation(dateID string) error {
+	logs.Info.Printf("RemoveLocation: dateID: %v\n", dateID)
+
+	result := repo.connector.session.Unscoped().Delete(&domain.DatesLocation{}, &dateID)
+
+	if result.Error != nil {
+		logs.Error.Println("Error while deleting date: ", result.Error)
+		return result.Error
+	}
+
+	logs.Info.Printf("%+v", result)
 	return nil
 }
 
 func (repo *locationRepository) UpdateLocationStatus(dateID string, state domain.DateState) error {
-
 	logs.Info.Printf("UpdateLocationStatus: dateID: %v, status: %v \n", dateID, state)
 
 	date := domain.DatesLocation{}
