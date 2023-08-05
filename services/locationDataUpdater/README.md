@@ -1,5 +1,11 @@
 # Location Data Updater.
 
+## Packages
+
+GORM for ORM in golang
+* go get gorm.io/gorm
+* go get gorm.io/driver/mysql
+
 ## WTF?
 
 This service is responsable for updating filter database base on new spots that where created in other databases.
@@ -10,4 +16,4 @@ This service is responsable for updating filter database base on new spots that 
 ## Useful links
 * TBD
 
-
+docker run --name mysql -p 3306:3306 -p 33006:33006 -e MYSQL_ROOT_PASSWORD=admin  -e MYSQL_PASSWORD=admin -e MYSQL_USER=admin -e MYSQL_DATABASE=pululapp -d mysql
