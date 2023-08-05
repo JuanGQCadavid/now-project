@@ -12,6 +12,7 @@ import (
 	"github.com/JuanGQCadavid/now-project/services/locationDataUpdater/internal/core/service"
 	"github.com/JuanGQCadavid/now-project/services/locationDataUpdater/internal/repositories/rds"
 	"github.com/JuanGQCadavid/now-project/services/pkgs/common/logs"
+
 	"github.com/JuanGQCadavid/now-project/services/pkgs/credentialsFinder/cmd/ssm"
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
