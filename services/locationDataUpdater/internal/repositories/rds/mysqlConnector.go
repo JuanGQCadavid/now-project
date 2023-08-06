@@ -18,7 +18,6 @@ type MysqlConnector struct {
 
 func NewConector(dbUser string, dbPassword string, dbName string, dbUrl string) (*MysqlConnector, error) {
 	session, err := gorm.Open(mysql.Open(fmt.Sprintf("%s:%s@tcp(%s:3306)/%s?charset=utf8&parseTime=true", dbUser, dbPassword, dbUrl, dbName)), &gorm.Config{})
-
 	if err != nil {
 		logs.Error.Println("We fail to create the connection to the DB, error: ", err.Error())
 	}

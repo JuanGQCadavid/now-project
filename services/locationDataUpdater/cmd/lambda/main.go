@@ -47,6 +47,9 @@ func HandleRequest(ctx context.Context, body *events.SQSEvent) (*string, error) 
 		return nil, err
 	}
 
+	connector.Migrate()
+	logs.Error.Println("Migarte operation")
+
 	location, err := rds.NewRDSRepo(connector)
 
 	if err != nil {
