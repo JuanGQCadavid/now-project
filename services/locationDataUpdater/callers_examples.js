@@ -145,3 +145,30 @@ Body:
       "status":"SCHEDULED"
    }
 }
+
+
+
+---
+
+{
+   MessageId:74e41748-a83c-4076-8a83-4a56866888b6 
+   Body:{"dateId":"23b70dcd-14a9-4607-9740-7f6bf889e5de","spotId":"f11495e4-3b25-4aa8-9b7d-33583b7242fe","userId":"33ddab28-006b-4790-bf42-1832f90dc8d4","aditionalpayload":{"startTime":"15:00:00","confirmed":true,"id":"23b70dcd-14a9-4607-9740-7f6bf889e5de","spotId":"f11495e4-3b25-4aa8-9b7d-33583b7242fe","place":{"name":"Place Laureles","lat":6.245887,"lon":-75.589868,"mapProviderId":"Place_Laureles"},"dateStamp":"2023-08-06","host":{"hostId":"33ddab28-006b-4790-bf42-1832f90dc8d4","hostName":"karol G"},"status":"SCHEDULED"}} 
+   Attributes:map[
+      ApproximateFirstReceiveTimestamp:1691281143321 
+      ApproximateReceiveCount:13 
+      SenderId:AIDAJQR6QDGQ7PATMSYEY 
+      SentTimestamp:1691281143321
+   ] 
+   MessageAttributes:map[
+      Operation:{
+         StringValue:0xc00001e860 
+         BinaryValue:[] 
+         StringListValues:[] 
+         BinaryListValues:[] 
+         DataType:String
+      }
+   ] 
+   EventSourceARN:arn:aws:sqs:us-east-2:732596568988:updateLocationDataSQS 
+   EventSource:aws:sqs 
+   AWSRegion:us-east-2
+}

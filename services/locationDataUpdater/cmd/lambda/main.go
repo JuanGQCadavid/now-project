@@ -25,6 +25,7 @@ const (
 	onlineFinalize  = "onlineFinalize"
 	dateConfirmed   = "dateConfirmed"
 	dateUnconfirmed = "dateUnconfirmed"
+	operation       = "Operation"
 )
 
 func HandleRequest(ctx context.Context, body *events.SQSEvent) (*string, error) {
@@ -60,24 +61,9 @@ func HandleRequest(ctx context.Context, body *events.SQSEvent) (*string, error) 
 	for _, record := range records {
 		logs.Info.Printf("The  SQS: %+v\n", record)
 
-		snsMessage := events.SNSEntity{}
-		err := json.Unmarshal([]byte(record.Body), &snsMessage)
-
-		if err != nil {
-			logs.Error.Println("We found an error while marshalling the sns message: ", err.Error())
-			continue
-		}
-
-		// if len(snsMessage.Message) == 0 {
-		// 	logs.Error.Println("Message is empty ")
-		// 	onError = true
-		// 	continue
-		// }
-
-		logs.Info.Printf("The  SNS: %+v\n", snsMessage)
-
+		// It is not a SNS message, the body is now the Notification itself
 		notification := domain.Notification{}
-		err = json.Unmarshal([]byte(snsMessage.Message), &notification)
+		err := json.Unmarshal([]byte(record.Body), &notification)
 
 		if err != nil {
 			logs.Error.Println("We found an error while marshalling the notification: ", err.Error())
@@ -85,7 +71,7 @@ func HandleRequest(ctx context.Context, body *events.SQSEvent) (*string, error) 
 			continue
 		}
 
-		err = methodsMap(snsMessage.Subject, notification, service)
+		err = methodsMap(*record.MessageAttributes[operation].StringValue, notification, service)
 
 		if err != nil {
 			logs.Error.Println("We found an error while running the methods map:", err.Error())
