@@ -146,9 +146,9 @@ func castNotificationToDatesLocation(
 	lon := placeMap["lon"].(float64)
 
 	return &domain.DatesLocation{
-		StateID: notification.DateId,
-		Lat:     lat,
-		Lon:     lon,
+		DateID: notification.DateId,
+		Lat:    lat,
+		Lon:    lon,
 		State: domain.States{
 			StateID: dateState,
 		},
