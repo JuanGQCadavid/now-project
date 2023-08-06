@@ -67,11 +67,13 @@ func HandleRequest(ctx context.Context, body *events.SQSEvent) (*string, error) 
 			continue
 		}
 
-		if len(snsMessage.Message) == 0 {
-			logs.Error.Println("Message is empty ")
-			onError = true
-			continue
-		}
+		// if len(snsMessage.Message) == 0 {
+		// 	logs.Error.Println("Message is empty ")
+		// 	onError = true
+		// 	continue
+		// }
+
+		logs.Info.Printf("The  SNS: %+v\n", snsMessage)
 
 		notification := domain.Notification{}
 		err = json.Unmarshal([]byte(snsMessage.Message), &notification)
