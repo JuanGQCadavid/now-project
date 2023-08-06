@@ -112,6 +112,7 @@ func (s *Service) Finalize(spotId string, requestUserId string) error {
 	}
 
 	s.notifer.SchedulePatternActivity(ports.OnlineFinalize, domain.Notification{
+		DateId: dateIdToStop,
 		SpotId: spotId,
 		UserId: requestUserId,
 	})
@@ -148,6 +149,7 @@ func (s *Service) Resume(spotId string, requestUserId string) error {
 
 	s.notifer.SchedulePatternActivity(ports.OnlineResume, domain.Notification{
 		SpotId: spotId,
+		DateId: dateIdToStop,
 		UserId: requestUserId,
 	})
 
@@ -194,6 +196,7 @@ func (s *Service) Stop(spotId string, requestUserId string) error {
 
 	s.notifer.SchedulePatternActivity(ports.OnlineStop, domain.Notification{
 		SpotId: spotId,
+		DateId: dateIdToStop,
 		UserId: requestUserId,
 	})
 
@@ -261,6 +264,7 @@ func (s *Service) Start(spotId string, requestUserId string, durationApproximate
 	}
 
 	s.notifer.SchedulePatternActivity(ports.OnlineStart, domain.Notification{
+		DateId:           dateInfo.DateId,
 		SpotId:           spotId,
 		UserId:           requestUserId,
 		Aditionalpayload: onlineSpot,
