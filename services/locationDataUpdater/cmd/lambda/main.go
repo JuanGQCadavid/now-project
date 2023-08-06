@@ -58,6 +58,7 @@ func HandleRequest(ctx context.Context, body *events.SQSEvent) (*string, error) 
 	var onError bool = false
 
 	for _, record := range records {
+		logs.Info.Printf("The  SQS: %+v\n", record)
 
 		snsMessage := events.SNSEntity{}
 		err := json.Unmarshal([]byte(record.Body), &snsMessage)
