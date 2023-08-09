@@ -57,6 +57,7 @@ func (svc *SearchSessionDynamoDbService) CreateSession(sessionType session.Sessi
 	output, outErr := svc.dynamoDbConnector.Svc.PutItem(input)
 
 	if outErr != nil {
+		// TODO -> We should handle this error
 		log.Fatalf("Got error on the output of the put item : %s", outErr)
 	}
 

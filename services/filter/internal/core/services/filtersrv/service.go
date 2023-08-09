@@ -2,12 +2,12 @@ package filtersrv
 
 import (
 	"fmt"
-	"log"
 	"time"
 
 	"github.com/JuanGQCadavid/now-project/services/filter/internal/core/domain"
 	"github.com/JuanGQCadavid/now-project/services/filter/internal/core/domain/session"
 	"github.com/JuanGQCadavid/now-project/services/filter/internal/core/ports"
+	"github.com/JuanGQCadavid/now-project/services/pkgs/common/logs"
 )
 
 type service struct {
@@ -41,25 +41,26 @@ func (srv *service) generatePoints(centralPoint domain.LatLng, radious float64) 
 
 }
 
-//{
-// 	"places": [
-// 		{
-// 			"id" : <String>,
-// 			"type": [ "ONLINE" |  "EVENT" | "UPCOMMING" ],
-// 			"emoji" : <String>, // The emoji code
-// 			"startsIn": <DateTime> // Only if the event is a upcomming one.
-// 		}
-// 		...
-// 		...
-// 		...
-// 		{
-// 			"id" : <String>,
-// 			"type": [ "ONLINE" |  "EVENT" | "UPCOMMING" ],
-// 			"emoji" : <String>, // The emoji code
-// 			"startsIn": <DateTime> // Only if the event is a upcomming one.
-// 		}
-// 	]
-// }
+//	{
+//		"places": [
+//			{
+//				"id" : <String>,
+//				"type": [ "ONLINE" |  "EVENT" | "UPCOMMING" ],
+//				"emoji" : <String>, // The emoji code
+//				"startsIn": <DateTime> // Only if the event is a upcomming one.
+//			}
+//			...
+//			...
+//			...
+//			{
+//				"id" : <String>,
+//				"type": [ "ONLINE" |  "EVENT" | "UPCOMMING" ],
+//				"emoji" : <String>, // The emoji code
+//				"startsIn": <DateTime> // Only if the event is a upcomming one.
+//			}
+//		]
+//	}
+//
 // TODO -> should we add the city parameter ?
 func (srv *service) FilterByProximity(centralPointLat float64, centralPointLng float64, radious float64, sessionData session.SearchSessionData, format ports.OutputFormat) (domain.Locations, error) {
 	//Procedure:
@@ -72,7 +73,7 @@ func (srv *service) FilterByProximity(centralPointLat float64, centralPointLng f
 	//	The spots info fetched by spot service but in short format
 
 	// 1. Create pointes A and B
-	log.Println(fmt.Sprintf("FilterByProximity - centralPointLat: %f, centralPointLng: %f, radious: %f, sessionData: %+v", centralPointLat, centralPointLng, radious, sessionData))
+	logs.Info.Println(fmt.Sprintf("FilterByProximity - centralPointLat: %f, centralPointLng: %f, radious: %f, sessionData: %+v", centralPointLat, centralPointLng, radious, sessionData))
 
 	var pointA, pointB domain.LatLng = srv.generatePoints(
 		domain.LatLng{
@@ -85,8 +86,8 @@ func (srv *service) FilterByProximity(centralPointLat float64, centralPointLng f
 	var err error
 	// 2. Fetch the spotsIds from LocationRepository
 	if sessionData.SessionConfiguration.SessionType != session.Empty && len(sessionData.Spots) > 0 {
-		spots := srv.unfoldSpotsIds(sessionData.Spots)
-		locations, err = srv.locationRepository.FetchSpotsIdsByAreaExcludingSpots(pointA, pointB, spots)
+		dates := srv.unfoldDatesIds(sessionData.Spots)
+		locations, err = srv.locationRepository.FetchSpotsIdsByAreaExcludingSpots(pointA, pointB, dates)
 	} else {
 		locations, err = srv.locationRepository.FetchSpotsIdsByArea(pointA, pointB)
 	}
@@ -104,19 +105,19 @@ func (srv *service) FilterByProximity(centralPointLat float64, centralPointLng f
 	if err != nil {
 		switch err {
 		case ports.ErrBodyRequestUnmarshal:
-			log.Println("[ERROR] The process halts wile performign the body request unmarshal, returning empty spots")
+			logs.Error.Println("The process halts wile performign the body request unmarshal, returning empty spots")
 			break
 		case ports.ErrBodyResponseUnmarshal:
-			log.Println("[ERROR] The process halts wile performign the body response unmarshal, returning empty spots")
+			logs.Error.Println("The process halts wile performign the body response unmarshal, returning empty spots")
 			break
 		case ports.ErrBodyResponseReadFail:
-			log.Println("[ERROR] The process halts wile performign the body data read, returning empty spots")
+			logs.Error.Println("The process halts wile performign the body data read, returning empty spots")
 			break
 		case ports.ErrSendingRequest:
-			log.Println("[ERROR] The process halts wile performign the spot service call, returning empty spots")
+			logs.Error.Println("The process halts wile performign the spot service call, returning empty spots")
 			break
 		default:
-			log.Println("[ERROR] ", err)
+			logs.Error.Println("err -> ", err)
 			break
 		}
 
@@ -128,48 +129,48 @@ func (srv *service) FilterByProximity(centralPointLat float64, centralPointLng f
 	}, nil
 }
 
-func (srv *service) unfoldSpotsIds(sessionDataSpots map[string][]string) []string {
-	log.Println("unfoldSpotsIds. sessionDataSpots:", fmt.Sprintf("%+v", sessionDataSpots))
+func (srv *service) unfoldDatesIds(sessionDataSpots map[string][]string) []string {
+	logs.Info.Println("unfoldDatesIds. sessionDataSpots:", fmt.Sprintf("%+v", sessionDataSpots))
 
 	spots := []string{}
 	for key, value := range sessionDataSpots {
-		log.Println("Appending sesison data from timestamp: ", key)
+		logs.Info.Println("Appending sesison data from timestamp: ", key)
 		spots = append(spots, value...)
 	}
 
 	return spots
 }
 
+// HERE What is this doing ?
 func (srv *service) filterByTime(locations domain.Locations) []string {
 	// TODO -> This seems that is not eficient as it needs to resize when the capacity has been reached.
-	// TODO -> Does golang has garbage collector ? Or should I remove it manually ?
 	var placesToReturn []string
 
 	for _, spot := range locations.Places {
 		startTimeNow := time.Now().Format(time.RFC3339) // Fetch it from Spot!  spot.StartTime
 
 		startTime, err := time.Parse(time.RFC3339, startTimeNow)
-		log.Println("Time before parsed ->", startTimeNow)
-		log.Println("Time Parsed ->  ", startTime.String())
+		logs.Info.Println("Time before parsed ->", startTimeNow)
+		logs.Info.Println("Time Parsed ->  ", startTime.String())
 
 		if err != nil {
 			// TODO -> Do something when it fails here.
 		}
 
 		nowTime := time.Now()
-		log.Println("Time Now ->  ", nowTime.String())
+		logs.Info.Println("Time Now ->  ", nowTime.String())
 
 		// if it is > 0 then it was in the pass, if not it is on the future.
 		elapsedTime := nowTime.Sub(startTime)
-		log.Println("Time elapsedTime ->  ", elapsedTime.String())
+		logs.Info.Println("Time elapsedTime ->  ", elapsedTime.String())
 
 		// The it was on the past
 		if elapsedTime < 0 && -elapsedTime > srv.maximunTimeWindow {
-			log.Println("Boom chacalaca!!!!!!!!!!!!")
+			logs.Info.Println("Boom chacalaca!!!!!!!!!!!!")
 			continue
 		}
 
-		log.Println("finish")
+		logs.Info.Println("finish")
 		placesToReturn = append(placesToReturn, spot.EventInfo.UUID)
 	}
 

@@ -3,6 +3,6 @@ package domain
 type SpotType string
 
 const (
-	OnlineSpot    SpotType = "OnlineSpot"
-	ScheduledSpot SpotType = "ScheduledSpot"
+	OnlineSpot    SpotType = "online"
+	ScheduledSpot SpotType = "schedule"
 )

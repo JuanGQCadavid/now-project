@@ -1,13 +1,13 @@
 package locationrepositories
 
 import (
-	"database/sql"
 	"fmt"
-	"log"
 	"math"
 
 	"github.com/JuanGQCadavid/now-project/services/filter/internal/core/domain"
 	"github.com/JuanGQCadavid/now-project/services/filter/internal/core/ports"
+	"github.com/JuanGQCadavid/now-project/services/pkgs/common/logs"
+	"gorm.io/gorm"
 )
 
 type Coordinates struct {
@@ -18,113 +18,70 @@ type Coordinates struct {
 }
 
 type locationRepository struct {
-	db *sql.DB
+	db *gorm.DB
 }
 
 func NewLocationRepo() (*locationRepository, error) {
-	log.Println("NewLocationRepo")
-
 	connector, err := NewConectorFromEnv()
 
 	if err != nil {
-		log.Println("[ERROR] An error ocoured while calling NewConectorFromEnv")
-		log.Println("[ERROR] ", err.Error())
-		return nil, err
-	}
-
-	db, err := connector.CreateSession()
-
-	if err != nil {
-		log.Println("[ERROR] An error ocoured while calling MysqlConnector.CreateSession")
-		log.Println("[ERROR] ", err.Error())
+		logs.Error.Println("An error ocoured while calling NewConectorFromEnv, err -> ", err.Error())
 		return nil, err
 	}
 
 	return &locationRepository{
-		db: db,
+		db: connector,
 	}, nil
 }
-func NewLocationRepoWithDriver(db *sql.DB) (*locationRepository, error) {
-	log.Println("NewLocationRepoWithDriver")
+
+func NewLocationRepoWithDriver(db *gorm.DB) (*locationRepository, error) {
 	return &locationRepository{
 		db: db,
 	}, nil
 }
 
 func (repo *locationRepository) FetchSpotsIdsByAreaExcludingSpots(pointA domain.LatLng, pointB domain.LatLng, spotsIdsToExclude []string) (domain.Locations, error) {
-	log.Println("FetchSpotsIdsByAreaExcludingSpots. Params:", fmt.Sprintf("pointA: %+v, pointB: %+v, spotsIdsToExclude: %+v", pointA, pointB, spotsIdsToExclude))
+	logs.Info.Println("FetchSpotsIdsByAreaExcludingSpots. Params:", fmt.Sprintf("pointA: %+v, pointB: %+v, spotsIdsToExclude: %+v", pointA, pointB, spotsIdsToExclude))
 
 	if len(spotsIdsToExclude) == 0 {
-		log.Println("Spots to exclude are empty, calling default FetchSpotsIdsByArea")
+		logs.Info.Println("Spots to exclude are empty, calling default FetchSpotsIdsByArea")
 		return repo.FetchSpotsIdsByArea(pointA, pointB)
 	}
 
-	var inStatement string = ""
-
-	for index, value := range spotsIdsToExclude {
-		if index == 0 {
-			inStatement = fmt.Sprintf("(")
-		}
-		inStatement = fmt.Sprintf("%s \"%s\"", inStatement, value)
-
-		if index == (len(spotsIdsToExclude) - 1) {
-			inStatement = fmt.Sprintf("%s)", inStatement)
-		} else {
-			inStatement = fmt.Sprintf("%s,", inStatement)
-		}
-	}
-
-	log.Println("FetchSpotsIdsByAreaExcludingSpots. In Statement", inStatement)
-
 	var coord Coordinates = repo.generateCoordinates(pointA, pointB)
+	var datesLocations []DatesLocation
 
-	query := fmt.Sprintf(`
-	SELECT 
-		spotId, lat, lng 
-	FROM 
-		locations
-	WHERE
-		%f <= lat AND lat <= %f
-		AND
-		%f <= lng AND lng <= %f
-		AND spotId NOT IN %s`, coord.LatLeftLimit, coord.LatRigthLimit, coord.LntLeftLimit, coord.LntRigthLimit, inStatement)
-	// TODO -> We could map all query errors instead of returning a generic one
-	result, err := repo.db.Query(query)
+	result := repo.db.Where(
+		"? <= lat AND lat <= ? AND ? <= lon AND lon <= ? AND date_id NOT IN ?",
+		coord.LatLeftLimit, coord.LatRigthLimit, coord.LntLeftLimit, coord.LntRigthLimit, spotsIdsToExclude,
+	).Find(&datesLocations)
 
-	if err != nil {
-		log.Println("[ERROR] An error occoured while runnning Query")
-		log.Println("[ERROR] FetchSpotsIdsByAreaExcludingSpots. Query", query)
-		log.Println("[ERROR] ", err.Error())
+	if result.Error != nil {
+		logs.Error.Println("[ERROR] FetchSpotsIdsByAreaExcludingSpots - An error occoured while runnning Query, err: ", result.Error.Error())
 		return domain.Locations{}, ports.ErrQueringData
 	}
 
-	return repo.queryResultToLocations(result)
+	return repo.queryResultToLocations(datesLocations)
 }
 
 func (repo *locationRepository) FetchSpotsIdsByArea(pointA domain.LatLng, pointB domain.LatLng) (domain.Locations, error) {
-	log.Println("FetchSpotsIdsByArea. Params:", fmt.Sprintf("pointA: %+v, pointB: %+v", pointA, pointB))
+	logs.Info.Println("FetchSpotsIdsByArea. Params:", fmt.Sprintf("pointA: %+v, pointB: %+v", pointA, pointB))
 
 	var coord Coordinates = repo.generateCoordinates(pointA, pointB)
 
-	query := fmt.Sprintf(`
-	SELECT 
-		spotId, lat, lng 
-	FROM 
-		locations
-	WHERE
-		%f <= lat AND lat <= %f
-		AND
-		%f <= lng AND lng <= %f`, coord.LatLeftLimit, coord.LatRigthLimit, coord.LntLeftLimit, coord.LntRigthLimit)
+	var datesLocations []DatesLocation
 
-	result, err := repo.db.Query(query)
+	// Missing setting the name propperly
+	result := repo.db.Where(
+		"? <= lat AND lat <= ? AND ? <= lon AND lon <= ? ",
+		coord.LatLeftLimit, coord.LatRigthLimit, coord.LntLeftLimit, coord.LntRigthLimit,
+	).Find(&datesLocations)
 
-	if err != nil {
-		log.Println("[ERROR] An error occoured while runnning Query")
-		log.Println("[ERROR] FetchSpotsIdsByArea. Query", query)
-		log.Println("[ERROR] ", err.Error())
+	if result.Error != nil {
+		logs.Error.Println("FetchSpotsIdsByArea - An error occoured while runnning Query, err: ", result.Error.Error())
 		return domain.Locations{}, ports.ErrQueringData
 	}
-	return repo.queryResultToLocations(result)
+	return repo.queryResultToLocations(datesLocations)
 }
 
 func (repo *locationRepository) generateCoordinates(pointA domain.LatLng, pointB domain.LatLng) Coordinates {
@@ -146,27 +103,20 @@ func (repo *locationRepository) generateCoordinates(pointA domain.LatLng, pointB
 	}
 }
 
-func (repo *locationRepository) queryResultToLocations(result *sql.Rows) (domain.Locations, error) {
+func (repo *locationRepository) queryResultToLocations(datesLocations []DatesLocation) (domain.Locations, error) {
 
-	spotResult := []domain.Spot{}
+	spotResult := make([]domain.Spot, len(datesLocations))
 
-	for result.Next() {
-
-		var spotLocation SpotLocation
-		err := result.Scan(&spotLocation.SpotId, &spotLocation.Lat, &spotLocation.Lng)
-
-		if err != nil {
-			log.Println("There where a problem while trying to scan the query row")
-			return domain.Locations{}, err
-		}
-
+	for _, date := range datesLocations {
 		spotResult = append(spotResult, domain.Spot{
+			// TODO -> Check if this is needed, if not Just use the date
 			EventInfo: domain.Event{
-				UUID: spotLocation.SpotId,
+				UUID: date.DateID,
 			},
+
 			PlaceInfo: domain.Place{
-				Lat: spotLocation.Lat,
-				Lon: spotLocation.Lng,
+				Lat: date.Lat,
+				Lon: date.Lon,
 			},
 		})
 	}
