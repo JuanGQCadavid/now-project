@@ -107,8 +107,8 @@ func (repo *locationRepository) queryResultToLocations(datesLocations []DatesLoc
 
 	spotResult := make([]domain.Spot, len(datesLocations))
 
-	for _, date := range datesLocations {
-		spotResult = append(spotResult, domain.Spot{
+	for i, date := range datesLocations {
+		spotResult[i] = domain.Spot{
 			// TODO -> Check if this is needed, if not Just use the date
 			EventInfo: domain.Event{
 				UUID: date.DateID,
@@ -118,7 +118,7 @@ func (repo *locationRepository) queryResultToLocations(datesLocations []DatesLoc
 				Lat: date.Lat,
 				Lon: date.Lon,
 			},
-		})
+		}
 	}
 	return domain.Locations{
 		Places: spotResult,

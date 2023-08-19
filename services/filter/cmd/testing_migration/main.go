@@ -46,7 +46,31 @@ func main() {
 	}
 
 	logs.Info.Println(len(result.Places))
-	logs.Info.Println(result.Places[len(result.Places)-1])
+	exclude := make([]string, len(result.Places)/2)
+
+	for i, spot := range result.Places[:len(result.Places)/2] {
+		logs.Info.Printf("DateID: %v, lat: %v, long: %v", spot.EventInfo.UUID, spot.PlaceInfo.Lat, spot.PlaceInfo.Lon)
+		exclude[i] = spot.EventInfo.UUID
+	}
+
+	result2, err := repo.FetchSpotsIdsByAreaExcludingSpots(pA, pB, exclude)
+
+	logs.Info.Println(len(result2.Places), len(result.Places)-len(exclude))
+
+	foundAMatchCounter := 0
+	for _, spot1 := range result.Places {
+		for _, spot2 := range result2.Places {
+			if spot1.EventInfo.UUID == spot2.EventInfo.UUID {
+				foundAMatchCounter++
+			}
+		}
+	}
+
+	if foundAMatchCounter > 0 {
+		logs.Info.Println("There is a match ", foundAMatchCounter)
+	}
+	// logs.Info.Println(result2.Places[len(result.Places)-1])
+
 }
 
 func populateDummyData(driver *gorm.DB) {
