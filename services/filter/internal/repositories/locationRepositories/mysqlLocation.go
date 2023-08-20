@@ -17,6 +17,10 @@ type Coordinates struct {
 	LntRigthLimit float64
 }
 
+const (
+	ONLINE_STATE = "online"
+)
+
 type locationRepository struct {
 	db *gorm.DB
 }
@@ -52,8 +56,8 @@ func (repo *locationRepository) FetchSpotsIdsByAreaExcludingSpots(pointA domain.
 	var datesLocations []DatesLocation
 
 	result := repo.db.Where(
-		"? <= lat AND lat <= ? AND ? <= lon AND lon <= ? AND date_id NOT IN ?",
-		coord.LatLeftLimit, coord.LatRigthLimit, coord.LntLeftLimit, coord.LntRigthLimit, spotsIdsToExclude,
+		"? <= lat AND lat <= ? AND ? <= lon AND lon <= ? AND date_id NOT IN ? AND ? = state_id",
+		coord.LatLeftLimit, coord.LatRigthLimit, coord.LntLeftLimit, coord.LntRigthLimit, spotsIdsToExclude, ONLINE_STATE,
 	).Find(&datesLocations)
 
 	if result.Error != nil {
@@ -71,10 +75,9 @@ func (repo *locationRepository) FetchSpotsIdsByArea(pointA domain.LatLng, pointB
 
 	var datesLocations []DatesLocation
 
-	// Missing setting the name propperly
 	result := repo.db.Where(
-		"? <= lat AND lat <= ? AND ? <= lon AND lon <= ? ",
-		coord.LatLeftLimit, coord.LatRigthLimit, coord.LntLeftLimit, coord.LntRigthLimit,
+		"? <= lat AND lat <= ? AND ? <= lon AND lon <= ? AND ? = state_id",
+		coord.LatLeftLimit, coord.LatRigthLimit, coord.LntLeftLimit, coord.LntRigthLimit, ONLINE_STATE,
 	).Find(&datesLocations)
 
 	if result.Error != nil {
@@ -85,7 +88,6 @@ func (repo *locationRepository) FetchSpotsIdsByArea(pointA domain.LatLng, pointB
 }
 
 func (repo *locationRepository) generateCoordinates(pointA domain.LatLng, pointB domain.LatLng) Coordinates {
-	// TODO -> What if both pontA and pointB are the same ?
 	pointALatFloat := float64(pointA.Lat)
 	pointBLatFloat := float64(pointB.Lat)
 
@@ -109,9 +111,9 @@ func (repo *locationRepository) queryResultToLocations(datesLocations []DatesLoc
 
 	for i, date := range datesLocations {
 		spotResult[i] = domain.Spot{
-			// TODO -> Check if this is needed, if not Just use the date
-			EventInfo: domain.Event{
-				UUID: date.DateID,
+			DateInfo: domain.Date{
+				Id:   date.DateID,
+				Type: domain.SpotType(date.Type.TypeID),
 			},
 
 			PlaceInfo: domain.Place{

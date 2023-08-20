@@ -49,7 +49,7 @@ func main() {
 	exclude := make([]string, len(result.Places)/2)
 
 	for i, spot := range result.Places[:len(result.Places)/2] {
-		logs.Info.Printf("DateID: %v, lat: %v, long: %v", spot.EventInfo.UUID, spot.PlaceInfo.Lat, spot.PlaceInfo.Lon)
+		logs.Info.Printf("DateID: %v, Type: %v lat: %v, long: %v", spot.DateInfo.Id, spot.DateInfo.Type, spot.PlaceInfo.Lat, spot.PlaceInfo.Lon)
 		exclude[i] = spot.EventInfo.UUID
 	}
 
@@ -60,7 +60,7 @@ func main() {
 	foundAMatchCounter := 0
 	for _, spot1 := range result.Places {
 		for _, spot2 := range result2.Places {
-			if spot1.EventInfo.UUID == spot2.EventInfo.UUID {
+			if spot1.DateInfo.Id == spot2.DateInfo.Id {
 				foundAMatchCounter++
 			}
 		}

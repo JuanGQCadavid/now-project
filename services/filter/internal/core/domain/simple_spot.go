@@ -7,3 +7,11 @@ type SimpleSpot struct {
 	StartTime string   `json:"spotStartTime"`
 	LatLng    LatLng   `json:"latLng"`
 }
+
+type SpotType string
+
+const (
+	OnlineSpot    SpotType = "online"
+	ScheduledSpot SpotType = "schedule"
+	Other         SpotType = "other"
+)
