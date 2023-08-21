@@ -16,6 +16,7 @@ const (
 
 var (
 	ErrSpotServiceFail = errors.New("There were an error while calling Spot service")
+	ErrRepositoryFail  = errors.New("There were an error while fetching the data in the repository")
 )
 
 type FilterService interface {

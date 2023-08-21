@@ -62,7 +62,7 @@ func (srv *service) generatePoints(centralPoint domain.LatLng, radious float64) 
 //	}
 //
 // TODO -> should we add the city parameter ?
-func (srv *service) FilterByProximity(centralPointLat float64, centralPointLng float64, radious float64, sessionData session.SearchSessionData, format ports.OutputFormat) (domain.Locations, error) {
+func (srv *service) FilterByProximity(centralPointLat float64, centralPointLng float64, radious float64, sessionData session.SearchSessionData, format ports.OutputFormat) (*domain.Locations, error) {
 	//Procedure:
 	//	1. Create pointes A and B
 	// 	2. Fetch the spotsIds from LocationRepository
@@ -93,14 +93,18 @@ func (srv *service) FilterByProximity(centralPointLat float64, centralPointLng f
 	}
 
 	if err != nil {
-		// TODO -> Do something when it fails here.
+		logs.Error.Println(ports.ErrRepositoryFail)
+		return nil, ports.ErrRepositoryFail
 	}
 
-	// 4. Remove all spots that are not in the 3 time window
-	placesToReturn := srv.filterByTime(locations)
+	// 4. Get spots ids
+	placesToReturn := srv.getDatesId(locations)
 
 	// 5. Call Spots Service in order to get the spots info
 	spotsInfo, err := srv.spotService.GetSpotsCardsInfo(placesToReturn, format)
+
+	// 6. remove spots that are in the future
+	// srv.filterByTime(locations)
 
 	if err != nil {
 		switch err {
@@ -121,12 +125,22 @@ func (srv *service) FilterByProximity(centralPointLat float64, centralPointLng f
 			break
 		}
 
-		return domain.Locations{}, ports.ErrSpotServiceFail
+		return &domain.Locations{}, ports.ErrSpotServiceFail
 	}
 
-	return domain.Locations{
+	return &domain.Locations{
 		Places: spotsInfo,
 	}, nil
+}
+
+func (srv *service) getDatesId(location domain.Locations) []string {
+	ids := make([]string, len(location.Places))
+
+	for i, spot := range location.Places {
+		ids[i] = spot.DateInfo.Id
+	}
+
+	return ids
 }
 
 func (srv *service) unfoldDatesIds(sessionDataSpots map[string][]string) []string {
@@ -142,11 +156,11 @@ func (srv *service) unfoldDatesIds(sessionDataSpots map[string][]string) []strin
 }
 
 // HERE What is this doing ?
-func (srv *service) filterByTime(locations domain.Locations) []string {
-	// TODO -> This seems that is not eficient as it needs to resize when the capacity has been reached.
-	var placesToReturn []string
+func (srv *service) filterByTime(locations domain.Locations) []domain.Spot {
+	placesToReturn := make([]domain.Spot, 0, len(locations.Places))
 
 	for _, spot := range locations.Places {
+		//TODO Maybe the time format should change
 		startTimeNow := time.Now().Format(time.RFC3339) // Fetch it from Spot!  spot.StartTime
 
 		startTime, err := time.Parse(time.RFC3339, startTimeNow)
@@ -171,7 +185,7 @@ func (srv *service) filterByTime(locations domain.Locations) []string {
 		}
 
 		logs.Info.Println("finish")
-		placesToReturn = append(placesToReturn, spot.EventInfo.UUID)
+		placesToReturn = append(placesToReturn, spot)
 	}
 
 	return placesToReturn
