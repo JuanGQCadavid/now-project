@@ -83,6 +83,13 @@ func (command *GetFullMultipleSpotsCommand) getSpotDataFromResult(record *db.Rec
 
 	}
 
+	// Date
+	// date_confirmed, isConfirmed := record.Get("date_confirmed")
+	date_date, _ := record.Get("date_date")
+	date_durationApproximatedInSeconds, _ := record.Get("date_durationApproximatedInSeconds")
+	date_startTime, _ := record.Get("date_startTime")
+	date_UUID, _ := record.Get("date_UUID")
+
 	logs.Info.Printf("%+v", record)
 
 	return domain.Spot{
@@ -106,6 +113,12 @@ func (command *GetFullMultipleSpotsCommand) getSpotDataFromResult(record *db.Rec
 		TopicsInfo: domain.Topic{
 			PrincipalTopic:  primary_tag,
 			SecondaryTopics: secondary_tag,
+		},
+		DateInfo: domain.Date{
+			DateTime:                      getStringFromInterface(date_date),
+			DurationApproximatedInSeconds: getInt64FromInterface(date_durationApproximatedInSeconds),
+			Id:                            getStringFromInterface(date_UUID),
+			StartTime:                     getStringFromInterface(date_startTime),
 		},
 	}
 
