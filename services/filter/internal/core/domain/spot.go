@@ -13,11 +13,11 @@ type Spot struct {
 }
 
 type Date struct {
-	DateTime                      string   `json:"dateTime,omitempty"`
-	Type                          SpotType `json:"type,omitempty"`
-	Id                            string   `json:"id,omitempty"`
-	DurationApproximatedInSeconds int64    `json:"durationApproximated,omitempty"`
-	StartTime                     string   `json:"startTime,omitempty"`
+	DateTime string `json:"dateTime,omitempty"`
+	// Type                          SpotType `json:"type,omitempty"`
+	Id                            string `json:"id,omitempty"`
+	DurationApproximatedInSeconds int64  `json:"durationApproximated,omitempty"`
+	StartTime                     string `json:"startTime,omitempty"`
 }
 type Event struct {
 	Name           string `json:"name,omitempty"`

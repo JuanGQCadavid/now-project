@@ -1,35 +1,39 @@
 package main
 
 import (
-	"log"
-
 	"github.com/JuanGQCadavid/now-project/services/filter/internal/core/services/filtersrv"
 	"github.com/JuanGQCadavid/now-project/services/filter/internal/handlers/httphdl"
 	locationrepositories "github.com/JuanGQCadavid/now-project/services/filter/internal/repositories/locationRepositories"
 	sessionservice "github.com/JuanGQCadavid/now-project/services/filter/internal/repositories/sessionService"
 	spotservicelambda "github.com/JuanGQCadavid/now-project/services/filter/internal/repositories/spotServiceLambda"
+	"github.com/JuanGQCadavid/now-project/services/pkgs/common/logs"
 	"github.com/JuanGQCadavid/now-project/services/pkgs/credentialsFinder/cmd/ssm"
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
-	log.SetFlags(log.LstdFlags)
-
 	credsFinder := ssm.NewSSMCredentialsFinder()
-
-	dbDriver, err := credsFinder.FindDBCredentialsFromDefaultEnv()
+	credentials, err := credsFinder.GetDBCredentialsFromDefaultEnv()
 
 	if err != nil {
-		log.Println("There were an error while attempting to create drivers")
-		log.Fatalln(err.Error())
+		logs.Error.Fatalln("we fail to Fetch the envs")
+	}
+
+	dbDriver, err := locationrepositories.NewConector(credentials.User, credentials.Password, credentials.Name, credentials.Url)
+
+	if err != nil {
+		logs.Error.Println("There were an error while attempting to create drivers")
+		logs.Error.Fatalln(err.Error())
 	}
 
 	// TODO -> How can we return an error from an init method ?
 	locationRepo, err := locationrepositories.NewLocationRepoWithDriver(dbDriver)
 
 	if err != nil {
-		panic(err.Error())
+		logs.Error.Println("There were an error while attempting to create the repository")
+		logs.Error.Fatalln(err.Error())
 	}
+
 	spotSrv, err := spotservicelambda.NewSpotServiceLambda()
 
 	if err != nil {
@@ -44,5 +48,5 @@ func main() {
 	router.GET("/filter/proximity", filterHandler.FilterSpots)
 	router.Static("/filter/swagger", "../../swagger")
 
-	router.Run(":8001")
+	router.Run(":8000")
 }

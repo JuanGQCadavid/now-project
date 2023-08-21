@@ -112,8 +112,8 @@ func (repo *locationRepository) queryResultToLocations(datesLocations []DatesLoc
 	for i, date := range datesLocations {
 		spotResult[i] = domain.Spot{
 			DateInfo: domain.Date{
-				Id:   date.DateID,
-				Type: domain.SpotType(date.Type.TypeID),
+				Id: date.DateID,
+				// Type: domain.SpotType(date.Type.TypeID),
 			},
 
 			PlaceInfo: domain.Place{

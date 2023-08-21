@@ -148,7 +148,7 @@ func (hdl *HTTPHandler) FilterSpots(context *gin.Context) {
 			log.Println("Empty response, omiting storing ids on session.")
 		}
 		httpResponse := &domain.ProxymityResult{
-			Result: response,
+			Result: *response,
 			SearchSessionResponse: domain.SearchSessionResponse{
 				SessionDetail: *domain.NewSessionDetails(sessionData.SessionConfiguration.SessionId, sessionData.SessionConfiguration.TTL),
 			},
@@ -159,7 +159,7 @@ func (hdl *HTTPHandler) FilterSpots(context *gin.Context) {
 
 	if onSessionError {
 		httpResponse := &domain.ProxymityResult{
-			Result: response,
+			Result: *response,
 			SearchSessionResponse: domain.SearchSessionResponse{
 				OnError: *onError,
 			},
@@ -167,7 +167,7 @@ func (hdl *HTTPHandler) FilterSpots(context *gin.Context) {
 		context.JSON(200, httpResponse)
 	} else {
 		httpResponse := &domain.ProxymityResult{
-			Result: response,
+			Result: *response,
 		}
 		context.JSON(200, httpResponse)
 	}

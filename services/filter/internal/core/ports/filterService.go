@@ -20,5 +20,5 @@ var (
 )
 
 type FilterService interface {
-	FilterByProximity(centralPointLat float64, centralPointLng float64, radious float64, session session.SearchSessionData, format OutputFormat) (domain.Locations, error)
+	FilterByProximity(centralPointLat float64, centralPointLng float64, radious float64, session session.SearchSessionData, format OutputFormat) (*domain.Locations, error)
 }

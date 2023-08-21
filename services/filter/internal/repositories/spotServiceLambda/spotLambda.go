@@ -33,15 +33,15 @@ func NewSpotServiceLambda() (*SpotServiceLambda, error) {
 
 	return &SpotServiceLambda{
 		SpotServiceURL: spotURL,
-		GetSpotsURI:    "getSpots",
+		GetSpotsURI:    "bulk/fetch",
 	}, nil
 }
 
-func (srv *SpotServiceLambda) GetSpotsCardsInfo(spots []string, format ports.OutputFormat) ([]domain.Spot, error) {
-	log.Printf("GetSpotsCardsInfo | \nspots:%+v ,\nformat:%s\n", spots, string(format))
+func (srv *SpotServiceLambda) GetSpotsCardsInfo(datesIds []string, format ports.OutputFormat) ([]domain.Spot, error) {
+	log.Printf("GetSpotsCardsInfo | \ndatesIds:%+v ,\nformat:%s\n", datesIds, string(format))
 
 	body, err := json.Marshal(map[string]interface{}{
-		"spotIds": spots,
+		"datesIds": datesIds,
 	})
 
 	if err != nil {
