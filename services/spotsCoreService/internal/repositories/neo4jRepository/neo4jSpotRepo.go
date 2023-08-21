@@ -57,18 +57,18 @@ func (r Neo4jSpotRepo) Get(id string, format ports.OutputFormat) (domain.Spot, e
 	return *records.(*domain.Spot), nil
 }
 
-func (r Neo4jSpotRepo) GetSpots(spotIds []string, format ports.OutputFormat) (domain.MultipleSpots, error) {
-	logs.Info.Println("Repository: GetSpots", fmt.Sprintf("%+v", spotIds))
+func (r Neo4jSpotRepo) GetSpotsByDatesId(datesIds []string, format ports.OutputFormat) (domain.MultipleSpots, error) {
+	logs.Info.Println("Repository: GetSpots", fmt.Sprintf("%+v", datesIds))
 
 	var command commands.Command
 
 	switch format {
 	case ports.FULL_FORMAT:
-		command = commands.NewGetFullMultipleSpotsCommand(spotIds)
+		command = commands.NewGetFullMultipleSpotsCommand(datesIds)
 	case ports.SMALL_FORMAT:
-		command = commands.NewGetSmallMultipleSpotsCommand(spotIds)
+		command = commands.NewGetSmallMultipleSpotsCommand(datesIds)
 	default:
-		command = commands.NewGetFullMultipleSpotsCommand(spotIds)
+		command = commands.NewGetFullMultipleSpotsCommand(datesIds)
 	}
 
 	session := r.driver.NewSession(neo4j.SessionConfig{})

@@ -22,7 +22,7 @@ var (
 type SpotService interface {
 	// Fetch
 	Get(spotId string, format OutputFormat) (domain.Spot, error)
-	GetSpots(spotIds []string, format OutputFormat) (domain.MultipleSpots, error)
+	GetSpotsByDatesIds(spotIds []string, format OutputFormat) (domain.MultipleSpots, error)
 	CreateSpot(spot domain.Spot) (domain.Spot, error)
 
 	UpdateSpotEvent(spotId string, ownerId string, spotEvent *domain.Event) error

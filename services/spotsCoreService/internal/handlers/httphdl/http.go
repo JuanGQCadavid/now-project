@@ -63,14 +63,14 @@ func (hdl *HTTPHandler) GetSpot(context *gin.Context) {
 func (hdl *HTTPHandler) GetMultipleSpots(context *gin.Context) {
 
 	// Getting data from call
-	spotIds := SpotsIdsRequest{}
-	context.BindJSON(&spotIds)
+	datesIds := SpotsIdsRequest{}
+	context.BindJSON(&datesIds)
 
 	format := hdl.getOuputFormat(context.DefaultQuery("format", "empty"))
 
-	logs.Info.Printf("\nHandler: GetEvents \n\tSpotIds: %+v, \n\tFormat: %s", spotIds, string(format))
+	logs.Info.Printf("\nHandler: GetEvents \n\tDateIds: %+v, \n\tFormat: %s", datesIds, string(format))
 
-	multipleSpots, err := hdl.spotService.GetSpots(spotIds.SpotIds, format)
+	multipleSpots, err := hdl.spotService.GetSpotsByDatesIds(datesIds.DatesIds, format)
 
 	if err != nil {
 		logs.Error.Println(err)

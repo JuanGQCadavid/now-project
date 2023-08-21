@@ -45,10 +45,10 @@ func (s *service) Get(spotId string, format ports.OutputFormat) (domain.Spot, er
 	return spotFounded, nil
 }
 
-func (s *service) GetSpots(spotIds []string, format ports.OutputFormat) (domain.MultipleSpots, error) {
+func (s *service) GetSpotsByDatesIds(datesIds []string, format ports.OutputFormat) (domain.MultipleSpots, error) {
 	// TODO -> Should we check that all elements are not empy ?
-	logs.Info.Println("Service: GetSpots ->", fmt.Sprintf("%+v", spotIds))
-	return s.spotRepository.GetSpots(spotIds, format)
+	logs.Info.Println("Service: GetSpotsByDatesIds ->", fmt.Sprintf("%+v", datesIds))
+	return s.spotRepository.GetSpotsByDatesId(datesIds, format)
 }
 
 /*

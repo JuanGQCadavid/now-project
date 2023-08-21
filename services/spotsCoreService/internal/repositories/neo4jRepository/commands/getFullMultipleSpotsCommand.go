@@ -1,6 +1,8 @@
 package commands
 
 import (
+	_ "embed"
+
 	"github.com/JuanGQCadavid/now-project/services/pkgs/common/logs"
 	"github.com/JuanGQCadavid/now-project/services/spotsCoreService/internal/core/domain"
 	"github.com/neo4j/neo4j-go-driver/v4/neo4j"
@@ -8,38 +10,24 @@ import (
 )
 
 type GetFullMultipleSpotsCommand struct {
-	spotIds []string
+	datesIds []string
+}
+
+var (
+	//go:embed queries/fullBulkFetch.cypher
+	fullBulkFetch string
+)
+
+func NewGetFullMultipleSpotsCommand(datesIds []string) *GetFullMultipleSpotsCommand {
+	return &GetFullMultipleSpotsCommand{
+		datesIds: datesIds,
+	}
 }
 
 func (command *GetFullMultipleSpotsCommand) Run(tr neo4j.Transaction) (interface{}, error) {
+	cyperParams := map[string]interface{}{"datesIds": command.datesIds}
 
-	var cypherQ string = `
-	MATCH
-		(host:Person)-[:OWNS]->(event:Event)-[:ON]->(place:Place)
-	WHERE
-		event.UUID IN $spotIds
-		AND NOT (event)-[:IS_DELETED]->(event)
-	OPTIONAL MATCH (tags:Topic)-[tagged:TAGGED]->(event)
-	RETURN
-		event.description as event_desc,
-		event.name as event_name,
-		event.maximunCapacty as event_max_capacity,
-		event.UUID as event_UUID,
-		event.emoji as event_emoji,
-		place.name as place_name,
-		place.lon as place_lon,
-		place.mapProviderId as place_provider_id,
-		place.lat as place_lat,
-		host.id as host_id,
-		host.name as host_name,
-		collect(tags.tag) as tag_tags,
-		collect(tagged.isPrincipal) as tag_principals
-	`
-	logs.Info.Println(cypherQ)
-
-	cyperParams := map[string]interface{}{"spotIds": command.spotIds}
-
-	result, err := tr.Run(cypherQ, cyperParams)
+	result, err := tr.Run(fullBulkFetch, cyperParams)
 
 	var spotsToReturn []domain.Spot = []domain.Spot{}
 
@@ -121,10 +109,4 @@ func (command *GetFullMultipleSpotsCommand) getSpotDataFromResult(record *db.Rec
 		},
 	}
 
-}
-
-func NewGetFullMultipleSpotsCommand(spotIds []string) *GetFullMultipleSpotsCommand {
-	return &GetFullMultipleSpotsCommand{
-		spotIds: spotIds,
-	}
 }

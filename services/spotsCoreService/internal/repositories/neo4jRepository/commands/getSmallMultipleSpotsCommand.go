@@ -1,6 +1,8 @@
 package commands
 
 import (
+	_ "embed"
+
 	"github.com/JuanGQCadavid/now-project/services/pkgs/common/logs"
 	"github.com/JuanGQCadavid/now-project/services/spotsCoreService/internal/core/domain"
 	"github.com/neo4j/neo4j-go-driver/v4/neo4j"
@@ -8,34 +10,24 @@ import (
 )
 
 type GetSmallMultipleSpotsCommand struct {
-	spotIds []string
+	datesIds []string
+}
+
+var (
+	//go:embed queries/smallBulkFetch.cypher
+	smallBulkFetch string
+)
+
+func NewGetSmallMultipleSpotsCommand(datesIds []string) *GetSmallMultipleSpotsCommand {
+	return &GetSmallMultipleSpotsCommand{
+		datesIds: datesIds,
+	}
 }
 
 func (command *GetSmallMultipleSpotsCommand) Run(tr neo4j.Transaction) (interface{}, error) {
+	cyperParams := map[string]interface{}{"datesIds": command.datesIds}
 
-	var cypherQ string = `
-	MATCH
-		(host:Person)-[host_relation:OWNS]->(event:Event)-[location_relation:ON]->(place:Place)
-	WHERE
-		event.UUID IN $spotIds
-		AND NOT (event)-[:IS_DELETED]->(event)
-	OPTIONAL MATCH (tags:Topic)-[tagged:TAGGED]->(event)
-	RETURN
-		event.name as event_name,
-		event.UUID as event_UUID,
-		event.emoji as event_emoji,
-		place.lon as place_lon,
-		place.mapProviderId as place_provider_id,
-		place.lat as place_lat,
-		collect(tags.tag) as tag_tags,
-		collect(tagged.isPrincipal) as tag_principals
-	`
-
-	logs.Info.Println(cypherQ)
-
-	cyperParams := map[string]interface{}{"spotIds": command.spotIds}
-
-	result, err := tr.Run(cypherQ, cyperParams)
+	result, err := tr.Run(smallBulkFetch, cyperParams)
 
 	var spotsToReturn []domain.Spot = []domain.Spot{}
 
@@ -103,10 +95,4 @@ func (command *GetSmallMultipleSpotsCommand) getSpotDataFromResult(record *db.Re
 		},
 	}
 
-}
-
-func NewGetSmallMultipleSpotsCommand(spotIds []string) *GetSmallMultipleSpotsCommand {
-	return &GetSmallMultipleSpotsCommand{
-		spotIds: spotIds,
-	}
 }
