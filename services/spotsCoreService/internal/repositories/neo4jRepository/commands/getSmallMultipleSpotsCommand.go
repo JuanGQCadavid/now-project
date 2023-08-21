@@ -67,6 +67,13 @@ func (command *GetSmallMultipleSpotsCommand) getSpotDataFromResult(record *db.Re
 	secondary_tag := make([]string, 0, len(tags_principals_array))
 	primary_tag := ""
 
+	// Date
+	// date_confirmed, isConfirmed := record.Get("date_confirmed")
+	date_date, _ := record.Get("date_date")
+	date_durationApproximatedInSeconds, _ := record.Get("date_durationApproximatedInSeconds")
+	date_startTime, _ := record.Get("date_startTime")
+	date_UUID, _ := record.Get("date_UUID")
+
 	for index, tag := range tags_ids.([]interface{}) {
 		if tags_principals_array[index].(bool) {
 			primary_tag = tag.(string)
@@ -92,6 +99,12 @@ func (command *GetSmallMultipleSpotsCommand) getSpotDataFromResult(record *db.Re
 		TopicsInfo: domain.Topic{
 			PrincipalTopic:  primary_tag,
 			SecondaryTopics: secondary_tag,
+		},
+		DateInfo: domain.Date{
+			DateTime:                      getStringFromInterface(date_date),
+			DurationApproximatedInSeconds: getInt64FromInterface(date_durationApproximatedInSeconds),
+			Id:                            getStringFromInterface(date_UUID),
+			StartTime:                     getStringFromInterface(date_startTime),
 		},
 	}
 
