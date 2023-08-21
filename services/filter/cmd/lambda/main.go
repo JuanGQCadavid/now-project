@@ -9,6 +9,7 @@ import (
 	sessionservice "github.com/JuanGQCadavid/now-project/services/filter/internal/repositories/sessionService"
 	spotservicelambda "github.com/JuanGQCadavid/now-project/services/filter/internal/repositories/spotServiceLambda"
 	"github.com/JuanGQCadavid/now-project/services/pkgs/common/logs"
+	"github.com/JuanGQCadavid/now-project/services/pkgs/credentialsFinder/cmd/ssm"
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
 	ginadapter "github.com/awslabs/aws-lambda-go-api-proxy/gin"
@@ -18,7 +19,14 @@ import (
 var ginLambda *ginadapter.GinLambda
 
 func init() {
-	dbDriver, err := locationrepositories.NewConectorFromEnv()
+	credsFinder := ssm.NewSSMCredentialsFinder()
+	credentials, err := credsFinder.GetDBCredentialsFromDefaultEnv()
+
+	if err != nil {
+		logs.Error.Fatalln("we fail to Fetch the envs")
+	}
+
+	dbDriver, err := locationrepositories.NewConector(credentials.User, credentials.Password, credentials.Name, credentials.Url)
 
 	if err != nil {
 		logs.Error.Println("There were an error while attempting to create drivers")
