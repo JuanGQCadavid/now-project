@@ -1,8 +1,4 @@
 import 'package:now_v8/src/core/models/long_spot.dart';
-import 'package:now_v8/src/core/models/long_spot/event_info.dart';
-import 'package:now_v8/src/core/models/long_spot/host_info.dart';
-import 'package:now_v8/src/core/models/long_spot/place_info.dart';
-import 'package:now_v8/src/core/models/long_spot/topics_info.dart';
 
 class GranularSpot {
   late SpotWindow window;
@@ -32,6 +28,12 @@ class GranularSpot {
       topicInfo: TopicsInfo(
         principalTag: "",
         secondaryTags: [],
+      ),
+      dateInfo: DateInfo(
+        dateTime: "", 
+        id: "id",
+        startTime: "", 
+        durationApproximatedInSeconds: 0,
       ),
     );
   }

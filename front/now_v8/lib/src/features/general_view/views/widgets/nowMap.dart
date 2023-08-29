@@ -16,7 +16,7 @@ class MapSample extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final filteredSpots = ref.watch(filteredSpotsProvider);
-    final location = const LatLng(6.251723, -75.592771);
+    const location = LatLng(6.251723, -75.592771);
 
     // if (widget.includeUserLocation != null || widget.centerMapOnSpots != true) {
     //   locationData = await location.getLocation();

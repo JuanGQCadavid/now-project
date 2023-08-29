@@ -4,10 +4,6 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import '../../../../core/contracts/filterService.dart';
 import '../../../../core/models/long_spot.dart';
-import '../../../../core/models/long_spot/event_info.dart';
-import '../../../../core/models/long_spot/host_info.dart';
-import '../../../../core/models/long_spot/place_info.dart';
-import '../../../../core/models/long_spot/topics_info.dart';
 import '../../../../core/models/spot.dart';
 import '../../../../core/models/state_response.dart';
 
@@ -16,6 +12,7 @@ import '../../../../core/models/state_response.dart';
 class FilterFakeService implements IFilterService {
   FilterFakeService();
 
+  @override
   Future<List<Spot>> getByProximity({
     required double cpLat,
     required double cpLng,
@@ -50,6 +47,7 @@ class FilterFakeService implements IFilterService {
     return spots;
   }
 
+  @override
   Future<StateResponse<List<LongSpot>, String>> getByProximityWithState({
     required double cpLat,
     required double cpLng,
@@ -79,6 +77,12 @@ class FilterFakeService implements IFilterService {
           principalTag: "Spot1principalTag",
           secondaryTags: ["Spot1Secondarytags"]
         ),
+        dateInfo: DateInfo(
+          dateTime: "", 
+          id: "id",
+          startTime: "", 
+          durationApproximatedInSeconds: 0,
+        ),
       ),
 
       const LongSpot(
@@ -102,6 +106,12 @@ class FilterFakeService implements IFilterService {
         topicInfo: TopicsInfo(
           principalTag: "Spot2principalTag",
           secondaryTags: ["Spot2Secondarytags"]
+        ),
+        dateInfo: DateInfo(
+          dateTime: "", 
+          id: "id",
+          startTime: "", 
+          durationApproximatedInSeconds: 0,
         ),
       ),
 
@@ -127,6 +137,12 @@ class FilterFakeService implements IFilterService {
           principalTag: "Spot3principalTag",
           secondaryTags: ["Spot3Secondarytags"]
         ),
+        dateInfo: DateInfo(
+          dateTime: "", 
+          id: "id",
+          startTime: "", 
+          durationApproximatedInSeconds: 0,
+        ),
       ),
 
       const LongSpot(
@@ -150,6 +166,13 @@ class FilterFakeService implements IFilterService {
         topicInfo: TopicsInfo(
           principalTag: "Spot4principalTag",
           secondaryTags: ["Spot4Secondarytags"]
+        ),
+        // MISSING
+        dateInfo: DateInfo(
+          dateTime: "", 
+          id: "id",
+          startTime: "", 
+          durationApproximatedInSeconds: 0,
         ),
       ),
     ];

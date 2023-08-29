@@ -37,7 +37,7 @@ class GeneralViewBody extends StatelessWidget {
         ),
         Expanded(
           child: ClipRRect(
-            borderRadius: BorderRadius.only(
+            borderRadius: const BorderRadius.only(
               topLeft: Radius.circular(25),
               topRight: Radius.circular(25),
               bottomLeft: Radius.circular(25),

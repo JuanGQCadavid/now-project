@@ -1,12 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:now_v8/src/core/contracts/filterService.dart';
-import 'package:now_v8/src/core/models/long_spot.dart';
-
-import 'package:now_v8/src/core/models/long_spot/host_info.dart' as long_host;
-import 'package:now_v8/src/core/models/long_spot/event_info.dart' as long_event;
-import 'package:now_v8/src/core/models/long_spot/place_info.dart' as long_place;
-import 'package:now_v8/src/core/models/long_spot/topics_info.dart'
-    as long_topic;
+import 'package:now_v8/src/core/models/long_spot.dart' as longSpot;
 
 import 'package:now_v8/src/core/models/spot.dart';
 import 'package:now_v8/src/core/models/state_response.dart';
@@ -55,7 +49,7 @@ class FilterService implements IFilterService {
     });
   }
 
-  Future<StateResponse<List<LongSpot>, String>> getByProximityWithState({
+  Future<StateResponse<List<longSpot.LongSpot>, String>> getByProximityWithState({
     required double cpLat,
     required double cpLng,
     double radious = 10,
@@ -89,7 +83,7 @@ class FilterService implements IFilterService {
       });
     }
 
-    return backendResponse.fold<StateResponse<List<LongSpot>, String>>((error) {
+    return backendResponse.fold<StateResponse<List<longSpot.LongSpot>, String>>((error) {
       print("Oh shit, an error!");
       print(error.toString());
 
@@ -101,7 +95,7 @@ class FilterService implements IFilterService {
       FilterProxyResponseWithState response =
           FilterProxyResponseWithState.fromJson(bodyResponse);
 
-      List<LongSpot> spots = [];
+      List<longSpot.LongSpot> spots = [];
 
       response.result.places.forEach(
         (FilterSpot spot) {
@@ -109,23 +103,30 @@ class FilterService implements IFilterService {
           String hostName = spot.hostInfo?.name ?? "" ;
 
           spots.add(
-            LongSpot(
-              hostInfo: long_host.HostInfo(name: hostName),
-              eventInfo: long_event.EventInfo(
+            longSpot.LongSpot(
+              hostInfo: longSpot.HostInfo(name: hostName),
+              eventInfo: longSpot.EventInfo(
                   description: spot.eventInfo.description,
                   emoji: spot.eventInfo.emoji,
                   eventType: spot.eventInfo.eventType,
                   id: spot.eventInfo.id,
                   maximunCapacty: 0,
                   name: spot.eventInfo.name),
-              placeInfo: long_place.PlaceInfo(
+              placeInfo: longSpot.PlaceInfo(
                   lat: spot.placeInfo.lat,
                   lon: spot.placeInfo.lon,
                   mapProviderId: spot.placeInfo.mapProviderId,
                   name: spot.placeInfo.name),
-              topicInfo: long_topic.TopicsInfo(
+              topicInfo: longSpot.TopicsInfo(
                 principalTag: spot.topicInfo.principalTopic,
                 secondaryTags: spot.topicInfo.secondaryTopics
+              ),
+              // MISSING
+              dateInfo: longSpot.DateInfo(
+                dateTime: "", 
+                id: "id",
+                startTime: "", 
+                durationApproximatedInSeconds: 0,
               ),
             ),
           );

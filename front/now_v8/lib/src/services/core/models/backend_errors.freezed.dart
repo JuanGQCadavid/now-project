@@ -1,7 +1,7 @@
 // coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint
-// ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target
+// ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'backend_errors.dart';
 
@@ -28,12 +28,12 @@ mixin _$BackendErrors {
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult Function()? internalError,
-    TResult Function()? resourceNotFound,
-    TResult Function()? serviceUnavailable,
-    TResult Function()? noInternetConnection,
-    TResult Function()? badResponseFormat,
-    TResult Function()? unknownError,
+    TResult? Function()? internalError,
+    TResult? Function()? resourceNotFound,
+    TResult? Function()? serviceUnavailable,
+    TResult? Function()? noInternetConnection,
+    TResult? Function()? badResponseFormat,
+    TResult? Function()? unknownError,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -59,12 +59,12 @@ mixin _$BackendErrors {
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
-    TResult Function(InternalError value)? internalError,
-    TResult Function(ResourceNotFound value)? resourceNotFound,
-    TResult Function(ServiceUnavailable value)? serviceUnavailable,
-    TResult Function(NoInternetConnection value)? noInternetConnection,
-    TResult Function(BadResponseFormat value)? badResponseFormat,
-    TResult Function(UnknownError value)? unknownError,
+    TResult? Function(InternalError value)? internalError,
+    TResult? Function(ResourceNotFound value)? resourceNotFound,
+    TResult? Function(ServiceUnavailable value)? serviceUnavailable,
+    TResult? Function(NoInternetConnection value)? noInternetConnection,
+    TResult? Function(BadResponseFormat value)? badResponseFormat,
+    TResult? Function(UnknownError value)? unknownError,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -84,17 +84,18 @@ mixin _$BackendErrors {
 abstract class $BackendErrorsCopyWith<$Res> {
   factory $BackendErrorsCopyWith(
           BackendErrors value, $Res Function(BackendErrors) then) =
-      _$BackendErrorsCopyWithImpl<$Res>;
+      _$BackendErrorsCopyWithImpl<$Res, BackendErrors>;
 }
 
 /// @nodoc
-class _$BackendErrorsCopyWithImpl<$Res>
+class _$BackendErrorsCopyWithImpl<$Res, $Val extends BackendErrors>
     implements $BackendErrorsCopyWith<$Res> {
   _$BackendErrorsCopyWithImpl(this._value, this._then);
 
-  final BackendErrors _value;
   // ignore: unused_field
-  final $Res Function(BackendErrors) _then;
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
 }
 
 /// @nodoc
@@ -106,14 +107,11 @@ abstract class _$$InternalErrorCopyWith<$Res> {
 
 /// @nodoc
 class __$$InternalErrorCopyWithImpl<$Res>
-    extends _$BackendErrorsCopyWithImpl<$Res>
+    extends _$BackendErrorsCopyWithImpl<$Res, _$InternalError>
     implements _$$InternalErrorCopyWith<$Res> {
   __$$InternalErrorCopyWithImpl(
       _$InternalError _value, $Res Function(_$InternalError) _then)
-      : super(_value, (v) => _then(v as _$InternalError));
-
-  @override
-  _$InternalError get _value => super._value as _$InternalError;
+      : super(_value, _then);
 }
 
 /// @nodoc
@@ -157,12 +155,12 @@ class _$InternalError with DiagnosticableTreeMixin implements InternalError {
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult Function()? internalError,
-    TResult Function()? resourceNotFound,
-    TResult Function()? serviceUnavailable,
-    TResult Function()? noInternetConnection,
-    TResult Function()? badResponseFormat,
-    TResult Function()? unknownError,
+    TResult? Function()? internalError,
+    TResult? Function()? resourceNotFound,
+    TResult? Function()? serviceUnavailable,
+    TResult? Function()? noInternetConnection,
+    TResult? Function()? badResponseFormat,
+    TResult? Function()? unknownError,
   }) {
     return internalError?.call();
   }
@@ -200,12 +198,12 @@ class _$InternalError with DiagnosticableTreeMixin implements InternalError {
   @override
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
-    TResult Function(InternalError value)? internalError,
-    TResult Function(ResourceNotFound value)? resourceNotFound,
-    TResult Function(ServiceUnavailable value)? serviceUnavailable,
-    TResult Function(NoInternetConnection value)? noInternetConnection,
-    TResult Function(BadResponseFormat value)? badResponseFormat,
-    TResult Function(UnknownError value)? unknownError,
+    TResult? Function(InternalError value)? internalError,
+    TResult? Function(ResourceNotFound value)? resourceNotFound,
+    TResult? Function(ServiceUnavailable value)? serviceUnavailable,
+    TResult? Function(NoInternetConnection value)? noInternetConnection,
+    TResult? Function(BadResponseFormat value)? badResponseFormat,
+    TResult? Function(UnknownError value)? unknownError,
   }) {
     return internalError?.call(this);
   }
@@ -241,14 +239,11 @@ abstract class _$$ResourceNotFoundCopyWith<$Res> {
 
 /// @nodoc
 class __$$ResourceNotFoundCopyWithImpl<$Res>
-    extends _$BackendErrorsCopyWithImpl<$Res>
+    extends _$BackendErrorsCopyWithImpl<$Res, _$ResourceNotFound>
     implements _$$ResourceNotFoundCopyWith<$Res> {
   __$$ResourceNotFoundCopyWithImpl(
       _$ResourceNotFound _value, $Res Function(_$ResourceNotFound) _then)
-      : super(_value, (v) => _then(v as _$ResourceNotFound));
-
-  @override
-  _$ResourceNotFound get _value => super._value as _$ResourceNotFound;
+      : super(_value, _then);
 }
 
 /// @nodoc
@@ -295,12 +290,12 @@ class _$ResourceNotFound
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult Function()? internalError,
-    TResult Function()? resourceNotFound,
-    TResult Function()? serviceUnavailable,
-    TResult Function()? noInternetConnection,
-    TResult Function()? badResponseFormat,
-    TResult Function()? unknownError,
+    TResult? Function()? internalError,
+    TResult? Function()? resourceNotFound,
+    TResult? Function()? serviceUnavailable,
+    TResult? Function()? noInternetConnection,
+    TResult? Function()? badResponseFormat,
+    TResult? Function()? unknownError,
   }) {
     return resourceNotFound?.call();
   }
@@ -338,12 +333,12 @@ class _$ResourceNotFound
   @override
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
-    TResult Function(InternalError value)? internalError,
-    TResult Function(ResourceNotFound value)? resourceNotFound,
-    TResult Function(ServiceUnavailable value)? serviceUnavailable,
-    TResult Function(NoInternetConnection value)? noInternetConnection,
-    TResult Function(BadResponseFormat value)? badResponseFormat,
-    TResult Function(UnknownError value)? unknownError,
+    TResult? Function(InternalError value)? internalError,
+    TResult? Function(ResourceNotFound value)? resourceNotFound,
+    TResult? Function(ServiceUnavailable value)? serviceUnavailable,
+    TResult? Function(NoInternetConnection value)? noInternetConnection,
+    TResult? Function(BadResponseFormat value)? badResponseFormat,
+    TResult? Function(UnknownError value)? unknownError,
   }) {
     return resourceNotFound?.call(this);
   }
@@ -379,14 +374,11 @@ abstract class _$$ServiceUnavailableCopyWith<$Res> {
 
 /// @nodoc
 class __$$ServiceUnavailableCopyWithImpl<$Res>
-    extends _$BackendErrorsCopyWithImpl<$Res>
+    extends _$BackendErrorsCopyWithImpl<$Res, _$ServiceUnavailable>
     implements _$$ServiceUnavailableCopyWith<$Res> {
   __$$ServiceUnavailableCopyWithImpl(
       _$ServiceUnavailable _value, $Res Function(_$ServiceUnavailable) _then)
-      : super(_value, (v) => _then(v as _$ServiceUnavailable));
-
-  @override
-  _$ServiceUnavailable get _value => super._value as _$ServiceUnavailable;
+      : super(_value, _then);
 }
 
 /// @nodoc
@@ -433,12 +425,12 @@ class _$ServiceUnavailable
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult Function()? internalError,
-    TResult Function()? resourceNotFound,
-    TResult Function()? serviceUnavailable,
-    TResult Function()? noInternetConnection,
-    TResult Function()? badResponseFormat,
-    TResult Function()? unknownError,
+    TResult? Function()? internalError,
+    TResult? Function()? resourceNotFound,
+    TResult? Function()? serviceUnavailable,
+    TResult? Function()? noInternetConnection,
+    TResult? Function()? badResponseFormat,
+    TResult? Function()? unknownError,
   }) {
     return serviceUnavailable?.call();
   }
@@ -476,12 +468,12 @@ class _$ServiceUnavailable
   @override
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
-    TResult Function(InternalError value)? internalError,
-    TResult Function(ResourceNotFound value)? resourceNotFound,
-    TResult Function(ServiceUnavailable value)? serviceUnavailable,
-    TResult Function(NoInternetConnection value)? noInternetConnection,
-    TResult Function(BadResponseFormat value)? badResponseFormat,
-    TResult Function(UnknownError value)? unknownError,
+    TResult? Function(InternalError value)? internalError,
+    TResult? Function(ResourceNotFound value)? resourceNotFound,
+    TResult? Function(ServiceUnavailable value)? serviceUnavailable,
+    TResult? Function(NoInternetConnection value)? noInternetConnection,
+    TResult? Function(BadResponseFormat value)? badResponseFormat,
+    TResult? Function(UnknownError value)? unknownError,
   }) {
     return serviceUnavailable?.call(this);
   }
@@ -517,14 +509,11 @@ abstract class _$$NoInternetConnectionCopyWith<$Res> {
 
 /// @nodoc
 class __$$NoInternetConnectionCopyWithImpl<$Res>
-    extends _$BackendErrorsCopyWithImpl<$Res>
+    extends _$BackendErrorsCopyWithImpl<$Res, _$NoInternetConnection>
     implements _$$NoInternetConnectionCopyWith<$Res> {
   __$$NoInternetConnectionCopyWithImpl(_$NoInternetConnection _value,
       $Res Function(_$NoInternetConnection) _then)
-      : super(_value, (v) => _then(v as _$NoInternetConnection));
-
-  @override
-  _$NoInternetConnection get _value => super._value as _$NoInternetConnection;
+      : super(_value, _then);
 }
 
 /// @nodoc
@@ -571,12 +560,12 @@ class _$NoInternetConnection
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult Function()? internalError,
-    TResult Function()? resourceNotFound,
-    TResult Function()? serviceUnavailable,
-    TResult Function()? noInternetConnection,
-    TResult Function()? badResponseFormat,
-    TResult Function()? unknownError,
+    TResult? Function()? internalError,
+    TResult? Function()? resourceNotFound,
+    TResult? Function()? serviceUnavailable,
+    TResult? Function()? noInternetConnection,
+    TResult? Function()? badResponseFormat,
+    TResult? Function()? unknownError,
   }) {
     return noInternetConnection?.call();
   }
@@ -614,12 +603,12 @@ class _$NoInternetConnection
   @override
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
-    TResult Function(InternalError value)? internalError,
-    TResult Function(ResourceNotFound value)? resourceNotFound,
-    TResult Function(ServiceUnavailable value)? serviceUnavailable,
-    TResult Function(NoInternetConnection value)? noInternetConnection,
-    TResult Function(BadResponseFormat value)? badResponseFormat,
-    TResult Function(UnknownError value)? unknownError,
+    TResult? Function(InternalError value)? internalError,
+    TResult? Function(ResourceNotFound value)? resourceNotFound,
+    TResult? Function(ServiceUnavailable value)? serviceUnavailable,
+    TResult? Function(NoInternetConnection value)? noInternetConnection,
+    TResult? Function(BadResponseFormat value)? badResponseFormat,
+    TResult? Function(UnknownError value)? unknownError,
   }) {
     return noInternetConnection?.call(this);
   }
@@ -655,14 +644,11 @@ abstract class _$$BadResponseFormatCopyWith<$Res> {
 
 /// @nodoc
 class __$$BadResponseFormatCopyWithImpl<$Res>
-    extends _$BackendErrorsCopyWithImpl<$Res>
+    extends _$BackendErrorsCopyWithImpl<$Res, _$BadResponseFormat>
     implements _$$BadResponseFormatCopyWith<$Res> {
   __$$BadResponseFormatCopyWithImpl(
       _$BadResponseFormat _value, $Res Function(_$BadResponseFormat) _then)
-      : super(_value, (v) => _then(v as _$BadResponseFormat));
-
-  @override
-  _$BadResponseFormat get _value => super._value as _$BadResponseFormat;
+      : super(_value, _then);
 }
 
 /// @nodoc
@@ -709,12 +695,12 @@ class _$BadResponseFormat
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult Function()? internalError,
-    TResult Function()? resourceNotFound,
-    TResult Function()? serviceUnavailable,
-    TResult Function()? noInternetConnection,
-    TResult Function()? badResponseFormat,
-    TResult Function()? unknownError,
+    TResult? Function()? internalError,
+    TResult? Function()? resourceNotFound,
+    TResult? Function()? serviceUnavailable,
+    TResult? Function()? noInternetConnection,
+    TResult? Function()? badResponseFormat,
+    TResult? Function()? unknownError,
   }) {
     return badResponseFormat?.call();
   }
@@ -752,12 +738,12 @@ class _$BadResponseFormat
   @override
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
-    TResult Function(InternalError value)? internalError,
-    TResult Function(ResourceNotFound value)? resourceNotFound,
-    TResult Function(ServiceUnavailable value)? serviceUnavailable,
-    TResult Function(NoInternetConnection value)? noInternetConnection,
-    TResult Function(BadResponseFormat value)? badResponseFormat,
-    TResult Function(UnknownError value)? unknownError,
+    TResult? Function(InternalError value)? internalError,
+    TResult? Function(ResourceNotFound value)? resourceNotFound,
+    TResult? Function(ServiceUnavailable value)? serviceUnavailable,
+    TResult? Function(NoInternetConnection value)? noInternetConnection,
+    TResult? Function(BadResponseFormat value)? badResponseFormat,
+    TResult? Function(UnknownError value)? unknownError,
   }) {
     return badResponseFormat?.call(this);
   }
@@ -793,14 +779,11 @@ abstract class _$$UnknownErrorCopyWith<$Res> {
 
 /// @nodoc
 class __$$UnknownErrorCopyWithImpl<$Res>
-    extends _$BackendErrorsCopyWithImpl<$Res>
+    extends _$BackendErrorsCopyWithImpl<$Res, _$UnknownError>
     implements _$$UnknownErrorCopyWith<$Res> {
   __$$UnknownErrorCopyWithImpl(
       _$UnknownError _value, $Res Function(_$UnknownError) _then)
-      : super(_value, (v) => _then(v as _$UnknownError));
-
-  @override
-  _$UnknownError get _value => super._value as _$UnknownError;
+      : super(_value, _then);
 }
 
 /// @nodoc
@@ -844,12 +827,12 @@ class _$UnknownError with DiagnosticableTreeMixin implements UnknownError {
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult Function()? internalError,
-    TResult Function()? resourceNotFound,
-    TResult Function()? serviceUnavailable,
-    TResult Function()? noInternetConnection,
-    TResult Function()? badResponseFormat,
-    TResult Function()? unknownError,
+    TResult? Function()? internalError,
+    TResult? Function()? resourceNotFound,
+    TResult? Function()? serviceUnavailable,
+    TResult? Function()? noInternetConnection,
+    TResult? Function()? badResponseFormat,
+    TResult? Function()? unknownError,
   }) {
     return unknownError?.call();
   }
@@ -887,12 +870,12 @@ class _$UnknownError with DiagnosticableTreeMixin implements UnknownError {
   @override
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
-    TResult Function(InternalError value)? internalError,
-    TResult Function(ResourceNotFound value)? resourceNotFound,
-    TResult Function(ServiceUnavailable value)? serviceUnavailable,
-    TResult Function(NoInternetConnection value)? noInternetConnection,
-    TResult Function(BadResponseFormat value)? badResponseFormat,
-    TResult Function(UnknownError value)? unknownError,
+    TResult? Function(InternalError value)? internalError,
+    TResult? Function(ResourceNotFound value)? resourceNotFound,
+    TResult? Function(ServiceUnavailable value)? serviceUnavailable,
+    TResult? Function(NoInternetConnection value)? noInternetConnection,
+    TResult? Function(BadResponseFormat value)? badResponseFormat,
+    TResult? Function(UnknownError value)? unknownError,
   }) {
     return unknownError?.call(this);
   }

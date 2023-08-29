@@ -1,7 +1,6 @@
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:now_v8/src/core/models/long_spot.dart';
 import 'package:now_v8/src/core/models/spotColors.dart';
-import 'package:flutter/material.dart';
 
 // I will need to investigate more about freezed in order to perfom copyWithData or something like that
 // What about builder ?

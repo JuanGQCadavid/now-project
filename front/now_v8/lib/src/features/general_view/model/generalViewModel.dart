@@ -25,8 +25,16 @@ class GeneralViewModel {
     print("getSpots");
     LatLng userLocation = await locationService.getUserCurrentLocation();
     print("userLocation done");
+
     spots = await filterService.getByProximity(
-        cpLat: userLocation.latitude, cpLng: userLocation.longitude);
+        cpLat: userLocation.latitude, 
+        cpLng: userLocation.longitude
+      );
+
+    
+    // for (var spot in spots) {
+    //   spot.spotsColor = colorService.getColor();
+    // }
 
     spots.forEach((spot) {
       spot.spotsColor = colorService.getColor();
@@ -35,16 +43,16 @@ class GeneralViewModel {
     return spots;
   }
 
-  /**
-   * 1. Check if tagsOn is empty, if so just return all spots.
-   * 2. To filter
-   *  1. Check if the spot princiapl tag is on tags on, if so then mark flag as true, if not then add the tag as not showed.
-   *  2. Check if the spot secondary tags contains one of the tags on, if so then mark flag as true, if not then add the tag as not showed.
-   *  3. if the mark if flagged if so then add the spot.
-   * 
-   */
+  /// 1. Check if tagsOn is empty, if so just return all spots.
+  /// 2. To filter
+  ///  1. Check if the spot princiapl tag is on tags on, if so then mark flag as true, if not then add the tag as not showed.
+  ///  2. Check if the spot secondary tags contains one of the tags on, if so then mark flag as true, if not then add the tag as not showed.
+  ///  3. if the mark if flagged if so then add the spot.
+  
   FilteredSpots filterSpotsBaseOnTags(
-      Set<String> tagsSelected, List<Spot> spots) {
+      Set<String> tagsSelected, 
+      List<Spot> spots
+  ) {
     if (tagsSelected.isEmpty) {
       return FilteredSpots(
           spots: spots,
