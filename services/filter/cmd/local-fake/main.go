@@ -7,24 +7,19 @@ import (
 	sessionservice "github.com/JuanGQCadavid/now-project/services/filter/internal/repositories/sessionService"
 	spotservicelambda "github.com/JuanGQCadavid/now-project/services/filter/internal/repositories/spotServiceLambda"
 	"github.com/JuanGQCadavid/now-project/services/pkgs/common/logs"
-	"github.com/JuanGQCadavid/now-project/services/pkgs/credentialsFinder/cmd/ssm"
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
-	credsFinder := ssm.NewSSMCredentialsFinder()
-	credentials, err := credsFinder.GetDBCredentialsFromDefaultEnv()
 
-	if err != nil {
-		logs.Error.Fatalln("we fail to Fetch the envs")
-	}
-
-	dbDriver, err := locationrepositories.NewConector(credentials.User, credentials.Password, credentials.Name, credentials.Url)
+	dbDriver, err := locationrepositories.NewConectorFromEnv()
 
 	if err != nil {
 		logs.Error.Println("There were an error while attempting to create drivers")
 		logs.Error.Fatalln(err.Error())
 	}
+
+	locationrepositories.Migrate(dbDriver)
 
 	// TODO -> How can we return an error from an init method ?
 	locationRepo, err := locationrepositories.NewLocationRepoWithDriver(dbDriver)

@@ -1,0 +1,25 @@
+services:
+  filter:
+    depends_on: db
+    build: .
+    ports:
+      - 8000:8000
+    environment:
+      - dbName=${DB_DATABASE}
+      - dbPassword=${DB_PASSWORD}
+      - dbUrl=db
+      - dbUser=${DB_USER}
+      - sessionTableName=${SESSION_TABLE}
+      - spotServiceURL=${SPOT_SERVICE}
+  db:
+    image: mysql:latest
+    environment:
+      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
+      - MYSQL_DATABASE=${DB_DATABASE}
+      - MYSQL_USER=${DB_USER}
+      - MYSQL_PASSWORD=${DB_PASSWORD}
+    volumes:
+      - db_volume:/var/lib/mysql
+
+volumes:
+  db_volume:
