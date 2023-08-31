@@ -4,16 +4,19 @@ ENV GOOS="linux"
 ENV CGO_ENABLED="0"
 ENV GOARCH="amd64"
 
-ARG CMD = "http"
+ARG CMD="http"
 
 WORKDIR /app
-COPY cmd cmd
-COPY internal/${CMD} internal/${CMD}
+COPY tmp/pkgs /pkgs
+COPY cmd/${CMD} cmd/${CMD}
+COPY internal internal
+
 COPY go.mod go.mod
 COPY go.sum go.sum
+# RUN go mod download
 
-RUN go get
+RUN go build -o main ./cmd/${CMD}/main.go
 
 EXPOSE 8000
 
-CMD  ["go", "run", "./cmd/${CMD}/main.go"]
+CMD  ["./main"]

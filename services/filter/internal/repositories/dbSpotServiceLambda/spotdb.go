@@ -7,7 +7,7 @@ import (
 )
 
 type SpotsDB struct {
-	EventUUID                         string `gorm:"primaryKey"`
+	EventId                           string `gorm:"primaryKey"`
 	DateId                            string `gorm:"index"`
 	DateDateTime                      string
 	DateDurationApproximatedInSeconds int64
@@ -23,7 +23,7 @@ type SpotsDB struct {
 	PlaceLon                          float64
 	PlaceMapProviderId                string
 	TopicPrincipalTopic               string
-	TopicSecondaryTopics              []string
+	TopicSecondaryTopics              string
 
 	// GORM Variables
 	CreatedAt time.Time

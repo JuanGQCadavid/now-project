@@ -1,7 +1,11 @@
 services:
   filter:
-    depends_on: db
-    build: .
+    depends_on: 
+      - db
+    build: 
+      context: .
+      args:
+        CMD: "local-fake"
     ports:
       - 8000:8000
     environment:
@@ -11,6 +15,10 @@ services:
       - dbUser=${DB_USER}
       - sessionTableName=${SESSION_TABLE}
       - spotServiceURL=${SPOT_SERVICE}
+    volumes:
+      - ~/.aws/credentials:/root/.aws/credentials:ro
+    restart: always
+
   db:
     image: mysql:latest
     environment:

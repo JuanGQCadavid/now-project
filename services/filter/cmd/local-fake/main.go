@@ -3,9 +3,9 @@ package main
 import (
 	"github.com/JuanGQCadavid/now-project/services/filter/internal/core/services/filtersrv"
 	"github.com/JuanGQCadavid/now-project/services/filter/internal/handlers/httphdl"
+	dbspotservicelambda "github.com/JuanGQCadavid/now-project/services/filter/internal/repositories/dbSpotServiceLambda"
 	locationrepositories "github.com/JuanGQCadavid/now-project/services/filter/internal/repositories/locationRepositories"
 	sessionservice "github.com/JuanGQCadavid/now-project/services/filter/internal/repositories/sessionService"
-	spotservicelambda "github.com/JuanGQCadavid/now-project/services/filter/internal/repositories/spotServiceLambda"
 	"github.com/JuanGQCadavid/now-project/services/pkgs/common/logs"
 	"github.com/gin-gonic/gin"
 )
@@ -20,6 +20,7 @@ func main() {
 	}
 
 	locationrepositories.Migrate(dbDriver)
+	dbDriver.AutoMigrate(&dbspotservicelambda.SpotsDB{})
 
 	// TODO -> How can we return an error from an init method ?
 	locationRepo, err := locationrepositories.NewLocationRepoWithDriver(dbDriver)
@@ -29,7 +30,7 @@ func main() {
 		logs.Error.Fatalln(err.Error())
 	}
 
-	spotSrv, err := spotservicelambda.NewSpotServiceLambda()
+	spotSrv, err := dbspotservicelambda.NewDBSpotServiceLambdaWithDriver(dbDriver)
 
 	if err != nil {
 		panic(err.Error())
