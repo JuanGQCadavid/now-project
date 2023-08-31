@@ -28,7 +28,7 @@ func (srv *DBSpotServiceLambda) GetSpotsCardsInfo(datesIds []string, format port
 
 	var results []SpotsDB
 
-	result := srv.db.Where("event_id IN ?", datesIds).Find(&results)
+	result := srv.db.Where("date_id IN ?", datesIds).Find(&results)
 
 	if result.Error != nil {
 		logs.Error.Println("[ERROR] GetSpotsCardsInfo - An error occoured while runnning Query, err: ", result.Error.Error())
