@@ -7,6 +7,10 @@ This project use some tools that generate code as json_serelizable, in order to 
 * flutter pub run build_runner build 
 * flutter pub run build_runner watch
 
+In order to update packages to their last one allowed we should use 
+
+* flutter pub upgrade
+
 ## How to manage the state ?
 
 The idea is to have a combination of StateNotifierProvider with StateNotifier, where we are going to simplify our lifes just managin one state per notifier, thus we are going to be more granular and avoiding creating big view-models monsters!
