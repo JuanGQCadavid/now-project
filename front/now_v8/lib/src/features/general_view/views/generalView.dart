@@ -42,8 +42,17 @@ class GeneralViewBody extends StatelessWidget {
               topRight: Radius.circular(25),
               bottomLeft: Radius.circular(25),
             ),
-            child: MapSample(
-              mapController: mapController 
+            child: Stack(
+              children: [
+                MapSample(
+                  mapController: mapController 
+                ),
+                // const Positioned(
+                //   top: 0.0,
+                //   left: 0.0,
+                //   child: MapDescriptor(),
+                // ),
+              ],
             ),
           ),
         )

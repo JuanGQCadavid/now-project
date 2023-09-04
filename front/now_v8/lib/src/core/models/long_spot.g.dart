@@ -66,7 +66,6 @@ _$_EventInfo _$$_EventInfoFromJson(Map<String, dynamic> json) => _$_EventInfo(
       id: json['id'] as String,
       description: json['description'] as String,
       maximunCapacty: json['maximunCapacty'] as int,
-      eventType: json['eventType'] as String,
       emoji: json['emoji'] as String,
     );
 
@@ -76,7 +75,6 @@ Map<String, dynamic> _$$_EventInfoToJson(_$_EventInfo instance) =>
       'id': instance.id,
       'description': instance.description,
       'maximunCapacty': instance.maximunCapacty,
-      'eventType': instance.eventType,
       'emoji': instance.emoji,
     };
 

@@ -792,7 +792,6 @@ mixin _$EventInfo {
   String get id => throw _privateConstructorUsedError;
   String get description => throw _privateConstructorUsedError;
   int get maximunCapacty => throw _privateConstructorUsedError;
-  String get eventType => throw _privateConstructorUsedError;
   String get emoji => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -811,7 +810,6 @@ abstract class $EventInfoCopyWith<$Res> {
       String id,
       String description,
       int maximunCapacty,
-      String eventType,
       String emoji});
 }
 
@@ -832,7 +830,6 @@ class _$EventInfoCopyWithImpl<$Res, $Val extends EventInfo>
     Object? id = null,
     Object? description = null,
     Object? maximunCapacty = null,
-    Object? eventType = null,
     Object? emoji = null,
   }) {
     return _then(_value.copyWith(
@@ -852,10 +849,6 @@ class _$EventInfoCopyWithImpl<$Res, $Val extends EventInfo>
           ? _value.maximunCapacty
           : maximunCapacty // ignore: cast_nullable_to_non_nullable
               as int,
-      eventType: null == eventType
-          ? _value.eventType
-          : eventType // ignore: cast_nullable_to_non_nullable
-              as String,
       emoji: null == emoji
           ? _value.emoji
           : emoji // ignore: cast_nullable_to_non_nullable
@@ -876,7 +869,6 @@ abstract class _$$_EventInfoCopyWith<$Res> implements $EventInfoCopyWith<$Res> {
       String id,
       String description,
       int maximunCapacty,
-      String eventType,
       String emoji});
 }
 
@@ -895,7 +887,6 @@ class __$$_EventInfoCopyWithImpl<$Res>
     Object? id = null,
     Object? description = null,
     Object? maximunCapacty = null,
-    Object? eventType = null,
     Object? emoji = null,
   }) {
     return _then(_$_EventInfo(
@@ -915,10 +906,6 @@ class __$$_EventInfoCopyWithImpl<$Res>
           ? _value.maximunCapacty
           : maximunCapacty // ignore: cast_nullable_to_non_nullable
               as int,
-      eventType: null == eventType
-          ? _value.eventType
-          : eventType // ignore: cast_nullable_to_non_nullable
-              as String,
       emoji: null == emoji
           ? _value.emoji
           : emoji // ignore: cast_nullable_to_non_nullable
@@ -935,7 +922,6 @@ class _$_EventInfo implements _EventInfo {
       required this.id,
       required this.description,
       required this.maximunCapacty,
-      required this.eventType,
       required this.emoji});
 
   factory _$_EventInfo.fromJson(Map<String, dynamic> json) =>
@@ -950,13 +936,11 @@ class _$_EventInfo implements _EventInfo {
   @override
   final int maximunCapacty;
   @override
-  final String eventType;
-  @override
   final String emoji;
 
   @override
   String toString() {
-    return 'EventInfo(name: $name, id: $id, description: $description, maximunCapacty: $maximunCapacty, eventType: $eventType, emoji: $emoji)';
+    return 'EventInfo(name: $name, id: $id, description: $description, maximunCapacty: $maximunCapacty, emoji: $emoji)';
   }
 
   @override
@@ -970,15 +954,13 @@ class _$_EventInfo implements _EventInfo {
                 other.description == description) &&
             (identical(other.maximunCapacty, maximunCapacty) ||
                 other.maximunCapacty == maximunCapacty) &&
-            (identical(other.eventType, eventType) ||
-                other.eventType == eventType) &&
             (identical(other.emoji, emoji) || other.emoji == emoji));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(
-      runtimeType, name, id, description, maximunCapacty, eventType, emoji);
+  int get hashCode =>
+      Object.hash(runtimeType, name, id, description, maximunCapacty, emoji);
 
   @JsonKey(ignore: true)
   @override
@@ -1000,7 +982,6 @@ abstract class _EventInfo implements EventInfo {
       required final String id,
       required final String description,
       required final int maximunCapacty,
-      required final String eventType,
       required final String emoji}) = _$_EventInfo;
 
   factory _EventInfo.fromJson(Map<String, dynamic> json) =
@@ -1014,8 +995,6 @@ abstract class _EventInfo implements EventInfo {
   String get description;
   @override
   int get maximunCapacty;
-  @override
-  String get eventType;
   @override
   String get emoji;
   @override

@@ -20,6 +20,8 @@ class FilterService implements IFilterService {
   final proximityResource = "/proximity";
 
   FilterService({required this.apiConfig}) {
+    print(apiConfig.getFilterEndpoint());
+    
     nowServicesCaller = NowServicesCaller(
       baseUrl: apiConfig.getFilterEndpoint(),
     );
@@ -41,8 +43,11 @@ class FilterService implements IFilterService {
 
     return response.fold<List<Spot>>((l) {
       // On error! What are we going to do bro ?
+      print("Where are on error ");
+      print(l);
       return List.empty();
     }, (requestResponse) {
+      print("We get a response");
       Locations locations =
           FilterProxymityResponse.fromJson(requestResponse).result;
       return mappers.fromPlacesToSpotList(locations);
@@ -108,7 +113,6 @@ class FilterService implements IFilterService {
               eventInfo: longSpot.EventInfo(
                   description: spot.eventInfo.description,
                   emoji: spot.eventInfo.emoji,
-                  eventType: spot.eventInfo.eventType,
                   id: spot.eventInfo.id,
                   maximunCapacty: 0,
                   name: spot.eventInfo.name),
@@ -123,10 +127,10 @@ class FilterService implements IFilterService {
               ),
               // MISSING
               dateInfo: longSpot.DateInfo(
-                dateTime: "", 
-                id: "id",
-                startTime: "", 
-                durationApproximatedInSeconds: 0,
+                dateTime: spot.dateInfo.dateTime, 
+                id: spot.dateInfo.id,
+                startTime: spot.dateInfo.startTime, 
+                durationApproximatedInSeconds: spot.dateInfo.durationApproximated,
               ),
             ),
           );

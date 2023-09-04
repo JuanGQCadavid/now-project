@@ -74,13 +74,15 @@ class FilterSpot {
   final EventInfo eventInfo;
   final PlaceInfo placeInfo;
   final TopicInfo topicInfo;
-  final HostInfo? hostInfo;
+  final DateInfo dateInfo;
+  final HostInfo hostInfo;
 
   FilterSpot({
     required this.eventInfo,
     required this.placeInfo,
     required this.topicInfo,
-    this.hostInfo, // This could crash :'()
+    required this.dateInfo,
+    required this.hostInfo, // This could crash :'()
   });
 
   factory FilterSpot.fromJson(Map<String, dynamic> json) =>
@@ -92,13 +94,13 @@ class FilterSpot {
 @JsonSerializable()
 class HostInfo {
 
+  final String id;
   final String name;
 
   HostInfo({
-    this.name = ""
+    required this.name,
+    required this.id
   });
-
-  factory HostInfo.empty() => HostInfo();
 
   factory HostInfo.fromJson(Map<String, dynamic> json) =>
       _$HostInfoFromJson(json);
@@ -107,18 +109,37 @@ class HostInfo {
 
 }
 
+// THis is an example of how to use it with empty values
+
+// @JsonSerializable()
+// class HostInfo {
+
+//   final String id;
+//   final String name;
+
+//   HostInfo({
+//     required this.name = ""
+//   });
+
+//   factory HostInfo.empty() => HostInfo();
+
+//   factory HostInfo.fromJson(Map<String, dynamic> json) =>
+//       _$HostInfoFromJson(json);
+
+//   Map<String, dynamic> toJson() => _$HostInfoToJson(this);
+
+// }
+
 @JsonSerializable()
 class EventInfo {
   final String name;
   final String id;
-  final String eventType;
   final String emoji;
   final String description;
 
   EventInfo({
     required this.name,
     required this.id,
-    required this.eventType,
     required this.emoji,
     this.description = ""
   });
@@ -127,6 +148,26 @@ class EventInfo {
       _$EventInfoFromJson(json);
 
   Map<String, dynamic> toJson() => _$EventInfoToJson(this);
+}
+
+@JsonSerializable()
+class DateInfo {
+  final String dateTime;
+  final String id;
+  final String startTime;
+  final int durationApproximated;
+
+  DateInfo({
+    required this.dateTime,
+    required this.id,
+    required this.startTime,
+    required this.durationApproximated,
+  });
+
+  factory DateInfo.fromJson(Map<String, dynamic> json) =>
+      _$DateInfoFromJson(json);
+
+  Map<String, dynamic> toJson() => _$DateInfoToJson(this);
 }
 
 @JsonSerializable()

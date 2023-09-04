@@ -48,17 +48,18 @@ class NowMapV2 extends ConsumerStatefulWidget {
   }) {
     List<Spot> spots = [];
 
-    filteredSpots.spots.forEach((spot) {
+    for (var spot in filteredSpots.spots) {
       spots.add(Spot(
         principalTag: spot.principalTag,
         secondaryTags: spot.secondaryTags,
         latLng: spot.latLng,
         spotId: spot.spotId,
+        date: spot.date,
         spotsColor: filteredSpots.tagsSelected.isEmpty
             ? spot.spotsColor
             : filteredSpots.onFilterColor,
       ));
-    });
+    }
 
     return NowMapV2(
       spots: spots,
@@ -119,7 +120,7 @@ class _NowMapV2State extends ConsumerState<NowMapV2> {
             visible: true,
             icon: spot.spotsColor.hue,
             infoWindow: InfoWindow(
-              title: spot.principalTag,
+              title: "${spot.date}",
             )),
       );
     });

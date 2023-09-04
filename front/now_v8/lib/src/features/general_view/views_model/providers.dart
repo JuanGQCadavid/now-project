@@ -12,7 +12,7 @@ import 'package:now_v8/src/services/core/providers.dart';
 
 final generalViewModelProvider = Provider<GeneralViewModel>((ref) {
   final IColorService colorsService = ref.read(colorsServiceProvider);
-  final IFilterService filterService = ref.read(fakeFilterServiceProvider);
+  final IFilterService filterService = ref.read(filterServiceProvider);
   final ILocationService locationService = ref.read(locationServiceProvider);
 
   return GeneralViewModel(

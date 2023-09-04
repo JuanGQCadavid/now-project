@@ -61,7 +61,6 @@ class EventInfo with _$EventInfo {
     required String id,
     required String description,
     required int maximunCapacty,
-    required String eventType,
     required String emoji,
   }) = _EventInfo;
 

@@ -11,7 +11,6 @@ class GranularSpot {
       eventInfo: EventInfo(
         description: "",
         emoji: "",
-        eventType: "",
         id: "",
         maximunCapacty: 0,
         name: "",

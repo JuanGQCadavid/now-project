@@ -9,6 +9,8 @@ class Spot {
   final List<String> secondaryTags;
   final LatLng latLng;
   final String spotId;
+  final DateTime date;
+
   SpotsColors spotsColor;
 
   Spot(
@@ -16,21 +18,28 @@ class Spot {
       required this.secondaryTags,
       required this.latLng,
       required this.spotId,
-      required this.spotsColor});
+      required this.spotsColor,
+      required this.date,});
 
   Spot.withOutSpotColors(
       {required this.principalTag,
       required this.secondaryTags,
       required this.latLng,
       required this.spotId,
+      required this.date,
       this.spotsColor = const SpotsColors.empty()});
 
   factory Spot.fromLongSpot(LongSpot longSpot) {
+
+    DateTime date  = DateTime.parse("${longSpot.dateInfo.dateTime}T${longSpot.dateInfo.startTime}");
 
     return Spot.withOutSpotColors(
         principalTag: longSpot.topicInfo.principalTag,
         secondaryTags: longSpot.topicInfo.secondaryTags,
         latLng: LatLng(longSpot.placeInfo.lat, longSpot.placeInfo.lon),
-        spotId: longSpot.eventInfo.id);
+        spotId: longSpot.eventInfo.id,
+        date: date,
+    );
+
   }
 }

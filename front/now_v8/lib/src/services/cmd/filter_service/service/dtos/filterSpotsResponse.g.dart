@@ -72,9 +72,8 @@ FilterSpot _$FilterSpotFromJson(Map<String, dynamic> json) => FilterSpot(
       eventInfo: EventInfo.fromJson(json['eventInfo'] as Map<String, dynamic>),
       placeInfo: PlaceInfo.fromJson(json['placeInfo'] as Map<String, dynamic>),
       topicInfo: TopicInfo.fromJson(json['topicInfo'] as Map<String, dynamic>),
-      hostInfo: json['hostInfo'] == null
-          ? null
-          : HostInfo.fromJson(json['hostInfo'] as Map<String, dynamic>),
+      dateInfo: DateInfo.fromJson(json['dateInfo'] as Map<String, dynamic>),
+      hostInfo: HostInfo.fromJson(json['hostInfo'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$FilterSpotToJson(FilterSpot instance) =>
@@ -82,21 +81,23 @@ Map<String, dynamic> _$FilterSpotToJson(FilterSpot instance) =>
       'eventInfo': instance.eventInfo,
       'placeInfo': instance.placeInfo,
       'topicInfo': instance.topicInfo,
+      'dateInfo': instance.dateInfo,
       'hostInfo': instance.hostInfo,
     };
 
 HostInfo _$HostInfoFromJson(Map<String, dynamic> json) => HostInfo(
-      name: json['name'] as String? ?? "",
+      name: json['name'] as String,
+      id: json['id'] as String,
     );
 
 Map<String, dynamic> _$HostInfoToJson(HostInfo instance) => <String, dynamic>{
+      'id': instance.id,
       'name': instance.name,
     };
 
 EventInfo _$EventInfoFromJson(Map<String, dynamic> json) => EventInfo(
       name: json['name'] as String,
       id: json['id'] as String,
-      eventType: json['eventType'] as String,
       emoji: json['emoji'] as String,
       description: json['description'] as String? ?? "",
     );
@@ -104,9 +105,22 @@ EventInfo _$EventInfoFromJson(Map<String, dynamic> json) => EventInfo(
 Map<String, dynamic> _$EventInfoToJson(EventInfo instance) => <String, dynamic>{
       'name': instance.name,
       'id': instance.id,
-      'eventType': instance.eventType,
       'emoji': instance.emoji,
       'description': instance.description,
+    };
+
+DateInfo _$DateInfoFromJson(Map<String, dynamic> json) => DateInfo(
+      dateTime: json['dateTime'] as String,
+      id: json['id'] as String,
+      startTime: json['startTime'] as String,
+      durationApproximated: json['durationApproximated'] as int,
+    );
+
+Map<String, dynamic> _$DateInfoToJson(DateInfo instance) => <String, dynamic>{
+      'dateTime': instance.dateTime,
+      'id': instance.id,
+      'startTime': instance.startTime,
+      'durationApproximated': instance.durationApproximated,
     };
 
 PlaceInfo _$PlaceInfoFromJson(Map<String, dynamic> json) => PlaceInfo(

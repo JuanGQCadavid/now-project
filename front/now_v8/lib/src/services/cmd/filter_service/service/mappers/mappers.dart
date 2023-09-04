@@ -6,9 +6,9 @@ class FilterServiceDTOsMappers {
   List<Spot> fromPlacesToSpotList(Locations locations) {
     List<Spot> spots = [];
 
-    locations.places.forEach((place) {
-      print(place.topicInfo.principalTopic);
-      print(place.topicInfo.secondaryTopics);
+    for (var place in locations.places) {
+
+      DateTime date  = DateTime.parse("${place.dateInfo.dateTime}T${place.dateInfo.startTime}");
 
       spots.add(
         Spot.withOutSpotColors(
@@ -22,9 +22,10 @@ class FilterServiceDTOsMappers {
             place.placeInfo.lon,
           ),
           spotId: place.eventInfo.id,
+          date: date
         ),
       );
-    });
+    }
 
     return spots;
   }

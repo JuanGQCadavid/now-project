@@ -18,29 +18,35 @@ class FilterFakeService implements IFilterService {
     required double cpLng,
     double radious = 10,
   }) async {
+    DateTime date = DateTime.now();
     List<Spot> spots = [
       Spot.withOutSpotColors(
         principalTag: "CoffeLovers",
         secondaryTags: List.empty(),
-        latLng: LatLng(6.253723, -75.592771),
+        latLng: const LatLng(6.253723, -75.592771),
         spotId: "spotId_1",
+        date: date,
       ),
       Spot.withOutSpotColors(
         principalTag: "ReadingClub",
         secondaryTags: List.empty(),
-        latLng: LatLng(6.255733, -75.592771),
+        latLng: const LatLng(6.255733, -75.592771),
         spotId: "spotId_2",
+        date: date,
       ),
       Spot.withOutSpotColors(
           principalTag: "StreePainting",
           secondaryTags: List.empty(),
-          latLng: LatLng(6.257743, -75.592771),
-          spotId: "spotId_3"),
+          latLng: const LatLng(6.257743, -75.592771),
+          spotId: "spotId_3",
+          date: date,
+      ),
       Spot.withOutSpotColors(
         principalTag: "Dance",
         secondaryTags: List.empty(),
-        latLng: LatLng(6.259753, -75.592771),
+        latLng: const LatLng(6.259753, -75.592771),
         spotId: "spotId_4",
+        date: date,
       )
     ];
 
@@ -59,7 +65,6 @@ class FilterFakeService implements IFilterService {
         eventInfo: EventInfo(
           description: "Spot 1 Description",
           emoji: ":p",
-          eventType: "online",
           id: "SPOT_ID_1",
           maximunCapacty: 1,
           name: "Spot 1 Name"
@@ -89,7 +94,6 @@ class FilterFakeService implements IFilterService {
         eventInfo: EventInfo(
           description: "Spot 2 Description",
           emoji: ":o",
-          eventType: "online",
           id: "SPOT_ID_2",
           maximunCapacty: 1,
           name: "Spot 2 Name"
@@ -119,7 +123,6 @@ class FilterFakeService implements IFilterService {
         eventInfo: EventInfo(
           description: "Spot 3 Description",
           emoji: ":d",
-          eventType: "online",
           id: "SPOT_ID_3",
           maximunCapacty: 1,
           name: "Spot 3 Name"
@@ -149,7 +152,6 @@ class FilterFakeService implements IFilterService {
         eventInfo: EventInfo(
           description: "Spot 4 Description",
           emoji: ":v",
-          eventType: "online",
           id: "SPOT_ID_4",
           maximunCapacty: 1,
           name: "Spot 4 Name"

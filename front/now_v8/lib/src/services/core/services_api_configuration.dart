@@ -13,12 +13,12 @@ class ApiConfig {
 
   ApiConfig.toProd({
     this.filterServiceResource = "filter",
-    this.apiGatewayEndpoint = "https://4co5utcub8.execute-api.us-east-2.amazonaws.com",
+    this.apiGatewayEndpoint = "http://192.168.10.11:8000",
     this.spotServiceResource = "spot",
     this.stage = "prod"
   });
 
-  String getFilterEndpoint() => "${apiGatewayEndpoint}/${stage}/${filterServiceResource}";
+  String getFilterEndpoint() => "${apiGatewayEndpoint}/${filterServiceResource}";
 
   String getBaseURL() => "${apiGatewayEndpoint}/${stage}";
 

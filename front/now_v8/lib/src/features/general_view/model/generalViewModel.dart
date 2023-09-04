@@ -31,14 +31,14 @@ class GeneralViewModel {
         cpLng: userLocation.longitude
       );
 
-    
-    // for (var spot in spots) {
-    //   spot.spotsColor = colorService.getColor();
-    // }
-
-    spots.forEach((spot) {
-      spot.spotsColor = colorService.getColor();
-    });
+    for (var spot in spots) {
+      if (spot.date.compareTo(DateTime.now()) > 0){
+        spot.spotsColor = colorService.getScheduleColor();
+      }else {
+        spot.spotsColor = colorService.getColor();
+      }
+      
+    }
 
     return spots;
   }

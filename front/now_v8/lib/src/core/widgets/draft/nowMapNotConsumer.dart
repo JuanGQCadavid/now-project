@@ -51,6 +51,7 @@ class NowMap extends StatefulWidget {
 
     filteredSpots.spots.forEach((spot) {
       spots.add(Spot(
+        date: spot.date,
         principalTag: spot.principalTag,
         secondaryTags: spot.secondaryTags,
         latLng: spot.latLng,

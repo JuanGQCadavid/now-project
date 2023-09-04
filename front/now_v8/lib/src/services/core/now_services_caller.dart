@@ -61,7 +61,10 @@ class NowServicesCaller {
       );
     } on DioError catch (e) {
       if (e.type == DioErrorType.response) {
+        Println(e.message);
+        Println(e.response?.data ?? " Not response" );
         return left(
+          // TODO -> If the backend returns this error is because a user action is neede, we should change this
           const InternalError(),
         );
       }
