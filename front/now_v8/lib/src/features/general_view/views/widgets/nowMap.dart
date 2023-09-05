@@ -68,19 +68,19 @@ class MapTags extends ConsumerWidget {
       rowTags.add(clearButtom(ref));
 
       // First Adding the tags that are selected.
-      filteredSpots.tagsSelected.forEach((tag) {
+      for (var tag in filteredSpots.tagsSelected) {
         rowTags.add(
           generateTag(filteredSpots.onFilterColor.color, tag, ref),
         );
-      });
+      }
 
       // Then Adding the ones that are not selected as gray
 
-      filteredSpots.tagsOff.forEach((tag) {
+      for (var tag in filteredSpots.tagsOff) {
         rowTags.add(
           generateTag(Colors.black38, tag, ref),
         );
-      });
+      }
     } else {
       Map<String, Color> tags = {};
 
@@ -131,7 +131,7 @@ class MapTags extends ConsumerWidget {
         borderRadius: BorderRadius.circular(50),
         color: Colors.white,
       ),
-      margin: EdgeInsets.only(right: 15),
+      margin: const EdgeInsets.only(right: 15),
       child: IconButton(
         onPressed: () => onClearButtom(ref),
         icon: const Icon(Icons.delete_outline),
@@ -143,7 +143,7 @@ class MapTags extends ConsumerWidget {
 class NowMap extends StatefulWidget {
   final FilteredSpots filteredSpots;
   NowMap({
-    Key? key,
+    Key? key,   
     required this.filteredSpots,
   }) : super(key: key);
 

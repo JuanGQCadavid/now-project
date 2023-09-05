@@ -21,7 +21,7 @@ class FilterServiceDTOsMappers {
             place.placeInfo.lat,
             place.placeInfo.lon,
           ),
-          spotId: place.eventInfo.id,
+          spotId: place.dateInfo.id,
           date: date
         ),
       );

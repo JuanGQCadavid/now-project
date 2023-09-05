@@ -3,12 +3,12 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:location/location.dart';
 import 'package:now_v8/src/core/models/spot.dart';
 import 'package:now_v8/src/features/general_view/model/filteredSpots.dart';
 import 'package:now_v8/src/services/core/providers.dart';
 
 // Statefull with consumer
+const LatLng _empty =  LatLng(-100000, -1000000);
 class NowMapV2 extends ConsumerStatefulWidget {
   final List<Spot> spots;
   final bool centerMapOnSpots;
@@ -32,9 +32,7 @@ class NowMapV2 extends ConsumerStatefulWidget {
       this.includeUserLocation = true,
       this.camaraPosition,
       required this.mapController})
-      : super(key: key) {
-    print("on NowMap");
-  }
+      : super(key: key);
 
   factory NowMapV2.fromFilteredSpots(
     FilteredSpots filteredSpots,
@@ -87,6 +85,7 @@ class _NowMapV2State extends ConsumerState<NowMapV2> {
     setState(() {
       _mapController = mapController;
     });
+
     LatLngBounds bounds;
     print("Hello?");
     if (widget.centerMapOnSpots && widget.spots.isNotEmpty) {
@@ -146,28 +145,21 @@ class _NowMapV2State extends ConsumerState<NowMapV2> {
               target: widget.camaraPosition!,
               zoom: widget.mapZoom,
             );
-            return GoogleMap(
+
+            return  GoogleMapLocal(
+              blockMap: widget.blockMap,
               markers: markers,
-              mapType: MapType.normal,
-              zoomControlsEnabled: false,
               initialCameraPosition: initialCameraPosition,
-              mapToolbarEnabled: false,
               myLocationButtonEnabled: widget.myLocationButtonEnabled,
-              myLocationEnabled: true,
-              onMapCreated: (controller) {
-                onMapCreated(controller, userLocation: snapshot.data);
-              },
-              scrollGesturesEnabled: !widget.blockMap,
-              zoomGesturesEnabled: !widget.blockMap,
+              onMapCreated: onMapCreated,
+              userLocation: snapshot.data!,
             );
           } else if (snapshot.hasError) {
             print("snapshot.hasError");
-            return Container(
-              child: Text("Ops we are having problems to didplay the map"),
-            );
+            return const Text("Ops we are having problems to didplay the map");
           } else {
             print("snapshot loading");
-            return Center(child: const CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           }
         },
       );
@@ -185,21 +177,56 @@ class _NowMapV2State extends ConsumerState<NowMapV2> {
         zoom: widget.mapZoom,
       );
 
-      return GoogleMap(
+      return GoogleMapLocal(
+        blockMap: widget.blockMap,
+        markers: markers,
+        initialCameraPosition: initialCameraPosition,
+        myLocationButtonEnabled: widget.myLocationButtonEnabled,
+        onMapCreated: onMapCreated,
+      );
+    }
+  }
+}
+
+class GoogleMapLocal extends StatelessWidget {
+  final Set<Marker> markers;
+  final CameraPosition initialCameraPosition;
+  final bool myLocationButtonEnabled;
+  final Function(GoogleMapController, {LatLng? userLocation}) onMapCreated;
+  final bool blockMap;
+  final LatLng userLocation;
+  final MinMaxZoomPreference defaulMinMaxZoom = const MinMaxZoomPreference(11.5, 100);
+  
+
+  const GoogleMapLocal({
+    super.key, 
+    required this.markers, 
+    required this.initialCameraPosition, 
+    required this.myLocationButtonEnabled, 
+    required this.onMapCreated, 
+    required this.blockMap,
+    this.userLocation = _empty
+    }
+  );
+
+  @override
+  Widget build(BuildContext context) {
+    return GoogleMap(
         markers: markers,
         mapType: MapType.normal,
         zoomControlsEnabled: false,
         initialCameraPosition: initialCameraPosition,
         mapToolbarEnabled: false,
-        myLocationButtonEnabled: widget.myLocationButtonEnabled,
+        myLocationButtonEnabled: myLocationButtonEnabled,
         myLocationEnabled: true,
         onMapCreated: (controller) {
-          onMapCreated(controller);
+          onMapCreated(controller, userLocation: userLocation == _empty ? null : userLocation );
         },
-        scrollGesturesEnabled: !widget.blockMap,
-        zoomGesturesEnabled: !widget.blockMap,
+        scrollGesturesEnabled: !blockMap,
+        zoomGesturesEnabled: !blockMap,
+        minMaxZoomPreference: !blockMap ? defaulMinMaxZoom : MinMaxZoomPreference.unbounded,
+        
       );
-    }
   }
 }
 

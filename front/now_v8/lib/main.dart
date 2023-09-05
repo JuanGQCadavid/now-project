@@ -20,10 +20,13 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         title: 'Flutter Demo',
         theme: ThemeData(
-          primarySwatch: Colors.blue,
+          primarySwatch: Colors.grey,
         ),
         home:
-            GeneralViewFeature()
+            Container(
+              color: Colors.grey.shade100,//Theme.of(context).primaryColorLight,
+              child: GeneralViewFeature(),
+            )
         );
   }
 }
