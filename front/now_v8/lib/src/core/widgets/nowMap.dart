@@ -124,6 +124,8 @@ class _NowMapV2State extends ConsumerState<NowMapV2> {
       );
     });
 
+    markers.add(Marker(markerId: MarkerId("mydudeIamHere"), position: LatLng(6.251723158537203, -75.59277109801769), visible: true, icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen) ));
+
     if (widget.includeUserLocation) {
       return FutureBuilder(
         future: locationService.getUserCurrentLocation(),
@@ -196,9 +198,11 @@ class GoogleMapLocal extends StatelessWidget {
   final bool blockMap;
   final LatLng userLocation;
   final MinMaxZoomPreference defaulMinMaxZoom = const MinMaxZoomPreference(11.5, 100);
-  
 
-  const GoogleMapLocal({
+  late LatLng lastCamare;
+  late double lastZoom;
+
+  GoogleMapLocal({
     super.key, 
     required this.markers, 
     required this.initialCameraPosition, 
@@ -225,7 +229,17 @@ class GoogleMapLocal extends StatelessWidget {
         scrollGesturesEnabled: !blockMap,
         zoomGesturesEnabled: !blockMap,
         minMaxZoomPreference: !blockMap ? defaulMinMaxZoom : MinMaxZoomPreference.unbounded,
-        
+        onCameraMove: ((position) {
+          print("User camera ${position.target.latitude} ${position.target.longitude}");
+          lastCamare = position.target;
+          lastZoom = position.zoom;
+        }),
+        onCameraIdle: () {
+          print("LAST POSITION  ${lastCamare.latitude} ${lastCamare.longitude} ZOOM - ${lastZoom}");
+        },
+        onCameraMoveStarted: () {
+          print("HERE WE GOOO!");
+        },
       );
   }
 }
