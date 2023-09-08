@@ -16,6 +16,7 @@ class MapSample extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final filteredSpots = ref.watch(filteredSpotsProvider);
+    final mapInteraction = ref.read(mapInteractionProvider.notifier);
     const location = LatLng(6.251723, -75.592771);
 
     // if (widget.includeUserLocation != null || widget.centerMapOnSpots != true) {
@@ -24,11 +25,14 @@ class MapSample extends ConsumerWidget {
 
     return Stack(
       children: [
-        NowMapV2.fromFilteredSpots(
-          filteredSpots,
-          mapController, 
-          camaraPosition: location,
+        NowMapV2(
+          spots: filteredSpots.spots,
           centerMapOnSpots: true,
+          mapController: mapController, 
+          camaraPosition: location,
+          onCameraIdle: mapInteraction.onCameraIdle,
+          onCameraMove: mapInteraction.onCameraMove,
+          onCameraMoveStarted: mapInteraction.onCameraMoveStarted,
         ),
         Align(
           alignment: Alignment.bottomLeft,
@@ -136,58 +140,6 @@ class MapTags extends ConsumerWidget {
         onPressed: () => onClearButtom(ref),
         icon: const Icon(Icons.delete_outline),
       ),
-    );
-  }
-}
-
-class NowMap extends StatefulWidget {
-  final FilteredSpots filteredSpots;
-  NowMap({
-    Key? key,   
-    required this.filteredSpots,
-  }) : super(key: key);
-
-  @override
-  State<NowMap> createState() => _NowMapState();
-}
-
-class _NowMapState extends State<NowMap> {
-  Completer<GoogleMapController> _controller = Completer();
-  // final Completer<GoogleMapController> _controller;
-
-  static const CameraPosition _kGooglePlex = CameraPosition(
-    target: LatLng(6.251723, -75.592771),
-    zoom: 14.4746,
-  );
-
-  @override
-  Widget build(BuildContext context) {
-    Set<Marker> markers = Set();
-
-    widget.filteredSpots.spots.forEach((spot) {
-      markers.add(
-        Marker(
-            markerId: MarkerId(spot.spotId),
-            position: spot.latLng,
-            visible: true,
-            icon: widget.filteredSpots.tagsSelected.isEmpty
-                ? spot.spotsColor.hue
-                : widget.filteredSpots.onFilterColor.hue,
-            infoWindow: InfoWindow(title: spot.principalTag)),
-      );
-    });
-
-    return GoogleMap(
-      markers: markers,
-      mapType: MapType.normal,
-      zoomControlsEnabled: false,
-      initialCameraPosition: _kGooglePlex,
-      mapToolbarEnabled: false,
-      myLocationButtonEnabled: false,
-      padding: const EdgeInsets.only(bottom: 65, left: 15),
-      // onMapCreated: (GoogleMapController controller) {
-      //   _controller.complete(controller);
-      // },
     );
   }
 }

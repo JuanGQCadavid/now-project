@@ -18,58 +18,29 @@ class NowMapV2 extends ConsumerStatefulWidget {
   final bool includeUserLocation;
   late LatLng? camaraPosition;
   final Completer<GoogleMapController> mapController;
+  final Function(CameraPosition)? onCameraMove;
+  final Function()?  onCameraIdle;
+  final Function()?  onCameraMoveStarted;
 
   // Internally
   final double mapPaddingOnCentered = 50;
 
   NowMapV2(
-      {Key? key,
-      this.spots = const [],
-      this.centerMapOnSpots = true,
-      this.blockMap = false,
-      this.mapZoom = 14.5,
-      this.myLocationButtonEnabled = true,
-      this.includeUserLocation = true,
-      this.camaraPosition,
-      required this.mapController})
+      {
+        Key? key,
+        this.spots = const [],
+        this.centerMapOnSpots = true,
+        this.blockMap = false,
+        this.mapZoom = 14.5,
+        this.myLocationButtonEnabled = true,
+        this.includeUserLocation = true,
+        this.camaraPosition,
+        this.onCameraIdle,
+        this.onCameraMove,
+        this.onCameraMoveStarted,
+        required this.mapController,
+      })
       : super(key: key);
-
-  factory NowMapV2.fromFilteredSpots(
-    FilteredSpots filteredSpots,
-    Completer<GoogleMapController> mapController, {
-    bool centerMapOnSpots = true,
-    bool blockMap = false,
-    double mapZoom = 14.5,
-    bool myLocationButtonEnabled = false,
-    bool includeUserLocation = true,
-    LatLng? camaraPosition,
-  }) {
-    List<Spot> spots = [];
-
-    for (var spot in filteredSpots.spots) {
-      spots.add(Spot(
-        principalTag: spot.principalTag,
-        secondaryTags: spot.secondaryTags,
-        latLng: spot.latLng,
-        spotId: spot.spotId,
-        date: spot.date,
-        spotsColor: filteredSpots.tagsSelected.isEmpty
-            ? spot.spotsColor
-            : filteredSpots.onFilterColor,
-      ));
-    }
-
-    return NowMapV2(
-      spots: spots,
-      centerMapOnSpots: centerMapOnSpots,
-      blockMap: blockMap,
-      mapZoom: mapZoom,
-      myLocationButtonEnabled: myLocationButtonEnabled,
-      camaraPosition: camaraPosition,
-      includeUserLocation: includeUserLocation,
-      mapController: mapController,
-    );
-  }
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _NowMapV2State();
@@ -87,12 +58,9 @@ class _NowMapV2State extends ConsumerState<NowMapV2> {
     });
 
     LatLngBounds bounds;
-    print("Hello?");
     if (widget.centerMapOnSpots && widget.spots.isNotEmpty) {
       if (userLocation != null) {
-        print("Hello?");
-        bounds =
-            MapUtilities.getCameraLatLngBounds(widget.spots, userLocation: userLocation);
+        bounds = MapUtilities.getCameraLatLngBounds(widget.spots, userLocation: userLocation);
       } else {
         bounds = MapUtilities.getCameraLatLngBounds(widget.spots);
       }
@@ -106,12 +74,11 @@ class _NowMapV2State extends ConsumerState<NowMapV2> {
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final locationService = ref.read(locationServiceProvider);
-    Set<Marker> markers = Set();
+  Set<Marker> generateMarkers(List<Spot> spots){
 
-    widget.spots.forEach((spot) {
+    Set<Marker> markers = {};
+
+    for (var spot in spots) {
       markers.add(
         Marker(
             markerId: MarkerId(spot.spotId),
@@ -122,26 +89,40 @@ class _NowMapV2State extends ConsumerState<NowMapV2> {
               title: "${spot.date}",
             )),
       );
-    });
+    }
 
-    markers.add(Marker(markerId: MarkerId("mydudeIamHere"), position: LatLng(6.251723158537203, -75.59277109801769), visible: true, icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen) ));
+    markers.add(
+      Marker(
+        markerId: const MarkerId("mydudeIamHere"), 
+        position: const LatLng(6.251723158537203, -75.59277109801769), 
+        visible: true, 
+        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen) 
+      )
+    );
+
+    return markers;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final locationService = ref.read(locationServiceProvider);
+    Set<Marker> markers = generateMarkers(widget.spots);
+
+    if (widget.camaraPosition == null) {
+      if (widget.spots.isNotEmpty && widget.spots.length == 1) {
+        widget.camaraPosition = widget.spots.first.latLng;
+      } else {
+        widget.camaraPosition = const LatLng(0, 0);
+      }
+    }
 
     if (widget.includeUserLocation) {
       return FutureBuilder(
         future: locationService.getUserCurrentLocation(),
         builder: (context, AsyncSnapshot<LatLng> snapshot) {
           if (snapshot.hasData) {
-            print("snapshot.hasData");
-            print(snapshot.data!);
-            if (widget.camaraPosition == null) {
-              if (widget.includeUserLocation) {
-                widget.camaraPosition = snapshot.data!;
-              } else if (widget.spots.isNotEmpty && widget.spots.length == 1) {
-                widget.camaraPosition = widget.spots.first.latLng;
-              } else {
-                widget.camaraPosition = const LatLng(0, 0);
-              }
-            }
+
+            widget.camaraPosition = snapshot.data!;
 
             initialCameraPosition = CameraPosition(
               target: widget.camaraPosition!,
@@ -155,25 +136,18 @@ class _NowMapV2State extends ConsumerState<NowMapV2> {
               myLocationButtonEnabled: widget.myLocationButtonEnabled,
               onMapCreated: onMapCreated,
               userLocation: snapshot.data!,
+              onCameraMove: widget.onCameraMove,
+              onCameraIdle: widget.onCameraIdle,
+              onCameraMoveStarted: widget.onCameraMoveStarted,
             );
           } else if (snapshot.hasError) {
-            print("snapshot.hasError");
             return const Text("Ops we are having problems to didplay the map");
           } else {
-            print("snapshot loading");
             return const Center(child: CircularProgressIndicator());
           }
         },
       );
     } else {
-      if (widget.camaraPosition == null) {
-        if (widget.spots.isNotEmpty && widget.spots.length == 1) {
-          widget.camaraPosition = widget.spots.first.latLng;
-        } else {
-          widget.camaraPosition = const LatLng(0, 0);
-        }
-      }
-
       initialCameraPosition = CameraPosition(
         target: widget.camaraPosition!,
         zoom: widget.mapZoom,
@@ -185,22 +159,29 @@ class _NowMapV2State extends ConsumerState<NowMapV2> {
         initialCameraPosition: initialCameraPosition,
         myLocationButtonEnabled: widget.myLocationButtonEnabled,
         onMapCreated: onMapCreated,
+        onCameraMove: widget.onCameraMove,
+        onCameraIdle: widget.onCameraIdle,
+        onCameraMoveStarted: widget.onCameraMoveStarted,
       );
     }
   }
 }
 
 class GoogleMapLocal extends StatelessWidget {
-  final Set<Marker> markers;
-  final CameraPosition initialCameraPosition;
-  final bool myLocationButtonEnabled;
-  final Function(GoogleMapController, {LatLng? userLocation}) onMapCreated;
   final bool blockMap;
+  late double lastZoom;
+  late LatLng lastCamare;
   final LatLng userLocation;
+  final Set<Marker> markers;
+  final bool myLocationButtonEnabled;
+  final CameraPosition initialCameraPosition;
+  final Function(GoogleMapController, {LatLng? userLocation}) onMapCreated;
+  final Function(CameraPosition)? onCameraMove;
+  final Function()?  onCameraIdle;
+  final Function()?  onCameraMoveStarted;
+
   final MinMaxZoomPreference defaulMinMaxZoom = const MinMaxZoomPreference(11.5, 100);
 
-  late LatLng lastCamare;
-  late double lastZoom;
 
   GoogleMapLocal({
     super.key, 
@@ -209,6 +190,9 @@ class GoogleMapLocal extends StatelessWidget {
     required this.myLocationButtonEnabled, 
     required this.onMapCreated, 
     required this.blockMap,
+    this.onCameraMove,
+    this.onCameraIdle,
+    this.onCameraMoveStarted,
     this.userLocation = _empty
     }
   );
@@ -229,17 +213,9 @@ class GoogleMapLocal extends StatelessWidget {
         scrollGesturesEnabled: !blockMap,
         zoomGesturesEnabled: !blockMap,
         minMaxZoomPreference: !blockMap ? defaulMinMaxZoom : MinMaxZoomPreference.unbounded,
-        onCameraMove: ((position) {
-          print("User camera ${position.target.latitude} ${position.target.longitude}");
-          lastCamare = position.target;
-          lastZoom = position.zoom;
-        }),
-        onCameraIdle: () {
-          print("LAST POSITION  ${lastCamare.latitude} ${lastCamare.longitude} ZOOM - ${lastZoom}");
-        },
-        onCameraMoveStarted: () {
-          print("HERE WE GOOO!");
-        },
+        onCameraMove: onCameraMove,
+        onCameraIdle: onCameraIdle,
+        onCameraMoveStarted: onCameraMoveStarted,
       );
   }
 }

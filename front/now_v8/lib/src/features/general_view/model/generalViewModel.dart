@@ -65,7 +65,7 @@ class GeneralViewModel {
     result.onFilterColor = defaultColor;
     result.tagsSelected = tagsSelected;
 
-    spots.forEach((spot) {
+    for (var spot in spots) {
       bool spotToShow = false;
 
       if (tagsSelected.contains(spot.principalTag)) {
@@ -74,18 +74,19 @@ class GeneralViewModel {
         result.tagsOff.add(spot.principalTag);
       }
 
-      spot.secondaryTags.forEach((spotTag) {
+      
+      for (var spotTag in spot.secondaryTags) {
         if (tagsSelected.contains(spotTag)) {
           spotToShow = true;
         } else {
           result.tagsOff.add(spotTag);
         }
-      });
+      }
 
       if (spotToShow) {
         result.spots.add(spot);
       }
-    });
+    }
 
     return result;
   }

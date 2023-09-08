@@ -32,7 +32,7 @@ class GeneralViewBody extends StatelessWidget {
     return Column(
       children: [
         Container(
-          child: GeneralViewHeader(),
+          child: const GeneralViewHeader(),
           margin: const EdgeInsets.all(10),
         ),
         Expanded(

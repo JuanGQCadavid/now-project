@@ -37,6 +37,8 @@ final tagsSelectedProvider =
   return TagsNotifier();
 }));
 
+final mapInteractionProvider = StateNotifierProvider<MapInteractions, MapState>((ref) => MapInteractions());
+
 final filteredSpotsProvider = StateProvider<FilteredSpots>((ref) {
   final tagsSelected = ref.watch(tagsSelectedProvider);
   final generalViewModel = ref.read(generalViewModelProvider);

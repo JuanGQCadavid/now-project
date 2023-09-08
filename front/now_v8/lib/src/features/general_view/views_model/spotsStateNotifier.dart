@@ -2,7 +2,9 @@
 // import 'dart:developer';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:now_v8/src/core/models/spot.dart';
+import 'package:now_v8/src/features/general_view/model/filteredSpots.dart';
 import 'package:now_v8/src/features/general_view/model/generalViewModel.dart';
 
 /**
@@ -32,7 +34,7 @@ class TagsNotifier extends StateNotifier<Set<String>> {
   TagsNotifier(): super({});
 
   void tagSelected(String tag){
-    Set<String> newState = new Set.from(state);
+    Set<String> newState = Set.from(state);
     if (state.contains(tag)) {
       newState.remove(tag);
     }else {
@@ -45,4 +47,33 @@ class TagsNotifier extends StateNotifier<Set<String>> {
   void cleanTags() {
     state = {};
   }
+}
+
+
+class MapInteractions extends StateNotifier<MapState> {
+  MapInteractions(): super(emptyMapState);
+
+  void onCameraMove(CameraPosition position){
+    print("User camera ${position.target.latitude} ${position.target.longitude}");
+
+    var newState = state.copyWith(
+      lastPositionKnowed: position.target,
+      zoom: position.zoom,
+      status: MapStatus.movingOnMap()
+    );
+
+    state = newState;
+  }
+
+  void onCameraIdle(){
+    print("LAST POSITION  ${state.lastPositionKnowed.latitude} ${state.lastPositionKnowed.longitude} ZOOM - ${state.zoom}");
+    state = state.copyWith(status: MapStatus.movingIdle());
+  }
+
+  void onCameraMoveStarted(){
+    print("HERE WE GOOO!");
+    state = state.copyWith(status: MapStatus.movingStarted());
+  }
+
+  
 }
