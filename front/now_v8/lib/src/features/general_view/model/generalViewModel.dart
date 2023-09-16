@@ -5,30 +5,44 @@ import 'package:now_v8/src/core/contracts/locationService.dart';
 import 'package:now_v8/src/core/models/spot.dart';
 import 'package:now_v8/src/core/models/spotColors.dart';
 import 'package:now_v8/src/features/general_view/model/filteredSpots.dart';
+import 'package:now_v8/src/core/contracts/key_value_storage.dart';
+import 'package:now_v8/src/core/models/long_spot.dart';
+import 'package:now_v8/src/core/models/state_response.dart';
 
 class GeneralViewModel {
   final IFilterService filterService;
   final IColorService colorService;
   final ILocationService locationService;
+  final IKeyValueStorage sessionDatabase;
+
   late SpotsColors defaultColor;
 
   List<Spot> spots = List.empty();
 
+  final String searchSessionKey = "Generla-View-Session-Id";
+
   GeneralViewModel(
       {required this.filterService,
       required this.colorService,
-      required this.locationService}) {
+      required this.locationService,
+      required this.sessionDatabase,
+    }) {
     defaultColor = colorService.getColor();
   }
 
-  Future<List<Spot>> getSpots() async {
-    print("getSpots");
-    LatLng userLocation = await locationService.getUserCurrentLocation();
-    print("userLocation done");
+  Future<List<Spot>> getSpots([LatLng? centralPosition]) async {
+    LatLng searchPosition = centralPosition??  await locationService.getUserCurrentLocation();
+
+    String token = sessionDatabase.getValue(searchSessionKey);
+
+    StateResponse<List<LongSpot>, String> filterResponse =
+        await filterService.getByProximityWithState(
+            cpLat: searchPosition.latitude, cpLng: searchPosition.longitude, token: token);
+      
 
     spots = await filterService.getByProximity(
-        cpLat: userLocation.latitude, 
-        cpLng: userLocation.longitude
+        cpLat: searchPosition.latitude, 
+        cpLng: searchPosition.longitude
       );
 
     for (var spot in spots) {
