@@ -33,12 +33,13 @@ class FilterService implements IFilterService {
   Future<List<Spot>> getByProximity({
     required double cpLat,
     required double cpLng,
-    double radious = 10,
+    double radious = 0.03,
   }) async {
     Either<BackendErrors, dynamic> response = await nowServicesCaller
         .request(Method.GET, proximityResource, queryParameters: {
       "cpLat": cpLat,
       "cpLon": cpLng,
+      "radious":  radious,
     });
 
     return response.fold<List<Spot>>((l) {
@@ -72,7 +73,15 @@ class FilterService implements IFilterService {
       castFunction: fromFilterSpotToSpot,
     );
     
-    return cast<StateResponse<List<Spot>, String>>(backendResponse);
+    
+    List<Spot> response = [];
+
+    for (var dynSpot in cast<List<dynamic>>(backendResponse.response)) {
+      response.add(cast<Spot>(dynSpot));
+    }
+    String tokenResponse = cast<String>(backendResponse.token);
+
+    return StateResponse<List<Spot> , String>(response: response, token: tokenResponse);
   }
 
 
@@ -80,7 +89,7 @@ class FilterService implements IFilterService {
   Future<StateResponse<List<longSpot.LongSpot>, String>> getLongSpotByProximityWithState({
     required double cpLat,
     required double cpLng,
-    double radious = 0.5,
+    double radious = 0.03,
     String token = "",
   }) async {
     StateResponse backendResponse;

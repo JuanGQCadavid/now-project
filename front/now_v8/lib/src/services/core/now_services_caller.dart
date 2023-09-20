@@ -68,11 +68,12 @@ class NowServicesCaller {
           const InternalError(),
         );
       }
-
+      print(e.toString());
       return left(
         const UnknownError(),
       );
     } catch (e) {
+      print(e.toString());
       return left(
         const UnknownError(),
       );

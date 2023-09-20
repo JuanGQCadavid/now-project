@@ -39,7 +39,7 @@ class GranularModel {
     print("Token -> " + token);
 
     StateResponse<List<LongSpot>, String> filterResponse =
-        await filterService.getByProximityWithState(
+        await filterService.getLongSpotByProximityWithState(
             cpLat: userLocation.latitude, cpLng: userLocation.longitude, token: token);
 
     if(filterResponse.token.isEmpty || filterResponse.token != token) {

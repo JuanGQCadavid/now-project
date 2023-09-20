@@ -3,8 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:now_v8/src/features/general_view/views/generalView.dart';
 
-void main() {
-  Hive.initFlutter();
+void main() async {
+
+  await Hive.initFlutter();
+  
   runApp(
     ProviderScope(
       child: MyApp(),

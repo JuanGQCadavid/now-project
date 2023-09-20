@@ -54,7 +54,7 @@ class FilterFakeService implements IFilterService {
   }
 
   @override
-  Future<StateResponse<List<LongSpot>, String>> getByProximityWithState({
+  Future<StateResponse<List<LongSpot>, String>> getLongSpotByProximityWithState({
     required double cpLat,
     required double cpLng,
     double radious = 10,
@@ -181,5 +181,12 @@ class FilterFakeService implements IFilterService {
 
     return StateResponse<List<LongSpot>, String>(
         response: longSpots, token: "FakeToken:(");
+  }
+  
+  
+  @override
+  Future<StateResponse<List<Spot>, String>> getSpotsByProximityWithState({required double cpLat, required double cpLng, double radious = 10, String token = ""}) {
+    // TODO: implement getSpotsByProximityWithState
+    throw UnimplementedError();
   }
 }

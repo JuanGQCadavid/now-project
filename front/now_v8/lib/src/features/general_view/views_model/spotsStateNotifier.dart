@@ -2,10 +2,11 @@
 // import 'dart:developer';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:now_v8/src/core/models/spot.dart';
 import 'package:now_v8/src/features/general_view/model/filteredSpots.dart';
-import 'package:now_v8/src/features/general_view/model/generalViewModel.dart';
+import 'package:now_v8/src/features/general_view/model/general_view_model.dart';
 
 /**
  * We are going to have singles state notifiers
@@ -23,9 +24,15 @@ class SpotsNotifer extends StateNotifier<List<Spot>> {
     refreshSpots();
   }
 
-  void refreshSpots() async{
-    List<Spot> spots = await generalViewModel.getSpots();
+  void refreshSpots({LatLng? latLng}) async{
+    List<Spot> spots = await generalViewModel.getSpots(
+      latLng=latLng
+    );
+
+    print("Before addAll state len -> ${state.length}  Spots len -> ${spots.length} total -> ${state.length + spots.length} " );
+    spots.addAll(state);
     state = spots;
+    print("After addAll state len -> ${state.length}" );
   }
 }
 
@@ -51,6 +58,7 @@ class TagsNotifier extends StateNotifier<Set<String>> {
 
 
 class MapInteractions extends StateNotifier<MapState> {
+
   MapInteractions(): super(emptyMapState);
 
   void onCameraMove(CameraPosition position){
