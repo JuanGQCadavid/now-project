@@ -30,7 +30,6 @@ class _LoginFeatureState extends State<LoginFeature> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              PhoneInputField(),
               const SizedBox(
                 height: 30,
               ),
@@ -44,75 +43,6 @@ class _LoginFeatureState extends State<LoginFeature> {
         tooltip: "Loging",
         child: const Icon(Icons.login_rounded),
       ),
-    );
-  }
-}
-
-// ignore: must_be_immutable
-class PhoneInputField extends StatelessWidget {
-  String phoneNumber = "";
-  String countryCode = "";
-
-  PhoneInputField({super.key});
-
-  void onPhoneNumberChanged(String value) {
-    phoneNumber = value;
-  }
-
-  void onCodeChanged(String value) {
-    countryCode = value;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.max,
-      children: [
-        Expanded(
-          flex: 3,
-          child: TextFormField(
-            decoration: const InputDecoration(
-              icon: Icon(Icons.add),
-              labelText: "code",
-            ),
-            keyboardType: TextInputType.number,
-            autofocus: false,
-            autocorrect: false,
-            onChanged: onCodeChanged,
-            onEditingComplete: () {
-              print("onEditingComplete");
-              print(phoneNumber);
-            },
-            onTapOutside: (event) {
-              print("onTapOutside");
-              print(phoneNumber);
-            },
-          ),
-        ),
-        Expanded(
-          flex: 7,
-          child: Padding(
-            padding: const EdgeInsets.only(left: 8.0),
-            child: TextFormField(
-              decoration: const InputDecoration(
-                labelText: "Phone number",
-              ),
-              keyboardType: TextInputType.number,
-              autofocus: false,
-              autocorrect: false,
-              onChanged: onPhoneNumberChanged,
-              onEditingComplete: () {
-                print("onEditingComplete");
-                print(phoneNumber);
-              },
-              onTapOutside: (event) {
-                print("onTapOutside");
-                print(phoneNumber);
-              },
-            ),
-          ),
-        ),
-      ],
     );
   }
 }
@@ -228,6 +158,7 @@ class _PhoneNumberV2State extends State<PhoneNumberV2> {
       children: [
         TextFormField(
           decoration: InputDecoration(
+            hintText: "Phone number",
             prefixIconConstraints: const BoxConstraints.tightFor(height: 60),
             prefixIcon: Container(
               margin: const EdgeInsets.only(
@@ -280,81 +211,86 @@ class _PhoneNumberV2State extends State<PhoneNumberV2> {
 
         //// This is the search
         Visibility(
-          // maintainAnimation: true,
-          // maintainState: true,
+          maintainAnimation: true,
+          maintainState: true,
           visible: showCountriesSearch,
-          child: Container(
-            margin: const EdgeInsets.only(top: 10),
-            padding: const EdgeInsets.symmetric(horizontal: 10),
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(
-                  color: Colors.black.withAlpha(150),
-                )
-                // color: Colors.blue,
-                ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                ////////////
-                //
-                // Country input name
-                //
-                ////////////
-                TextFormField(
-                  controller: countriesController,
-                  decoration: InputDecoration(
-                    hintText: "Search for countries",
-                    prefixIcon: Container(
-                      margin: const EdgeInsets.only(
-                        right: 10,
-                        left: 10,
-                      ),
-                      child: RotatedBox(
-                        quarterTurns: 4,
-                        child: Icon(
-                          Icons.search,
-                          // size: 30,
-                          color: Theme.of(context).primaryColor,
+          child: AnimatedOpacity(
+            duration: const Duration(milliseconds: 500),
+            curve: Curves.easeInOut,
+            opacity: showCountriesSearch ? 1 : 0,
+            child: Container(
+              margin: const EdgeInsets.only(top: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(
+                    color: Colors.black.withAlpha(150),
+                  )
+                  // color: Colors.blue,
+                  ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  ////////////
+                  //
+                  // Country input name
+                  //
+                  ////////////
+                  TextFormField(
+                    controller: countriesController,
+                    decoration: InputDecoration(
+                      hintText: "Search for countries",
+                      prefixIcon: Container(
+                        margin: const EdgeInsets.only(
+                          right: 10,
+                          left: 10,
+                        ),
+                        child: RotatedBox(
+                          quarterTurns: 4,
+                          child: Icon(
+                            Icons.search,
+                            // size: 30,
+                            color: Theme.of(context).primaryColor,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  keyboardType: TextInputType.text,
-                  autocorrect: false,
-                  onTapOutside: (event) {
-                    WidgetsBinding.instance.focusManager.primaryFocus
-                        ?.unfocus();
-                  },
-                  onChanged: onCountryNameChanged,
-                ),
-
-                ////////////
-                //
-                // list  options
-                //
-                ////////////
-                ConstrainedBox(
-                  constraints: const BoxConstraints(
-                    minHeight: 50,
-                    maxHeight: 250,
-                  ),
-                  child: ListView.builder(
-                    shrinkWrap: true,
-                    scrollDirection: Axis.vertical,
-                    itemCount: countryCodesToShow.length, // 5,
-                    itemBuilder: (buildContext, index) {
-                      return CountryCodeInfo(
-                        countryCode: countryCodesToShow[index],
-                        countryCodeSelected: countrySelected,
-                        onPressed: () {
-                          onCountryNameSelected(countryCodesToShow[index]);
-                        },
-                      );
+                    keyboardType: TextInputType.text,
+                    autocorrect: false,
+                    onTapOutside: (event) {
+                      WidgetsBinding.instance.focusManager.primaryFocus
+                          ?.unfocus();
                     },
+                    onChanged: onCountryNameChanged,
                   ),
-                ),
-              ],
+
+                  ////////////
+                  //
+                  // list  options
+                  //
+                  ////////////
+                  ConstrainedBox(
+                    constraints: const BoxConstraints(
+                      minHeight: 50,
+                      maxHeight: 250,
+                    ),
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      scrollDirection: Axis.vertical,
+                      itemCount: countryCodesToShow.length, // 5,
+                      itemBuilder: (buildContext, index) {
+                        return CountryCodeInfo(
+                          countryCode: countryCodesToShow[index],
+                          countryCodeSelected: countrySelected,
+                          onPressed: () {
+                            onCountryNameSelected(countryCodesToShow[index]);
+                          },
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         )
