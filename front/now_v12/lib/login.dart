@@ -33,7 +33,19 @@ class _LoginFeatureState extends State<LoginFeature> {
               const SizedBox(
                 height: 30,
               ),
-              PhoneNumberV2()
+              const PhoneNumberV2(),
+              const SizedBox(
+                height: 30,
+              ),
+              CodeInputV2(
+                size: 5,
+              ),
+              const SizedBox(
+                height: 30,
+              ),
+              const TextInput(
+                hint: "What is your name?",
+              )
             ],
           ),
         ),
@@ -42,6 +54,112 @@ class _LoginFeatureState extends State<LoginFeature> {
         onPressed: onPressed,
         tooltip: "Loging",
         child: const Icon(Icons.login_rounded),
+      ),
+    );
+  }
+}
+
+class TextInput extends StatelessWidget {
+  final String? hint;
+  const TextInput({super.key, this.hint});
+
+  @override
+  Widget build(BuildContext context) {
+    return TextFormField(
+      decoration: InputDecoration(
+        hintText: hint,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(15.0),
+        ),
+      ),
+      keyboardType: TextInputType.text,
+      autocorrect: false,
+      enableSuggestions: true,
+      onTapOutside: (event) {
+        WidgetsBinding.instance.focusManager.primaryFocus?.unfocus();
+      },
+      onChanged: (value) {},
+    );
+  }
+}
+
+// ignore: must_be_immutable
+class CodeInputV2 extends StatelessWidget {
+  late List<TextEditingController> controllers;
+  late List<FocusNode> focusNodes;
+  final int size;
+
+  CodeInputV2({super.key, required this.size}) {
+    controllers = [];
+    focusNodes = [];
+    for (var i = 0; i < size; i++) {
+      controllers.add(TextEditingController());
+      focusNodes.add(FocusNode());
+    }
+
+    focusNodes[0].requestFocus();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 80,
+      child: ListView.builder(
+        itemCount: size,
+        shrinkWrap: true,
+        scrollDirection: Axis.horizontal,
+        itemBuilder: (builderContext, index) {
+          return CodeNumnber(
+              controller: controllers[index],
+              myFocusNode: focusNodes[index],
+              nextFocusNode: index == size - 1 ? null : focusNodes[index + 1]);
+        },
+      ),
+    );
+  }
+}
+
+// ignore: must_be_immutable
+class CodeNumnber extends StatelessWidget {
+  TextEditingController controller;
+  FocusNode? nextFocusNode;
+  FocusNode myFocusNode;
+
+  CodeNumnber({
+    super.key,
+    required this.controller,
+    required this.myFocusNode,
+    this.nextFocusNode,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(left: 10),
+      child: SizedBox(
+        width: 60,
+        child: TextFormField(
+          textAlign: TextAlign.center,
+          focusNode: myFocusNode,
+          maxLength: 1,
+          controller: controller,
+          keyboardType: TextInputType.number,
+          decoration: InputDecoration(
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+          onChanged: (value) {
+            if (value.isNotEmpty) {
+              if (nextFocusNode != null) {
+                nextFocusNode!.requestFocus();
+              }
+            }
+          },
+          onTapOutside: (event) {
+            WidgetsBinding.instance.focusManager.primaryFocus?.unfocus();
+          },
+        ),
       ),
     );
   }
@@ -84,7 +202,7 @@ class _PhoneNumberV2State extends State<PhoneNumberV2> {
     CountryCodes(code: "+9", countryID: "ESP", countryName: "espana"),
   ];
 
-  CountryCodes countrySelected = CountryCodes(
+  late CountryCodes countrySelected = CountryCodes(
     countryID: "",
     code: "",
     countryName: "",
@@ -298,20 +416,6 @@ class _PhoneNumberV2State extends State<PhoneNumberV2> {
     );
   }
 }
-
-// Flexible(
-//   fit: FlexFit.loose,
-//   child: ListView.builder(
-//     shrinkWrap: true,
-//     scrollDirection: Axis.vertical,
-//     itemCount: countryCodes.length <= 5
-//         ? countryCodes.length
-//         : countryCodes.length, // 5,
-//     itemBuilder: (buildContext, index) {
-//       return CountryCodeInfo(countryCode: countryCodes[index]);
-//     },
-//   ),
-// ),
 
 class CountryCodeInfo extends StatelessWidget {
   final CountryCodes countryCode;
