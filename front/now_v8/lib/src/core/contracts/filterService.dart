@@ -12,7 +12,14 @@ abstract class IFilterService {
     double radious = 10
   });
 
-  Future<StateResponse<List<LongSpot>, String>> getByProximityWithState({
+  Future<StateResponse<List<LongSpot>, String>> getLongSpotByProximityWithState({
+    required double cpLat,
+    required double cpLng,
+    double radious = 10,
+    String token = "",
+  });
+
+  Future<StateResponse<List<Spot>, String>> getSpotsByProximityWithState({
     required double cpLat,
     required double cpLng,
     double radious = 10,
