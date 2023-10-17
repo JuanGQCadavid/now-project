@@ -4,9 +4,10 @@ import 'package:flutter/material.dart';
 class CodeInputV2 extends StatelessWidget {
   late List<TextEditingController> controllers;
   late List<FocusNode> focusNodes;
+  void Function(int, String) onCodeChange;
   final int size;
 
-  CodeInputV2({super.key, required this.size}) {
+  CodeInputV2({super.key, required this.size, required this.onCodeChange}) {
     controllers = [];
     focusNodes = [];
     for (var i = 0; i < size; i++) {
@@ -29,6 +30,8 @@ class CodeInputV2 extends StatelessWidget {
           return _CodeNumnber(
               controller: controllers[index],
               myFocusNode: focusNodes[index],
+              myIndex: index,
+              onChange: onCodeChange,
               nextFocusNode: index == size - 1 ? null : focusNodes[index + 1]);
         },
       ),
@@ -41,12 +44,16 @@ class _CodeNumnber extends StatelessWidget {
   TextEditingController controller;
   FocusNode? nextFocusNode;
   FocusNode myFocusNode;
+  final void Function(int, String) onChange;
+  final int myIndex;
 
   _CodeNumnber({
     super.key,
     required this.controller,
     required this.myFocusNode,
     this.nextFocusNode,
+    required this.onChange,
+    required this.myIndex,
   });
 
   @override
@@ -72,6 +79,7 @@ class _CodeNumnber extends StatelessWidget {
                 nextFocusNode!.requestFocus();
               }
             }
+            onChange(myIndex, value);
           },
           onTapOutside: (event) {
             WidgetsBinding.instance.focusManager.primaryFocus?.unfocus();

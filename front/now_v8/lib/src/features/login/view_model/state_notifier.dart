@@ -98,7 +98,8 @@ class LoginStateNotifer extends StateNotifier<LoginState> {
           ),
         );
 
-  void onNext(String userPhoneNumber, String userName, String userCode) async {
+  void onNext(
+      String userPhoneNumber, String userName, List<String> userCode) async {
     print(
         "\n userPhoneNumber: ${userPhoneNumber} \n userName: ${userName}\n userCode: ${userCode}\n State: ${state.onState}");
 
@@ -115,7 +116,7 @@ class LoginStateNotifer extends StateNotifier<LoginState> {
 
   void validateSignUser(
     String userPhoneNumber,
-    String userCode,
+    List<String> userCode,
     String userName,
   ) {
     state = state.copyWith(
@@ -126,7 +127,7 @@ class LoginStateNotifer extends StateNotifier<LoginState> {
 
   void preSignUser(
     String userPhoneNumber,
-    String userCode,
+    List<String> userCode,
   ) async {
     state = state.copyWith(
       onState: OnState.onSingUpPhoneValidation,
@@ -136,7 +137,7 @@ class LoginStateNotifer extends StateNotifier<LoginState> {
 
   void validateLogin(
     String userPhoneNumber,
-    String userCode,
+    List<String> userCode,
   ) async {
     state = state.copyWith(
       onState: OnState.onDone,

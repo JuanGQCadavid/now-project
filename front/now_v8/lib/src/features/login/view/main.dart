@@ -21,9 +21,9 @@ class LoginFeature extends ConsumerWidget {
     userName = value;
   }
 
-  String codeVerification = "";
-  void onCodeVerificationChanged(String value) {
-    codeVerification = value;
+  List<String> verificationCodes = ["", "", "", "", ""];
+  void onCodeVerificationChanged(int pos, String value) {
+    verificationCodes[pos] = value;
   }
 
   @override
@@ -44,7 +44,7 @@ class LoginFeature extends ConsumerWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          notifier.onNext(phoneNumber, userName, codeVerification);
+          notifier.onNext(phoneNumber, userName, verificationCodes);
         },
         tooltip: "Loging",
         child: const Icon(Icons.login_rounded),
@@ -56,7 +56,7 @@ class LoginFeature extends ConsumerWidget {
 class _Body extends StatelessWidget {
   final void Function(String) onPhoneChange;
   final void Function(String) onUserNameChanged;
-  final void Function(String) onCodeVerificationChanged;
+  final void Function(int, String) onCodeVerificationChanged;
   final LoginState state;
 
   const _Body({
@@ -98,6 +98,7 @@ class _Body extends StatelessWidget {
               child: Container(
                 margin: const EdgeInsets.only(bottom: 30),
                 child: CodeInputV2(
+                  onCodeChange: onCodeVerificationChanged,
                   size: 5,
                 ),
               ),
