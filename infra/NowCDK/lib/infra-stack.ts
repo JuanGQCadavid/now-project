@@ -586,6 +586,28 @@ export class InfraStack extends Stack {
     Tags.of(filterLambda).add("Family", FILTER_FAMILY);
 
     // -> locationDataUpdater
+
+    const locationDataUpdaterRole = new iam.Role(this, "locationDataUpdaterRole", {
+      assumedBy: new iam.ServicePrincipal("lambda.amazonaws.com"),
+      description: "Role for locationDataUpdater service",
+    });
+
+    // Lambda Permisions
+    locationDataUpdaterRole.addManagedPolicy(
+      iam.ManagedPolicy.fromAwsManagedPolicyName(
+        "service-role/AWSLambdaBasicExecutionRole"
+      )
+    );
+
+    locationDataUpdaterRole.addToPolicy(
+      new iam.PolicyStatement({
+        actions: ["ssm:GetParameters"],
+        effect: iam.Effect.ALLOW,
+        resources: ["*"],
+      })
+    );
+
+
     const locationDataUpdater = new lambda.Function(
       this,
       "locationDataUpdater",
@@ -594,6 +616,7 @@ export class InfraStack extends Stack {
         handler: "main",
         code: lambda.Code.fromAsset(path),
         functionName: "LocationDataUpdater",
+        role: locationDataUpdaterRole,
         environment: {
           dbUser: dbUserParameter.parameterName,
           dbPassword: dbPasswordParameter.parameterName,

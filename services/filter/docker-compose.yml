@@ -17,6 +17,7 @@ services:
       - spotServiceURL=${SPOT_SERVICE}
     volumes:
       - ~/.aws/credentials:/root/.aws/credentials:ro
+      - ~/.aws/config:/root/.aws/config:ro
     restart: always
 
   db:

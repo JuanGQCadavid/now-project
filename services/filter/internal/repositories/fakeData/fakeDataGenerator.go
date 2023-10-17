@@ -79,7 +79,7 @@ func (gen *DummyDataGenerator) GeneratePoints() {
 
 		}
 		// TODO -> with time.Unix we could get it in integer format.
-		spot.StartTime = startsAt.Format(time.DateOnly)
+		spot.StartTime = startsAt.Format(time.TimeOnly)
 
 		// 3. With a random number assign a emoji from the emojis list and a type for the event.
 		spot.Emoji = emojies[rand.Intn(len(emojies)-1)]
