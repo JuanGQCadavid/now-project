@@ -82,9 +82,7 @@ class _Body extends StatelessWidget {
                   onPhoneNomberEdited: onPhoneChange,
                 ),
               ),
-              visible: state.onState == OnState.onLogin ||
-                  state.onState == OnState.onInit ||
-                  state.onState == OnState.onSingUp,
+              visible: state.stateConfig.showPhoneNumber,
             ),
             Visibility(
               child: Container(
@@ -94,7 +92,7 @@ class _Body extends StatelessWidget {
                   onTextChanged: onUserNameChanged,
                 ),
               ),
-              visible: state.onState == OnState.onSingUp,
+              visible: state.stateConfig.showUserName,
             ),
             Visibility(
               child: Container(
@@ -103,8 +101,7 @@ class _Body extends StatelessWidget {
                   size: 5,
                 ),
               ),
-              visible: state.onState == OnState.onLogin ||
-                  state.onState == OnState.onSingUpPhoneValidation,
+              visible: state.stateConfig.showCodeInput,
             ),
             Visibility(
               child: Text(state.errorMessage),

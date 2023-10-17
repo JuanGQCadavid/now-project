@@ -6,6 +6,39 @@ import 'package:now_v8/src/features/login/model/login_state.dart';
 
 part 'state_notifier.freezed.dart';
 
+Map<OnState, OnStateConfig> stateConfigMaps = {
+  OnState.onInit: const OnStateConfig(
+    showCodeInput: false,
+    showPhoneNumber: true,
+    showUserName: false,
+  ),
+  OnState.onLogin: const OnStateConfig(
+    showCodeInput: true,
+    showPhoneNumber: true,
+    showUserName: false,
+  ),
+  OnState.onSingUp: const OnStateConfig(
+    showCodeInput: false,
+    showPhoneNumber: true,
+    showUserName: true,
+  ),
+  OnState.onSingUpPhoneValidation: const OnStateConfig(
+    showCodeInput: true,
+    showPhoneNumber: true,
+    showUserName: true,
+  ),
+  OnState.onErrorState: const OnStateConfig(
+    showCodeInput: false,
+    showPhoneNumber: false,
+    showUserName: false,
+  ),
+  OnState.onDone: const OnStateConfig(
+    showCodeInput: false,
+    showPhoneNumber: false,
+    showUserName: false,
+  ),
+};
+
 class UserDetails {
   final String userName;
   final String userId;
@@ -87,6 +120,7 @@ class LoginStateNotifer extends StateNotifier<LoginState> {
   ) {
     state = state.copyWith(
       onState: OnState.onDone,
+      stateConfig: stateConfigMaps[OnState.onDone]!,
     );
   }
 
@@ -96,6 +130,7 @@ class LoginStateNotifer extends StateNotifier<LoginState> {
   ) async {
     state = state.copyWith(
       onState: OnState.onSingUpPhoneValidation,
+      stateConfig: stateConfigMaps[OnState.onSingUpPhoneValidation]!,
     );
   }
 
@@ -105,6 +140,7 @@ class LoginStateNotifer extends StateNotifier<LoginState> {
   ) async {
     state = state.copyWith(
       onState: OnState.onDone,
+      stateConfig: stateConfigMaps[OnState.onDone]!,
     );
   }
 
@@ -116,6 +152,7 @@ class LoginStateNotifer extends StateNotifier<LoginState> {
         state = state.copyWith(
           onState: OnState.onLogin,
           phoneNumber: userPhoneNumber,
+          stateConfig: stateConfigMaps[OnState.onLogin]!,
         )
       },
       (r) => {
@@ -124,11 +161,11 @@ class LoginStateNotifer extends StateNotifier<LoginState> {
             state = state.copyWith(
               onState: OnState.onSingUp,
               phoneNumber: userPhoneNumber,
+              stateConfig: stateConfigMaps[OnState.onSingUp]!,
             );
           },
           internalError: (String err) {
             state = state.copyWith(
-              // onState: OnState.onErrorState,
               errorMessage: err,
               phoneNumber: userPhoneNumber,
             );

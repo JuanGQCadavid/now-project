@@ -12,39 +12,6 @@ enum OnState {
   onDone,
 }
 
-Map<OnState, OnStateConfig> stateConfigMaps = {
-  OnState.onInit: const OnStateConfig(
-    showCodeInput: false,
-    showPhoneNumber: true,
-    showUserName: false,
-  ),
-  OnState.onLogin: const OnStateConfig(
-    showCodeInput: true,
-    showPhoneNumber: true,
-    showUserName: false,
-  ),
-  OnState.onSingUp: const OnStateConfig(
-    showCodeInput: false,
-    showPhoneNumber: true,
-    showUserName: true,
-  ),
-  OnState.onSingUpPhoneValidation: const OnStateConfig(
-    showCodeInput: true,
-    showPhoneNumber: true,
-    showUserName: true,
-  ),
-  OnState.onErrorState: const OnStateConfig(
-    showCodeInput: false,
-    showPhoneNumber: false,
-    showUserName: false,
-  ),
-  OnState.onDone: const OnStateConfig(
-    showCodeInput: false,
-    showPhoneNumber: false,
-    showUserName: false,
-  ),
-};
-
 @freezed
 class OnStateConfig with _$OnStateConfig {
   const factory OnStateConfig({
