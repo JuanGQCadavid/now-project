@@ -62,7 +62,8 @@ class GranularView extends StatelessWidget {
 class _Body extends ConsumerWidget {
   final Color appColor;
   final Completer<GoogleMapController> mapController;
-  const _Body({Key? key, required this.appColor, required this.mapController}) : super(key: key);
+  const _Body({Key? key, required this.appColor, required this.mapController})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -124,7 +125,7 @@ class _Body extends ConsumerWidget {
             ReadMoreBox(
               textBody: onSpot.spot.eventInfo.description,
             ),
-                        const SizedBox(
+            const SizedBox(
               height: 15,
             ),
             Wrap(
