@@ -99,7 +99,7 @@ class _NowMapV2State extends ConsumerState<NowMapV2> {
         icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen) 
       )
     );
-
+    
     return markers;
   }
 
