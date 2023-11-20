@@ -1,11 +1,11 @@
 package domain
 
 type User struct {
-	Name           string `json:"name"`
-	PhoneNumber    string `json:"phoneNumber"`
-	Validated      bool   `json:"isValid"`
-	UserId         string `json:"userId"`
-	PhoneSignature string `json:"phoneSignature"`
+	Name           string `json:"name" dynamodbav:"Name"`
+	PhoneNumber    string `json:"phoneNumber" dynamodbav:"PhoneNumber"`
+	Validated      bool   `json:"isValid" dynamodbav:"Validated"`
+	UserId         string `json:"userId" dynamodbav:"UserId"`
+	PhoneSignature string `json:"phoneSignature" dynamodbav:"PhoneSignature,omitempty"`
 }
 
 type Tokens struct {
