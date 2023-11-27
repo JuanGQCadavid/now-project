@@ -76,6 +76,12 @@ func (repo *DynamoDBUserRepository) CreateUser(phoneNumber, userName string) (*d
 	return user, nil
 }
 
+type UserOTP struct {
+	OTP      []int         `json:"otp"`
+	TTL      time.Duration `json:"ttl"`
+	Attempts int           `json:"attempts"`
+}
+
 // Save OTP
 func (repo *DynamoDBUserRepository) AddOTP(phoneNumber string, otp []int, ttl time.Duration) error {
 
