@@ -76,20 +76,12 @@ func (repo *DynamoDBUserRepository) CreateUser(phoneNumber, userName string) (*d
 	return user, nil
 }
 
-type UserOTP struct {
-	OTP      []int         `json:"otp"`
-	TTL      time.Duration `json:"ttl"`
-	Attempts int           `json:"attempts"`
-}
-
 // Save OTP
 func (repo *DynamoDBUserRepository) AddOTP(phoneNumber string, otp []int, ttl time.Duration) error {
 
-	newOTP := &OTP{
+	key, err := dynamodbattribute.MarshalMap(TableKey{
 		PhoneNumber: phoneNumber,
-	}
-
-	key, err := dynamodbattribute.MarshalMap(newOTP)
+	})
 
 	if err != nil {
 		log.Fatalf("Got error marshalling key item: %s", err)
@@ -100,26 +92,22 @@ func (repo *DynamoDBUserRepository) AddOTP(phoneNumber string, otp []int, ttl ti
 
 	updateExpression := "set"
 	updateExpression = fmt.Sprintf("%s #%s = :%s,", updateExpression, "OTP", "OTP")
-	updateExpression = fmt.Sprintf("%s #%s = :%s,", updateExpression, "OTP_TTL", "OTP_TTL")
-	// Remove last " , " in the updateExpression
 	updateExpression = strings.TrimSuffix(updateExpression, ",")
 
 	expressionAttributesNames[fmt.Sprintf("#%s", "OTP")] = aws.String("OTP")
-	expressionAttributesNames[fmt.Sprintf("#%s", "OTP_TTL")] = aws.String("OTP_TTL")
 
-	otpAttribute, err := dynamodbattribute.Marshal(otp)
+	userOTP := UserOTP{
+		OTP:      otp,
+		TTL:      ttl,
+		Attempts: 0,
+	}
+
+	otpAttribute, err := dynamodbattribute.Marshal(userOTP)
 	if err != nil {
 		logs.Error.Println("We fail casting the OTP, err: ", err.Error())
 		return err
 	}
 	expressionAttributeValues[fmt.Sprintf(":%s", "OTP")] = otpAttribute
-
-	ttlAttribute, err := dynamodbattribute.Marshal(ttl)
-	if err != nil {
-		logs.Error.Println("We fail casting the TTL, err: ", err.Error())
-		return err
-	}
-	expressionAttributeValues[fmt.Sprintf(":%s", "OTP_TTL")] = ttlAttribute
 
 	input := &dynamodb.UpdateItemInput{
 		Key:                       key,
