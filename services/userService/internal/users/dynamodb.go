@@ -4,11 +4,11 @@ import (
 	"errors"
 	"fmt"
 	"log"
-	"strings"
 	"time"
 
 	"github.com/JuanGQCadavid/now-project/services/pkgs/common/logs"
 	"github.com/JuanGQCadavid/now-project/services/userService/internal/core/domain"
+	"github.com/JuanGQCadavid/now-project/services/userService/internal/core/ports"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
@@ -19,15 +19,17 @@ import (
 // phoneNumber string Key | name string | validated bool | UserId tring | phoneSiganuture string | otp string/[]int | otp_ttl string
 
 type DynamoDBUserRepository struct {
-	svc       *dynamodb.DynamoDB
-	tableName string
+	svc        *dynamodb.DynamoDB
+	tableName  string
+	maxRetries int
 }
 
 func NewDynamoDBUserRepository(tableName string, session *session.Session) *DynamoDBUserRepository {
 	svc := dynamodb.New(session)
 	return &DynamoDBUserRepository{
-		tableName: tableName,
-		svc:       svc,
+		tableName:  tableName,
+		svc:        svc,
+		maxRetries: 3,
 	}
 }
 
@@ -79,30 +81,19 @@ func (repo *DynamoDBUserRepository) CreateUser(phoneNumber, userName string) (*d
 // Save OTP
 func (repo *DynamoDBUserRepository) AddOTP(phoneNumber string, otp []int, ttl time.Duration) error {
 
-	key, err := dynamodbattribute.MarshalMap(TableKey{
-		PhoneNumber: phoneNumber,
-	})
-
+	key, err := repo.genKey(phoneNumber)
 	if err != nil {
-		log.Fatalf("Got error marshalling key item: %s", err)
+		return err
 	}
 
 	expressionAttributeValues := map[string]*dynamodb.AttributeValue{}
-	expressionAttributesNames := map[string]*string{}
 
-	updateExpression := "set"
-	updateExpression = fmt.Sprintf("%s #%s = :%s,", updateExpression, "OTP", "OTP")
-	updateExpression = strings.TrimSuffix(updateExpression, ",")
-
-	expressionAttributesNames[fmt.Sprintf("#%s", "OTP")] = aws.String("OTP")
-
-	userOTP := UserOTP{
+	otpAttribute, err := dynamodbattribute.Marshal(UserOTP{
 		OTP:      otp,
 		TTL:      ttl,
 		Attempts: 0,
-	}
+	})
 
-	otpAttribute, err := dynamodbattribute.Marshal(userOTP)
 	if err != nil {
 		logs.Error.Println("We fail casting the OTP, err: ", err.Error())
 		return err
@@ -113,9 +104,8 @@ func (repo *DynamoDBUserRepository) AddOTP(phoneNumber string, otp []int, ttl ti
 		Key:                       key,
 		TableName:                 &repo.tableName,
 		ExpressionAttributeValues: expressionAttributeValues,
-		ExpressionAttributeNames:  expressionAttributesNames,
 		ReturnConsumedCapacity:    aws.String(dynamodb.ReturnConsumedCapacityIndexes),
-		UpdateExpression:          &updateExpression,
+		UpdateExpression:          aws.String("set OTP = :OTP"),
 	}
 
 	_, err = repo.svc.UpdateItem(input)
@@ -129,9 +119,138 @@ func (repo *DynamoDBUserRepository) AddOTP(phoneNumber string, otp []int, ttl ti
 // Validate OTP, this should punish on wrong attemp
 
 func (repo *DynamoDBUserRepository) ValidateOTP(phoneNumber string, otp []int) error {
-	return nil
+
+	otpFromRepo, err := repo.getOTP(phoneNumber)
+	logs.Info.Printf("OTP: %+v \n", otpFromRepo)
+
+	if err != nil {
+		return err
+	}
+
+	if len(otp) != len(otpFromRepo.OTP) {
+		logs.Error.Println("lengths are not the same for the OTPs")
+		return repo.punishOTP(phoneNumber, otpFromRepo)
+	}
+
+	for i, code := range otp {
+		if otpFromRepo.OTP[i] != code {
+			logs.Error.Println("OTP does not match")
+			return repo.punishOTP(phoneNumber, otpFromRepo)
+		}
+	}
+
+	logs.Info.Println("Code validation goes well")
+	return repo.cleanOTP(phoneNumber, otpFromRepo)
+}
+
+func (repo *DynamoDBUserRepository) cleanOTP(phoneNumber string, userOTP *UserOTP) error {
+	return repo.updateOTP(phoneNumber, nil)
+}
+
+func (repo *DynamoDBUserRepository) punishOTP(phoneNumber string, userOTP *UserOTP) error {
+	userOTP.Attempts = userOTP.Attempts + 1
+
+	if userOTP.Attempts >= repo.maxRetries {
+		if err := repo.cleanOTP(phoneNumber, userOTP); err != nil {
+			logs.Error.Println("We fail to clean the code")
+			return err
+		}
+		logs.Warning.Println("OTP Clean")
+
+		return ports.ErrMaxRetriesOnTOP
+	}
+
+	if err := repo.updateOTP(phoneNumber, userOTP); err != nil {
+		return err
+	}
+
+	return ports.ErrInvalidOTP
+}
+
+func (repo *DynamoDBUserRepository) updateOTP(phoneNumber string, userOTP *UserOTP) error {
+	logs.Info.Println("Updating OTP: phoneNumber: ", phoneNumber, " userOTP: ", userOTP)
+
+	otpAttribute, err := dynamodbattribute.Marshal(userOTP)
+	if err != nil {
+		return err
+	}
+
+	key, err := repo.genKey(phoneNumber)
+	if err != nil {
+		return err
+	}
+
+	if err != nil {
+		logs.Error.Println("We fail casting the OTP, err: ", err.Error())
+		return err
+	}
+
+	expressionAttributeValues := map[string]*dynamodb.AttributeValue{}
+	expressionAttributeValues[fmt.Sprintf(":%s", "OTP")] = otpAttribute
+
+	out, err := repo.svc.UpdateItem(&dynamodb.UpdateItemInput{
+		Key:                       key,
+		TableName:                 &repo.tableName,
+		ExpressionAttributeValues: expressionAttributeValues,
+		ReturnConsumedCapacity:    aws.String(dynamodb.ReturnConsumedCapacityIndexes),
+		UpdateExpression:          aws.String("set OTP = :OTP"),
+	})
+
+	if err != nil {
+		logs.Error.Println("We fail updating the item: ", err.Error())
+		return err
+	}
+
+	logs.Info.Println(out)
+	return err
+
 }
 
 func (repo *DynamoDBUserRepository) generateId() string {
 	return uuid.NewString()
+}
+
+func (repo *DynamoDBUserRepository) getOTP(phoneNumber string) (*UserOTP, error) {
+	key, err := repo.genKey(phoneNumber)
+	if err != nil {
+		return nil, err
+	}
+
+	resp := &UserOTPBody{}
+
+	out, err := repo.svc.GetItem(&dynamodb.GetItemInput{
+		// ProjectionExpression: aws.String("OTP"),
+		// ConsistentRead:       aws.Bool(true),
+		TableName: aws.String(repo.tableName),
+		Key:       key,
+	})
+
+	if err != nil {
+		logs.Error.Println("We fail to get the OTP, error: ", err.Error())
+		return nil, err
+	}
+
+	logs.Info.Printf("%+v\n", out)
+
+	err = dynamodbattribute.UnmarshalMap(out.Item, resp)
+
+	if err != nil {
+		logs.Error.Println("We fail to unmarshal the OTP, error: ", err.Error())
+		return nil, err
+	}
+
+	return resp.OTP, nil
+}
+
+func (repo *DynamoDBUserRepository) genKey(phoneNumber string) (map[string]*dynamodb.AttributeValue, error) {
+	key, err := dynamodbattribute.MarshalMap(TableKey{
+		PhoneNumber: phoneNumber,
+	})
+
+	if err != nil {
+		log.Fatalf("Got error marshalling key item: %s", err)
+		return nil, err
+	}
+
+	return key, nil
 }

@@ -11,3 +11,7 @@ type UserOTP struct {
 	TTL      time.Duration `json:"ttl"`
 	Attempts int           `json:"attempts"`
 }
+
+type UserOTPBody struct {
+	OTP *UserOTP `json:"OTP" dynamodbav:"OTP"`
+}

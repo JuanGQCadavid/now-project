@@ -16,6 +16,9 @@ func main() {
 	// repo.CreateUser("+573013475995", "JuanGo")
 	// repo.CreateUser("+573235237844", "Sofilongas")
 
-	otp := []int{2, 2, 3, 4, 5}
-	repo.AddOTP("+573013475995", otp, time.Duration(time.Hour*3))
+	otp := []int{2, 2, 2, 2, 5}
+	repo.AddOTP("+573235237844", otp, time.Duration(time.Hour*3))
+	// fakeOTP := []int{1, 2, 3, 4, 5}
+	repo.ValidateOTP("+573235237844", otp)
+
 }
