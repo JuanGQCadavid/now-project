@@ -80,40 +80,11 @@ func (repo *DynamoDBUserRepository) CreateUser(phoneNumber, userName string) (*d
 
 // Save OTP
 func (repo *DynamoDBUserRepository) AddOTP(phoneNumber string, otp []int, ttl time.Duration) error {
-
-	key, err := repo.genKey(phoneNumber)
-	if err != nil {
-		return err
-	}
-
-	expressionAttributeValues := map[string]*dynamodb.AttributeValue{}
-
-	otpAttribute, err := dynamodbattribute.Marshal(UserOTP{
+	return repo.updateOTP(phoneNumber, &UserOTP{
 		OTP:      otp,
 		TTL:      ttl,
 		Attempts: 0,
 	})
-
-	if err != nil {
-		logs.Error.Println("We fail casting the OTP, err: ", err.Error())
-		return err
-	}
-	expressionAttributeValues[fmt.Sprintf(":%s", "OTP")] = otpAttribute
-
-	input := &dynamodb.UpdateItemInput{
-		Key:                       key,
-		TableName:                 &repo.tableName,
-		ExpressionAttributeValues: expressionAttributeValues,
-		ReturnConsumedCapacity:    aws.String(dynamodb.ReturnConsumedCapacityIndexes),
-		UpdateExpression:          aws.String("set OTP = :OTP"),
-	}
-
-	_, err = repo.svc.UpdateItem(input)
-	if err != nil {
-		logs.Error.Println("We fail updating the item: ", err.Error())
-		return err
-	}
-	return err
 }
 
 // Validate OTP, this should punish on wrong attemp
@@ -148,7 +119,7 @@ func (repo *DynamoDBUserRepository) cleanOTP(phoneNumber string, userOTP *UserOT
 }
 
 func (repo *DynamoDBUserRepository) punishOTP(phoneNumber string, userOTP *UserOTP) error {
-	userOTP.Attempts = userOTP.Attempts + 1
+	userOTP.Attempts++
 
 	if userOTP.Attempts >= repo.maxRetries {
 		if err := repo.cleanOTP(phoneNumber, userOTP); err != nil {
