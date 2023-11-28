@@ -1,5 +1,7 @@
 package domain
 
+import "time"
+
 type User struct {
 	Name           string `json:"name" dynamodbav:"Name"`
 	PhoneNumber    string `json:"phoneNumber" dynamodbav:"PhoneNumber"`
@@ -7,13 +9,12 @@ type User struct {
 	UserId         string `json:"userId" dynamodbav:"UserId"`
 	PhoneSignature string `json:"phoneSignature" dynamodbav:"PhoneSignature,omitempty"`
 }
-
 type Tokens struct {
-	TokenId              string
-	UserId               string
-	LongLiveRefreshToken string
-	ShortLiveToken       string
-	ShortLiveTokenTTL    int
+	TokenId           string    `json:"tokenId" dynamodbav:"TokenId"`
+	UserID            string    `json:"userId" dynamodbav:"UserID"`
+	RefreshToken      string    `json:"refreshToken" dynamodbav:"RefreshToken"`
+	ShortLiveToken    string    `json:"shortLiveToken" dynamodbav:"ShortLiveToken"`
+	ShortLiveTokenTTL time.Time `json:"shortLiveTokenTTL" dynamodbav:"ShortLiveTokenTTL"`
 }
 
 type Login struct {

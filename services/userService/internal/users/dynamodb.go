@@ -36,7 +36,13 @@ func NewDynamoDBUserRepository(tableName string, session *session.Session) *Dyna
 // Fetch user data from repository
 
 func (repo *DynamoDBUserRepository) GetUser(phoneNumber string) (*domain.User, error) {
-	return nil, nil
+	user := &domain.User{}
+
+	if err := repo.getAndMapTo(phoneNumber, user); err != nil {
+		return nil, err
+	}
+
+	return user, nil
 }
 
 // Returns latest OTP generation timestap
@@ -109,6 +115,10 @@ func (repo *DynamoDBUserRepository) ValidateOTP(phoneNumber string, otp []int) e
 
 	if err != nil {
 		return err
+	}
+
+	if otpFromRepo == nil {
+		return ports.ErrInvalidOTP
 	}
 
 	if len(otp) != len(otpFromRepo.OTP) {
@@ -195,12 +205,21 @@ func (repo *DynamoDBUserRepository) generateId() string {
 }
 
 func (repo *DynamoDBUserRepository) getOTP(phoneNumber string) (*UserOTP, error) {
-	key, err := repo.genKey(phoneNumber)
-	if err != nil {
+
+	resp := &UserOTPBody{}
+
+	if err := repo.getAndMapTo(phoneNumber, resp); err != nil {
 		return nil, err
 	}
 
-	resp := &UserOTPBody{}
+	return resp.OTP, nil
+}
+
+func (repo *DynamoDBUserRepository) getAndMapTo(phoneNumber string, mapTo any) error {
+	key, err := repo.genKey(phoneNumber)
+	if err != nil {
+		return err
+	}
 
 	out, err := repo.svc.GetItem(&dynamodb.GetItemInput{
 		// ProjectionExpression: aws.String("OTP"),
@@ -211,19 +230,19 @@ func (repo *DynamoDBUserRepository) getOTP(phoneNumber string) (*UserOTP, error)
 
 	if err != nil {
 		logs.Error.Println("We fail to get the OTP, error: ", err.Error())
-		return nil, err
+		return err
 	}
 
 	logs.Info.Printf("%+v\n", out)
 
-	err = dynamodbattribute.UnmarshalMap(out.Item, resp)
+	err = dynamodbattribute.UnmarshalMap(out.Item, mapTo)
 
 	if err != nil {
 		logs.Error.Println("We fail to unmarshal the OTP, error: ", err.Error())
-		return nil, err
+		return err
 	}
 
-	return resp.OTP, nil
+	return nil
 }
 
 func (repo *DynamoDBUserRepository) genKey(phoneNumber string) (map[string]*dynamodb.AttributeValue, error) {
