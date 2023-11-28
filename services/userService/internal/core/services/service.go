@@ -152,10 +152,14 @@ func (svc *Service) getUser(phoneNumber string) (*domain.User, error) {
 }
 
 func (svc *Service) initProcessValidation(user *domain.User, methodVerificator domain.MethodVerifictor) error {
-	latestOTPGenerationTime := svc.userRepository.GetLastOTPGenerationTimestap(user.PhoneNumber)
+	latestOTPGenerationTime, err := svc.userRepository.GetLastOTPGenerationTimestap(user.PhoneNumber)
+
+	if err != nil {
+		return ports.ErrInternalError
+	}
 
 	//time.Now().Sub(*latestOTPGenerationTime) < svc.otpConifg.TTL
-	if latestOTPGenerationTime != nil && time.Since(*latestOTPGenerationTime) < svc.otpConifg.TTL {
+	if latestOTPGenerationTime != nil && time.Since(*latestOTPGenerationTime).Abs() < svc.otpConifg.TTL {
 		return ports.ErrOTPTTLStillLive
 	}
 

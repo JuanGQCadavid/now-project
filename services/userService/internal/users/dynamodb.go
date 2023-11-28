@@ -41,8 +41,19 @@ func (repo *DynamoDBUserRepository) GetUser(phoneNumber string) (*domain.User, e
 
 // Returns latest OTP generation timestap
 
-func (repo *DynamoDBUserRepository) GetLastOTPGenerationTimestap(phoneNumber string) *time.Time {
-	return nil
+func (repo *DynamoDBUserRepository) GetLastOTPGenerationTimestap(phoneNumber string) (*time.Time, error) {
+	otpFromRepo, err := repo.getOTP(phoneNumber)
+	logs.Info.Printf("OTP: %+v \n", otpFromRepo)
+
+	if err != nil {
+		logs.Error.Println("We fail to fetch the OTP")
+		return nil, err
+	}
+
+	if otpFromRepo != nil {
+		return &otpFromRepo.TTL, nil
+	}
+	return nil, nil
 }
 
 // Create a user in the repository
@@ -80,9 +91,11 @@ func (repo *DynamoDBUserRepository) CreateUser(phoneNumber, userName string) (*d
 
 // Save OTP
 func (repo *DynamoDBUserRepository) AddOTP(phoneNumber string, otp []int, ttl time.Duration) error {
+	now := time.Now()
+
 	return repo.updateOTP(phoneNumber, &UserOTP{
 		OTP:      otp,
-		TTL:      ttl,
+		TTL:      now.Add(ttl),
 		Attempts: 0,
 	})
 }

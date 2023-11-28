@@ -7,9 +7,9 @@ type TableKey struct {
 }
 
 type UserOTP struct {
-	OTP      []int         `json:"otp"`
-	TTL      time.Duration `json:"ttl"`
-	Attempts int           `json:"attempts"`
+	OTP      []int     `json:"otp"`
+	TTL      time.Time `json:"ttl"`
+	Attempts int       `json:"attempts"`
 }
 
 type UserOTPBody struct {

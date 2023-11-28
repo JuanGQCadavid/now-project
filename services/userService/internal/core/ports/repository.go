@@ -22,7 +22,7 @@ type UserRepository interface {
 	GetUser(phoneNumber string) (*domain.User, error)
 
 	// Returns latest OTP generation timestap
-	GetLastOTPGenerationTimestap(phoneNumber string) *time.Time
+	GetLastOTPGenerationTimestap(phoneNumber string) (*time.Time, error)
 
 	// Create a user in the repository
 	CreateUser(phoneNumber, userName string) (*domain.User, error)
