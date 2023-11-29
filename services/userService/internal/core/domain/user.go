@@ -40,3 +40,11 @@ type MethodVerifictor struct {
 	WhatsApp bool   `json:"whatsapp"`
 	SMS      bool   `json:"sms"`
 }
+
+type NotificatorType string
+
+const (
+	SMS      NotificatorType = "SMS"
+	WHATSAPP NotificatorType = "WHATSAPP"
+	DEFAULT  NotificatorType = "DEFAULT"
+)

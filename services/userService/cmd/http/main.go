@@ -1,44 +1,50 @@
 package main
 
 import (
-	"github.com/JuanGQCadavid/now-project/services/pkgs/common/logs"
+	"os"
+
+	"github.com/JuanGQCadavid/now-project/services/userService/internal/core/domain"
+	"github.com/JuanGQCadavid/now-project/services/userService/internal/core/ports"
+	"github.com/JuanGQCadavid/now-project/services/userService/internal/core/services"
+	"github.com/JuanGQCadavid/now-project/services/userService/internal/handlers/httphdl"
+	"github.com/JuanGQCadavid/now-project/services/userService/internal/notificators/localnotificator"
 	"github.com/JuanGQCadavid/now-project/services/userService/internal/tokens"
+	"github.com/JuanGQCadavid/now-project/services/userService/internal/users"
 	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
+
 	session := session.Must(session.NewSessionWithOptions(session.Options{
 		SharedConfigState: session.SharedConfigEnable,
 	}))
-	// repo := users.NewDynamoDBUserRepository("Users", session)
 
-	// repo.CreateUser("+573013475995", "JuanGo")
-	// repo.CreateUser("+573235237844", "Sofilongas")
+	userTableName := getenv("usersTableName", "Users")
+	tokensTableName := getenv("tokensTableName", "Tokens")
 
-	// otp := []int{2, 2, 2, 2, 5}
-	// repo.AddOTP("+573013475995", otp, time.Duration(time.Hour*3))
-	// fakeOTP := []int{1, 2, 3, 4, 5}
-	// repo.ValidateOTP("+573013475995", fakeOTP)
+	var userRepository ports.UserRepository = users.NewDynamoDBUserRepository(userTableName, session)
+	var tokensRepository ports.TokensRepository = tokens.NewDynamoDBTokensRepository(tokensTableName, session)
+	var defaultNotificator ports.Notificator = localnotificator.LocalNotificator{}
 
-	// ttl, _ := repo.GetLastOTPGenerationTimestap("+573013475995")
+	var notificators map[domain.NotificatorType]ports.Notificator = map[domain.NotificatorType]ports.Notificator{
+		domain.WHATSAPP: defaultNotificator,
+	}
 
-	// if ttl != nil {
-	// 	logs.Info.Println(time.Now().Sub(*ttl))
-	// 	logs.Info.Println(ttl)
-	// } else {
-	// 	logs.Warning.Println("Empty TTL")
-	// }
+	var service ports.UserService = services.NewService(userRepository, notificators, tokensRepository)
 
-	// user, err := repo.GetUser("+573013475995")
+	userService := httphdl.NewUserServiceHandler(service)
 
-	// if err != nil {
-	// 	logs.Error.Fatal(err.Error())
-	// }
-	// logs.Info.Println(user)
+	router := gin.Default()
+	userService.ConfigureRouter(router)
 
-	// Tokens
-	tokenRepo := tokens.NewDynamoDBTokensRepository("Tokens", session)
-	token, _ := tokenRepo.GeneratePairOfTokens("JuanGo")
-	logs.Info.Printf("%+v\n", token)
+	router.Run("0.0.0.0:8000")
+}
 
+func getenv(key, fallback string) string {
+	value := os.Getenv(key)
+	if len(value) == 0 {
+		return fallback
+	}
+	return value
 }

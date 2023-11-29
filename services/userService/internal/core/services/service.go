@@ -9,14 +9,6 @@ import (
 	"github.com/JuanGQCadavid/now-project/services/userService/internal/core/ports"
 )
 
-type NotificatorType string
-
-const (
-	SMS      NotificatorType = "SMS"
-	WHATSAPP NotificatorType = "WHATSAPP"
-	DEFAULT  NotificatorType = "DEFAULT"
-)
-
 const (
 	OTPEnglish string = "Hi, your code is %s. Best regards, Pululapp."
 	OTPSpanish string = "Hola, tu codigo es %s. Pululap."
@@ -31,17 +23,18 @@ type Service struct {
 	userRepository   ports.UserRepository
 	tokensRepository ports.TokensRepository
 	otpConifg        *OTPConfig
-	notificators     map[NotificatorType]ports.Notificator
+	notificators     map[domain.NotificatorType]ports.Notificator
 }
 
-func NewService(userRepository ports.UserRepository, notificators map[NotificatorType]ports.Notificator) *Service {
+func NewService(userRepository ports.UserRepository, notificators map[domain.NotificatorType]ports.Notificator, tokensRepository ports.TokensRepository) *Service {
 	return &Service{
 		userRepository: userRepository,
 		otpConifg: &OTPConfig{
 			DefaultLength: 4,
 			TTL:           time.Minute * 5, // 5 minutes
 		},
-		notificators: notificators,
+		notificators:     notificators,
+		tokensRepository: tokensRepository,
 	}
 }
 
@@ -120,7 +113,11 @@ func (svc *Service) ValidateProcess(validateProcess domain.ValidateProcess) (*do
 		return nil, err
 	}
 
-	tokens := svc.tokensRepository.GeneratePairOfTokens(userFetched.UserId)
+	tokens, err := svc.tokensRepository.GeneratePairOfTokens(userFetched.UserId)
+
+	if err != nil {
+		return nil, err
+	}
 
 	return tokens, nil
 }
@@ -180,15 +177,16 @@ func (svc *Service) initProcessValidation(user *domain.User, methodVerificator d
 
 func (svc *Service) getNotificator(notType domain.MethodVerifictor) ports.Notificator {
 	if notType.SMS {
-		return svc.notificators[SMS]
+		return svc.notificators[domain.SMS]
 	}
 
 	if notType.WhatsApp {
-		return svc.notificators[WHATSAPP]
+		return svc.notificators[domain.WHATSAPP]
 	}
 
-	return svc.notificators[DEFAULT]
+	return svc.notificators[domain.DEFAULT]
 }
+
 func (svc *Service) genOTPMessage(notType domain.MethodVerifictor, otp []int) string {
 
 	codestr := ""
