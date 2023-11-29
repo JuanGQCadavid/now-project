@@ -191,7 +191,7 @@ func (svc *Service) genOTPMessage(notType domain.MethodVerifictor, otp []int) st
 
 	codestr := ""
 
-	for code := range otp {
+	for _, code := range otp {
 		codestr = codestr + fmt.Sprint(code)
 	}
 

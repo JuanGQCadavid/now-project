@@ -1,12 +1,94 @@
 package main
 
 import (
+	"os"
+
 	"github.com/JuanGQCadavid/now-project/services/pkgs/common/logs"
+	"github.com/JuanGQCadavid/now-project/services/userService/internal/core/domain"
+	"github.com/JuanGQCadavid/now-project/services/userService/internal/core/ports"
+	"github.com/JuanGQCadavid/now-project/services/userService/internal/core/services"
+	"github.com/JuanGQCadavid/now-project/services/userService/internal/notificators/localnotificator"
 	"github.com/JuanGQCadavid/now-project/services/userService/internal/tokens"
+	"github.com/JuanGQCadavid/now-project/services/userService/internal/users"
 	"github.com/aws/aws-sdk-go/aws/session"
 )
 
+var (
+	service ports.UserService
+)
+
+func init() {
+	session := session.Must(session.NewSessionWithOptions(session.Options{
+		SharedConfigState: session.SharedConfigEnable,
+	}))
+
+	userTableName := getenv("usersTableName", "Users")
+	tokensTableName := getenv("tokensTableName", "Tokens")
+
+	var userRepository ports.UserRepository = users.NewDynamoDBUserRepository(userTableName, session)
+	var tokensRepository ports.TokensRepository = tokens.NewDynamoDBTokensRepository(tokensTableName, session)
+	var defaultNotificator ports.Notificator = localnotificator.LocalNotificator{}
+
+	var notificators map[domain.NotificatorType]ports.Notificator = map[domain.NotificatorType]ports.Notificator{
+		domain.WHATSAPP: defaultNotificator,
+	}
+
+	service = services.NewService(userRepository, notificators, tokensRepository)
+}
+
 func main() {
+	// Singup
+
+	err := service.InitSingUp(domain.SingUp{
+		PhoneNumber: "+573137590102",
+		UserName:    "AdrianL",
+		MethodVerificator: domain.MethodVerifictor{
+			Language: "en",
+			WhatsApp: true,
+		},
+	})
+
+	if err != nil {
+		logs.Error.Println(err.Error())
+	}
+
+	// Login
+
+	// err := service.InitLogin(domain.Login{
+	// 	PhoneNumber: "+573235237844",
+	// 	MethodVerificator: domain.MethodVerifictor{
+	// 		Language: "en",
+	// 		WhatsApp: true,
+	// 	},
+	// })
+
+	// if err != nil {
+	// 	logs.Error.Println(err.Error())
+	// }
+
+	// Validate process
+
+	// tokens, err := service.ValidateProcess(domain.ValidateProcess{
+	// 	PhoneNumber: "+573235237844",
+	// 	Code:        []int{2, 0, 1, 2},
+	// })
+
+	// if err != nil {
+	// 	logs.Error.Println(err.Error())
+	// } else {
+	// 	logs.Info.Printf("%+v", tokens)
+	// }
+}
+
+func getenv(key, fallback string) string {
+	value := os.Getenv(key)
+	if len(value) == 0 {
+		return fallback
+	}
+	return value
+}
+
+func repoTest() {
 	session := session.Must(session.NewSessionWithOptions(session.Options{
 		SharedConfigState: session.SharedConfigEnable,
 	}))
@@ -40,5 +122,4 @@ func main() {
 	tokenRepo := tokens.NewDynamoDBTokensRepository("Tokens", session)
 	token, _ := tokenRepo.GeneratePairOfTokens("JuanGo")
 	logs.Info.Printf("%+v\n", token)
-
 }
