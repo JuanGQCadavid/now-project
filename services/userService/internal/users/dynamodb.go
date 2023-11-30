@@ -42,6 +42,10 @@ func (repo *DynamoDBUserRepository) GetUser(phoneNumber string) (*domain.User, e
 		return nil, err
 	}
 
+	if user == nil || len(user.PhoneNumber) == 0 {
+		return nil, ports.ErrUserDoesNotExist
+	}
+
 	return user, nil
 }
 

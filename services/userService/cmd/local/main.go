@@ -52,25 +52,9 @@ func main() {
 		logs.Error.Println(err.Error())
 	}
 
-	// Login
-
-	// err := service.InitLogin(domain.Login{
-	// 	PhoneNumber: "+573235237844",
-	// 	MethodVerificator: domain.MethodVerifictor{
-	// 		Language: "en",
-	// 		WhatsApp: true,
-	// 	},
-	// })
-
-	// if err != nil {
-	// 	logs.Error.Println(err.Error())
-	// }
-
-	// Validate process
-
 	// tokens, err := service.ValidateProcess(domain.ValidateProcess{
-	// 	PhoneNumber: "+573235237844",
-	// 	Code:        []int{2, 0, 1, 2},
+	// 	PhoneNumber: "+573137590102",
+	// 	Code:        []int{0, 7, 9, 6},
 	// })
 
 	// if err != nil {
@@ -78,6 +62,37 @@ func main() {
 	// } else {
 	// 	logs.Info.Printf("%+v", tokens)
 	// }
+
+	// Login
+	// login()
+}
+
+func login() {
+
+	err := service.InitLogin(domain.Login{
+		PhoneNumber: "+573235237844",
+		MethodVerificator: domain.MethodVerifictor{
+			Language: "en",
+			WhatsApp: true,
+		},
+	})
+
+	if err != nil {
+		logs.Error.Println(err.Error())
+	}
+
+	//Validate process
+
+	tokens, err := service.ValidateProcess(domain.ValidateProcess{
+		PhoneNumber: "+573235237844",
+		Code:        []int{2, 0, 1, 2},
+	})
+
+	if err != nil {
+		logs.Error.Println(err.Error())
+	} else {
+		logs.Info.Printf("%+v", tokens)
+	}
 }
 
 func getenv(key, fallback string) string {

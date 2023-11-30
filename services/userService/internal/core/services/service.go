@@ -5,6 +5,7 @@ import (
 	"math/rand"
 	"time"
 
+	"github.com/JuanGQCadavid/now-project/services/pkgs/common/logs"
 	"github.com/JuanGQCadavid/now-project/services/userService/internal/core/domain"
 	"github.com/JuanGQCadavid/now-project/services/userService/internal/core/ports"
 )
@@ -76,11 +77,20 @@ func (svc *Service) InitSingUp(userInfo domain.SingUp) error {
 
 	// Does the user already exist and it is validated?
 	if err == nil && userFetched.Validated {
+		logs.Info.Println("User is already created and validated")
 		return ports.ErrUserIsAlreadyCreated
 	}
 
-	// Does the service fail due to a different error than it is not creadte yet ?
-	if err != ports.ErrUserNotFound {
+	if err == nil && !userFetched.Validated {
+		logs.Info.Println("User was attempted to be created but it is still not validated")
+		if isOTPAlive := svc.isOTPStillAlive(userFetched); isOTPAlive != nil {
+			logs.Error.Println("OTP is still alive or a error occour, err: ", isOTPAlive.Error())
+			return isOTPAlive
+		}
+	}
+
+	if err != nil && err != ports.ErrUserNotFound {
+		logs.Error.Println("The service fail and it is not due to user not found")
 		return err
 	}
 
@@ -148,7 +158,7 @@ func (svc *Service) getUser(phoneNumber string) (*domain.User, error) {
 	return user, err
 }
 
-func (svc *Service) initProcessValidation(user *domain.User, methodVerificator domain.MethodVerifictor) error {
+func (svc *Service) isOTPStillAlive(user *domain.User) error {
 	latestOTPGenerationTime, err := svc.userRepository.GetLastOTPGenerationTimestap(user.PhoneNumber)
 
 	if err != nil {
@@ -158,6 +168,15 @@ func (svc *Service) initProcessValidation(user *domain.User, methodVerificator d
 	//time.Now().Sub(*latestOTPGenerationTime) < svc.otpConifg.TTL
 	if latestOTPGenerationTime != nil && time.Since(*latestOTPGenerationTime).Abs() < svc.otpConifg.TTL {
 		return ports.ErrOTPTTLStillLive
+	}
+
+	return nil
+}
+
+func (svc *Service) initProcessValidation(user *domain.User, methodVerificator domain.MethodVerifictor) error {
+	if isOTPAlive := svc.isOTPStillAlive(user); isOTPAlive != nil {
+		logs.Error.Println("OTP is still alive or a error occour, err: ", isOTPAlive.Error())
+		return isOTPAlive
 	}
 
 	var otp []int = svc.generateOTP(svc.otpConifg.DefaultLength)

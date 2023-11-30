@@ -12,6 +12,10 @@ type UserOTP struct {
 	Attempts int       `json:"attempts"`
 }
 
+type UserValidate struct {
+	Validated bool `json:"isValid" dynamodbav:"Validated"`
+}
+
 type UserOTPBody struct {
 	OTP *UserOTP `json:"OTP" dynamodbav:"OTP"`
 }
