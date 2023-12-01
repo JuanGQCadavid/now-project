@@ -173,4 +173,44 @@ func (hdl *UserServiceHandler) ValidateProcess(context *gin.Context) {
 // user/validare/<userId>/otp/resent
 func (hdl *UserServiceHandler) GenerateNewOTP(context *gin.Context) {
 
+	loginRequest := domain.Login{}
+	context.BindJSON(&loginRequest)
+
+	logs.Info.Printf("\nHandler: GenerateNewOTP \n\tRequest: %+v", loginRequest)
+
+	if len(loginRequest.PhoneNumber) == 0 {
+		context.AbortWithStatusJSON(http.StatusBadRequest, ErrorMessage{
+			Message: "phoneNumber and Code are required",
+		})
+		return
+	}
+
+	if err := hdl.userService.GenerateNewOTP(loginRequest); err != nil {
+
+		if err == ports.ErrUserNotFound {
+			context.AbortWithStatusJSON(http.StatusBadRequest, ErrorMessage{
+				Message:       "User does not exist",
+				InternalError: err.Error(),
+			})
+			return
+		}
+
+		if err == ports.ErrOTPTTLStillLive {
+			context.AbortWithStatusJSON(http.StatusLocked, ErrorMessage{
+				Message:       "OPT is still alive",
+				InternalError: err.Error(),
+			})
+			return
+		}
+
+		context.AbortWithStatusJSON(http.StatusInternalServerError, ErrorMessage{
+			Message:       "Ups there is a internal problem",
+			InternalError: err.Error(),
+		})
+
+		return
+	}
+
+	context.Status(http.StatusNoContent)
+
 }
