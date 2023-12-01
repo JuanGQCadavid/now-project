@@ -1,6 +1,8 @@
 package httphdl
 
 import (
+	"net/http"
+
 	"github.com/JuanGQCadavid/now-project/services/pkgs/common/logs"
 	"github.com/JuanGQCadavid/now-project/services/userService/internal/core/domain"
 	"github.com/JuanGQCadavid/now-project/services/userService/internal/core/ports"
@@ -42,14 +44,14 @@ func (hdl *UserServiceHandler) InitLoging(context *gin.Context) {
 	if err := hdl.userService.InitLogin(loginRequest); err != nil {
 
 		if err == ports.ErrUserNotFound {
-			context.AbortWithStatusJSON(400, ErrorMessage{
+			context.AbortWithStatusJSON(http.StatusBadRequest, ErrorMessage{
 				Message:       "User does not exist",
 				InternalError: err.Error(),
 			})
 			return
 		}
 
-		context.AbortWithStatusJSON(500, ErrorMessage{
+		context.AbortWithStatusJSON(http.StatusInternalServerError, ErrorMessage{
 			Message:       "Ups there is a internal problem",
 			InternalError: err.Error(),
 		})
@@ -57,13 +59,51 @@ func (hdl *UserServiceHandler) InitLoging(context *gin.Context) {
 		return
 	}
 
-	context.Status(204)
+	context.Status(http.StatusNoContent)
 
 }
 
 // user/init/singup
 func (hdl *UserServiceHandler) InitSingUp(context *gin.Context) {
+	singUpRequest := domain.SingUp{}
+	context.BindJSON(&singUpRequest)
 
+	logs.Info.Printf("\nHandler: InitSingUp \n\tRequest: %+v", singUpRequest)
+
+	if len(singUpRequest.PhoneNumber) == 0 || len(singUpRequest.UserName) == 0 {
+		context.AbortWithStatusJSON(http.StatusBadRequest, ErrorMessage{
+			Message: "phoneNumber and userName are required",
+		})
+		return
+	}
+
+	if err := hdl.userService.InitSingUp(singUpRequest); err != nil {
+
+		if err == ports.ErrUserIsAlreadyCreated {
+			context.AbortWithStatusJSON(http.StatusConflict, ErrorMessage{
+				Message:       "Phonenomber is already registered",
+				InternalError: err.Error(),
+			})
+			return
+		}
+
+		if err == ports.ErrOTPTTLStillLive {
+			context.AbortWithStatusJSON(http.StatusNotAcceptable, ErrorMessage{
+				Message:       "OPT is still valid, you should wait",
+				InternalError: err.Error(),
+			})
+			return
+		}
+
+		context.AbortWithStatusJSON(http.StatusInternalServerError, ErrorMessage{
+			Message:       "Ups there is a internal problem",
+			InternalError: err.Error(),
+		})
+
+		return
+	}
+
+	context.Status(http.StatusAccepted)
 }
 
 // user/otp/<userID>/validate
