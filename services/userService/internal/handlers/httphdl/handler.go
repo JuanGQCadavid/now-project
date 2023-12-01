@@ -109,6 +109,64 @@ func (hdl *UserServiceHandler) InitSingUp(context *gin.Context) {
 // user/otp/<userID>/validate
 func (hdl *UserServiceHandler) ValidateProcess(context *gin.Context) {
 
+	validateProcess := domain.ValidateProcess{}
+	context.BindJSON(&validateProcess)
+
+	logs.Info.Printf("\nHandler: ValidateProcess \n\tRequest: %+v", validateProcess)
+
+	if len(validateProcess.PhoneNumber) == 0 || len(validateProcess.Code) == 0 {
+		context.AbortWithStatusJSON(http.StatusBadRequest, ErrorMessage{
+			Message: "phoneNumber and Code are required",
+		})
+		return
+	}
+
+	tokens, err := hdl.userService.ValidateProcess(validateProcess)
+
+	if err != nil {
+
+		if err == ports.ErrUserNotFound {
+			context.AbortWithStatusJSON(http.StatusBadRequest, ErrorMessage{
+				Message:       "User does not exist",
+				InternalError: err.Error(),
+			})
+			return
+		}
+
+		if err == ports.ErrInvalidOTP {
+			context.AbortWithStatusJSON(http.StatusUnauthorized, ErrorMessage{
+				Message:       "OPT is not valid",
+				InternalError: err.Error(),
+			})
+			return
+		}
+
+		if err == ports.ErrThereIsNotOTP {
+			context.AbortWithStatusJSON(http.StatusPreconditionFailed, ErrorMessage{
+				Message:       "There is not pending OTP, request a OTP first",
+				InternalError: err.Error(),
+			})
+			return
+		}
+
+		if err == ports.ErrMaxRetriesOnTOP {
+			context.AbortWithStatusJSON(http.StatusGone, ErrorMessage{
+				Message:       "OPT attemps reach the limit, request a new one",
+				InternalError: err.Error(),
+			})
+			return
+		}
+
+		context.AbortWithStatusJSON(http.StatusInternalServerError, ErrorMessage{
+			Message:       "Ups there is a internal problem",
+			InternalError: err.Error(),
+		})
+
+		return
+	}
+
+	context.JSON(200, tokens)
+
 }
 
 // user/otp/<userId>/resent

@@ -11,6 +11,7 @@ var (
 	ErrUserDoesNotExist    = errors.New("err the user does not exist in the registry")
 	ErrRegistryUnavailable = errors.New("err registry is temporaly unavailable")
 	ErrInvalidOTP          = errors.New("err Invalid OTP")
+	ErrThereIsNotOTP       = errors.New("err there is not OTP alive for the accout")
 	ErrMaxRetriesOnTOP     = errors.New("err max retries in OTP reached")
 	ErrOTPTTLStillLive     = errors.New("err the OTP is still alive")
 )
