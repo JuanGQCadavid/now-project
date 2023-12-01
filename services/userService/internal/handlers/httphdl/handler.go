@@ -1,6 +1,8 @@
 package httphdl
 
 import (
+	"github.com/JuanGQCadavid/now-project/services/pkgs/common/logs"
+	"github.com/JuanGQCadavid/now-project/services/userService/internal/core/domain"
 	"github.com/JuanGQCadavid/now-project/services/userService/internal/core/ports"
 	"github.com/gin-gonic/gin"
 )
@@ -25,6 +27,37 @@ func (hdl *UserServiceHandler) ConfigureRouter(router *gin.Engine) {
 
 // user/init/login
 func (hdl *UserServiceHandler) InitLoging(context *gin.Context) {
+	loginRequest := domain.Login{}
+	context.BindJSON(&loginRequest)
+
+	logs.Info.Printf("\nHandler: InitLoging \n\tRequest: %+v", loginRequest)
+
+	if len(loginRequest.PhoneNumber) == 0 {
+		context.AbortWithStatusJSON(400, ErrorMessage{
+			Message: "phoneNumber is required",
+		})
+		return
+	}
+
+	if err := hdl.userService.InitLogin(loginRequest); err != nil {
+
+		if err == ports.ErrUserNotFound {
+			context.AbortWithStatusJSON(400, ErrorMessage{
+				Message:       "User does not exist",
+				InternalError: err.Error(),
+			})
+			return
+		}
+
+		context.AbortWithStatusJSON(500, ErrorMessage{
+			Message:       "Ups there is a internal problem",
+			InternalError: err.Error(),
+		})
+
+		return
+	}
+
+	context.Status(204)
 
 }
 
