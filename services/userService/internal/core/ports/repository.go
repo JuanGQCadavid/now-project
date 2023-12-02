@@ -13,6 +13,7 @@ var (
 	ErrInvalidOTP          = errors.New("err Invalid OTP")
 	ErrMaxRetriesOnTOP     = errors.New("err max retries in OTP reached")
 	ErrOTPTTLStillLive     = errors.New("err the OTP is still alive")
+	ErrOTPNotAlive         = errors.New("err the OTP is not alive")
 )
 
 // phoneNumber string Key | name string | validated bool | UserId tring | phoneSiganuture string | otp string/[]int | otp_ttl string

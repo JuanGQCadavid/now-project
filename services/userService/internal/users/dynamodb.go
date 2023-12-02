@@ -103,7 +103,7 @@ func (repo *DynamoDBUserRepository) CreateUser(phoneNumber, userName string) (*d
 func (repo *DynamoDBUserRepository) AddOTP(phoneNumber string, otp []int, ttl time.Duration) error {
 	now := time.Now()
 
-	return repo.updateOTP(phoneNumber, &UserOTP{
+	return repo.updateSingleAttribute(phoneNumber, "OTP", &UserOTP{
 		OTP:      otp,
 		TTL:      now.Add(ttl),
 		Attempts: 0,
@@ -137,12 +137,17 @@ func (repo *DynamoDBUserRepository) ValidateOTP(phoneNumber string, otp []int) e
 		}
 	}
 
+	if err := repo.updateSingleAttribute(phoneNumber, "Validated", true); err != nil {
+		logs.Error.Println("We fail to update the user, err", err.Error())
+		return err
+	}
+
 	logs.Info.Println("Code validation goes well")
 	return repo.cleanOTP(phoneNumber, otpFromRepo)
 }
 
 func (repo *DynamoDBUserRepository) cleanOTP(phoneNumber string, userOTP *UserOTP) error {
-	return repo.updateOTP(phoneNumber, nil)
+	return repo.updateSingleAttribute(phoneNumber, "OTP", nil)
 }
 
 func (repo *DynamoDBUserRepository) punishOTP(phoneNumber string, userOTP *UserOTP) error {
@@ -158,17 +163,17 @@ func (repo *DynamoDBUserRepository) punishOTP(phoneNumber string, userOTP *UserO
 		return ports.ErrMaxRetriesOnTOP
 	}
 
-	if err := repo.updateOTP(phoneNumber, userOTP); err != nil {
+	if err := repo.updateSingleAttribute(phoneNumber, "OTP", userOTP); err != nil {
 		return err
 	}
 
 	return ports.ErrInvalidOTP
 }
 
-func (repo *DynamoDBUserRepository) updateOTP(phoneNumber string, userOTP *UserOTP) error {
-	logs.Info.Println("Updating OTP: phoneNumber: ", phoneNumber, " userOTP: ", userOTP)
+func (repo *DynamoDBUserRepository) updateSingleAttribute(phoneNumber string, attribute string, value any) error {
+	logs.Info.Println("Updating OTP: phoneNumber: ", phoneNumber, " value: ", value)
 
-	otpAttribute, err := dynamodbattribute.Marshal(userOTP)
+	otpAttribute, err := dynamodbattribute.Marshal(value)
 	if err != nil {
 		return err
 	}
@@ -179,19 +184,19 @@ func (repo *DynamoDBUserRepository) updateOTP(phoneNumber string, userOTP *UserO
 	}
 
 	if err != nil {
-		logs.Error.Println("We fail casting the OTP, err: ", err.Error())
+		logs.Error.Println("We fail casting the VALUE, err: ", err.Error())
 		return err
 	}
 
 	expressionAttributeValues := map[string]*dynamodb.AttributeValue{}
-	expressionAttributeValues[fmt.Sprintf(":%s", "OTP")] = otpAttribute
+	expressionAttributeValues[":VALUE"] = otpAttribute
 
 	out, err := repo.svc.UpdateItem(&dynamodb.UpdateItemInput{
 		Key:                       key,
 		TableName:                 &repo.tableName,
 		ExpressionAttributeValues: expressionAttributeValues,
 		ReturnConsumedCapacity:    aws.String(dynamodb.ReturnConsumedCapacityIndexes),
-		UpdateExpression:          aws.String("set OTP = :OTP"),
+		UpdateExpression:          aws.String(fmt.Sprintf("set %s = :VALUE", attribute)),
 	})
 
 	if err != nil {

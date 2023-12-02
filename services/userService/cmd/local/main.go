@@ -38,10 +38,18 @@ func init() {
 
 func main() {
 	// Singup
+	// singUp()
 
-	err := service.InitSingUp(domain.SingUp{
-		PhoneNumber: "+573137590102",
-		UserName:    "AdrianL",
+	// Login
+	// login()
+
+	// genNewToken()
+	validate()
+}
+
+func genNewToken() {
+	err := service.GenerateNewOTP(domain.Login{
+		PhoneNumber: "+573235237844-2",
 		MethodVerificator: domain.MethodVerifictor{
 			Language: "en",
 			WhatsApp: true,
@@ -51,20 +59,47 @@ func main() {
 	if err != nil {
 		logs.Error.Println(err.Error())
 	}
+}
 
-	// tokens, err := service.ValidateProcess(domain.ValidateProcess{
-	// 	PhoneNumber: "+573137590102",
-	// 	Code:        []int{0, 7, 9, 6},
+func validate() {
+	tokens, err := service.ValidateProcess(domain.ValidateProcess{
+		PhoneNumber: "+573235237844-2",
+		Code:        []int{3, 6, 9, 4},
+	})
+
+	if err != nil {
+		logs.Error.Println(err.Error())
+	} else {
+		logs.Info.Printf("%+v", tokens)
+	}
+}
+
+func singUp() {
+
+	// err := service.InitSingUp(domain.SingUp{
+	// 	PhoneNumber: "+573235237844-3",
+	// 	UserName:    "Sofia3",
+	// 	MethodVerificator: domain.MethodVerifictor{
+	// 		Language: "en",
+	// 		WhatsApp: true,
+	// 	},
 	// })
 
 	// if err != nil {
 	// 	logs.Error.Println(err.Error())
-	// } else {
-	// 	logs.Info.Printf("%+v", tokens)
 	// }
 
-	// Login
-	// login()
+	tokens, err := service.ValidateProcess(domain.ValidateProcess{
+		PhoneNumber: "+573235237844-2",
+		Code:        []int{5, 8, 9, 0},
+	})
+
+	if err != nil {
+		logs.Error.Println(err.Error())
+	} else {
+		logs.Info.Printf("%+v", tokens)
+	}
+
 }
 
 func login() {
@@ -85,7 +120,7 @@ func login() {
 
 	tokens, err := service.ValidateProcess(domain.ValidateProcess{
 		PhoneNumber: "+573235237844",
-		Code:        []int{2, 0, 1, 2},
+		Code:        []int{2, 9, 3, 7},
 	})
 
 	if err != nil {

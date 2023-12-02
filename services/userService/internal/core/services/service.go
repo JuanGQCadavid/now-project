@@ -83,10 +83,19 @@ func (svc *Service) InitSingUp(userInfo domain.SingUp) error {
 
 	if err == nil && !userFetched.Validated {
 		logs.Info.Println("User was attempted to be created but it is still not validated")
-		if isOTPAlive := svc.isOTPStillAlive(userFetched); isOTPAlive != nil {
-			logs.Error.Println("OTP is still alive or a error occour, err: ", isOTPAlive.Error())
-			return isOTPAlive
+
+		isOTPAlive, err := svc.isOTPStillAlive(userFetched)
+
+		if err != nil {
+			logs.Error.Println("a error occour, err: ", err.Error())
+			return err
 		}
+
+		if isOTPAlive {
+			logs.Error.Println("OTP is still alive")
+			return ports.ErrOTPTTLStillLive
+		}
+
 	}
 
 	if err != nil && err != ports.ErrUserNotFound {
@@ -115,6 +124,17 @@ func (svc *Service) ValidateProcess(validateProcess domain.ValidateProcess) (*do
 
 	if err != nil {
 		return nil, err
+	}
+
+	isOTPAlive, err := svc.isOTPStillAlive(userFetched)
+
+	if err != nil {
+		logs.Error.Println("An error occur while checking OTP ", err.Error())
+	}
+
+	if !isOTPAlive {
+		logs.Error.Println("OTP is not alive")
+		return nil, ports.ErrOTPNotAlive
 	}
 
 	err = svc.userRepository.ValidateOTP(validateProcess.PhoneNumber, validateProcess.Code)
@@ -158,25 +178,40 @@ func (svc *Service) getUser(phoneNumber string) (*domain.User, error) {
 	return user, err
 }
 
-func (svc *Service) isOTPStillAlive(user *domain.User) error {
+func (svc *Service) isOTPStillAlive(user *domain.User) (bool, error) {
 	latestOTPGenerationTime, err := svc.userRepository.GetLastOTPGenerationTimestap(user.PhoneNumber)
 
 	if err != nil {
-		return ports.ErrInternalError
+		return false, ports.ErrInternalError
 	}
 
-	//time.Now().Sub(*latestOTPGenerationTime) < svc.otpConifg.TTL
-	if latestOTPGenerationTime != nil && time.Since(*latestOTPGenerationTime).Abs() < svc.otpConifg.TTL {
-		return ports.ErrOTPTTLStillLive
+	if latestOTPGenerationTime != nil {
+		logs.Info.Println(time.Since(*latestOTPGenerationTime))
+		if time.Since(*latestOTPGenerationTime) < time.Second {
+			logs.Info.Println("It is less tan a second")
+		}
+	} else {
+		logs.Info.Println("NO OTP")
 	}
 
-	return nil
+	if latestOTPGenerationTime != nil && time.Since(*latestOTPGenerationTime) < time.Second {
+		return true, nil
+	}
+
+	return false, nil
 }
 
 func (svc *Service) initProcessValidation(user *domain.User, methodVerificator domain.MethodVerifictor) error {
-	if isOTPAlive := svc.isOTPStillAlive(user); isOTPAlive != nil {
-		logs.Error.Println("OTP is still alive or a error occour, err: ", isOTPAlive.Error())
-		return isOTPAlive
+	isOTPAlive, err := svc.isOTPStillAlive(user)
+
+	if err != nil {
+		logs.Error.Println("a error occour, err: ", err.Error())
+		return err
+	}
+
+	if isOTPAlive {
+		logs.Error.Println("OTP is still alive")
+		return ports.ErrOTPTTLStillLive
 	}
 
 	var otp []int = svc.generateOTP(svc.otpConifg.DefaultLength)
