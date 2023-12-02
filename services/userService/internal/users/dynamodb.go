@@ -122,7 +122,7 @@ func (repo *DynamoDBUserRepository) ValidateOTP(phoneNumber string, otp []int) e
 	}
 
 	if otpFromRepo == nil {
-		return ports.ErrInvalidOTP
+		return ports.ErrThereIsNotOTP
 	}
 
 	if len(otp) != len(otpFromRepo.OTP) {
