@@ -1,0 +1,35 @@
+name: Deploy userService service
+on:
+  push: # https://docs.github.com/en/actions/using-workflows/triggering-a-workflow
+    branches: 
+      - main
+    paths:
+      - services/userService/** 
+
+jobs:
+  userService-Service-Deployment:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+      
+      - name: Set up go
+        uses: actions/setup-go@v4
+        with:
+          go-version: 1.20.2
+
+      - name: Build userService service to run on lambda
+        run: cd ${{ github.workspace }}/services/userService ; sh build.sh ;
+      
+      - name: Zip code
+        run: cd ${{ github.workspace }}/services/userService ; zip main.zip main
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-2
+
+      - name: Deploy userService lambda
+        run: aws --version ;  aws lambda update-function-code --function-name UserService --zip-file fileb://${{ github.workspace }}/services/userService/main.zip
