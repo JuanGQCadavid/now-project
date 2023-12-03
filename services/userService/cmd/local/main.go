@@ -7,6 +7,7 @@ import (
 	"github.com/JuanGQCadavid/now-project/services/userService/internal/core/domain"
 	"github.com/JuanGQCadavid/now-project/services/userService/internal/core/ports"
 	"github.com/JuanGQCadavid/now-project/services/userService/internal/core/services"
+	"github.com/JuanGQCadavid/now-project/services/userService/internal/notificators/awssns"
 	"github.com/JuanGQCadavid/now-project/services/userService/internal/notificators/localnotificator"
 	"github.com/JuanGQCadavid/now-project/services/userService/internal/tokens"
 	"github.com/JuanGQCadavid/now-project/services/userService/internal/users"
@@ -28,9 +29,12 @@ func init() {
 	var userRepository ports.UserRepository = users.NewDynamoDBUserRepository(userTableName, session)
 	var tokensRepository ports.TokensRepository = tokens.NewDynamoDBTokensRepository(tokensTableName, session)
 	var defaultNotificator ports.Notificator = localnotificator.LocalNotificator{}
+	var snsNotificator ports.Notificator = awssns.NewSNSNotificator(session)
 
 	var notificators map[domain.NotificatorType]ports.Notificator = map[domain.NotificatorType]ports.Notificator{
 		domain.WHATSAPP: defaultNotificator,
+		domain.DEFAULT:  snsNotificator,
+		domain.SMS:      snsNotificator,
 	}
 
 	service = services.NewService(userRepository, notificators, tokensRepository)
@@ -41,10 +45,10 @@ func main() {
 	// singUp()
 
 	// Login
-	// login()
+	login()
 
 	// genNewToken()
-	validate()
+	// validate()
 }
 
 func genNewToken() {
@@ -105,10 +109,10 @@ func singUp() {
 func login() {
 
 	err := service.InitLogin(domain.Login{
-		PhoneNumber: "+573235237844",
+		PhoneNumber: "+573013475995",
 		MethodVerificator: domain.MethodVerifictor{
 			Language: "en",
-			WhatsApp: true,
+			SMS:      true,
 		},
 	})
 
@@ -118,16 +122,16 @@ func login() {
 
 	//Validate process
 
-	tokens, err := service.ValidateProcess(domain.ValidateProcess{
-		PhoneNumber: "+573235237844",
-		Code:        []int{2, 9, 3, 7},
-	})
+	// tokens, err := service.ValidateProcess(domain.ValidateProcess{
+	// 	PhoneNumber: "+573235237844",
+	// 	Code:        []int{2, 9, 3, 7},
+	// })
 
-	if err != nil {
-		logs.Error.Println(err.Error())
-	} else {
-		logs.Info.Printf("%+v", tokens)
-	}
+	// if err != nil {
+	// 	logs.Error.Println(err.Error())
+	// } else {
+	// 	logs.Info.Printf("%+v", tokens)
+	// }
 }
 
 func getenv(key, fallback string) string {
