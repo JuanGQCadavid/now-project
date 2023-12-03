@@ -10,6 +10,7 @@ import 'package:now_v8/src/services/core/now_services_caller.dart';
 import 'package:now_v8/src/services/core/services_api_configuration.dart';
 
 const String InitLoginResource = "/init/login";
+const String InitSingUpResource = "/init/singup";
 
 class UserService implements IUserService {
   late NowServicesCaller nowServicesCaller;
@@ -20,18 +21,39 @@ class UserService implements IUserService {
   }
 
   @override
-  Future<Either<None, UserError>> login(String userPhoneNumber) async {
+  Future<Either<None, UserError>> initSingUp(
+    String userPhoneNumber,
+    String userName,
+  ) async {
+    InitSingUp request = InitSingUp(
+      userPhoneNumber,
+      userName,
+      MethodVerificator("en", sms: true),
+    );
+
+    return await perfomPOST(InitSingUpResource, request.toJson());
+  }
+
+  @override
+  Future<Either<None, UserError>> initLoging(String userPhoneNumber) async {
     InitLogin request = InitLogin(
       userPhoneNumber,
       MethodVerificator("en", sms: true),
     );
 
-    print(request.toJson());
+    return await perfomPOST(InitLoginResource, request.toJson());
+  }
+
+  Future<Either<None, UserError>> perfomPOST(
+    String resource,
+    Map<String, dynamic> body,
+  ) async {
+    print(body);
 
     Either<BackendErrors, dynamic> response = await nowServicesCaller.request(
       Method.POST,
-      InitLoginResource,
-      data: request.toJson(),
+      resource,
+      data: body,
     );
 
     return response.fold((l) {

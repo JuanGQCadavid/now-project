@@ -36,27 +36,69 @@ class LoginStateNotifer extends StateNotifier<LoginState> {
     } else if (state.onState == OnState.onLogin) {
       validateLogin(userPhoneNumber, userCode);
     } else if (state.onState == OnState.onSingUp) {
-      preSignUser(userPhoneNumber, userCode);
+      initSignUp(userPhoneNumber, userName);
     } else if (state.onState == OnState.onSingUpPhoneValidation) {
-      validateSignUser(userPhoneNumber, userCode, userName);
+      validateSignUser(userPhoneNumber, userCode);
     }
   }
 
   void validateSignUser(
     String userPhoneNumber,
     List<String> userCode,
-    String userName,
   ) {
     state = state.copyWith(
       onState: OnState.onDone,
       stateConfig: stateConfigMaps[OnState.onDone]!,
     );
   }
+  // 3013475995
 
-  void preSignUser(
+  void initSignUp(
     String userPhoneNumber,
-    List<String> userCode,
+    String userName,
   ) async {
+    var serviceResponse =
+        await userService.initSingUp(userPhoneNumber, userName);
+
+    serviceResponse.fold(
+      (l) => {
+        state = state.copyWith(
+          onState: OnState.onSingUpPhoneValidation,
+          userName: userName,
+          stateConfig: stateConfigMaps[OnState.onSingUpPhoneValidation]!,
+        )
+      },
+      (r) => {
+        r.whenOrNull(
+          phoneNumberAlreadyTaken: () {
+            print("phoneNumberAlreadyTaken");
+            state = state.copyWith(
+              onState: OnState.onLogin,
+              userName: userName,
+              stateConfig: stateConfigMaps[OnState.onLogin]!,
+            );
+          },
+          otpAlive: () {
+            print("otpAlive");
+            state = state.copyWith(
+              onState: OnState.onSingUp,
+              userName: userName,
+              errorMessage:
+                  "You should wait some time, someone is already validating your account",
+              stateConfig: stateConfigMaps[OnState.onSingUp]!,
+            );
+          },
+          internalError: (String err) {
+            print("internal err - " + err);
+            state = state.copyWith(
+              errorMessage: err,
+              userName: userName,
+            );
+          },
+        )
+      },
+    );
+
     state = state.copyWith(
       onState: OnState.onSingUpPhoneValidation,
       stateConfig: stateConfigMaps[OnState.onSingUpPhoneValidation]!,
@@ -73,9 +115,8 @@ class LoginStateNotifer extends StateNotifier<LoginState> {
     );
   }
 
-  // HERE
   void onUserAttemptToLogIn(String userPhoneNumber) async {
-    var serviceResponse = await userService.login(userPhoneNumber);
+    var serviceResponse = await userService.initLoging(userPhoneNumber);
 
     serviceResponse.fold(
       (l) => {

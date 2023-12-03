@@ -36,3 +36,23 @@ Map<String, dynamic> _$InitLoginToJson(InitLogin instance) => <String, dynamic>{
       'phoneNumber': instance.phoneNumber,
       'methodVerificator': instance.methodVerificator.toJson(),
     };
+
+InitSingUp _$InitSingUpFromJson(Map<String, dynamic> json) {
+  $checkKeys(
+    json,
+    requiredKeys: const ['phoneNumber', 'userName', 'methodVerificator'],
+  );
+  return InitSingUp(
+    json['phoneNumber'] as String,
+    json['userName'] as String,
+    MethodVerificator.fromJson(
+        json['methodVerificator'] as Map<String, dynamic>),
+  );
+}
+
+Map<String, dynamic> _$InitSingUpToJson(InitSingUp instance) =>
+    <String, dynamic>{
+      'phoneNumber': instance.phoneNumber,
+      'userName': instance.userName,
+      'methodVerificator': instance.methodVerificator.toJson(),
+    };

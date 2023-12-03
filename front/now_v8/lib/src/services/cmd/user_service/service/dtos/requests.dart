@@ -36,3 +36,22 @@ class InitLogin {
 
   Map<String, dynamic> toJson() => _$InitLoginToJson(this);
 }
+
+@JsonSerializable(explicitToJson: true)
+class InitSingUp {
+  @JsonKey(name: "phoneNumber", required: true)
+  String phoneNumber;
+
+  @JsonKey(name: "userName", required: true)
+  String userName;
+
+  @JsonKey(name: "methodVerificator", required: true)
+  MethodVerificator methodVerificator;
+
+  InitSingUp(this.phoneNumber, this.userName, this.methodVerificator);
+
+  factory InitSingUp.fromJson(Map<String, dynamic> json) =>
+      _$InitSingUpFromJson(json);
+
+  Map<String, dynamic> toJson() => _$InitSingUpToJson(this);
+}

@@ -6,7 +6,11 @@ import 'package:now_v8/src/services/core/models/backend_errors.dart';
 part 'user_service.freezed.dart';
 
 abstract class IUserService {
-  Future<Either<None, UserError>> login(String userPhoneNumber);
+  Future<Either<None, UserError>> initLoging(String userPhoneNumber);
+  Future<Either<None, UserError>> initSingUp(
+    String userPhoneNumber,
+    String userName,
+  );
 }
 
 @freezed
