@@ -22,6 +22,7 @@ import { join } from "path";
 // Tags const
 const SPOT_FAMILY = "Spot";
 const FILTER_FAMILY = "Filter";
+const USER_FAMILY = "User";
 const SERVICE_TYPE = "Service";
 const FUNCTION_TYPE = "Function";
 const CONFIRMATION_FAMILY = "Confirmation";
@@ -159,12 +160,12 @@ export class InfraStack extends Stack {
     spotActivityTopic.addSubscription(
       new subscriptions.SqsSubscription(updateLocationDataSQS, {
         ...defaultSubscriptionConfiguration,
-        filterPolicy: 
-          {
-            Operation: sns.SubscriptionFilter.stringFilter({
-              matchPrefixes: ["date", "online"]
-            })
-          }
+        filterPolicy:
+        {
+          Operation: sns.SubscriptionFilter.stringFilter({
+            matchPrefixes: ["date", "online"]
+          })
+        }
       })
     );
 
@@ -175,12 +176,12 @@ export class InfraStack extends Stack {
     spotActivityTopic.addSubscription(
       new subscriptions.SqsSubscription(schedulePatternSQS, {
         ...defaultSubscriptionConfiguration,
-        filterPolicy: 
-          {
-            Operation: sns.SubscriptionFilter.stringFilter({
-              matchPrefixes: ["schedule"]
-            })
-          }
+        filterPolicy:
+        {
+          Operation: sns.SubscriptionFilter.stringFilter({
+            matchPrefixes: ["schedule"]
+          })
+        }
       })
     );
 
@@ -519,6 +520,95 @@ export class InfraStack extends Stack {
 
     confirmationSpotSQSLambda.addEventSource(sendConfirmationSQSEvent);
 
+    // User Service
+
+    const userServiceLambdaRole = new iam.Role(this, "userServiceLambdaRole", {
+      assumedBy: new iam.ServicePrincipal("lambda.amazonaws.com"),
+      description: "Role for filter service",
+    });
+
+    userServiceLambdaRole.addManagedPolicy(
+      iam.ManagedPolicy.fromAwsManagedPolicyName(
+        "service-role/AWSLambdaBasicExecutionRole"
+      )
+    );
+
+    userServiceLambdaRole.addToPolicy(
+      new iam.PolicyStatement({
+        actions: ["ssm:GetParameters"],
+        effect: iam.Effect.ALLOW,
+        resources: ["*"],
+      })
+    );
+
+    userServiceLambdaRole.addToPolicy(
+      new iam.PolicyStatement({
+        actions: [
+          "sns:ListOriginationNumbers",
+          "sns:Publish",
+          "sns:ListTopics",
+          "sns:ConfirmSubscription",
+          "sns:GetSubscriptionAttributes",
+          "sns:ListSubscriptions",
+          "sns:GetSMSAttributes",
+          "sns:OptInPhoneNumber",
+          "sns:CheckIfPhoneNumberIsOptedOut",
+        ],
+        effect: iam.Effect.ALLOW,
+        resources: ["*"],
+      })
+    );
+
+    const userRepositoryDynamodbTable = new dynamodb.Table(
+      this,
+      "userRepositoryDynamodbTable",
+      {
+        partitionKey: {
+          name: "PhoneNumber",
+          type: dynamodb.AttributeType.STRING,
+        },
+        billingMode: dynamodb.BillingMode.PROVISIONED,
+        writeCapacity: 5,
+        readCapacity: 5,
+        tableName: "Users",
+      }
+    );
+
+    userRepositoryDynamodbTable.grantReadWriteData(userServiceLambdaRole);
+
+    const TokensRepositoryDynamodbTable = new dynamodb.Table(
+      this,
+      "TokensRepositoryDynamodbTable",
+      {
+        partitionKey: {
+          name: "TokenId",
+          type: dynamodb.AttributeType.STRING,
+        },
+        billingMode: dynamodb.BillingMode.PROVISIONED,
+        writeCapacity: 5,
+        readCapacity: 5,
+        tableName: "Tokens",
+      }
+    );
+
+    TokensRepositoryDynamodbTable.grantReadWriteData(userServiceLambdaRole);
+
+    const userService = new lambda.Function(this, "userService", {
+      runtime: lambda.Runtime.GO_1_X,
+      handler: "main",
+      code: lambda.Code.fromAsset(path),
+      functionName: "UserService",
+      role: userServiceLambdaRole,
+      environment: {
+        usersTableName: userRepositoryDynamodbTable.tableName,
+        tokensTableName: TokensRepositoryDynamodbTable.tableName,
+      },
+    });
+
+    addMethodToApiGateway(userService, mainApiGateway, "user");
+    Tags.of(userService).add("Type", SERVICE_TYPE);
+    Tags.of(userService).add("Family", USER_FAMILY);
+
     // Filter
 
     const filterSessionsDynamoTable = new dynamodb.Table(
@@ -534,8 +624,8 @@ export class InfraStack extends Stack {
           type: dynamodb.AttributeType.STRING,
         },
         billingMode: dynamodb.BillingMode.PROVISIONED,
-        writeCapacity: 20,
-        readCapacity: 20,
+        writeCapacity: 10,
+        readCapacity: 10,
         tableName: "FilterSessions",
         timeToLiveAttribute: "TTL",
         stream: dynamodb.StreamViewType.NEW_AND_OLD_IMAGES,
@@ -722,7 +812,7 @@ export class InfraStack extends Stack {
     Tags.of(scheduledPatternsChecker).add("Type", FUNCTION_TYPE);
     Tags.of(scheduledPatternsChecker).add("Family", SPOT_FAMILY);
 
-    
+
 
     const scheduledPatternsCheckerEvent = new lambdaEvent.SqsEventSource(
       schedulePatternSQS,
