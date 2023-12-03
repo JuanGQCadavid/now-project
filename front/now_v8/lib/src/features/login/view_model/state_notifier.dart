@@ -1,87 +1,15 @@
-import 'package:flutter/foundation.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:now_v8/src/core/contracts/user_service.dart';
 import 'package:now_v8/src/features/login/model/login_state.dart';
-
-part 'state_notifier.freezed.dart';
-
-Map<OnState, OnStateConfig> stateConfigMaps = {
-  OnState.onInit: const OnStateConfig(
-    showCodeInput: false,
-    showPhoneNumber: true,
-    showUserName: false,
-  ),
-  OnState.onLogin: const OnStateConfig(
-    showCodeInput: true,
-    showPhoneNumber: true,
-    showUserName: false,
-  ),
-  OnState.onSingUp: const OnStateConfig(
-    showCodeInput: false,
-    showPhoneNumber: true,
-    showUserName: true,
-  ),
-  OnState.onSingUpPhoneValidation: const OnStateConfig(
-    showCodeInput: true,
-    showPhoneNumber: true,
-    showUserName: true,
-  ),
-  OnState.onErrorState: const OnStateConfig(
-    showCodeInput: false,
-    showPhoneNumber: false,
-    showUserName: false,
-  ),
-  OnState.onDone: const OnStateConfig(
-    showCodeInput: false,
-    showPhoneNumber: false,
-    showUserName: false,
-  ),
-};
-
-class UserDetails {
-  final String userName;
-  final String userId;
-  final String userToken;
-
-  UserDetails({
-    required this.userName,
-    required this.userId,
-    required this.userToken,
-  });
-}
-
-@freezed
-class UserError with _$UserError {
-  factory UserError.userDoesNotExist() = UserDoesNotExist;
-  factory UserError.internalError(String error) = InternalError;
-}
-
-abstract class IUserService {
-  Future<Either<UserDetails, UserError>> login(String userPhoneNumber);
-}
-
-class FakeUserService implements IUserService {
-  final String exist = "+57301";
-  final UserDetails existUser =
-      UserDetails(userId: "123", userName: "Juan", userToken: "myFuckingToken");
-  final String doesNotExist = "+57323";
-
-  @override
-  Future<Either<UserDetails, UserError>> login(String userPhoneNumber) async {
-    if (userPhoneNumber == exist) {
-      return left(existUser);
-    } else if (userPhoneNumber == doesNotExist) {
-      return right(UserError.userDoesNotExist());
-    } else {
-      return right(UserError.internalError(
-          "phone number is not the two options ${userPhoneNumber}"));
-    }
-  }
-}
+import 'package:now_v8/src/services/cmd/user_service/fake/service.dart';
+import 'package:now_v8/src/services/cmd/user_service/service/service.dart';
+import 'package:now_v8/src/services/core/services_api_configuration.dart';
 
 class LoginStateNotifer extends StateNotifier<LoginState> {
-  final IUserService userService = FakeUserService();
+  final IUserService userService = UserService(
+    apiConfig: ApiConfig.toProd(),
+  );
 
   LoginStateNotifer()
       : super(
@@ -145,6 +73,7 @@ class LoginStateNotifer extends StateNotifier<LoginState> {
     );
   }
 
+  // HERE
   void onUserAttemptToLogIn(String userPhoneNumber) async {
     var serviceResponse = await userService.login(userPhoneNumber);
 
@@ -157,8 +86,9 @@ class LoginStateNotifer extends StateNotifier<LoginState> {
         )
       },
       (r) => {
-        r.when(
+        r.whenOrNull(
           userDoesNotExist: () {
+            print("userDoesNotExist");
             state = state.copyWith(
               onState: OnState.onSingUp,
               phoneNumber: userPhoneNumber,
@@ -166,6 +96,7 @@ class LoginStateNotifer extends StateNotifier<LoginState> {
             );
           },
           internalError: (String err) {
+            print("internal err - " + err);
             state = state.copyWith(
               errorMessage: err,
               phoneNumber: userPhoneNumber,

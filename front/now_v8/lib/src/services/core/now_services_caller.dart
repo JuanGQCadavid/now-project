@@ -28,16 +28,15 @@ class NowServicesCaller {
     try {
       Options options = Options();
       if (headers != null) {
-        options = Options(
-          headers: headers
-        );
+        options = Options(headers: headers);
       }
 
       if (method == Method.GET) {
-        response = await _dio.get(path, queryParameters: queryParameters, options: options);
+        response = await _dio.get(path,
+            queryParameters: queryParameters, options: options);
       } else {
-        response =
-            await _dio.post(path, data: data, queryParameters: queryParameters, options: options);
+        response = await _dio.post(path,
+            data: data, queryParameters: queryParameters, options: options);
       }
 
       // Checkers on 500
@@ -62,10 +61,8 @@ class NowServicesCaller {
     } on DioError catch (e) {
       if (e.type == DioErrorType.response) {
         Println(e.message);
-        Println(e.response?.data ?? " Not response" );
         return left(
-          // TODO -> If the backend returns this error is because a user action is neede, we should change this
-          const InternalError(),
+          ClientError(ErrorMessage.fromJson(e.response?.data ?? "")),
         );
       }
       print(e.toString());

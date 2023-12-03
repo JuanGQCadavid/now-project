@@ -24,6 +24,7 @@ mixin _$BackendErrors {
     required TResult Function() noInternetConnection,
     required TResult Function() badResponseFormat,
     required TResult Function() unknownError,
+    required TResult Function(ErrorMessage errorMessage) clientError,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -34,6 +35,7 @@ mixin _$BackendErrors {
     TResult? Function()? noInternetConnection,
     TResult? Function()? badResponseFormat,
     TResult? Function()? unknownError,
+    TResult? Function(ErrorMessage errorMessage)? clientError,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -44,6 +46,7 @@ mixin _$BackendErrors {
     TResult Function()? noInternetConnection,
     TResult Function()? badResponseFormat,
     TResult Function()? unknownError,
+    TResult Function(ErrorMessage errorMessage)? clientError,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -55,6 +58,7 @@ mixin _$BackendErrors {
     required TResult Function(NoInternetConnection value) noInternetConnection,
     required TResult Function(BadResponseFormat value) badResponseFormat,
     required TResult Function(UnknownError value) unknownError,
+    required TResult Function(ClientError value) clientError,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -65,6 +69,7 @@ mixin _$BackendErrors {
     TResult? Function(NoInternetConnection value)? noInternetConnection,
     TResult? Function(BadResponseFormat value)? badResponseFormat,
     TResult? Function(UnknownError value)? unknownError,
+    TResult? Function(ClientError value)? clientError,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -75,6 +80,7 @@ mixin _$BackendErrors {
     TResult Function(NoInternetConnection value)? noInternetConnection,
     TResult Function(BadResponseFormat value)? badResponseFormat,
     TResult Function(UnknownError value)? unknownError,
+    TResult Function(ClientError value)? clientError,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -148,6 +154,7 @@ class _$InternalError with DiagnosticableTreeMixin implements InternalError {
     required TResult Function() noInternetConnection,
     required TResult Function() badResponseFormat,
     required TResult Function() unknownError,
+    required TResult Function(ErrorMessage errorMessage) clientError,
   }) {
     return internalError();
   }
@@ -161,6 +168,7 @@ class _$InternalError with DiagnosticableTreeMixin implements InternalError {
     TResult? Function()? noInternetConnection,
     TResult? Function()? badResponseFormat,
     TResult? Function()? unknownError,
+    TResult? Function(ErrorMessage errorMessage)? clientError,
   }) {
     return internalError?.call();
   }
@@ -174,6 +182,7 @@ class _$InternalError with DiagnosticableTreeMixin implements InternalError {
     TResult Function()? noInternetConnection,
     TResult Function()? badResponseFormat,
     TResult Function()? unknownError,
+    TResult Function(ErrorMessage errorMessage)? clientError,
     required TResult orElse(),
   }) {
     if (internalError != null) {
@@ -191,6 +200,7 @@ class _$InternalError with DiagnosticableTreeMixin implements InternalError {
     required TResult Function(NoInternetConnection value) noInternetConnection,
     required TResult Function(BadResponseFormat value) badResponseFormat,
     required TResult Function(UnknownError value) unknownError,
+    required TResult Function(ClientError value) clientError,
   }) {
     return internalError(this);
   }
@@ -204,6 +214,7 @@ class _$InternalError with DiagnosticableTreeMixin implements InternalError {
     TResult? Function(NoInternetConnection value)? noInternetConnection,
     TResult? Function(BadResponseFormat value)? badResponseFormat,
     TResult? Function(UnknownError value)? unknownError,
+    TResult? Function(ClientError value)? clientError,
   }) {
     return internalError?.call(this);
   }
@@ -217,6 +228,7 @@ class _$InternalError with DiagnosticableTreeMixin implements InternalError {
     TResult Function(NoInternetConnection value)? noInternetConnection,
     TResult Function(BadResponseFormat value)? badResponseFormat,
     TResult Function(UnknownError value)? unknownError,
+    TResult Function(ClientError value)? clientError,
     required TResult orElse(),
   }) {
     if (internalError != null) {
@@ -283,6 +295,7 @@ class _$ResourceNotFound
     required TResult Function() noInternetConnection,
     required TResult Function() badResponseFormat,
     required TResult Function() unknownError,
+    required TResult Function(ErrorMessage errorMessage) clientError,
   }) {
     return resourceNotFound();
   }
@@ -296,6 +309,7 @@ class _$ResourceNotFound
     TResult? Function()? noInternetConnection,
     TResult? Function()? badResponseFormat,
     TResult? Function()? unknownError,
+    TResult? Function(ErrorMessage errorMessage)? clientError,
   }) {
     return resourceNotFound?.call();
   }
@@ -309,6 +323,7 @@ class _$ResourceNotFound
     TResult Function()? noInternetConnection,
     TResult Function()? badResponseFormat,
     TResult Function()? unknownError,
+    TResult Function(ErrorMessage errorMessage)? clientError,
     required TResult orElse(),
   }) {
     if (resourceNotFound != null) {
@@ -326,6 +341,7 @@ class _$ResourceNotFound
     required TResult Function(NoInternetConnection value) noInternetConnection,
     required TResult Function(BadResponseFormat value) badResponseFormat,
     required TResult Function(UnknownError value) unknownError,
+    required TResult Function(ClientError value) clientError,
   }) {
     return resourceNotFound(this);
   }
@@ -339,6 +355,7 @@ class _$ResourceNotFound
     TResult? Function(NoInternetConnection value)? noInternetConnection,
     TResult? Function(BadResponseFormat value)? badResponseFormat,
     TResult? Function(UnknownError value)? unknownError,
+    TResult? Function(ClientError value)? clientError,
   }) {
     return resourceNotFound?.call(this);
   }
@@ -352,6 +369,7 @@ class _$ResourceNotFound
     TResult Function(NoInternetConnection value)? noInternetConnection,
     TResult Function(BadResponseFormat value)? badResponseFormat,
     TResult Function(UnknownError value)? unknownError,
+    TResult Function(ClientError value)? clientError,
     required TResult orElse(),
   }) {
     if (resourceNotFound != null) {
@@ -418,6 +436,7 @@ class _$ServiceUnavailable
     required TResult Function() noInternetConnection,
     required TResult Function() badResponseFormat,
     required TResult Function() unknownError,
+    required TResult Function(ErrorMessage errorMessage) clientError,
   }) {
     return serviceUnavailable();
   }
@@ -431,6 +450,7 @@ class _$ServiceUnavailable
     TResult? Function()? noInternetConnection,
     TResult? Function()? badResponseFormat,
     TResult? Function()? unknownError,
+    TResult? Function(ErrorMessage errorMessage)? clientError,
   }) {
     return serviceUnavailable?.call();
   }
@@ -444,6 +464,7 @@ class _$ServiceUnavailable
     TResult Function()? noInternetConnection,
     TResult Function()? badResponseFormat,
     TResult Function()? unknownError,
+    TResult Function(ErrorMessage errorMessage)? clientError,
     required TResult orElse(),
   }) {
     if (serviceUnavailable != null) {
@@ -461,6 +482,7 @@ class _$ServiceUnavailable
     required TResult Function(NoInternetConnection value) noInternetConnection,
     required TResult Function(BadResponseFormat value) badResponseFormat,
     required TResult Function(UnknownError value) unknownError,
+    required TResult Function(ClientError value) clientError,
   }) {
     return serviceUnavailable(this);
   }
@@ -474,6 +496,7 @@ class _$ServiceUnavailable
     TResult? Function(NoInternetConnection value)? noInternetConnection,
     TResult? Function(BadResponseFormat value)? badResponseFormat,
     TResult? Function(UnknownError value)? unknownError,
+    TResult? Function(ClientError value)? clientError,
   }) {
     return serviceUnavailable?.call(this);
   }
@@ -487,6 +510,7 @@ class _$ServiceUnavailable
     TResult Function(NoInternetConnection value)? noInternetConnection,
     TResult Function(BadResponseFormat value)? badResponseFormat,
     TResult Function(UnknownError value)? unknownError,
+    TResult Function(ClientError value)? clientError,
     required TResult orElse(),
   }) {
     if (serviceUnavailable != null) {
@@ -553,6 +577,7 @@ class _$NoInternetConnection
     required TResult Function() noInternetConnection,
     required TResult Function() badResponseFormat,
     required TResult Function() unknownError,
+    required TResult Function(ErrorMessage errorMessage) clientError,
   }) {
     return noInternetConnection();
   }
@@ -566,6 +591,7 @@ class _$NoInternetConnection
     TResult? Function()? noInternetConnection,
     TResult? Function()? badResponseFormat,
     TResult? Function()? unknownError,
+    TResult? Function(ErrorMessage errorMessage)? clientError,
   }) {
     return noInternetConnection?.call();
   }
@@ -579,6 +605,7 @@ class _$NoInternetConnection
     TResult Function()? noInternetConnection,
     TResult Function()? badResponseFormat,
     TResult Function()? unknownError,
+    TResult Function(ErrorMessage errorMessage)? clientError,
     required TResult orElse(),
   }) {
     if (noInternetConnection != null) {
@@ -596,6 +623,7 @@ class _$NoInternetConnection
     required TResult Function(NoInternetConnection value) noInternetConnection,
     required TResult Function(BadResponseFormat value) badResponseFormat,
     required TResult Function(UnknownError value) unknownError,
+    required TResult Function(ClientError value) clientError,
   }) {
     return noInternetConnection(this);
   }
@@ -609,6 +637,7 @@ class _$NoInternetConnection
     TResult? Function(NoInternetConnection value)? noInternetConnection,
     TResult? Function(BadResponseFormat value)? badResponseFormat,
     TResult? Function(UnknownError value)? unknownError,
+    TResult? Function(ClientError value)? clientError,
   }) {
     return noInternetConnection?.call(this);
   }
@@ -622,6 +651,7 @@ class _$NoInternetConnection
     TResult Function(NoInternetConnection value)? noInternetConnection,
     TResult Function(BadResponseFormat value)? badResponseFormat,
     TResult Function(UnknownError value)? unknownError,
+    TResult Function(ClientError value)? clientError,
     required TResult orElse(),
   }) {
     if (noInternetConnection != null) {
@@ -688,6 +718,7 @@ class _$BadResponseFormat
     required TResult Function() noInternetConnection,
     required TResult Function() badResponseFormat,
     required TResult Function() unknownError,
+    required TResult Function(ErrorMessage errorMessage) clientError,
   }) {
     return badResponseFormat();
   }
@@ -701,6 +732,7 @@ class _$BadResponseFormat
     TResult? Function()? noInternetConnection,
     TResult? Function()? badResponseFormat,
     TResult? Function()? unknownError,
+    TResult? Function(ErrorMessage errorMessage)? clientError,
   }) {
     return badResponseFormat?.call();
   }
@@ -714,6 +746,7 @@ class _$BadResponseFormat
     TResult Function()? noInternetConnection,
     TResult Function()? badResponseFormat,
     TResult Function()? unknownError,
+    TResult Function(ErrorMessage errorMessage)? clientError,
     required TResult orElse(),
   }) {
     if (badResponseFormat != null) {
@@ -731,6 +764,7 @@ class _$BadResponseFormat
     required TResult Function(NoInternetConnection value) noInternetConnection,
     required TResult Function(BadResponseFormat value) badResponseFormat,
     required TResult Function(UnknownError value) unknownError,
+    required TResult Function(ClientError value) clientError,
   }) {
     return badResponseFormat(this);
   }
@@ -744,6 +778,7 @@ class _$BadResponseFormat
     TResult? Function(NoInternetConnection value)? noInternetConnection,
     TResult? Function(BadResponseFormat value)? badResponseFormat,
     TResult? Function(UnknownError value)? unknownError,
+    TResult? Function(ClientError value)? clientError,
   }) {
     return badResponseFormat?.call(this);
   }
@@ -757,6 +792,7 @@ class _$BadResponseFormat
     TResult Function(NoInternetConnection value)? noInternetConnection,
     TResult Function(BadResponseFormat value)? badResponseFormat,
     TResult Function(UnknownError value)? unknownError,
+    TResult Function(ClientError value)? clientError,
     required TResult orElse(),
   }) {
     if (badResponseFormat != null) {
@@ -820,6 +856,7 @@ class _$UnknownError with DiagnosticableTreeMixin implements UnknownError {
     required TResult Function() noInternetConnection,
     required TResult Function() badResponseFormat,
     required TResult Function() unknownError,
+    required TResult Function(ErrorMessage errorMessage) clientError,
   }) {
     return unknownError();
   }
@@ -833,6 +870,7 @@ class _$UnknownError with DiagnosticableTreeMixin implements UnknownError {
     TResult? Function()? noInternetConnection,
     TResult? Function()? badResponseFormat,
     TResult? Function()? unknownError,
+    TResult? Function(ErrorMessage errorMessage)? clientError,
   }) {
     return unknownError?.call();
   }
@@ -846,6 +884,7 @@ class _$UnknownError with DiagnosticableTreeMixin implements UnknownError {
     TResult Function()? noInternetConnection,
     TResult Function()? badResponseFormat,
     TResult Function()? unknownError,
+    TResult Function(ErrorMessage errorMessage)? clientError,
     required TResult orElse(),
   }) {
     if (unknownError != null) {
@@ -863,6 +902,7 @@ class _$UnknownError with DiagnosticableTreeMixin implements UnknownError {
     required TResult Function(NoInternetConnection value) noInternetConnection,
     required TResult Function(BadResponseFormat value) badResponseFormat,
     required TResult Function(UnknownError value) unknownError,
+    required TResult Function(ClientError value) clientError,
   }) {
     return unknownError(this);
   }
@@ -876,6 +916,7 @@ class _$UnknownError with DiagnosticableTreeMixin implements UnknownError {
     TResult? Function(NoInternetConnection value)? noInternetConnection,
     TResult? Function(BadResponseFormat value)? badResponseFormat,
     TResult? Function(UnknownError value)? unknownError,
+    TResult? Function(ClientError value)? clientError,
   }) {
     return unknownError?.call(this);
   }
@@ -889,6 +930,7 @@ class _$UnknownError with DiagnosticableTreeMixin implements UnknownError {
     TResult Function(NoInternetConnection value)? noInternetConnection,
     TResult Function(BadResponseFormat value)? badResponseFormat,
     TResult Function(UnknownError value)? unknownError,
+    TResult Function(ClientError value)? clientError,
     required TResult orElse(),
   }) {
     if (unknownError != null) {
@@ -900,4 +942,176 @@ class _$UnknownError with DiagnosticableTreeMixin implements UnknownError {
 
 abstract class UnknownError implements BackendErrors {
   const factory UnknownError() = _$UnknownError;
+}
+
+/// @nodoc
+abstract class _$$ClientErrorCopyWith<$Res> {
+  factory _$$ClientErrorCopyWith(
+          _$ClientError value, $Res Function(_$ClientError) then) =
+      __$$ClientErrorCopyWithImpl<$Res>;
+  @useResult
+  $Res call({ErrorMessage errorMessage});
+}
+
+/// @nodoc
+class __$$ClientErrorCopyWithImpl<$Res>
+    extends _$BackendErrorsCopyWithImpl<$Res, _$ClientError>
+    implements _$$ClientErrorCopyWith<$Res> {
+  __$$ClientErrorCopyWithImpl(
+      _$ClientError _value, $Res Function(_$ClientError) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? errorMessage = null,
+  }) {
+    return _then(_$ClientError(
+      null == errorMessage
+          ? _value.errorMessage
+          : errorMessage // ignore: cast_nullable_to_non_nullable
+              as ErrorMessage,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _$ClientError with DiagnosticableTreeMixin implements ClientError {
+  const _$ClientError(this.errorMessage);
+
+  @override
+  final ErrorMessage errorMessage;
+
+  @override
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+    return 'BackendErrors.clientError(errorMessage: $errorMessage)';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(DiagnosticsProperty('type', 'BackendErrors.clientError'))
+      ..add(DiagnosticsProperty('errorMessage', errorMessage));
+  }
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$ClientError &&
+            (identical(other.errorMessage, errorMessage) ||
+                other.errorMessage == errorMessage));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, errorMessage);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$ClientErrorCopyWith<_$ClientError> get copyWith =>
+      __$$ClientErrorCopyWithImpl<_$ClientError>(this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() internalError,
+    required TResult Function() resourceNotFound,
+    required TResult Function() serviceUnavailable,
+    required TResult Function() noInternetConnection,
+    required TResult Function() badResponseFormat,
+    required TResult Function() unknownError,
+    required TResult Function(ErrorMessage errorMessage) clientError,
+  }) {
+    return clientError(errorMessage);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? internalError,
+    TResult? Function()? resourceNotFound,
+    TResult? Function()? serviceUnavailable,
+    TResult? Function()? noInternetConnection,
+    TResult? Function()? badResponseFormat,
+    TResult? Function()? unknownError,
+    TResult? Function(ErrorMessage errorMessage)? clientError,
+  }) {
+    return clientError?.call(errorMessage);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? internalError,
+    TResult Function()? resourceNotFound,
+    TResult Function()? serviceUnavailable,
+    TResult Function()? noInternetConnection,
+    TResult Function()? badResponseFormat,
+    TResult Function()? unknownError,
+    TResult Function(ErrorMessage errorMessage)? clientError,
+    required TResult orElse(),
+  }) {
+    if (clientError != null) {
+      return clientError(errorMessage);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(InternalError value) internalError,
+    required TResult Function(ResourceNotFound value) resourceNotFound,
+    required TResult Function(ServiceUnavailable value) serviceUnavailable,
+    required TResult Function(NoInternetConnection value) noInternetConnection,
+    required TResult Function(BadResponseFormat value) badResponseFormat,
+    required TResult Function(UnknownError value) unknownError,
+    required TResult Function(ClientError value) clientError,
+  }) {
+    return clientError(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(InternalError value)? internalError,
+    TResult? Function(ResourceNotFound value)? resourceNotFound,
+    TResult? Function(ServiceUnavailable value)? serviceUnavailable,
+    TResult? Function(NoInternetConnection value)? noInternetConnection,
+    TResult? Function(BadResponseFormat value)? badResponseFormat,
+    TResult? Function(UnknownError value)? unknownError,
+    TResult? Function(ClientError value)? clientError,
+  }) {
+    return clientError?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(InternalError value)? internalError,
+    TResult Function(ResourceNotFound value)? resourceNotFound,
+    TResult Function(ServiceUnavailable value)? serviceUnavailable,
+    TResult Function(NoInternetConnection value)? noInternetConnection,
+    TResult Function(BadResponseFormat value)? badResponseFormat,
+    TResult Function(UnknownError value)? unknownError,
+    TResult Function(ClientError value)? clientError,
+    required TResult orElse(),
+  }) {
+    if (clientError != null) {
+      return clientError(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class ClientError implements BackendErrors {
+  const factory ClientError(final ErrorMessage errorMessage) = _$ClientError;
+
+  ErrorMessage get errorMessage;
+  @JsonKey(ignore: true)
+  _$$ClientErrorCopyWith<_$ClientError> get copyWith =>
+      throw _privateConstructorUsedError;
 }
