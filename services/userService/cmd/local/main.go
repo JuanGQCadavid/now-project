@@ -109,7 +109,7 @@ func singUp() {
 func login() {
 
 	err := service.InitLogin(domain.Login{
-		PhoneNumber: "+573013475995",
+		PhoneNumber: "+573137590102",
 		MethodVerificator: domain.MethodVerifictor{
 			Language: "en",
 			SMS:      true,

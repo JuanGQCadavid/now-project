@@ -23,8 +23,8 @@ func (hdl *UserServiceHandler) ConfigureRouter(router *gin.Engine) {
 	router.POST("/user/init/login", hdl.InitLoging)
 	router.POST("/user/init/singup", hdl.InitSingUp)
 
-	router.POST("/user/validate/:userID/otp", hdl.ValidateProcess)
-	router.POST("/user/validate/:userID/otp/resent", hdl.GenerateNewOTP)
+	router.POST("/user/validate/otp", hdl.ValidateProcess)
+	router.POST("/user/validate/otp/resent", hdl.GenerateNewOTP)
 }
 
 // user/init/login
