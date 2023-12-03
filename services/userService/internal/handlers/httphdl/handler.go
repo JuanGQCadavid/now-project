@@ -35,8 +35,9 @@ func (hdl *UserServiceHandler) InitLoging(context *gin.Context) {
 	logs.Info.Printf("\nHandler: InitLoging \n\tRequest: %+v", loginRequest)
 
 	if len(loginRequest.PhoneNumber) == 0 {
-		context.AbortWithStatusJSON(400, ErrorMessage{
+		context.AbortWithStatusJSON(http.StatusBadRequest, ErrorMessage{
 			Message: "phoneNumber is required",
+			Id:      BadBodyRequest,
 		})
 		return
 	}
@@ -44,8 +45,9 @@ func (hdl *UserServiceHandler) InitLoging(context *gin.Context) {
 	if err := hdl.userService.InitLogin(loginRequest); err != nil {
 
 		if err == ports.ErrUserNotFound {
-			context.AbortWithStatusJSON(http.StatusBadRequest, ErrorMessage{
+			context.AbortWithStatusJSON(http.StatusNotFound, ErrorMessage{
 				Message:       "User does not exist",
+				Id:            UserNotFound,
 				InternalError: err.Error(),
 			})
 			return
@@ -53,6 +55,7 @@ func (hdl *UserServiceHandler) InitLoging(context *gin.Context) {
 
 		context.AbortWithStatusJSON(http.StatusInternalServerError, ErrorMessage{
 			Message:       "Ups there is a internal problem",
+			Id:            Internal,
 			InternalError: err.Error(),
 		})
 
@@ -72,6 +75,7 @@ func (hdl *UserServiceHandler) InitSingUp(context *gin.Context) {
 
 	if len(singUpRequest.PhoneNumber) == 0 || len(singUpRequest.UserName) == 0 {
 		context.AbortWithStatusJSON(http.StatusBadRequest, ErrorMessage{
+			Id:      BadBodyRequest,
 			Message: "phoneNumber and userName are required",
 		})
 		return
@@ -82,6 +86,7 @@ func (hdl *UserServiceHandler) InitSingUp(context *gin.Context) {
 		if err == ports.ErrUserIsAlreadyCreated {
 			context.AbortWithStatusJSON(http.StatusConflict, ErrorMessage{
 				Message:       "Phonenomber is already registered",
+				Id:            PhoneNumberAlreadyTaken,
 				InternalError: err.Error(),
 			})
 			return
@@ -90,6 +95,7 @@ func (hdl *UserServiceHandler) InitSingUp(context *gin.Context) {
 		if err == ports.ErrOTPTTLStillLive {
 			context.AbortWithStatusJSON(http.StatusNotAcceptable, ErrorMessage{
 				Message:       "OPT is still valid, you should wait",
+				Id:            OTPAlive,
 				InternalError: err.Error(),
 			})
 			return
@@ -97,6 +103,7 @@ func (hdl *UserServiceHandler) InitSingUp(context *gin.Context) {
 
 		context.AbortWithStatusJSON(http.StatusInternalServerError, ErrorMessage{
 			Message:       "Ups there is a internal problem",
+			Id:            Internal,
 			InternalError: err.Error(),
 		})
 
@@ -116,6 +123,7 @@ func (hdl *UserServiceHandler) ValidateProcess(context *gin.Context) {
 
 	if len(validateProcess.PhoneNumber) == 0 || len(validateProcess.Code) == 0 {
 		context.AbortWithStatusJSON(http.StatusBadRequest, ErrorMessage{
+			Id:      BadBodyRequest,
 			Message: "phoneNumber and Code are required",
 		})
 		return
@@ -128,6 +136,7 @@ func (hdl *UserServiceHandler) ValidateProcess(context *gin.Context) {
 		if err == ports.ErrUserNotFound {
 			context.AbortWithStatusJSON(http.StatusBadRequest, ErrorMessage{
 				Message:       "User does not exist",
+				Id:            UserNotFound,
 				InternalError: err.Error(),
 			})
 			return
@@ -136,6 +145,7 @@ func (hdl *UserServiceHandler) ValidateProcess(context *gin.Context) {
 		if err == ports.ErrInvalidOTP {
 			context.AbortWithStatusJSON(http.StatusUnauthorized, ErrorMessage{
 				Message:       "OPT is not valid",
+				Id:            WrongOTP,
 				InternalError: err.Error(),
 			})
 			return
@@ -144,6 +154,7 @@ func (hdl *UserServiceHandler) ValidateProcess(context *gin.Context) {
 		if err == ports.ErrThereIsNotOTP {
 			context.AbortWithStatusJSON(http.StatusPreconditionFailed, ErrorMessage{
 				Message:       "There is not pending OTP, request a OTP first",
+				Id:            NoPendingOTP,
 				InternalError: err.Error(),
 			})
 			return
@@ -152,12 +163,14 @@ func (hdl *UserServiceHandler) ValidateProcess(context *gin.Context) {
 		if err == ports.ErrMaxRetriesOnTOP {
 			context.AbortWithStatusJSON(http.StatusGone, ErrorMessage{
 				Message:       "OPT attemps reach the limit, request a new one",
+				Id:            OTPMaxTriesReached,
 				InternalError: err.Error(),
 			})
 			return
 		}
 
 		context.AbortWithStatusJSON(http.StatusInternalServerError, ErrorMessage{
+			Id:            Internal,
 			Message:       "Ups there is a internal problem",
 			InternalError: err.Error(),
 		})
@@ -180,6 +193,7 @@ func (hdl *UserServiceHandler) GenerateNewOTP(context *gin.Context) {
 
 	if len(loginRequest.PhoneNumber) == 0 {
 		context.AbortWithStatusJSON(http.StatusBadRequest, ErrorMessage{
+			Id:      BadBodyRequest,
 			Message: "phoneNumber and Code are required",
 		})
 		return
@@ -190,6 +204,7 @@ func (hdl *UserServiceHandler) GenerateNewOTP(context *gin.Context) {
 		if err == ports.ErrUserNotFound {
 			context.AbortWithStatusJSON(http.StatusBadRequest, ErrorMessage{
 				Message:       "User does not exist",
+				Id:            UserNotFound,
 				InternalError: err.Error(),
 			})
 			return
@@ -198,12 +213,14 @@ func (hdl *UserServiceHandler) GenerateNewOTP(context *gin.Context) {
 		if err == ports.ErrOTPTTLStillLive {
 			context.AbortWithStatusJSON(http.StatusLocked, ErrorMessage{
 				Message:       "OPT is still alive",
+				Id:            OTPAlive,
 				InternalError: err.Error(),
 			})
 			return
 		}
 
 		context.AbortWithStatusJSON(http.StatusInternalServerError, ErrorMessage{
+			Id:            Internal,
 			Message:       "Ups there is a internal problem",
 			InternalError: err.Error(),
 		})
