@@ -12,6 +12,7 @@ type SNSNotificator struct {
 }
 
 func NewSNSNotificator(session *session.Session) *SNSNotificator {
+	session.Config.WithRegion("us-west-2")
 	svc := sns.New(session)
 	return &SNSNotificator{
 		svc: svc,
