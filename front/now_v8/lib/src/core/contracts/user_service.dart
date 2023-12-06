@@ -11,6 +11,10 @@ abstract class IUserService {
     String userPhoneNumber,
     String userName,
   );
+  Future<Either<UserDetails, UserError>> validate(
+    String userPhoneNumber,
+    List<String> userCode,
+  );
 }
 
 @freezed

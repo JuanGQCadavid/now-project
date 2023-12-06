@@ -55,3 +55,19 @@ class InitSingUp {
 
   Map<String, dynamic> toJson() => _$InitSingUpToJson(this);
 }
+
+@JsonSerializable(explicitToJson: true)
+class ValidateOTP {
+  @JsonKey(name: "phoneNumber", required: true)
+  String userPhoneNumber;
+
+  @JsonKey(name: "code", required: true)
+  List<int> userCode;
+
+  ValidateOTP(this.userPhoneNumber, this.userCode);
+
+  factory ValidateOTP.fromJson(Map<String, dynamic> json) =>
+      _$ValidateOTPFromJson(json);
+
+  Map<String, dynamic> toJson() => _$ValidateOTPToJson(this);
+}

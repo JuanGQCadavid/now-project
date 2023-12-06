@@ -61,9 +61,17 @@ class NowServicesCaller {
     } on DioError catch (e) {
       if (e.type == DioErrorType.response) {
         Println(e.message);
-        return left(
-          ClientError(ErrorMessage.fromJson(e.response?.data ?? "")),
-        );
+        var data = e.response?.data ?? "";
+        if (data is String || data.runtimeType == String) {
+          Println(data);
+          return left(
+            ClientError(ErrorMessage("NONE", e.message, "NONE")),
+          );
+        } else {
+          return left(
+            ClientError(ErrorMessage.fromJson(e.response?.data ?? "")),
+          );
+        }
       }
       print(e.toString());
       return left(

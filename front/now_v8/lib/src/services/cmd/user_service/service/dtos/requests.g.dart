@@ -56,3 +56,20 @@ Map<String, dynamic> _$InitSingUpToJson(InitSingUp instance) =>
       'userName': instance.userName,
       'methodVerificator': instance.methodVerificator.toJson(),
     };
+
+ValidateOTP _$ValidateOTPFromJson(Map<String, dynamic> json) {
+  $checkKeys(
+    json,
+    requiredKeys: const ['phoneNumber', 'code'],
+  );
+  return ValidateOTP(
+    json['phoneNumber'] as String,
+    (json['code'] as List<dynamic>).map((e) => e as int).toList(),
+  );
+}
+
+Map<String, dynamic> _$ValidateOTPToJson(ValidateOTP instance) =>
+    <String, dynamic>{
+      'phoneNumber': instance.userPhoneNumber,
+      'code': instance.userCode,
+    };

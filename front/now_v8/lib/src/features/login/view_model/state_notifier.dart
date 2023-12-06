@@ -34,24 +34,13 @@ class LoginStateNotifer extends StateNotifier<LoginState> {
     if (state.onState == OnState.onInit) {
       onUserAttemptToLogIn(userPhoneNumber);
     } else if (state.onState == OnState.onLogin) {
-      validateLogin(userPhoneNumber, userCode);
+      validate(userPhoneNumber, userCode);
     } else if (state.onState == OnState.onSingUp) {
       initSignUp(userPhoneNumber, userName);
     } else if (state.onState == OnState.onSingUpPhoneValidation) {
-      validateSignUser(userPhoneNumber, userCode);
+      validate(userPhoneNumber, userCode);
     }
   }
-
-  void validateSignUser(
-    String userPhoneNumber,
-    List<String> userCode,
-  ) {
-    state = state.copyWith(
-      onState: OnState.onDone,
-      stateConfig: stateConfigMaps[OnState.onDone]!,
-    );
-  }
-  // 3013475995
 
   void initSignUp(
     String userPhoneNumber,
@@ -65,6 +54,7 @@ class LoginStateNotifer extends StateNotifier<LoginState> {
         state = state.copyWith(
           onState: OnState.onSingUpPhoneValidation,
           userName: userName,
+          errorMessage: "",
           stateConfig: stateConfigMaps[OnState.onSingUpPhoneValidation]!,
         )
       },
@@ -105,13 +95,47 @@ class LoginStateNotifer extends StateNotifier<LoginState> {
     );
   }
 
-  void validateLogin(
+  void validate(
     String userPhoneNumber,
     List<String> userCode,
   ) async {
-    state = state.copyWith(
-      onState: OnState.onDone,
-      stateConfig: stateConfigMaps[OnState.onDone]!,
+    var serviceResponse = await userService.validate(userPhoneNumber, userCode);
+
+    serviceResponse.fold(
+      (l) => {
+        print("ID: " +
+            l.userId +
+            "Tokens" +
+            "\n" +
+            l.refreshToken +
+            "\n" +
+            l.shortLiveToken +
+            "\n" +
+            l.shortLiveTokenTTL +
+            "\n")
+      },
+      (r) => {
+        r.whenOrNull(
+          wrongOTP: () {
+            print("wrongOTP");
+            state = state.copyWith(
+              errorMessage: "Wrong code, try again",
+            );
+          },
+          otpMaxTriesReached: () {
+            print("otpMaxTriesReached");
+            state = state.copyWith(
+              errorMessage: "Ups, we reach the limit",
+            );
+          },
+          internalError: (String err) {
+            print("internal err - " + err);
+            state = state.copyWith(
+              errorMessage: err,
+            );
+          },
+        )
+      },
     );
   }
 
@@ -122,6 +146,7 @@ class LoginStateNotifer extends StateNotifier<LoginState> {
       (l) => {
         state = state.copyWith(
           onState: OnState.onLogin,
+          errorMessage: "",
           phoneNumber: userPhoneNumber,
           stateConfig: stateConfigMaps[OnState.onLogin]!,
         )

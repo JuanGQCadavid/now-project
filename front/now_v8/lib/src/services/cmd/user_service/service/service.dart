@@ -11,6 +11,7 @@ import 'package:now_v8/src/services/core/services_api_configuration.dart';
 
 const String InitLoginResource = "/init/login";
 const String InitSingUpResource = "/init/singup";
+const String ValidateResource = "/validate/otp";
 
 class UserService implements IUserService {
   late NowServicesCaller nowServicesCaller;
@@ -89,5 +90,52 @@ class UserService implements IUserService {
         return right(UserError.internalError("Internal error"));
       },
     );
+  }
+
+  @override
+  Future<Either<UserDetails, UserError>> validate(
+    String userPhoneNumber,
+    List<String> userCode,
+  ) async {
+    ValidateOTP request = ValidateOTP(
+      userPhoneNumber,
+      userCode.map((e) => int.parse(e)).toList(),
+    );
+
+    Either<BackendErrors, dynamic> response = await nowServicesCaller.request(
+      Method.POST,
+      ValidateResource,
+      data: request.toJson(),
+    );
+
+    return response.fold((l) {
+      return l.when(
+        clientError: (errorMessage) {
+          log("We found a client error: ");
+          log(errorMessage.toString());
+          return right(mapMessageErrorToUserError(errorMessage));
+        },
+        internalError: () {
+          return right(UserError.internalError("Internal error"));
+        },
+        resourceNotFound: () {
+          return right(UserError.internalError("Internal error"));
+        },
+        serviceUnavailable: () {
+          return right(UserError.internalError("Internal error"));
+        },
+        noInternetConnection: () {
+          return right(UserError.internalError("Internal error"));
+        },
+        badResponseFormat: () {
+          return right(UserError.internalError("Internal error"));
+        },
+        unknownError: () {
+          return right(UserError.internalError("Internal error"));
+        },
+      );
+    }, (r) {
+      return left(UserDetails.fromJson(r));
+    });
   }
 }

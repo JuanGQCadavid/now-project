@@ -21,7 +21,7 @@ class LoginFeature extends ConsumerWidget {
     userName = value;
   }
 
-  List<String> verificationCodes = ["", "", "", "", ""];
+  List<String> verificationCodes = ["", "", "", ""];
   void onCodeVerificationChanged(int pos, String value) {
     verificationCodes[pos] = value;
   }
@@ -99,7 +99,7 @@ class _Body extends StatelessWidget {
                 margin: const EdgeInsets.only(bottom: 30),
                 child: CodeInputV2(
                   onCodeChange: onCodeVerificationChanged,
-                  size: 5,
+                  size: 4,
                 ),
               ),
               visible: state.stateConfig.showCodeInput,
