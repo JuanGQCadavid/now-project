@@ -8,8 +8,8 @@ class HiveKeyValue<V> implements IKeyValueStorage<String, V> {
     doInit();
   }
 
-  doInit() async{
-    if(!Hive.isBoxOpen(boxName)) {
+  doInit() async {
+    if (!Hive.isBoxOpen(boxName)) {
       await Hive.openBox(boxName);
       print("I'am initialized");
     }
@@ -18,7 +18,7 @@ class HiveKeyValue<V> implements IKeyValueStorage<String, V> {
   @override
   V getValue(String key) {
     var box = Hive.box(boxName);
-    return box.get(key, defaultValue: "");
+    return box.get(key);
   }
 
   @override

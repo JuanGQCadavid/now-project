@@ -35,14 +35,16 @@ class GranularModel {
     await sessionDatabase.doInit();
 
     print("Before calling Search Session key");
-    String token = sessionDatabase.getValue(searchSessionKey);
+    String token = sessionDatabase.getValue(searchSessionKey) ?? "";
     print("Token -> " + token);
 
     StateResponse<List<LongSpot>, String> filterResponse =
         await filterService.getLongSpotByProximityWithState(
-            cpLat: userLocation.latitude, cpLng: userLocation.longitude, token: token);
+            cpLat: userLocation.latitude,
+            cpLng: userLocation.longitude,
+            token: token);
 
-    if(filterResponse.token.isEmpty || filterResponse.token != token) {
+    if (filterResponse.token.isEmpty || filterResponse.token != token) {
       print("Differente tokens");
       print("Before calling Search Session key");
       print("filterResponse.token -> " + filterResponse.token);
@@ -50,7 +52,7 @@ class GranularModel {
       sessionDatabase.save(filterResponse.token, searchSessionKey);
 
       print("Before calling Search Session key again");
-      String token2 = sessionDatabase.getValue(searchSessionKey);
+      String token2 = sessionDatabase.getValue(searchSessionKey) ?? "";
       print("token2 -> " + token2);
     } else {
       print("Same token as the one we use to call the service");
@@ -92,7 +94,7 @@ class GranularModel {
     } else {
       if (middleSpotIndex == 0) {
         return SpotWindow(
-          previousOne: "",//spotsList[spotsList.length - 1].eventInfo.name,
+          previousOne: "", //spotsList[spotsList.length - 1].eventInfo.name,
           actualOne: spotsList[middleSpotIndex].eventInfo.name,
           nextOne: spotsList[middleSpotIndex + 1].eventInfo.name,
         );

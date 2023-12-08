@@ -17,26 +17,30 @@ class GeneralViewModel {
 
   final String searchSessionKey = "Generla-View-Session-Id";
 
-  GeneralViewModel(
-      {required this.filterService,
-      required this.colorService,
-      required this.locationService,
-      required this.sessionDatabase,
-    }) {
+  GeneralViewModel({
+    required this.filterService,
+    required this.colorService,
+    required this.locationService,
+    required this.sessionDatabase,
+  }) {
     defaultColor = colorService.getColor();
   }
 
   Future<List<Spot>> getSpots([LatLng? centralPosition]) async {
-    LatLng searchPosition = centralPosition??  await locationService.getUserCurrentLocation();
+    LatLng searchPosition =
+        centralPosition ?? await locationService.getUserCurrentLocation();
     await sessionDatabase.doInit();
 
-    String token = sessionDatabase.getValue(searchSessionKey);
+    String token = sessionDatabase.getValue(searchSessionKey) ?? "";
 
     StateResponse<List<Spot>, String> filterResponse =
         await filterService.getSpotsByProximityWithState(
-            cpLat: searchPosition.latitude, cpLng: searchPosition.longitude, token: token, radious: 0.03);
-    
-    if(filterResponse.token.isEmpty || filterResponse.token != token) {
+            cpLat: searchPosition.latitude,
+            cpLng: searchPosition.longitude,
+            token: token,
+            radious: 0.03);
+
+    if (filterResponse.token.isEmpty || filterResponse.token != token) {
       print("Differente tokens");
       print("Before calling Search Session key");
       print("filterResponse.token -> " + filterResponse.token);
@@ -44,7 +48,7 @@ class GeneralViewModel {
       sessionDatabase.save(filterResponse.token, searchSessionKey);
 
       print("Before calling Search Session key again");
-      String token2 = sessionDatabase.getValue(searchSessionKey);
+      String token2 = sessionDatabase.getValue(searchSessionKey) ?? "";
       print("token2 -> " + token2);
     } else {
       print("Same token as the one we use to call the service");
@@ -53,28 +57,24 @@ class GeneralViewModel {
     }
 
     for (var spot in filterResponse.response) {
-      if (spot.date.compareTo(DateTime.now()) > 0){
+      if (spot.date.compareTo(DateTime.now()) > 0) {
         spot.spotsColor = colorService.getScheduleColor();
-      }else {
+      } else {
         spot.spotsColor = colorService.getColor();
       }
-      
     }
 
     return filterResponse.response;
   }
-
 
   /// 1. Check if tagsOn is empty, if so just return all spots.
   /// 2. To filter
   ///  1. Check if the spot princiapl tag is on tags on, if so then mark flag as true, if not then add the tag as not showed.
   ///  2. Check if the spot secondary tags contains one of the tags on, if so then mark flag as true, if not then add the tag as not showed.
   ///  3. if the mark if flagged if so then add the spot.
-  
+
   FilteredSpots filterSpotsBaseOnTags(
-      Set<String> tagsSelected, 
-      List<Spot> spots
-  ) {
+      Set<String> tagsSelected, List<Spot> spots) {
     if (tagsSelected.isEmpty) {
       return FilteredSpots(
           spots: spots,
@@ -96,7 +96,6 @@ class GeneralViewModel {
         result.tagsOff.add(spot.principalTag);
       }
 
-      
       for (var spotTag in spot.secondaryTags) {
         if (tagsSelected.contains(spotTag)) {
           spotToShow = true;
@@ -112,6 +111,4 @@ class GeneralViewModel {
 
     return result;
   }
-
-
 }
