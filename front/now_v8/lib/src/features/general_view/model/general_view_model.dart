@@ -1,3 +1,4 @@
+import 'package:dartz/dartz.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:now_v8/src/core/contracts/colorService.dart';
 import 'package:now_v8/src/core/contracts/filterService.dart';
@@ -24,6 +25,17 @@ class GeneralViewModel {
     required this.sessionDatabase,
   }) {
     defaultColor = colorService.getColor();
+    sessionDatabase.doInit();
+  }
+
+  String getToken() {
+    var token = sessionDatabase.getValue(searchSessionKey);
+
+    return token.fold((l) {
+      return l as String;
+    }, (r) {
+      return "";
+    });
   }
 
   Future<List<Spot>> getSpots([LatLng? centralPosition]) async {
@@ -31,7 +43,7 @@ class GeneralViewModel {
         centralPosition ?? await locationService.getUserCurrentLocation();
     await sessionDatabase.doInit();
 
-    String token = sessionDatabase.getValue(searchSessionKey) ?? "";
+    String token = getToken();
 
     StateResponse<List<Spot>, String> filterResponse =
         await filterService.getSpotsByProximityWithState(
@@ -48,7 +60,7 @@ class GeneralViewModel {
       sessionDatabase.save(filterResponse.token, searchSessionKey);
 
       print("Before calling Search Session key again");
-      String token2 = sessionDatabase.getValue(searchSessionKey) ?? "";
+      String token2 = getToken();
       print("token2 -> " + token2);
     } else {
       print("Same token as the one we use to call the service");

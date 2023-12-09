@@ -1,3 +1,4 @@
+import 'package:dartz/dartz.dart';
 import 'package:hive/hive.dart';
 import 'package:now_v8/src/core/contracts/key_value_storage.dart';
 
@@ -16,9 +17,15 @@ class HiveKeyValue<V> implements IKeyValueStorage<String, V> {
   }
 
   @override
-  V getValue(String key) {
+  Either<V, None> getValue(String key) {
     var box = Hive.box(boxName);
-    return box.get(key);
+    var value = box.get(key);
+
+    if (value == null) {
+      return right(const None());
+    }
+
+    return left(value);
   }
 
   @override

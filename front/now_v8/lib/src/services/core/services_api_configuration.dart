@@ -13,17 +13,16 @@ class ApiConfig {
       required this.stage});
 
   ApiConfig.toProd({
-    this.filterServiceResource = "filter",
-    this.apiGatewayEndpoint = "http://192.168.20.39:8000",
-    this.userServiceResource = "user",
-    this.spotServiceResource = "spot",
+    this.filterServiceResource = ":8000/filter",
+    this.apiGatewayEndpoint = "http://192.168.4.106",
+    this.userServiceResource = ":8001/user",
+    this.spotServiceResource = ":8000/spot",
     this.stage = "prod",
   });
 
-  String getFilterEndpoint() =>
-      "${apiGatewayEndpoint}/${filterServiceResource}";
+  String getFilterEndpoint() => "${apiGatewayEndpoint}${filterServiceResource}";
 
-  String getUserEndpoint() => "${apiGatewayEndpoint}/${userServiceResource}";
+  String getUserEndpoint() => "${apiGatewayEndpoint}${userServiceResource}";
 
   String getBaseURL() => "${apiGatewayEndpoint}/${stage}";
 }

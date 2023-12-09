@@ -1,7 +1,7 @@
+import 'package:dartz/dartz.dart';
 
-
-abstract class IKeyValueStorage<K,V> {
-  V getValue(K key);
+abstract class IKeyValueStorage<K, V> {
+  Either<V, None> getValue(K key);
   save(V value, K key);
   update(V value, K key);
   Future doInit();
