@@ -34,17 +34,18 @@ class GeneralViewModel {
   }
 
   Future<Either<UserDetails, None>> getUserInfo() async {
-    await authSessionDatabase.storeUserDetails(
-      UserDetails(
-        userId: "1",
-        userName: "Sofia Gomez",
-        refreshToken: "refreshToken",
-        shortLiveToken: "shortLiveToken",
-        shortLiveTokenTTL: "shortLiveTokenTTL",
-      ),
-    );
+    // await authSessionDatabase.storeUserDetails(
+    //   UserDetails(
+    //     userId: "1",
+    //     userName: "Sofia Gomez",
+    //     refreshToken: "refreshToken",
+    //     shortLiveToken: "shortLiveToken",
+    //     shortLiveTokenTTL: "shortLiveTokenTTL",
+    //   ),
+    // );
 
-    return await authSessionDatabase.getUserDetails();
+    var details = await authSessionDatabase.getUserDetails();
+    return details;
   }
 
   Future<String> getSessionToken() async {
