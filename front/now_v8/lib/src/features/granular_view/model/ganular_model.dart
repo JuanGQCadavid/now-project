@@ -30,7 +30,9 @@ class GranularModel {
     return newModel;
   }
 
-  String getToken() {
+  Future<String> getToken() async {
+    await sessionDatabase.doInit();
+
     var token = sessionDatabase.getValue(searchSessionKey);
 
     return token.fold((l) {
@@ -42,10 +44,9 @@ class GranularModel {
 
   Future<List<LongSpot>> getSpots() async {
     LatLng userLocation = await locationService.getUserCurrentLocation();
-    await sessionDatabase.doInit();
 
     print("Before calling Search Session key");
-    String token = getToken();
+    String token = await getToken();
     print("Token -> " + token);
 
     StateResponse<List<LongSpot>, String> filterResponse =
@@ -62,7 +63,7 @@ class GranularModel {
       sessionDatabase.save(filterResponse.token, searchSessionKey);
 
       print("Before calling Search Session key again");
-      String token2 = getToken();
+      String token2 = await getToken();
       print("token2 -> " + token2);
     } else {
       print("Same token as the one we use to call the service");

@@ -9,16 +9,17 @@ class HiveKeyValue<V> implements IKeyValueStorage<String, V> {
     doInit();
   }
 
+  @override
   doInit() async {
     if (!Hive.isBoxOpen(boxName)) {
-      await Hive.openBox(boxName);
+      await Hive.openBox<V>(boxName);
       print("I'am initialized");
     }
   }
 
   @override
   Either<V, None> getValue(String key) {
-    var box = Hive.box(boxName);
+    var box = Hive.box<V>(boxName);
     var value = box.get(key);
 
     if (value == null) {
@@ -30,13 +31,13 @@ class HiveKeyValue<V> implements IKeyValueStorage<String, V> {
 
   @override
   save(V value, String key) {
-    var box = Hive.box(boxName);
+    var box = Hive.box<V>(boxName);
     box.put(key, value);
   }
 
   @override
   update(V value, String key) {
-    var box = Hive.box(boxName);
+    var box = Hive.box<V>(boxName);
     box.put(key, value);
   }
 }

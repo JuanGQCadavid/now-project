@@ -8,11 +8,13 @@ class AuthLocalStorage implements IAuthService {
   final String key = "UserDetails";
 
   AuthLocalStorage({required this.keyValueStorage}) {
-    keyValueStorage.doInit();
+    keyValueStorage.doInit().then((value) => {print("We are init!")});
   }
 
   @override
-  Either<UserDetails, None> getUserDetails() {
+  Future<Either<UserDetails, None>> getUserDetails() async {
+    await keyValueStorage.doInit();
+
     var user = keyValueStorage.getValue(key);
 
     if (user.isRight()) {
@@ -20,7 +22,9 @@ class AuthLocalStorage implements IAuthService {
     }
 
     return user.fold((l) {
-      var user = l as UserDetails;
+      var data = l as Map<String, dynamic>;
+
+      var user = UserDetails.fromJson(data);
       return left(user);
     }, (r) {
       return right(const None());
@@ -28,7 +32,9 @@ class AuthLocalStorage implements IAuthService {
   }
 
   @override
-  storeUserDetails(UserDetails user) {
-    keyValueStorage.save(user, key);
+  Future storeUserDetails(UserDetails user) async {
+    await keyValueStorage.doInit();
+    var userDumped = user.toJson();
+    keyValueStorage.save(userDumped, key);
   }
 }

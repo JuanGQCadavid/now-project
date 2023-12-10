@@ -1,10 +1,12 @@
 import 'package:dartz/dartz.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:now_v8/src/core/contracts/auth_service.dart';
 import 'package:now_v8/src/core/contracts/colorService.dart';
 import 'package:now_v8/src/core/contracts/filterService.dart';
 import 'package:now_v8/src/core/contracts/locationService.dart';
 import 'package:now_v8/src/core/models/spot.dart';
 import 'package:now_v8/src/core/models/spotColors.dart';
+import 'package:now_v8/src/core/models/user.dart';
 import 'package:now_v8/src/features/general_view/model/filteredSpots.dart';
 import 'package:now_v8/src/core/contracts/key_value_storage.dart';
 import 'package:now_v8/src/core/models/state_response.dart';
@@ -14,6 +16,8 @@ class GeneralViewModel {
   final IColorService colorService;
   final ILocationService locationService;
   final IKeyValueStorage sessionDatabase;
+  final IAuthService authSessionDatabase;
+
   late SpotsColors defaultColor;
 
   final String searchSessionKey = "Generla-View-Session-Id";
@@ -23,12 +27,28 @@ class GeneralViewModel {
     required this.colorService,
     required this.locationService,
     required this.sessionDatabase,
+    required this.authSessionDatabase,
   }) {
     defaultColor = colorService.getColor();
     sessionDatabase.doInit();
   }
 
-  String getToken() {
+  Future<Either<UserDetails, None>> getUserInfo() async {
+    await authSessionDatabase.storeUserDetails(
+      UserDetails(
+        userId: "1",
+        userName: "Juan Gonzalo",
+        refreshToken: "refreshToken",
+        shortLiveToken: "shortLiveToken",
+        shortLiveTokenTTL: "shortLiveTokenTTL",
+      ),
+    );
+
+    return await authSessionDatabase.getUserDetails();
+  }
+
+  Future<String> getSessionToken() async {
+    await sessionDatabase.doInit();
     var token = sessionDatabase.getValue(searchSessionKey);
 
     return token.fold((l) {
@@ -41,9 +61,8 @@ class GeneralViewModel {
   Future<List<Spot>> getSpots([LatLng? centralPosition]) async {
     LatLng searchPosition =
         centralPosition ?? await locationService.getUserCurrentLocation();
-    await sessionDatabase.doInit();
 
-    String token = getToken();
+    String token = await getSessionToken();
 
     StateResponse<List<Spot>, String> filterResponse =
         await filterService.getSpotsByProximityWithState(
@@ -60,7 +79,7 @@ class GeneralViewModel {
       sessionDatabase.save(filterResponse.token, searchSessionKey);
 
       print("Before calling Search Session key again");
-      String token2 = getToken();
+      String token2 = await getSessionToken();
       print("token2 -> " + token2);
     } else {
       print("Same token as the one we use to call the service");

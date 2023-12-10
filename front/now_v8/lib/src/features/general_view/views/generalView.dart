@@ -25,14 +25,15 @@ class GeneralViewFeature extends StatelessWidget {
 
 class GeneralViewBody extends StatelessWidget {
   final Completer<GoogleMapController> mapController;
-  const GeneralViewBody({Key? key, required this.mapController}) : super(key: key);
+  const GeneralViewBody({Key? key, required this.mapController})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         Container(
-          child: const GeneralViewHeader(),
+          child: GeneralViewHeader(),
           margin: const EdgeInsets.all(10),
         ),
         Expanded(
@@ -44,9 +45,7 @@ class GeneralViewBody extends StatelessWidget {
             ),
             child: Stack(
               children: [
-                MapSample(
-                  mapController: mapController 
-                ),
+                MapSample(mapController: mapController),
                 // const Positioned(
                 //   top: 0.0,
                 //   left: 0.0,

@@ -43,6 +43,6 @@ final keyValueProvider = Provider.family<IKeyValueStorage, String>(
 );
 
 final authProvider = Provider<IAuthService>((ref) {
-  var keyValue = ref.read(keyValueProvider("authSession"));
+  var keyValue = HiveKeyValue<Map<String, dynamic>>(boxName: "authSession");
   return AuthLocalStorage(keyValueStorage: keyValue);
 });
