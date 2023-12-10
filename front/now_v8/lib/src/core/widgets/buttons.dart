@@ -84,3 +84,65 @@ class IconTextButtom extends StatelessWidget {
     );
   }
 }
+
+class UserLoggedButton extends StatelessWidget {
+  final void Function() onTap;
+  final String displayName;
+
+  const UserLoggedButton({
+    super.key,
+    required this.onTap,
+    required this.displayName,
+  });
+
+  String genTwoLettersName(String name) {
+    if (name.length >= 2) {
+      var splits = name.split(" ");
+
+      if (splits.length >= 2) {
+        return splits[0].toUpperCase()[0] + splits[1].toUpperCase()[0];
+      }
+
+      return splits[0].toUpperCase()[0] + splits[0].toUpperCase()[1];
+    }
+
+    if (name.isEmpty) {
+      return "Hi";
+    }
+
+    return name.toUpperCase();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    var twoLettersName = genTwoLettersName(displayName);
+
+    return InkWell(
+      onTap: onTap,
+      child: ClipOval(
+        child: Container(
+          padding: const EdgeInsets.all(2),
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  Colors.blue,
+                  Colors.purpleAccent,
+                ]),
+          ),
+          child: ClipOval(
+            child: Container(
+              padding: const EdgeInsets.all(6),
+              color: Colors.white,
+              child: Text(
+                twoLettersName,
+                // style: TextStyle(color: Colors.blueGrey),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}

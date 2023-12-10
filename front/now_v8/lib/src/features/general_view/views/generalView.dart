@@ -33,7 +33,11 @@ class GeneralViewBody extends StatelessWidget {
     return Column(
       children: [
         Container(
-          child: GeneralViewHeader(),
+          child: GeneralViewHeader(
+            onRequestToGoToMenu: () {},
+            onRequestToGoToProfile: () {},
+            onRequestToLogin: () {},
+          ),
           margin: const EdgeInsets.all(10),
         ),
         Expanded(

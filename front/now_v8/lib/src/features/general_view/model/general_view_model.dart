@@ -37,7 +37,7 @@ class GeneralViewModel {
     await authSessionDatabase.storeUserDetails(
       UserDetails(
         userId: "1",
-        userName: "Juan Gonzalo",
+        userName: "Sofia Gomez",
         refreshToken: "refreshToken",
         shortLiveToken: "shortLiveToken",
         shortLiveTokenTTL: "shortLiveTokenTTL",

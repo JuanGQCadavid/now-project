@@ -6,6 +6,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:now_v8/src/core/models/spot.dart';
 import 'package:now_v8/src/core/models/spotColors.dart';
+import 'package:now_v8/src/core/widgets/buttons.dart';
 import 'package:now_v8/src/features/general_view/views/generalView.dart';
 
 // HERE
@@ -30,13 +31,107 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'Flutter Demo',
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-          useMaterial3: true,
+      debugShowCheckedModeBanner: false,
+      title: 'Flutter Demo',
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        useMaterial3: true,
+      ),
+      home: GeneralViewFeature(),
+      // home: DetailsWorkingHome(), //()); //LoginFeature());
+    );
+  }
+}
+
+class DetailsWorkingHome extends StatelessWidget {
+  const DetailsWorkingHome({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Scaffold(
+      body: Center(child: UserAccountButton()),
+    );
+  }
+}
+
+class UserAccountButton extends StatelessWidget {
+  const UserAccountButton({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        UserLoggedButton(
+          onTap: () {},
+          displayName: "JG",
         ),
-        home: GeneralViewFeature()); //LoginFeature());
+        const SizedBox(
+          width: 10,
+        ),
+        // Option D
+        ClipOval(
+          child: Container(
+            padding: const EdgeInsets.all(2),
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    Colors.blue,
+                    Colors.purpleAccent,
+                  ]),
+            ),
+            child: ClipOval(
+              child: Container(
+                padding: const EdgeInsets.all(6),
+                color: Colors.white,
+                child: const Text(
+                  "JG",
+                  // style: TextStyle(color: Colors.blueGrey),
+                ),
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(
+          width: 10,
+        ),
+        // Option B
+        ClipOval(
+          child: Container(
+            padding: const EdgeInsets.all(2),
+            color: Colors.blue,
+            child: ClipOval(
+              child: Container(
+                padding: const EdgeInsets.all(6),
+                color: Colors.white,
+                child: const Text(
+                  "JG",
+                  // style: TextStyle(color: Colors.blueGrey),
+                ),
+              ),
+            ),
+          ),
+        ),
+        // Option A
+        IconButton(
+          onPressed: () {},
+          icon: const Icon(
+            Icons.person,
+            color: Colors.blue,
+          ),
+        ),
+        // Option C
+        IconButton(
+          onPressed: () {},
+          icon: const Icon(
+            Icons.person,
+            // color: Colors.blue,
+          ),
+        )
+      ],
+    );
   }
 }
 
