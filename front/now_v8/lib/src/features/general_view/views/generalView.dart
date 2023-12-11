@@ -14,13 +14,13 @@ class GeneralViewFeature extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        body: GeneralViewBody(
+    return Scaffold(
+      body: SafeArea(
+        child: GeneralViewBody(
           mapController: mapController,
         ),
-        bottomNavigationBar: BottomBar(),
       ),
+      bottomNavigationBar: BottomBar(),
     );
   }
 }

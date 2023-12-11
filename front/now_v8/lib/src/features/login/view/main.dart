@@ -39,9 +39,8 @@ class LoginFeature extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: const Text('Flutter Demo Home Page'),
-      ),
+          // backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+          ),
       body: _Body(
         onPhoneChange: onPhoneNumberChanged,
         onCodeVerificationChanged: onCodeVerificationChanged,

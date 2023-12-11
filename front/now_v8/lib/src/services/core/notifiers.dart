@@ -5,7 +5,20 @@ import 'package:now_v8/src/core/models/user.dart';
 
 class OnAuthState extends StateNotifier<Either<UserDetails, None>> {
   final IAuthService authService;
-  OnAuthState({required this.authService}) : super(right(const None()));
+  OnAuthState({required this.authService}) : super(right(const None())) {
+    initState();
+  }
+
+  initState() {
+    authService.getUserDetails().then((value) {
+      state = value.fold(
+        (l) => left(l),
+        (r) => right(
+          const None(),
+        ),
+      );
+    });
+  }
 
   Future userLogIn(UserDetails details) async {
     await authService.storeUserDetails(details);
