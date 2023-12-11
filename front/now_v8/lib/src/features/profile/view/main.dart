@@ -9,14 +9,15 @@ class ProfileFeature extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var authService = ref.read(authProvider);
+    var userDetails = ref.read(userDetailsProvider);
+    var autNotifier = ref.read(userDetailsProvider.notifier);
 
     return Scaffold(
       body: Center(
           child: TextButton(
         child: const Text("Log out"),
         onPressed: () async {
-          await authService.removeUserDetails();
+          await autNotifier.userLogOut();
           Navigator.pop(context);
         },
       )),

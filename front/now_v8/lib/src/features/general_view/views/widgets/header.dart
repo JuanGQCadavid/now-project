@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:now_v8/src/core/models/user.dart';
 import 'package:now_v8/src/core/widgets/buttons.dart';
 import 'package:now_v8/src/features/general_view/views_model/providers.dart';
+import 'package:now_v8/src/services/core/providers.dart';
 
 class GeneralViewHeader extends ConsumerWidget {
   final void Function() onRequestToLogin;
@@ -19,6 +20,25 @@ class GeneralViewHeader extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    var userDetails = ref.watch(userDetailsProvider);
+
+    return userDetails.fold(
+      (l) => DefaultHeader(
+          userHeader: UserLogged(
+        userDetails: l,
+        onMenuTap: onRequestToGoToMenu,
+        onUserTap: onRequestToGoToProfile,
+      )),
+      (r) => DefaultHeader(
+        userHeader: NotLoggedHeader(
+          onMenuTap: onRequestToGoToMenu,
+          onUserTap: onRequestToLogin,
+        ),
+      ),
+    );
+  }
+
+  Widget build2(BuildContext context, WidgetRef ref) {
     var userDetails = ref.read(generalViewModelProvider).getUserInfo();
 
     return FutureBuilder<Either<UserDetails, None>>(

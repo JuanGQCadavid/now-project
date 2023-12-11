@@ -1,17 +1,20 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:now_v8/src/core/contracts/user_service.dart';
+import 'package:now_v8/src/core/models/user.dart';
 import 'package:now_v8/src/features/login/model/login_state.dart';
 import 'package:now_v8/src/services/cmd/user_service/fake/service.dart';
 import 'package:now_v8/src/services/cmd/user_service/service/service.dart';
+import 'package:now_v8/src/services/core/notifiers.dart';
 import 'package:now_v8/src/services/core/services_api_configuration.dart';
 
 class LoginStateNotifer extends StateNotifier<LoginState> {
   final IUserService userService = UserService(
     apiConfig: ApiConfig.toProd(),
   );
+  final OnAuthState auth;
 
-  LoginStateNotifer()
+  LoginStateNotifer({required this.auth})
       : super(
           const LoginState(
             stateConfig: OnStateConfig(
@@ -40,6 +43,33 @@ class LoginStateNotifer extends StateNotifier<LoginState> {
     } else if (state.onState == OnState.onSingUpPhoneValidation) {
       validate(userPhoneNumber, userCode);
     }
+  }
+
+  Future done(UserDetails userDetails) async {
+    print("ID: " +
+        userDetails.userId +
+        "Tokens" +
+        "\n" +
+        userDetails.refreshToken +
+        "\n" +
+        userDetails.shortLiveToken +
+        "\n" +
+        userDetails.shortLiveTokenTTL +
+        "\n");
+
+    await auth.userLogIn(
+      UserDetails(
+        userId: userDetails.userId,
+        userName: state.userName,
+        refreshToken: userDetails.refreshToken,
+        shortLiveToken: userDetails.shortLiveToken,
+        shortLiveTokenTTL: userDetails.shortLiveTokenTTL,
+      ),
+    );
+
+    state = state.copyWith(
+      onState: OnState.onDone,
+    );
   }
 
   void initSignUp(
@@ -101,41 +131,30 @@ class LoginStateNotifer extends StateNotifier<LoginState> {
   ) async {
     var serviceResponse = await userService.validate(userPhoneNumber, userCode);
 
-    serviceResponse.fold(
-      (l) => {
-        print("ID: " +
-            l.userId +
-            "Tokens" +
-            "\n" +
-            l.refreshToken +
-            "\n" +
-            l.shortLiveToken +
-            "\n" +
-            l.shortLiveTokenTTL +
-            "\n")
+    await serviceResponse.fold(
+      (l) async {
+        await done(l);
       },
-      (r) => {
-        r.whenOrNull(
-          wrongOTP: () {
-            print("wrongOTP");
-            state = state.copyWith(
-              errorMessage: "Wrong code, try again",
-            );
-          },
-          otpMaxTriesReached: () {
-            print("otpMaxTriesReached");
-            state = state.copyWith(
-              errorMessage: "Ups, we reach the limit",
-            );
-          },
-          internalError: (String err) {
-            print("internal err - " + err);
-            state = state.copyWith(
-              errorMessage: err,
-            );
-          },
-        )
-      },
+      (r) => r.whenOrNull(
+        wrongOTP: () {
+          print("wrongOTP");
+          state = state.copyWith(
+            errorMessage: "Wrong code, try again",
+          );
+        },
+        otpMaxTriesReached: () {
+          print("otpMaxTriesReached");
+          state = state.copyWith(
+            errorMessage: "Ups, we reach the limit",
+          );
+        },
+        internalError: (String err) {
+          print("internal err - " + err);
+          state = state.copyWith(
+            errorMessage: err,
+          );
+        },
+      ),
     );
   }
 

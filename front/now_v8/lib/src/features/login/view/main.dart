@@ -31,6 +31,12 @@ class LoginFeature extends ConsumerWidget {
     var state = ref.watch(loginStateNotifierProvider);
     var notifier = ref.read(loginStateNotifierProvider.notifier);
 
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (state.onState == OnState.onDone) {
+        Navigator.of(context).pop();
+      }
+    });
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
