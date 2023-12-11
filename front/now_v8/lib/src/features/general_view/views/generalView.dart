@@ -6,6 +6,7 @@ import 'package:now_v8/src/features/general_view/views/widgets/footbar.dart';
 import 'package:now_v8/src/features/general_view/views/widgets/header.dart';
 import 'package:now_v8/src/features/general_view/views/widgets/nowMap.dart';
 import 'package:now_v8/src/features/login/view/main.dart';
+import 'package:now_v8/src/features/profile/view/main.dart';
 
 class GeneralViewFeature extends StatelessWidget {
   GeneralViewFeature({Key? key}) : super(key: key);
@@ -29,9 +30,7 @@ class GeneralViewBody extends StatelessWidget {
   const GeneralViewBody({Key? key, required this.mapController})
       : super(key: key);
 
-  void goToLogin() {}
   void openMenu() {}
-  void goToProfile() {}
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +39,14 @@ class GeneralViewBody extends StatelessWidget {
         Container(
           child: GeneralViewHeader(
             onRequestToGoToMenu: openMenu,
-            onRequestToGoToProfile: goToProfile,
+            onRequestToGoToProfile: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const ProfileFeature(),
+                ),
+              );
+            },
             onRequestToLogin: () {
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => LoginFeature()));

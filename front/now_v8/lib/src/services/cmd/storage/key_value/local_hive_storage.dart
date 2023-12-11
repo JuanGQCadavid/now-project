@@ -40,4 +40,10 @@ class HiveKeyValue<V> implements IKeyValueStorage<String, V> {
     var box = Hive.box<V>(boxName);
     box.put(key, value);
   }
+
+  @override
+  Future delete(String key) async {
+    var box = Hive.box<V>(boxName);
+    await box.delete(key);
+  }
 }

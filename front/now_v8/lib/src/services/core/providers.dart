@@ -1,3 +1,4 @@
+import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -6,6 +7,7 @@ import 'package:now_v8/src/core/contracts/auth_service.dart';
 import 'package:now_v8/src/core/contracts/filterService.dart';
 import 'package:now_v8/src/core/contracts/key_value_storage.dart';
 import 'package:now_v8/src/core/contracts/locationService.dart';
+import 'package:now_v8/src/core/models/user.dart';
 import 'package:now_v8/src/services/cmd/auth/local/local_auth_service.dart';
 import 'package:now_v8/src/services/cmd/colors_service/colors_service.dart';
 import 'package:now_v8/src/services/cmd/filter_service/fake/filterFakeService.dart';
@@ -13,6 +15,7 @@ import 'package:now_v8/src/services/cmd/filter_service/service/filterService.dar
 import 'package:now_v8/src/services/cmd/location_service/fake/locationFakeService.dart';
 import 'package:now_v8/src/services/cmd/location_service/service/locationService.dart';
 import 'package:now_v8/src/services/cmd/storage/key_value/local_hive_storage.dart';
+import 'package:now_v8/src/services/core/notifiers.dart';
 import 'package:now_v8/src/services/core/services_api_configuration.dart';
 
 final locationServiceProvider = Provider<ILocationService>((ref) {
@@ -45,4 +48,10 @@ final keyValueProvider = Provider.family<IKeyValueStorage, String>(
 final authProvider = Provider<IAuthService>((ref) {
   var keyValue = HiveKeyValue<Map<dynamic, dynamic>?>(boxName: "authSession");
   return AuthLocalStorage(keyValueStorage: keyValue);
+});
+
+final userDetailsProvider =
+    StateNotifierProvider<OnAuthState, Either<UserDetails, None>>((ref) {
+  final authService = ref.read(authProvider);
+  return OnAuthState(authService: authService);
 });

@@ -35,7 +35,15 @@ class AuthLocalStorage implements IAuthService {
   @override
   Future storeUserDetails(UserDetails user) async {
     await keyValueStorage.doInit();
+
     var userDumped = user.toJson();
     keyValueStorage.save(userDumped, key);
+  }
+
+  @override
+  Future removeUserDetails() async {
+    await keyValueStorage.doInit();
+
+    await keyValueStorage.delete(key);
   }
 }
