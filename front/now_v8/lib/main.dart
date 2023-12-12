@@ -13,6 +13,8 @@ import 'package:now_v8/src/features/general_view/views/generalView.dart';
 import 'package:now_v8/src/core/widgets/nowMap.dart';
 import 'dart:math';
 
+import 'package:now_v8/src/features/spots_creation/main.dart';
+
 void main() async {
   await Hive.initFlutter();
 
@@ -37,7 +39,8 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: GeneralViewFeature(),
+      // home: GeneralViewFeature(),
+      home: SpotsCreationFeature(),
       // home: DetailsWorkingHome(), //()); //LoginFeature());
     );
   }
