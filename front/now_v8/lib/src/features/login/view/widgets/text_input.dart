@@ -3,8 +3,17 @@ import 'package:flutter/material.dart';
 class TextInput extends StatelessWidget {
   final String? hint;
   final void Function(String)? onTextChanged;
+  final TextInputType keyboardType;
+  final int? minLines;
+  final int? maxLines;
 
-  const TextInput({super.key, this.hint, this.onTextChanged});
+  const TextInput(
+      {super.key,
+      this.hint,
+      this.onTextChanged,
+      this.keyboardType = TextInputType.text,
+      this.maxLines,
+      this.minLines});
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +24,9 @@ class TextInput extends StatelessWidget {
           borderRadius: BorderRadius.circular(15.0),
         ),
       ),
-      keyboardType: TextInputType.text,
+      minLines: minLines,
+      maxLines: maxLines,
+      keyboardType: keyboardType,
       autocorrect: false,
       enableSuggestions: true,
       onTapOutside: (event) {
