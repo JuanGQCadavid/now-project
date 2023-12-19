@@ -21,12 +21,22 @@ class Body extends StatelessWidget {
     return Row(
       children: [
         Expanded(
-          child: Container(
-            constraints: const BoxConstraints(
-              maxHeight: double.infinity,
-            ),
-            child: Center(
-              child: Text("Hi dude how are you? "),
+          child: SafeArea(
+            child: Container(
+              constraints: const BoxConstraints(
+                maxHeight: double.infinity,
+              ),
+              child: Center(
+                child: PageNavigator(
+                  child: Text("Hi dude how are you? "),
+                  next: () {
+                    print("Next");
+                  },
+                  back: () {
+                    print("Back");
+                  },
+                ),
+              ),
             ),
           ),
         ),
@@ -42,6 +52,65 @@ class Body extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+class PageNavigator extends StatelessWidget {
+  final void Function()? back;
+  final void Function()? next;
+  final Widget child;
+
+  const PageNavigator({
+    super.key,
+    required this.child,
+    this.back,
+    this.next,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        back != null
+            ? NavigationIconButton(
+                icon: Icons.arrow_upward,
+                onTap: back!,
+              )
+            : const SizedBox(height: 50),
+        child,
+        next != null
+            ? NavigationIconButton(
+                icon: Icons.arrow_downward,
+                onTap: next!,
+              )
+            : const SizedBox(height: 50),
+      ],
+    );
+  }
+}
+
+class NavigationIconButton extends StatelessWidget {
+  final IconData icon;
+  final void Function() onTap;
+  const NavigationIconButton({
+    super.key,
+    required this.icon,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      child: Container(
+        constraints: const BoxConstraints(
+          minHeight: 50,
+          minWidth: double.infinity,
+        ),
+        child: Icon(icon),
+      ),
+      onTap: onTap,
     );
   }
 }
