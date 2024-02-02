@@ -74,7 +74,7 @@ class SpotGeneralInfo extends StatelessWidget {
           ),
           SizedBox(
             child: TextInput(
-              hint: "Description",
+              hint: "Description hi",
               onTextChanged: (value) {},
               keyboardType: TextInputType.multiline,
               minLines: 5,
