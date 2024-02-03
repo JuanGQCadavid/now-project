@@ -11,6 +11,7 @@ import 'package:now_v8/src/features/general_view/views/generalView.dart';
 
 // HERE
 import 'package:now_v8/src/core/widgets/nowMap.dart';
+import 'package:now_v8/src/features/login/view/main.dart';
 import 'dart:math';
 
 import 'package:now_v8/src/features/spots_creation/main.dart';

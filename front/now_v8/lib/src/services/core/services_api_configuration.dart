@@ -14,7 +14,7 @@ class ApiConfig {
 
   ApiConfig.toProd({
     this.filterServiceResource = ":8000/filter",
-    this.apiGatewayEndpoint = "http://192.168.1.67",
+    this.apiGatewayEndpoint = "http://10.97.121.66",
     this.userServiceResource = ":8001/user",
     this.spotServiceResource = ":8000/spot",
     this.stage = "prod",

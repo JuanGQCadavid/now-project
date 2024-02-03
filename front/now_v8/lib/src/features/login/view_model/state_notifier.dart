@@ -1,9 +1,7 @@
-import 'package:dartz/dartz.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:now_v8/src/core/contracts/user_service.dart';
 import 'package:now_v8/src/core/models/user.dart';
 import 'package:now_v8/src/features/login/model/login_state.dart';
-import 'package:now_v8/src/services/cmd/user_service/fake/service.dart';
 import 'package:now_v8/src/services/cmd/user_service/service/service.dart';
 import 'package:now_v8/src/services/core/notifiers.dart';
 import 'package:now_v8/src/services/core/services_api_configuration.dart';
@@ -34,15 +32,33 @@ class LoginStateNotifer extends StateNotifier<LoginState> {
     print(
         "\n userPhoneNumber: ${userPhoneNumber} \n userName: ${userName}\n userCode: ${userCode}\n State: ${state.onState}");
 
-    if (state.onState == OnState.onInit) {
-      onUserAttemptToLogIn(userPhoneNumber);
-    } else if (state.onState == OnState.onLogin) {
-      validate(userPhoneNumber, userCode);
-    } else if (state.onState == OnState.onSingUp) {
-      initSignUp(userPhoneNumber, userName);
-    } else if (state.onState == OnState.onSingUpPhoneValidation) {
-      validate(userPhoneNumber, userCode);
-    }
+    var mapStates = {
+      OnState.onInit: () {
+        onUserAttemptToLogIn(userPhoneNumber);
+      },
+      OnState.onLogin: () {
+        validate(userPhoneNumber, userCode);
+      },
+      OnState.onSingUp: () {
+        initSignUp(userPhoneNumber, userName);
+      },
+      OnState.onSingUpPhoneValidation: () {
+        validate(userPhoneNumber, userCode);
+      },
+    };
+
+    var a = mapStates[state.onState];
+    a!();
+
+    // if (state.onState == OnState.onInit) {
+    //   onUserAttemptToLogIn(userPhoneNumber);
+    // } else if (state.onState == OnState.onLogin) {
+    //   validate(userPhoneNumber, userCode);
+    // } else if (state.onState == OnState.onSingUp) {
+    //   initSignUp(userPhoneNumber, userName);
+    // } else if (state.onState == OnState.onSingUpPhoneValidation) {
+    //   validate(userPhoneNumber, userCode);
+    // }
   }
 
   Future done(UserDetails userDetails) async {

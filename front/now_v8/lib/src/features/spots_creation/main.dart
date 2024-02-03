@@ -19,6 +19,10 @@ class Body extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var mapsTest = {
+      "a": () {},
+    };
+
     return Row(
       children: [
         Expanded(
