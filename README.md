@@ -24,7 +24,7 @@ We are going as Microservices, each microservice is being built using a hexagona
 **/services** -> Here you can find all related to the backend services.
 
 ![now-Infra v1 1 drawio](assets/HexagonalArchitecture.png)
-Taken from https://medium.com/@matiasvarela/hexagonal-architecture-in-go-cfd4e436faa3
+Image taken from https://medium.com/@matiasvarela/hexagonal-architecture-in-go-cfd4e436faa3
 
 ### The development Stack!
 
