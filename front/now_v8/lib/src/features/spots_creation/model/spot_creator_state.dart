@@ -17,6 +17,8 @@ enum OnState {
 class SpotCreatorState with _$SpotCreatorState {
   const factory SpotCreatorState({
     required OnState onState,
+    required int totalSteps,
+    required int actualStep,
     required LongSpot spot,
   }) = _SpotCreatorState;
 }

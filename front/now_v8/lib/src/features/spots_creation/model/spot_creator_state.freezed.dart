@@ -17,6 +17,8 @@ final _privateConstructorUsedError = UnsupportedError(
 /// @nodoc
 mixin _$SpotCreatorState {
   OnState get onState => throw _privateConstructorUsedError;
+  int get totalSteps => throw _privateConstructorUsedError;
+  int get actualStep => throw _privateConstructorUsedError;
   LongSpot get spot => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
@@ -30,7 +32,7 @@ abstract class $SpotCreatorStateCopyWith<$Res> {
           SpotCreatorState value, $Res Function(SpotCreatorState) then) =
       _$SpotCreatorStateCopyWithImpl<$Res, SpotCreatorState>;
   @useResult
-  $Res call({OnState onState, LongSpot spot});
+  $Res call({OnState onState, int totalSteps, int actualStep, LongSpot spot});
 
   $LongSpotCopyWith<$Res> get spot;
 }
@@ -49,6 +51,8 @@ class _$SpotCreatorStateCopyWithImpl<$Res, $Val extends SpotCreatorState>
   @override
   $Res call({
     Object? onState = null,
+    Object? totalSteps = null,
+    Object? actualStep = null,
     Object? spot = null,
   }) {
     return _then(_value.copyWith(
@@ -56,6 +60,14 @@ class _$SpotCreatorStateCopyWithImpl<$Res, $Val extends SpotCreatorState>
           ? _value.onState
           : onState // ignore: cast_nullable_to_non_nullable
               as OnState,
+      totalSteps: null == totalSteps
+          ? _value.totalSteps
+          : totalSteps // ignore: cast_nullable_to_non_nullable
+              as int,
+      actualStep: null == actualStep
+          ? _value.actualStep
+          : actualStep // ignore: cast_nullable_to_non_nullable
+              as int,
       spot: null == spot
           ? _value.spot
           : spot // ignore: cast_nullable_to_non_nullable
@@ -80,7 +92,7 @@ abstract class _$$_SpotCreatorStateCopyWith<$Res>
       __$$_SpotCreatorStateCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({OnState onState, LongSpot spot});
+  $Res call({OnState onState, int totalSteps, int actualStep, LongSpot spot});
 
   @override
   $LongSpotCopyWith<$Res> get spot;
@@ -98,6 +110,8 @@ class __$$_SpotCreatorStateCopyWithImpl<$Res>
   @override
   $Res call({
     Object? onState = null,
+    Object? totalSteps = null,
+    Object? actualStep = null,
     Object? spot = null,
   }) {
     return _then(_$_SpotCreatorState(
@@ -105,6 +119,14 @@ class __$$_SpotCreatorStateCopyWithImpl<$Res>
           ? _value.onState
           : onState // ignore: cast_nullable_to_non_nullable
               as OnState,
+      totalSteps: null == totalSteps
+          ? _value.totalSteps
+          : totalSteps // ignore: cast_nullable_to_non_nullable
+              as int,
+      actualStep: null == actualStep
+          ? _value.actualStep
+          : actualStep // ignore: cast_nullable_to_non_nullable
+              as int,
       spot: null == spot
           ? _value.spot
           : spot // ignore: cast_nullable_to_non_nullable
@@ -118,16 +140,24 @@ class __$$_SpotCreatorStateCopyWithImpl<$Res>
 class _$_SpotCreatorState
     with DiagnosticableTreeMixin
     implements _SpotCreatorState {
-  const _$_SpotCreatorState({required this.onState, required this.spot});
+  const _$_SpotCreatorState(
+      {required this.onState,
+      required this.totalSteps,
+      required this.actualStep,
+      required this.spot});
 
   @override
   final OnState onState;
+  @override
+  final int totalSteps;
+  @override
+  final int actualStep;
   @override
   final LongSpot spot;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'SpotCreatorState(onState: $onState, spot: $spot)';
+    return 'SpotCreatorState(onState: $onState, totalSteps: $totalSteps, actualStep: $actualStep, spot: $spot)';
   }
 
   @override
@@ -136,6 +166,8 @@ class _$_SpotCreatorState
     properties
       ..add(DiagnosticsProperty('type', 'SpotCreatorState'))
       ..add(DiagnosticsProperty('onState', onState))
+      ..add(DiagnosticsProperty('totalSteps', totalSteps))
+      ..add(DiagnosticsProperty('actualStep', actualStep))
       ..add(DiagnosticsProperty('spot', spot));
   }
 
@@ -145,11 +177,16 @@ class _$_SpotCreatorState
         (other.runtimeType == runtimeType &&
             other is _$_SpotCreatorState &&
             (identical(other.onState, onState) || other.onState == onState) &&
+            (identical(other.totalSteps, totalSteps) ||
+                other.totalSteps == totalSteps) &&
+            (identical(other.actualStep, actualStep) ||
+                other.actualStep == actualStep) &&
             (identical(other.spot, spot) || other.spot == spot));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, onState, spot);
+  int get hashCode =>
+      Object.hash(runtimeType, onState, totalSteps, actualStep, spot);
 
   @JsonKey(ignore: true)
   @override
@@ -161,10 +198,16 @@ class _$_SpotCreatorState
 abstract class _SpotCreatorState implements SpotCreatorState {
   const factory _SpotCreatorState(
       {required final OnState onState,
+      required final int totalSteps,
+      required final int actualStep,
       required final LongSpot spot}) = _$_SpotCreatorState;
 
   @override
   OnState get onState;
+  @override
+  int get totalSteps;
+  @override
+  int get actualStep;
   @override
   LongSpot get spot;
   @override

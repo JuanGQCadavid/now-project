@@ -88,7 +88,10 @@ class Body extends ConsumerWidget {
           ),
           decoration: BoxDecoration(color: Colors.amber.shade100),
           child: Center(
-            child: StatusBar(),
+            child: StatusBar(
+              actualStatus: state.actualStep,
+              totalStatus: state.totalSteps,
+            ),
           ),
         ),
       ],
@@ -156,26 +159,59 @@ class NavigationIconButton extends StatelessWidget {
 }
 
 class StatusBar extends StatelessWidget {
-  const StatusBar({super.key});
+  final int totalStatus;
+  final int actualStatus;
+  const StatusBar({
+    super.key,
+    required this.actualStatus,
+    required this.totalStatus,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return const Column(
+    List<Widget> childrens = [];
+
+    for (var i = 0; i < totalStatus; i++) {
+      if (i == actualStatus) {
+        childrens.add(
+          Status(
+            actualStep: true,
+            stepNumber: i,
+          ),
+        );
+      } else {
+        childrens.add(
+          Status(
+            actualStep: false,
+            stepNumber: i,
+          ),
+        );
+      }
+    }
+
+    return Column(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        Status(),
-        Status(),
-        Status(),
-      ],
+      children: childrens,
     );
   }
 }
 
 class Status extends StatelessWidget {
-  const Status({super.key});
+  final bool actualStep;
+  final int stepNumber;
+  const Status({
+    super.key,
+    required this.actualStep,
+    required this.stepNumber,
+  });
 
   @override
   Widget build(BuildContext context) {
+    Color color = Colors.blue;
+
+    if (actualStep) {
+      color = Colors.redAccent;
+    }
     return Container(
       height: 35,
       width: 35,
@@ -189,14 +225,14 @@ class Status extends StatelessWidget {
         child: Container(
           height: 30,
           width: 30,
-          decoration: const BoxDecoration(
-            color: Colors.blue,
-            borderRadius: BorderRadius.all(
+          decoration: BoxDecoration(
+            color: color,
+            borderRadius: const BorderRadius.all(
               Radius.circular(50),
             ),
           ),
-          child: const Center(
-            child: Text("1"),
+          child: Center(
+            child: Text((stepNumber + 1).toString()),
           ),
         ),
       ),

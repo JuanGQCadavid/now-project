@@ -8,6 +8,8 @@ class SpotCreator extends StateNotifier<SpotCreatorState> {
   SpotCreator()
       : super(
           const SpotCreatorState(
+            actualStep: 0,
+            totalSteps: 4,
             onState: OnState.onDescription,
             spot: LongSpot(
               dateInfo: DateInfo(
@@ -65,23 +67,23 @@ class SpotCreator extends StateNotifier<SpotCreatorState> {
 
   void onDescription(bool next) {
     if (next) {
-      state = state.copyWith(onState: OnState.onLocation);
+      state = state.copyWith(onState: OnState.onLocation, actualStep: 1);
     }
   }
 
   void onLocation(bool next) {
     if (next) {
-      state = state.copyWith(onState: OnState.onTags);
+      state = state.copyWith(onState: OnState.onTags, actualStep: 2);
     } else {
-      state = state.copyWith(onState: OnState.onDescription);
+      state = state.copyWith(onState: OnState.onDescription, actualStep: 0);
     }
   }
 
   void onTags(bool next) {
     if (next) {
-      state = state.copyWith(onState: OnState.onReview);
+      state = state.copyWith(onState: OnState.onReview, actualStep: 3);
     } else {
-      state = state.copyWith(onState: OnState.onLocation);
+      state = state.copyWith(onState: OnState.onLocation, actualStep: 1);
     }
   }
 
@@ -89,7 +91,7 @@ class SpotCreator extends StateNotifier<SpotCreatorState> {
     if (next) {
       state = state.copyWith(onState: OnState.onDone);
     } else {
-      state = state.copyWith(onState: OnState.onTags);
+      state = state.copyWith(onState: OnState.onTags, actualStep: 2);
     }
   }
 
