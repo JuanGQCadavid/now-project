@@ -1,5 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:now_v8/src/features/login/view/widgets/text_input.dart';
+import 'package:now_v8/src/features/spots_creation/model/spot_creator_state.dart';
+import 'package:now_v8/src/features/spots_creation/view/description.dart';
+import 'package:now_v8/src/features/spots_creation/view/done_or_cancel.dart';
+import 'package:now_v8/src/features/spots_creation/view/location.dart';
+import 'package:now_v8/src/features/spots_creation/view/review.dart';
+import 'package:now_v8/src/features/spots_creation/view/tags.dart';
+import 'package:now_v8/src/features/spots_creation/view_model/providers.dart';
+import 'package:now_v8/src/features/spots_creation/view_model/state_notifier.dart';
 
 class SpotsCreationFeature extends StatelessWidget {
   const SpotsCreationFeature({super.key});
@@ -14,14 +23,40 @@ class SpotsCreationFeature extends StatelessWidget {
   }
 }
 
-class Body extends StatelessWidget {
+class Body extends ConsumerWidget {
   const Body({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    var mapsTest = {
-      "a": () {},
-    };
+  Widget build(BuildContext context, WidgetRef ref) {
+    Widget pageBody;
+
+    SpotCreatorState state = ref.watch(spotsCreatorNotiferProvider);
+    SpotCreator notifer = ref.watch(spotsCreatorNotiferProvider.notifier);
+
+    switch (state.onState) {
+      case OnState.onDescription:
+        pageBody = const SpotGeneralInfo();
+        break;
+      case OnState.onLocation:
+        pageBody = const LocationSelectorView();
+        break;
+      case OnState.onTags:
+        pageBody = const TagsSelectorView();
+        break;
+      case OnState.onReview:
+        pageBody = const ReviewView();
+        break;
+      case OnState.onDone:
+        pageBody = const DoneOrCancelView(
+          state: "DONE",
+        );
+        break;
+      case OnState.onCancelle:
+        pageBody = const DoneOrCancelView(
+          state: "CANCELLED",
+        );
+        break;
+    }
 
     return Row(
       children: [
@@ -33,12 +68,12 @@ class Body extends StatelessWidget {
               ),
               child: Center(
                 child: PageNavigator(
-                  child: SpotGeneralInfo(), //Text("Hi dude how are you? "),
+                  child: pageBody, //Text("Hi dude how are you? "),
                   next: () {
-                    print("Next");
+                    notifer.onNext();
                   },
                   back: () {
-                    print("Back");
+                    notifer.onBack();
                   },
                 ),
               ),
@@ -57,35 +92,6 @@ class Body extends StatelessWidget {
           ),
         ),
       ],
-    );
-  }
-}
-
-class SpotGeneralInfo extends StatelessWidget {
-  const SpotGeneralInfo({super.key});
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 15.0),
-      child: Column(
-        children: [
-          TextInput(
-            hint: "Title",
-            onTextChanged: (value) {},
-          ),
-          const SizedBox(
-            height: 30,
-          ),
-          SizedBox(
-            child: TextInput(
-              hint: "Description hi",
-              onTextChanged: (value) {},
-              keyboardType: TextInputType.multiline,
-              minLines: 5,
-            ),
-          ),
-        ],
-      ),
     );
   }
 }
