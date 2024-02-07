@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:now_v8/src/core/models/long_spot.dart';
 import 'package:now_v8/src/features/login/view/widgets/text_input.dart';
 import 'package:now_v8/src/features/spots_creation/model/spot_creator_state.dart';
 import 'package:now_v8/src/features/spots_creation/view/description.dart';
@@ -15,7 +16,7 @@ class SpotsCreationFeature extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    return Scaffold(
       body: Center(
         child: Body(),
       ),
@@ -24,7 +25,44 @@ class SpotsCreationFeature extends StatelessWidget {
 }
 
 class Body extends ConsumerWidget {
-  const Body({super.key});
+  late LongSpot spot = const LongSpot(
+    dateInfo: DateInfo(
+      dateTime: "",
+      id: "",
+      startTime: "",
+      durationApproximatedInSeconds: 0,
+    ),
+    eventInfo: EventInfo(
+      name: "",
+      id: "",
+      description: "",
+      maximunCapacty: 0,
+      emoji: ":p",
+    ),
+    hostInfo: HostInfo(
+      name: "",
+    ),
+    placeInfo: PlaceInfo(
+      name: "",
+      lat: 0.0,
+      lon: 0.0,
+      mapProviderId: "",
+    ),
+    topicInfo: TopicsInfo(
+      principalTag: "",
+      secondaryTags: [],
+    ),
+  );
+
+  Body({super.key});
+
+  void onTitleChange(String txt) {
+    spot = spot.copyWith(eventInfo: spot.eventInfo.copyWith(name: txt));
+  }
+
+  void onDescriptionChange(String txt) {
+    spot = spot.copyWith(eventInfo: spot.eventInfo.copyWith(description: txt));
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -35,7 +73,33 @@ class Body extends ConsumerWidget {
 
     switch (state.onState) {
       case OnState.onDescription:
-        pageBody = const SpotGeneralInfo();
+        TextEditingController? titleController;
+        TextEditingController? descriptionController;
+        String? err;
+
+        if (state.spot.eventInfo.name.isNotEmpty) {
+          titleController = TextEditingController(
+            text: state.spot.eventInfo.name,
+          );
+        }
+
+        if (state.spot.eventInfo.description.isNotEmpty) {
+          descriptionController = TextEditingController(
+            text: state.spot.eventInfo.description,
+          );
+        }
+
+        if (state.onError.isNotEmpty) {
+          err = state.onError;
+        }
+
+        pageBody = SpotGeneralInfo(
+          onDescriptionChange: onDescriptionChange,
+          onTitleChanged: onTitleChange,
+          titleController: titleController,
+          descriptionController: descriptionController,
+          errMessage: err,
+        );
         break;
       case OnState.onLocation:
         pageBody = const LocationSelectorView();
@@ -70,7 +134,7 @@ class Body extends ConsumerWidget {
                 child: PageNavigator(
                   child: pageBody, //Text("Hi dude how are you? "),
                   next: () {
-                    notifer.onNext();
+                    notifer.onNext(spot);
                   },
                   back: () {
                     notifer.onBack();

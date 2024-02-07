@@ -20,5 +20,6 @@ class SpotCreatorState with _$SpotCreatorState {
     required int totalSteps,
     required int actualStep,
     required LongSpot spot,
+    required String onError,
   }) = _SpotCreatorState;
 }

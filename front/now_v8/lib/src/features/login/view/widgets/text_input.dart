@@ -6,18 +6,22 @@ class TextInput extends StatelessWidget {
   final TextInputType keyboardType;
   final int? minLines;
   final int? maxLines;
+  final TextEditingController? controller;
 
-  const TextInput(
-      {super.key,
-      this.hint,
-      this.onTextChanged,
-      this.keyboardType = TextInputType.text,
-      this.maxLines,
-      this.minLines});
+  const TextInput({
+    super.key,
+    this.hint,
+    this.onTextChanged,
+    this.keyboardType = TextInputType.text,
+    this.maxLines,
+    this.minLines,
+    this.controller,
+  });
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      controller: controller,
       decoration: InputDecoration(
         hintText: hint,
         border: OutlineInputBorder(

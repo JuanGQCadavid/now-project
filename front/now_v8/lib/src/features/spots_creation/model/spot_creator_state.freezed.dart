@@ -20,6 +20,7 @@ mixin _$SpotCreatorState {
   int get totalSteps => throw _privateConstructorUsedError;
   int get actualStep => throw _privateConstructorUsedError;
   LongSpot get spot => throw _privateConstructorUsedError;
+  String get onError => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
   $SpotCreatorStateCopyWith<SpotCreatorState> get copyWith =>
@@ -32,7 +33,12 @@ abstract class $SpotCreatorStateCopyWith<$Res> {
           SpotCreatorState value, $Res Function(SpotCreatorState) then) =
       _$SpotCreatorStateCopyWithImpl<$Res, SpotCreatorState>;
   @useResult
-  $Res call({OnState onState, int totalSteps, int actualStep, LongSpot spot});
+  $Res call(
+      {OnState onState,
+      int totalSteps,
+      int actualStep,
+      LongSpot spot,
+      String onError});
 
   $LongSpotCopyWith<$Res> get spot;
 }
@@ -54,6 +60,7 @@ class _$SpotCreatorStateCopyWithImpl<$Res, $Val extends SpotCreatorState>
     Object? totalSteps = null,
     Object? actualStep = null,
     Object? spot = null,
+    Object? onError = null,
   }) {
     return _then(_value.copyWith(
       onState: null == onState
@@ -72,6 +79,10 @@ class _$SpotCreatorStateCopyWithImpl<$Res, $Val extends SpotCreatorState>
           ? _value.spot
           : spot // ignore: cast_nullable_to_non_nullable
               as LongSpot,
+      onError: null == onError
+          ? _value.onError
+          : onError // ignore: cast_nullable_to_non_nullable
+              as String,
     ) as $Val);
   }
 
@@ -92,7 +103,12 @@ abstract class _$$_SpotCreatorStateCopyWith<$Res>
       __$$_SpotCreatorStateCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({OnState onState, int totalSteps, int actualStep, LongSpot spot});
+  $Res call(
+      {OnState onState,
+      int totalSteps,
+      int actualStep,
+      LongSpot spot,
+      String onError});
 
   @override
   $LongSpotCopyWith<$Res> get spot;
@@ -113,6 +129,7 @@ class __$$_SpotCreatorStateCopyWithImpl<$Res>
     Object? totalSteps = null,
     Object? actualStep = null,
     Object? spot = null,
+    Object? onError = null,
   }) {
     return _then(_$_SpotCreatorState(
       onState: null == onState
@@ -131,6 +148,10 @@ class __$$_SpotCreatorStateCopyWithImpl<$Res>
           ? _value.spot
           : spot // ignore: cast_nullable_to_non_nullable
               as LongSpot,
+      onError: null == onError
+          ? _value.onError
+          : onError // ignore: cast_nullable_to_non_nullable
+              as String,
     ));
   }
 }
@@ -144,7 +165,8 @@ class _$_SpotCreatorState
       {required this.onState,
       required this.totalSteps,
       required this.actualStep,
-      required this.spot});
+      required this.spot,
+      required this.onError});
 
   @override
   final OnState onState;
@@ -154,10 +176,12 @@ class _$_SpotCreatorState
   final int actualStep;
   @override
   final LongSpot spot;
+  @override
+  final String onError;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'SpotCreatorState(onState: $onState, totalSteps: $totalSteps, actualStep: $actualStep, spot: $spot)';
+    return 'SpotCreatorState(onState: $onState, totalSteps: $totalSteps, actualStep: $actualStep, spot: $spot, onError: $onError)';
   }
 
   @override
@@ -168,7 +192,8 @@ class _$_SpotCreatorState
       ..add(DiagnosticsProperty('onState', onState))
       ..add(DiagnosticsProperty('totalSteps', totalSteps))
       ..add(DiagnosticsProperty('actualStep', actualStep))
-      ..add(DiagnosticsProperty('spot', spot));
+      ..add(DiagnosticsProperty('spot', spot))
+      ..add(DiagnosticsProperty('onError', onError));
   }
 
   @override
@@ -181,12 +206,13 @@ class _$_SpotCreatorState
                 other.totalSteps == totalSteps) &&
             (identical(other.actualStep, actualStep) ||
                 other.actualStep == actualStep) &&
-            (identical(other.spot, spot) || other.spot == spot));
+            (identical(other.spot, spot) || other.spot == spot) &&
+            (identical(other.onError, onError) || other.onError == onError));
   }
 
   @override
   int get hashCode =>
-      Object.hash(runtimeType, onState, totalSteps, actualStep, spot);
+      Object.hash(runtimeType, onState, totalSteps, actualStep, spot, onError);
 
   @JsonKey(ignore: true)
   @override
@@ -200,7 +226,8 @@ abstract class _SpotCreatorState implements SpotCreatorState {
       {required final OnState onState,
       required final int totalSteps,
       required final int actualStep,
-      required final LongSpot spot}) = _$_SpotCreatorState;
+      required final LongSpot spot,
+      required final String onError}) = _$_SpotCreatorState;
 
   @override
   OnState get onState;
@@ -210,6 +237,8 @@ abstract class _SpotCreatorState implements SpotCreatorState {
   int get actualStep;
   @override
   LongSpot get spot;
+  @override
+  String get onError;
   @override
   @JsonKey(ignore: true)
   _$$_SpotCreatorStateCopyWith<_$_SpotCreatorState> get copyWith =>

@@ -3,7 +3,7 @@ import 'package:now_v8/src/core/models/long_spot.dart';
 import 'package:now_v8/src/features/spots_creation/model/spot_creator_state.dart';
 
 class SpotCreator extends StateNotifier<SpotCreatorState> {
-  late Map<OnState, Function(bool)> mapStates;
+  late Map<OnState, Function(bool, LongSpot spot)> mapStates;
 
   SpotCreator()
       : super(
@@ -11,6 +11,7 @@ class SpotCreator extends StateNotifier<SpotCreatorState> {
             actualStep: 0,
             totalSteps: 4,
             onState: OnState.onDescription,
+            onError: "",
             spot: LongSpot(
               dateInfo: DateInfo(
                 dateTime: "",
@@ -55,46 +56,82 @@ class SpotCreator extends StateNotifier<SpotCreatorState> {
 
   // void onBack(LongSpot spot) {}
 
-  void onNext() {
-    Function(bool) func = mapStates[super.state.onState]!;
-    func(true);
+  void onNext(LongSpot spot) {
+    Function(bool, LongSpot) func = mapStates[super.state.onState]!;
+    func(true, spot);
   }
 
   void onBack() {
-    Function(bool) func = mapStates[super.state.onState]!;
-    func(false);
+    Function(bool, LongSpot) func = mapStates[super.state.onState]!;
+    func(false, state.spot);
   }
 
-  void onDescription(bool next) {
+  void onDescription(bool next, LongSpot spot) {
+    print("onDescription");
+    print(spot.eventInfo.description);
+    print(spot.eventInfo.name);
     if (next) {
-      state = state.copyWith(onState: OnState.onLocation, actualStep: 1);
+      if (spot.eventInfo.description.isEmpty || spot.eventInfo.name.isEmpty) {
+        state = state.copyWith(onError: "Title and description are required");
+        return;
+      }
+
+      var newEvents = state.spot.eventInfo.copyWith(
+          name: spot.eventInfo.name, description: spot.eventInfo.description);
+
+      state = state.copyWith(
+        onState: OnState.onLocation,
+        actualStep: 1,
+        spot: spot.copyWith(eventInfo: newEvents),
+        onError: "",
+      );
     }
   }
 
-  void onLocation(bool next) {
+  void onLocation(bool next, LongSpot spot) {
     if (next) {
-      state = state.copyWith(onState: OnState.onTags, actualStep: 2);
+      state = state.copyWith(
+        onState: OnState.onTags,
+        actualStep: 2,
+        onError: "",
+      );
     } else {
-      state = state.copyWith(onState: OnState.onDescription, actualStep: 0);
+      state = state.copyWith(
+        onState: OnState.onDescription,
+        actualStep: 0,
+        onError: "",
+      );
     }
   }
 
-  void onTags(bool next) {
+  void onTags(bool next, LongSpot spot) {
     if (next) {
-      state = state.copyWith(onState: OnState.onReview, actualStep: 3);
+      state = state.copyWith(
+        onState: OnState.onReview,
+        actualStep: 3,
+        onError: "",
+      );
     } else {
-      state = state.copyWith(onState: OnState.onLocation, actualStep: 1);
+      state = state.copyWith(
+        onState: OnState.onLocation,
+        actualStep: 1,
+        onError: "",
+      );
     }
   }
 
-  void onReview(bool next) {
+  void onReview(bool next, LongSpot spot) {
     if (next) {
       state = state.copyWith(onState: OnState.onDone);
     } else {
-      state = state.copyWith(onState: OnState.onTags, actualStep: 2);
+      state = state.copyWith(
+        onState: OnState.onTags,
+        actualStep: 2,
+        onError: "",
+      );
     }
   }
 
-  void onCancelle(bool next) {}
-  void onDone(bool next) {}
+  void onCancelle(bool next, LongSpot spot) {}
+  void onDone(bool next, LongSpot spot) {}
 }
