@@ -10,7 +10,7 @@ class SpotCreator extends StateNotifier<SpotCreatorState> {
           const SpotCreatorState(
             actualStep: 0,
             totalSteps: 4,
-            onState: OnState.onDescription,
+            onState: OnState.onLocation,
             onError: "",
             spot: LongSpot(
               dateInfo: DateInfo(

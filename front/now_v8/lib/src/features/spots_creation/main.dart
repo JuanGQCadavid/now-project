@@ -102,7 +102,7 @@ class Body extends ConsumerWidget {
         );
         break;
       case OnState.onLocation:
-        pageBody = const LocationSelectorView();
+        pageBody = LocationSelectorView();
         break;
       case OnState.onTags:
         pageBody = const TagsSelectorView();
