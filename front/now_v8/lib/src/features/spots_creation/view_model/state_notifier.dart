@@ -1,11 +1,13 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:now_v8/src/core/models/long_spot.dart';
+import 'package:now_v8/src/features/spots_creation/model/core.dart';
 import 'package:now_v8/src/features/spots_creation/model/spot_creator_state.dart';
 
 class SpotCreator extends StateNotifier<SpotCreatorState> {
   late Map<OnState, Function(bool, LongSpot spot)> mapStates;
+  final SpotsCreatorCore core;
 
-  SpotCreator()
+  SpotCreator({required this.core})
       : super(
           const SpotCreatorState(
             actualStep: 0,
@@ -88,13 +90,21 @@ class SpotCreator extends StateNotifier<SpotCreatorState> {
     }
   }
 
-  void onLocation(bool next, LongSpot spot) {
+  Future onLocation(bool next, LongSpot spot) async {
     if (next) {
-      state = state.copyWith(
-        onState: OnState.onTags,
-        actualStep: 2,
-        onError: "",
-      );
+      var called = await core.getOptions("WeWork");
+
+      called.fold((l) {
+        print("Places");
+        print(l);
+      }, (r) {
+        print("Oh fuck");
+      });
+      // state = state.copyWith(
+      //   onState: OnState.onTags,
+      //   actualStep: 2,
+      //   onError: "",
+      // );
     } else {
       state = state.copyWith(
         onState: OnState.onDescription,

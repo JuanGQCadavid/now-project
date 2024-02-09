@@ -5,6 +5,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:now_v8/src/core/contracts/auth_service.dart';
 import 'package:now_v8/src/core/contracts/filterService.dart';
+import 'package:now_v8/src/core/contracts/gcp_services.dart';
 import 'package:now_v8/src/core/contracts/key_value_storage.dart';
 import 'package:now_v8/src/core/contracts/locationService.dart';
 import 'package:now_v8/src/core/models/user.dart';
@@ -12,6 +13,7 @@ import 'package:now_v8/src/services/cmd/auth/local/local_auth_service.dart';
 import 'package:now_v8/src/services/cmd/colors_service/colors_service.dart';
 import 'package:now_v8/src/services/cmd/filter_service/fake/filterFakeService.dart';
 import 'package:now_v8/src/services/cmd/filter_service/service/filterService.dart';
+import 'package:now_v8/src/services/cmd/gcp_service/services/google_cloud_services.dart';
 import 'package:now_v8/src/services/cmd/location_service/fake/locationFakeService.dart';
 import 'package:now_v8/src/services/cmd/location_service/service/locationService.dart';
 import 'package:now_v8/src/services/cmd/storage/key_value/local_hive_storage.dart';
@@ -54,4 +56,8 @@ final userDetailsProvider =
     StateNotifierProvider<OnAuthState, Either<UserDetails, None>>((ref) {
   final authService = ref.read(authProvider);
   return OnAuthState(authService: authService);
+});
+
+final gpcServicesProvider = Provider<IGCPServices>((ref) {
+  return GoogleCloudServices();
 });
