@@ -11,7 +11,7 @@ class GoogleCloudServices implements IGCPServices {
   GoogleCloudServices() {
     _dio = Dio();
     placeOptions = Options(headers: {
-      "X-Goog-Api-Key": "HERE",
+      "X-Goog-Api-Key": "",
       "X-Goog-FieldMask":
           "places.location,places.shortFormattedAddress,places.id,places.name"
     });

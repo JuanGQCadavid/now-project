@@ -1,22 +1,18 @@
-
-
 import 'package:freezed_annotation/freezed_annotation.dart';
-
 
 part 'long_spot.freezed.dart';
 part 'long_spot.g.dart';
 
 @freezed
-class LongSpot with _$LongSpot{
-  const factory LongSpot({
-    required DateInfo dateInfo,
-    required EventInfo eventInfo,
-    required HostInfo hostInfo,
-    required PlaceInfo placeInfo,
-    required TopicsInfo topicInfo
-  }) = _LongSpot;
-  factory LongSpot.fromJson(Map<String, Object?> json)
-      => _$LongSpotFromJson(json);
+class LongSpot with _$LongSpot {
+  const factory LongSpot(
+      {required DateInfo dateInfo,
+      required EventInfo eventInfo,
+      required HostInfo hostInfo,
+      required PlaceInfo placeInfo,
+      required TopicsInfo topicInfo}) = _LongSpot;
+  factory LongSpot.fromJson(Map<String, Object?> json) =>
+      _$LongSpotFromJson(json);
 }
 
 @freezed
@@ -26,33 +22,29 @@ class TopicsInfo with _$TopicsInfo {
     required List<String> secondaryTags,
   }) = _TopicsInfo;
 
-  factory TopicsInfo.fromJson(Map<String, Object?> json)
-      => _$TopicsInfoFromJson(json);
+  factory TopicsInfo.fromJson(Map<String, Object?> json) =>
+      _$TopicsInfoFromJson(json);
 }
 
 @freezed
-class PlaceInfo with _$PlaceInfo{
-  const factory PlaceInfo({
-    required String name,
-    required double lat,
-    required double lon,
-    required String mapProviderId
-  }) = _PlaceInfo;
+class PlaceInfo with _$PlaceInfo {
+  const factory PlaceInfo(
+      {required String name,
+      required double lat,
+      required double lon,
+      required String mapProviderId}) = _PlaceInfo;
 
-  factory PlaceInfo.fromJson(Map<String, Object?> json)
-      => _$PlaceInfoFromJson(json);
+  factory PlaceInfo.fromJson(Map<String, Object?> json) =>
+      _$PlaceInfoFromJson(json);
 }
 
 @freezed
 class HostInfo with _$HostInfo {
-  const factory HostInfo({
-    required String name
-  }) = _HostInfo;
+  const factory HostInfo({required String name}) = _HostInfo;
 
-  factory HostInfo.fromJson(Map<String, Object?> json)
-      => _$HostInfoFromJson(json);
+  factory HostInfo.fromJson(Map<String, Object?> json) =>
+      _$HostInfoFromJson(json);
 }
-
 
 @freezed
 class EventInfo with _$EventInfo {
@@ -64,8 +56,8 @@ class EventInfo with _$EventInfo {
     required String emoji,
   }) = _EventInfo;
 
-  factory EventInfo.fromJson(Map<String, Object?> json)
-      => _$EventInfoFromJson(json);
+  factory EventInfo.fromJson(Map<String, Object?> json) =>
+      _$EventInfoFromJson(json);
 }
 
 @freezed
@@ -77,6 +69,6 @@ class DateInfo with _$DateInfo {
     required int durationApproximatedInSeconds,
   }) = _DateInfo;
 
-  factory DateInfo.fromJson(Map<String, Object?> json)
-      => _$DateInfoFromJson(json);
+  factory DateInfo.fromJson(Map<String, Object?> json) =>
+      _$DateInfoFromJson(json);
 }
