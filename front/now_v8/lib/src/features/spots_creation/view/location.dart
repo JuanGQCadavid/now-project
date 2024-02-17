@@ -2,92 +2,124 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:now_v8/src/core/models/long_spot.dart';
 import 'package:now_v8/src/core/widgets/nowMap.dart';
 import 'package:now_v8/src/features/login/view/widgets/text_input.dart';
 
-class LocationSelectorView extends StatelessWidget {
+class LocationSelectorView extends StatefulWidget {
   late Completer<GoogleMapController> mapController = Completer();
+  final Future<List<PlaceInfo>> Function(String) onSearch;
+  final void Function(PlaceInfo) onChosen;
+  late PlaceInfo placeSelected;
 
-  LocationSelectorView({super.key});
+  LocationSelectorView({
+    super.key,
+    required this.onChosen,
+    required this.onSearch,
+    required this.placeSelected,
+  });
+
+  @override
+  State<LocationSelectorView> createState() => _LocationSelectorViewState();
+}
+
+class _LocationSelectorViewState extends State<LocationSelectorView> {
+  void onChosen(PlaceInfo place) {
+    setState(() {
+      widget.placeSelected = place;
+    });
+    widget.onChosen(place);
+  }
+
+  String resume() {
+    return widget.placeSelected.name.replaceFirst(" -#AT#- ", "\n");
+  }
+
   @override
   Widget build(BuildContext context) {
+    String selectedResume = resume();
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 15.0),
       child: ClipRRect(
         borderRadius: const BorderRadius.all(
           Radius.circular(15),
         ),
-        child: Stack(
+        child: Column(
           children: [
-            SizedBox(
-              height: 600,
-              width: double.infinity,
-              child: NowMapV2(
-                mapController: mapController,
-              ),
+            Stack(
+              children: [
+                SizedBox(
+                  height: 600,
+                  width: double.infinity,
+                  child: NowMapV2(
+                    mapController: widget.mapController,
+                  ),
+                ),
+                SizedBox(
+                  child: SeachLocationSF(
+                    onSearch: widget.onSearch,
+                    onChosen: onChosen,
+                  ),
+                  width: double.infinity,
+                ),
+              ],
             ),
-            SizedBox(
-              child: SeachLocationSF(),
-              height: 600,
-              width: double.infinity,
+            Container(
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.primary,
+              ),
+              constraints: const BoxConstraints.expand(
+                height: 70,
+              ),
+              child: Center(
+                child: Text(
+                  selectedResume,
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyLarge!
+                      .copyWith(color: Colors.white),
+                ),
+              ),
             )
           ],
         ),
       ),
-      // child: Column(
-      //   children: [Text("LocationSelectorView")],
-      // ),
     );
   }
 }
 
 class SeachLocationSF extends StatefulWidget {
-  const SeachLocationSF({super.key});
+  final Future<List<PlaceInfo>> Function(String) onSearch;
+  final void Function(PlaceInfo) onChosen;
+
+  const SeachLocationSF({
+    super.key,
+    required this.onChosen,
+    required this.onSearch,
+  });
 
   @override
   State<SeachLocationSF> createState() => _SeachLocationSFState();
 }
 
 class _SeachLocationSFState extends State<SeachLocationSF> {
-  List<String> options = [];
+  List<PlaceInfo> options = [];
+  String data = "";
 
-  void onSearch(String txt) {
+  Future onSearch(String txt) async {
+    var locations = await widget.onSearch(data);
     setState(() {
-      options = [txt, txt, txt];
+      options = locations;
     });
   }
 
-  @override
-  Widget build(BuildContext context) {
-    if (options.isEmpty) {
-      return SearchInputText(
-        onSend: onSearch,
-      );
-    }
-
-    return ListView.builder(
-      itemCount: options.length,
-      itemBuilder: (context, index) {
-        if (index == 0) {
-          return SearchInputText(
-            onSend: onSearch,
-          );
-        }
-        return PlaceSearchResult();
-        //return Text(options[index]);
-      },
-    );
+  void onChosen(PlaceInfo place) {
+    widget.onChosen(place);
+    print(place.name);
+    setState(() {
+      options = [];
+    });
   }
-}
-
-class SearchInputText extends StatelessWidget {
-  String data = "";
-  final void Function(String) onSend;
-
-  SearchInputText({
-    super.key,
-    required this.onSend,
-  });
 
   void onText(String txt) {
     data = txt;
@@ -95,6 +127,29 @@ class SearchInputText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (options.isEmpty) {
+      return searchInputText();
+    }
+
+    return Container(
+      // color: Colors.black,
+      child: ListView.builder(
+        itemCount: options.length + 1,
+        shrinkWrap: true,
+        itemBuilder: (context, index) {
+          if (index == 0) {
+            return searchInputText();
+          }
+          return PlaceSearchResult(
+            place: options[index - 1],
+            onChosen: onChosen,
+          );
+        },
+      ),
+    );
+  }
+
+  Widget searchInputText() {
     return TextField(
       onChanged: onText,
       decoration: InputDecoration(
@@ -110,7 +165,7 @@ class SearchInputText extends StatelessWidget {
           icon: const Icon(Icons.search),
           tooltip: "Search",
           onPressed: () {
-            onSend(data);
+            onSearch(data);
           },
         ),
       ),
@@ -129,14 +184,20 @@ class SearchInputText extends StatelessWidget {
 // },
 
 class PlaceSearchResult extends StatelessWidget {
-  const PlaceSearchResult({super.key});
+  final PlaceInfo place;
+  final void Function(PlaceInfo) onChosen;
+
+  const PlaceSearchResult({
+    super.key,
+    required this.place,
+    required this.onChosen,
+  });
 
   @override
   Widget build(BuildContext context) {
+    var adresss = place.name.split("-#AT#-");
     return InkWell(
-      onTap: () {
-        print("HIIII");
-      },
+      onTap: () => onChosen(place),
       child: Container(
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.background,
@@ -155,7 +216,7 @@ class PlaceSearchResult extends StatelessWidget {
             ),
           ),
         ),
-        padding: const EdgeInsets.only(left: 15, bottom: 8, top: 8),
+        padding: const EdgeInsets.only(left: 15, bottom: 8, top: 8, right: 15),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -163,16 +224,16 @@ class PlaceSearchResult extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "A",
+                  adresss[0],
                   style: Theme.of(context).textTheme.bodyLarge,
                 ),
                 Text(
-                  "BBBBBBB",
+                  adresss[1],
                   style: Theme.of(context).textTheme.bodySmall,
                 ),
               ],
             ),
-            IconButton(onPressed: () {}, icon: Icon(Icons.location_searching)),
+            const Icon(Icons.location_searching),
           ],
         ),
       ),

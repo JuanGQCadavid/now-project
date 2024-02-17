@@ -102,7 +102,16 @@ class Body extends ConsumerWidget {
         );
         break;
       case OnState.onLocation:
-        pageBody = LocationSelectorView();
+        pageBody = LocationSelectorView(
+          onSearch: notifer.onMapSearch,
+          placeSelected: const PlaceInfo(
+            lat: 6.251723,
+            lon: -75.592771,
+            name: "House of the lord -#AT#- Calle 34 # 54 - 28",
+            mapProviderId: "ABC",
+          ),
+          onChosen: (a) {},
+        );
         break;
       case OnState.onTags:
         pageBody = const TagsSelectorView();

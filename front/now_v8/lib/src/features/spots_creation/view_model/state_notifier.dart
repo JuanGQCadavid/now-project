@@ -90,6 +90,16 @@ class SpotCreator extends StateNotifier<SpotCreatorState> {
     }
   }
 
+  Future<List<PlaceInfo>> onMapSearch(String locationName) async {
+    var called = await core.getOptions(locationName);
+
+    return called.fold((l) {
+      return l;
+    }, (r) {
+      return [];
+    });
+  }
+
   Future onLocation(bool next, LongSpot spot) async {
     if (next) {
       var called = await core.getOptions("WeWork");

@@ -13,6 +13,7 @@ import 'package:now_v8/src/services/cmd/auth/local/local_auth_service.dart';
 import 'package:now_v8/src/services/cmd/colors_service/colors_service.dart';
 import 'package:now_v8/src/services/cmd/filter_service/fake/filterFakeService.dart';
 import 'package:now_v8/src/services/cmd/filter_service/service/filterService.dart';
+import 'package:now_v8/src/services/cmd/gcp_service/fake/fake_google_cloud_services.dart';
 import 'package:now_v8/src/services/cmd/gcp_service/services/google_cloud_services.dart';
 import 'package:now_v8/src/services/cmd/location_service/fake/locationFakeService.dart';
 import 'package:now_v8/src/services/cmd/location_service/service/locationService.dart';
@@ -59,5 +60,6 @@ final userDetailsProvider =
 });
 
 final gpcServicesProvider = Provider<IGCPServices>((ref) {
-  return GoogleCloudServices();
+  // return GoogleCloudServices();
+  return FakeGoogleServices();
 });
