@@ -17,8 +17,19 @@ class SpotsCreationFeature extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Body(),
+      body: SafeArea(
+        child: LayoutBuilder(
+          builder: (context, constraints) => SingleChildScrollView(
+            child: Container(
+              constraints: BoxConstraints(
+                minHeight: constraints.maxHeight,
+              ),
+              child: Center(
+                child: Body(),
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -134,21 +145,19 @@ class Body extends ConsumerWidget {
     return Row(
       children: [
         Expanded(
-          child: SafeArea(
-            child: Container(
-              constraints: const BoxConstraints(
-                maxHeight: double.infinity,
-              ),
-              child: Center(
-                child: PageNavigator(
-                  child: pageBody, //Text("Hi dude how are you? "),
-                  next: () {
-                    notifer.onNext(spot);
-                  },
-                  back: () {
-                    notifer.onBack();
-                  },
-                ),
+          child: Container(
+            constraints: const BoxConstraints(
+              maxHeight: double.infinity,
+            ),
+            child: Center(
+              child: PageNavigator(
+                child: pageBody, //Text("Hi dude how are you? "),
+                next: () {
+                  notifer.onNext(spot);
+                },
+                back: () {
+                  notifer.onBack();
+                },
               ),
             ),
           ),

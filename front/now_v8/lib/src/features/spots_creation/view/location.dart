@@ -3,11 +3,12 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:now_v8/src/core/models/long_spot.dart';
+import 'package:now_v8/src/core/models/spot.dart';
+import 'package:now_v8/src/core/models/spotColors.dart';
 import 'package:now_v8/src/core/widgets/nowMap.dart';
 import 'package:now_v8/src/features/login/view/widgets/text_input.dart';
 
 class LocationSelectorView extends StatefulWidget {
-  late Completer<GoogleMapController> mapController = Completer();
   final Future<List<PlaceInfo>> Function(String) onSearch;
   final void Function(PlaceInfo) onChosen;
   late PlaceInfo placeSelected;
@@ -24,11 +25,34 @@ class LocationSelectorView extends StatefulWidget {
 }
 
 class _LocationSelectorViewState extends State<LocationSelectorView> {
+  late GoogleMapController mapController;
+
   void onChosen(PlaceInfo place) {
     setState(() {
       widget.placeSelected = place;
     });
     widget.onChosen(place);
+
+    var bounds = MapUtilities.getCameraLatLngBounds(
+      [
+        Spot.withOutSpotColors(
+          principalTag: "",
+          secondaryTags: [],
+          latLng: LatLng(
+            widget.placeSelected.lat,
+            widget.placeSelected.lon,
+          ),
+          spotId: "",
+          date: DateTime.now(),
+        ),
+      ],
+    );
+    mapController.animateCamera(
+      CameraUpdate.newLatLngBounds(
+        bounds,
+        50,
+      ),
+    );
   }
 
   String resume() {
@@ -52,7 +76,28 @@ class _LocationSelectorViewState extends State<LocationSelectorView> {
                   height: 600,
                   width: double.infinity,
                   child: NowMapV2(
-                    mapController: widget.mapController,
+                    centerMapOnSpots: true,
+                    includeUserLocation: false,
+                    camaraPosition: LatLng(
+                      widget.placeSelected.lat,
+                      widget.placeSelected.lon,
+                    ),
+                    mapController: Completer(),
+                    onMapCreated: (mapController) {
+                      this.mapController = mapController;
+                    },
+                    spots: [
+                      Spot.withOutSpotColors(
+                        principalTag: "",
+                        secondaryTags: [],
+                        latLng: LatLng(
+                          widget.placeSelected.lat,
+                          widget.placeSelected.lon,
+                        ),
+                        spotId: "",
+                        date: DateTime.now(),
+                      )
+                    ],
                   ),
                 ),
                 SizedBox(
@@ -131,21 +176,18 @@ class _SeachLocationSFState extends State<SeachLocationSF> {
       return searchInputText();
     }
 
-    return Container(
-      // color: Colors.black,
-      child: ListView.builder(
-        itemCount: options.length + 1,
-        shrinkWrap: true,
-        itemBuilder: (context, index) {
-          if (index == 0) {
-            return searchInputText();
-          }
-          return PlaceSearchResult(
-            place: options[index - 1],
-            onChosen: onChosen,
-          );
-        },
-      ),
+    return ListView.builder(
+      itemCount: options.length + 1,
+      shrinkWrap: true,
+      itemBuilder: (context, index) {
+        if (index == 0) {
+          return searchInputText();
+        }
+        return PlaceSearchResult(
+          place: options[index - 1],
+          onChosen: onChosen,
+        );
+      },
     );
   }
 
