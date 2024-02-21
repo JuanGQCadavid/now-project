@@ -26,6 +26,16 @@ class GoogleCloudServices implements IGCPServices {
     throw UnimplementedError();
   }
 
+  // {
+//     "name": "places/ChIJZW4d6ZCbP44RkIlGZJpenuE",
+//     "id": "ChIJZW4d6ZCbP44RkIlGZJpenuE",
+//     "location": {
+//         "latitude": 4.6640806,
+//         "longitude": -74.0559318
+//     },
+//     "shortFormattedAddress": "Cra. 12a #78-40"
+// },
+
   // https://developers.google.com/maps/documentation/geocoding/requests-reverse-geocoding
   @override
   Future<Either<List<PlaceInfo>, String>> findPlacesByName(

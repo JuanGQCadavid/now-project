@@ -10,4 +10,9 @@ class SpotsCreatorCore {
   Future<Either<List<PlaceInfo>, String>> getOptions(String placeName) async {
     return await gpcService.findPlacesByName(placeName);
   }
+
+  Future<Either<List<PlaceInfo>, String>> getAproximatedPlaces(
+      double lat, lng) async {
+    return await gpcService.findPlacesByLatLon(lat, lng);
+  }
 }

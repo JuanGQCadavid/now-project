@@ -23,19 +23,34 @@ class FakeGoogleServices implements IGCPServices {
       mapProviderId: "C",
     )
   ];
+
+  final List<PlaceInfo> latLngPlaces = [
+    const PlaceInfo(
+      name: "Latiaoladraba -#AT#- Circular 4 # 51 - 52",
+      lat: 6.251723,
+      lon: -75.592771,
+      mapProviderId: "HOME1",
+    ),
+    const PlaceInfo(
+      name: "StandUp SF -#AT#- Circular4 # 55 - 22",
+      lat: 6.251733,
+      lon: -75.592791,
+      mapProviderId: "HOME2",
+    ),
+  ];
+
   @override
   Future<Either<List<PlaceInfo>, String>> findPlacesByLatLon(
     double lat,
     double lon,
   ) async {
-    return left(places);
+    return left(latLngPlaces);
   }
 
   @override
   Future<Either<List<PlaceInfo>, String>> findPlacesByName(
     String placeName,
   ) async {
-    // TODO: implement findPlacesByName
     return left(places);
   }
 }

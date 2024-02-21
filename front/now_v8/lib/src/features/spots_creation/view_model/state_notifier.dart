@@ -1,7 +1,44 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:now_v8/src/core/contracts/locationService.dart';
 import 'package:now_v8/src/core/models/long_spot.dart';
+import 'package:now_v8/src/core/models/simple_state.dart';
 import 'package:now_v8/src/features/spots_creation/model/core.dart';
 import 'package:now_v8/src/features/spots_creation/model/spot_creator_state.dart';
+
+class LocationState extends StateNotifier<SimpleState<PlaceInfo>> {
+  final ILocationService locationService;
+  final SpotsCreatorCore core;
+
+  LocationState({required this.locationService, required this.core})
+      : super(
+          const SimpleState(
+            value: PlaceInfo(
+              lat: 0,
+              lon: 0,
+              mapProviderId: "",
+              name: "",
+            ),
+            onState: SimpleOnState.onLoading,
+          ),
+        ) {
+    initState();
+  }
+
+  Future initState() async {
+    var currentLocation = await locationService.getUserCurrentLocation();
+    var response = await core.getAproximatedPlaces(
+      currentLocation.latitude,
+      currentLocation.longitude,
+    );
+
+    response.fold((l) {
+      state = SimpleState(
+        value: l[0],
+        onState: SimpleOnState.onDone,
+      );
+    }, (r) => null);
+  }
+}
 
 class SpotCreator extends StateNotifier<SpotCreatorState> {
   late Map<OnState, Function(bool, LongSpot spot)> mapStates;
@@ -53,10 +90,6 @@ class SpotCreator extends StateNotifier<SpotCreatorState> {
       OnState.onCancelle: onCancelle,
     };
   }
-
-  // void onNext(LongSpot spot) {}
-
-  // void onBack(LongSpot spot) {}
 
   void onNext(LongSpot spot) {
     Function(bool, LongSpot) func = mapStates[super.state.onState]!;

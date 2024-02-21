@@ -1,12 +1,22 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:now_v8/src/core/models/long_spot.dart';
 import 'package:now_v8/src/core/models/spot.dart';
 import 'package:now_v8/src/core/models/spotColors.dart';
 import 'package:now_v8/src/core/widgets/nowMap.dart';
 import 'package:now_v8/src/features/login/view/widgets/text_input.dart';
+
+class LocationSeletorViewV2 extends ConsumerWidget {
+  const LocationSeletorViewV2({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return const Placeholder();
+  }
+}
 
 class LocationSelectorView extends StatefulWidget {
   final Future<List<PlaceInfo>> Function(String) onSearch;
@@ -214,16 +224,6 @@ class _SeachLocationSFState extends State<SeachLocationSF> {
     );
   }
 }
-
-// {
-//     "name": "places/ChIJZW4d6ZCbP44RkIlGZJpenuE",
-//     "id": "ChIJZW4d6ZCbP44RkIlGZJpenuE",
-//     "location": {
-//         "latitude": 4.6640806,
-//         "longitude": -74.0559318
-//     },
-//     "shortFormattedAddress": "Cra. 12a #78-40"
-// },
 
 class PlaceSearchResult extends StatelessWidget {
   final PlaceInfo place;
