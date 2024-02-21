@@ -1,13 +1,19 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:now_v8/src/core/contracts/locationService.dart';
 import 'package:now_v8/src/core/models/long_spot.dart';
 import 'package:now_v8/src/core/models/simple_state.dart';
+import 'package:now_v8/src/core/models/spot.dart';
+import 'package:now_v8/src/core/widgets/nowMap.dart';
 import 'package:now_v8/src/features/spots_creation/model/core.dart';
 import 'package:now_v8/src/features/spots_creation/model/spot_creator_state.dart';
 
 class LocationState extends StateNotifier<SimpleState<PlaceInfo>> {
   final ILocationService locationService;
   final SpotsCreatorCore core;
+
+  late GoogleMapController controller;
+  late void Function(PlaceInfo) onChosenCallBack = (place) {};
 
   LocationState({required this.locationService, required this.core})
       : super(
@@ -32,11 +38,61 @@ class LocationState extends StateNotifier<SimpleState<PlaceInfo>> {
     );
 
     response.fold((l) {
+      onChosenCallBack(l[0]);
       state = SimpleState(
         value: l[0],
         onState: SimpleOnState.onDone,
       );
     }, (r) => null);
+  }
+
+  String resume(PlaceInfo place) {
+    return place.name.replaceFirst(" -#AT#- ", "\n");
+  }
+
+  void setCallback(void Function(PlaceInfo) onChosenCallBack) {
+    this.onChosenCallBack = onChosenCallBack;
+  }
+
+  Future onChosen(PlaceInfo placeInfo) async {
+    var currentLocation = await locationService.getUserCurrentLocation();
+    var bounds = MapUtilities.getCameraLatLngBounds(
+      [
+        Spot.withOutSpotColors(
+          principalTag: "",
+          secondaryTags: [],
+          latLng: LatLng(
+            placeInfo.lat,
+            placeInfo.lon,
+          ),
+          spotId: "",
+          date: DateTime.now(),
+        ),
+      ],
+      userLocation: currentLocation,
+    );
+    controller.animateCamera(
+      CameraUpdate.newLatLngBounds(
+        bounds,
+        50,
+      ),
+    );
+    state = state.copyWith(value: placeInfo);
+    onChosenCallBack(placeInfo);
+  }
+
+  Future<List<PlaceInfo>> onSearch(String locationName) async {
+    var called = await core.getOptions(locationName);
+
+    return called.fold((l) {
+      return l;
+    }, (r) {
+      return [];
+    });
+  }
+
+  Future onMapCreated(GoogleMapController controller) async {
+    this.controller = controller;
   }
 }
 
@@ -123,31 +179,16 @@ class SpotCreator extends StateNotifier<SpotCreatorState> {
     }
   }
 
-  Future<List<PlaceInfo>> onMapSearch(String locationName) async {
-    var called = await core.getOptions(locationName);
-
-    return called.fold((l) {
-      return l;
-    }, (r) {
-      return [];
-    });
-  }
-
   Future onLocation(bool next, LongSpot spot) async {
     if (next) {
-      var called = await core.getOptions("WeWork");
-
-      called.fold((l) {
-        print("Places");
-        print(l);
-      }, (r) {
-        print("Oh fuck");
-      });
-      // state = state.copyWith(
-      //   onState: OnState.onTags,
-      //   actualStep: 2,
-      //   onError: "",
-      // );
+      print("-------------");
+      print(spot.placeInfo);
+      state = state.copyWith(
+        onState: OnState.onTags,
+        spot: spot.copyWith(placeInfo: spot.placeInfo),
+        actualStep: 2,
+        onError: "",
+      );
     } else {
       state = state.copyWith(
         onState: OnState.onDescription,

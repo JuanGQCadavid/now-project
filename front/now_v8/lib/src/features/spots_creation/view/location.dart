@@ -4,74 +4,44 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:now_v8/src/core/models/long_spot.dart';
+import 'package:now_v8/src/core/models/simple_state.dart';
 import 'package:now_v8/src/core/models/spot.dart';
 import 'package:now_v8/src/core/models/spotColors.dart';
 import 'package:now_v8/src/core/widgets/nowMap.dart';
 import 'package:now_v8/src/features/login/view/widgets/text_input.dart';
+import 'package:now_v8/src/features/spots_creation/view_model/providers.dart';
+import 'package:now_v8/src/features/spots_creation/view_model/state_notifier.dart';
 
 class LocationSeletorViewV2 extends ConsumerWidget {
-  const LocationSeletorViewV2({super.key});
+  final void Function(PlaceInfo) onChosen;
+  const LocationSeletorViewV2({super.key, required this.onChosen});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return const Placeholder();
-  }
-}
+    var state = ref.watch(locationNotiferProvider);
+    var notifier = ref.read(locationNotiferProvider.notifier);
+    notifier.setCallback(onChosen);
 
-class LocationSelectorView extends StatefulWidget {
-  final Future<List<PlaceInfo>> Function(String) onSearch;
-  final void Function(PlaceInfo) onChosen;
-  late PlaceInfo placeSelected;
+    Widget widget = const Placeholder();
 
-  LocationSelectorView({
-    super.key,
-    required this.onChosen,
-    required this.onSearch,
-    required this.placeSelected,
-  });
+    switch (state.onState) {
+      case SimpleOnState.onLoading:
+        widget = const CircularProgressIndicator();
+        break;
+      case SimpleOnState.onDone:
+        return app(context, state, notifier);
+      case SimpleOnState.onError:
+        break;
+    }
 
-  @override
-  State<LocationSelectorView> createState() => _LocationSelectorViewState();
-}
-
-class _LocationSelectorViewState extends State<LocationSelectorView> {
-  late GoogleMapController mapController;
-
-  void onChosen(PlaceInfo place) {
-    setState(() {
-      widget.placeSelected = place;
-    });
-    widget.onChosen(place);
-
-    var bounds = MapUtilities.getCameraLatLngBounds(
-      [
-        Spot.withOutSpotColors(
-          principalTag: "",
-          secondaryTags: [],
-          latLng: LatLng(
-            widget.placeSelected.lat,
-            widget.placeSelected.lon,
-          ),
-          spotId: "",
-          date: DateTime.now(),
-        ),
-      ],
-    );
-    mapController.animateCamera(
-      CameraUpdate.newLatLngBounds(
-        bounds,
-        50,
-      ),
-    );
+    return widget;
   }
 
-  String resume() {
-    return widget.placeSelected.name.replaceFirst(" -#AT#- ", "\n");
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    String selectedResume = resume();
+  Widget app(
+    BuildContext context,
+    SimpleState<PlaceInfo> state,
+    LocationState notifier,
+  ) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 15.0),
       child: ClipRRect(
@@ -89,20 +59,18 @@ class _LocationSelectorViewState extends State<LocationSelectorView> {
                     centerMapOnSpots: true,
                     includeUserLocation: false,
                     camaraPosition: LatLng(
-                      widget.placeSelected.lat,
-                      widget.placeSelected.lon,
+                      state.value.lat,
+                      state.value.lon,
                     ),
                     mapController: Completer(),
-                    onMapCreated: (mapController) {
-                      this.mapController = mapController;
-                    },
+                    onMapCreated: notifier.onMapCreated,
                     spots: [
                       Spot.withOutSpotColors(
                         principalTag: "",
                         secondaryTags: [],
                         latLng: LatLng(
-                          widget.placeSelected.lat,
-                          widget.placeSelected.lon,
+                          state.value.lat,
+                          state.value.lon,
                         ),
                         spotId: "",
                         date: DateTime.now(),
@@ -112,8 +80,8 @@ class _LocationSelectorViewState extends State<LocationSelectorView> {
                 ),
                 SizedBox(
                   child: SeachLocationSF(
-                    onSearch: widget.onSearch,
-                    onChosen: onChosen,
+                    onSearch: notifier.onSearch,
+                    onChosen: notifier.onChosen,
                   ),
                   width: double.infinity,
                 ),
@@ -128,7 +96,7 @@ class _LocationSelectorViewState extends State<LocationSelectorView> {
               ),
               child: Center(
                 child: Text(
-                  selectedResume,
+                  notifier.resume(state.value),
                   style: Theme.of(context)
                       .textTheme
                       .bodyLarge!

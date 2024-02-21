@@ -22,8 +22,7 @@ final spotsCreatorNotiferProvider =
 });
 
 final locationNotiferProvider =
-    StateNotifierProvider.autoDispose<LocationState, SimpleState<PlaceInfo>>(
-        (ref) {
+    StateNotifierProvider<LocationState, SimpleState<PlaceInfo>>((ref) {
   var core = ref.read(coreProvider);
   var location = ref.read(locationServiceProvider);
   return LocationState(

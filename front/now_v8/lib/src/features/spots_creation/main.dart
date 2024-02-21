@@ -75,6 +75,10 @@ class Body extends ConsumerWidget {
     spot = spot.copyWith(eventInfo: spot.eventInfo.copyWith(description: txt));
   }
 
+  void onLocationSeleted(PlaceInfo place) {
+    spot = spot.copyWith(placeInfo: place);
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     Widget pageBody;
@@ -113,15 +117,8 @@ class Body extends ConsumerWidget {
         );
         break;
       case OnState.onLocation:
-        pageBody = LocationSelectorView(
-          onSearch: notifer.onMapSearch,
-          placeSelected: const PlaceInfo(
-            lat: 6.251723,
-            lon: -75.592771,
-            name: "House of the lord -#AT#- Calle 34 # 54 - 28",
-            mapProviderId: "ABC",
-          ),
-          onChosen: (a) {},
+        pageBody = LocationSeletorViewV2(
+          onChosen: onLocationSeleted,
         );
         break;
       case OnState.onTags:
