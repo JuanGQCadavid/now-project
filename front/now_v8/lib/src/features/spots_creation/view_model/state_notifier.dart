@@ -11,6 +11,7 @@ import 'package:now_v8/src/features/spots_creation/model/spot_creator_state.dart
 class LocationState extends StateNotifier<SimpleState<PlaceInfo>> {
   final ILocationService locationService;
   final SpotsCreatorCore core;
+  late CameraPosition cameraPosition;
 
   late GoogleMapController controller;
   late void Function(PlaceInfo) onChosenCallBack = (place) {};
@@ -71,12 +72,24 @@ class LocationState extends StateNotifier<SimpleState<PlaceInfo>> {
       ],
       userLocation: currentLocation,
     );
+
+    // A
+    // controller.animateCamera(
+    //   CameraUpdate.newLatLngBounds(
+    //     bounds,
+    //     50,
+    //   ),
+    // );
+
+    //B
+
     controller.animateCamera(
-      CameraUpdate.newLatLngBounds(
-        bounds,
-        50,
+      CameraUpdate.newLatLngZoom(
+        LatLng(placeInfo.lat, placeInfo.lon),
+        18.5,
       ),
     );
+
     state = state.copyWith(value: placeInfo);
     onChosenCallBack(placeInfo);
   }
@@ -93,6 +106,24 @@ class LocationState extends StateNotifier<SimpleState<PlaceInfo>> {
 
   Future onMapCreated(GoogleMapController controller) async {
     this.controller = controller;
+  }
+
+  Future onCameraMoveStarted() async {
+    print("Here we go!");
+  }
+
+  Future onCameraIdle() async {
+    print("STOP!");
+    var response = await core.getAproximatedPlaces(
+      cameraPosition.target.latitude,
+      cameraPosition.target.longitude,
+    );
+
+    response.fold((l) => onChosen(l[0]), (r) => null);
+  }
+
+  Future onCameraMove(CameraPosition cameraPosition) async {
+    this.cameraPosition = cameraPosition;
   }
 }
 

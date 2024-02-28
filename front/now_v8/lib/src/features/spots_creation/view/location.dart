@@ -64,6 +64,9 @@ class LocationSeletorViewV2 extends ConsumerWidget {
                     ),
                     mapController: Completer(),
                     onMapCreated: notifier.onMapCreated,
+                    onCameraIdle: notifier.onCameraIdle,
+                    onCameraMove: notifier.onCameraMove,
+                    onCameraMoveStarted: notifier.onCameraMoveStarted,
                     spots: [
                       Spot.withOutSpotColors(
                         principalTag: "",

@@ -44,7 +44,15 @@ class FakeGoogleServices implements IGCPServices {
     double lat,
     double lon,
   ) async {
-    return left(latLngPlaces);
+    return left([
+      PlaceInfo(
+        name:
+            "A -#AT#- ${lat.toStringAsPrecision(5)} ${lon.toStringAsPrecision(5)}",
+        lat: lat,
+        lon: lon,
+        mapProviderId: "mapProviderId",
+      )
+    ]);
   }
 
   @override
