@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:now_v8/src/core/contracts/locationService.dart';
@@ -8,6 +9,37 @@ import 'package:now_v8/src/core/widgets/nowMap.dart';
 import 'package:now_v8/src/features/spots_creation/model/core.dart';
 import 'package:now_v8/src/features/spots_creation/model/spot_creator_state.dart';
 
+class TagsState extends StateNotifier<List<String>> {
+  TagsState(): super([]);
+  final TextEditingController controller = TextEditingController() ;
+  final FocusNode focus = FocusNode();
+
+  void addTag(String tag) {
+    print(tag);
+
+    tag = tag.replaceAll(RegExp(" "), "");
+
+    if(!tag.startsWith("#")) {
+      tag = '#$tag';
+    }
+    state.add(tag);
+    updateState(state);
+  }
+
+  void removeTag(String tag) {
+    if(state.remove(tag)){
+      state = state;
+    }
+  }
+
+  void updateState(List<String> newState ){
+    state = [ ...newState];
+    // controller.text = "";
+    controller.clear();
+    focus.requestFocus();
+  }
+
+}
 class LocationState extends StateNotifier<SimpleState<PlaceInfo>> {
   final ILocationService locationService;
   final SpotsCreatorCore core;
@@ -136,7 +168,7 @@ class SpotCreator extends StateNotifier<SpotCreatorState> {
           const SpotCreatorState(
             actualStep: 0,
             totalSteps: 4,
-            onState: OnState.onLocation,
+            onState: OnState.onTags,
             onError: "",
             spot: LongSpot(
               dateInfo: DateInfo(

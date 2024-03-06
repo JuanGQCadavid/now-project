@@ -6,9 +6,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:now_v8/src/core/models/long_spot.dart';
 import 'package:now_v8/src/core/models/simple_state.dart';
 import 'package:now_v8/src/core/models/spot.dart';
-import 'package:now_v8/src/core/models/spotColors.dart';
 import 'package:now_v8/src/core/widgets/nowMap.dart';
-import 'package:now_v8/src/features/login/view/widgets/text_input.dart';
 import 'package:now_v8/src/features/spots_creation/view_model/providers.dart';
 import 'package:now_v8/src/features/spots_creation/view_model/state_notifier.dart';
 

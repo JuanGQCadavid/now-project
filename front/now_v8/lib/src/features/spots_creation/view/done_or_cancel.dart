@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:now_v8/src/features/login/view/widgets/text_input.dart';
 
 class DoneOrCancelView extends StatelessWidget {
   final String state;

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:now_v8/src/features/login/view/widgets/text_input.dart';
+import 'package:now_v8/src/core/widgets/text_input.dart';
 
 class SpotGeneralInfo extends StatelessWidget {
   final void Function(String) onTitleChanged;

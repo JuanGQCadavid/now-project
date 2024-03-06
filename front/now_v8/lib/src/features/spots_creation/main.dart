@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:now_v8/src/core/models/long_spot.dart';
-import 'package:now_v8/src/features/login/view/widgets/text_input.dart';
+import 'package:now_v8/src/core/widgets/text_input.dart';
 import 'package:now_v8/src/features/spots_creation/model/spot_creator_state.dart';
 import 'package:now_v8/src/features/spots_creation/view/description.dart';
 import 'package:now_v8/src/features/spots_creation/view/done_or_cancel.dart';
@@ -139,44 +139,40 @@ class Body extends ConsumerWidget {
         break;
     }
 
-    return Row(
-      children: [
-        Expanded(
-          child: Container(
-            constraints: const BoxConstraints(
-              maxHeight: double.infinity,
-            ),
-            child: Center(
-              child: PageNavigator(
-                child: pageBody, //Text("Hi dude how are you? "),
-                next: () {
-                  notifer.onNext(spot);
-                },
-                back: () {
-                  notifer.onBack();
-                },
-              ),
-            ),
-          ),
+    return Container(
+      constraints: const BoxConstraints(
+        maxHeight: double.infinity,
+      ),
+      child: Center(
+        child: PageNavigator(
+          child: pageBody,
+          next: () {
+            notifer.onNext(spot);
+          },
+          back: () {
+            notifer.onBack();
+          },
         ),
-        Container(
-          constraints: const BoxConstraints(
-            maxHeight: double.infinity,
-            minWidth: 50,
-            maxWidth: 50,
-          ),
-          decoration: BoxDecoration(color: Colors.amber.shade100),
-          child: Center(
-            child: StatusBar(
-              actualStatus: state.actualStep,
-              totalStatus: state.totalSteps,
-            ),
-          ),
-        ),
-      ],
+      ),
     );
   }
 }
+
+
+        // Container(
+        //   constraints: const BoxConstraints(
+        //     maxHeight: double.infinity,
+        //     minWidth: 50,
+        //     maxWidth: 50,
+        //   ),
+        //   decoration: BoxDecoration(color: Colors.amber.shade100),
+        //   child: Center(
+        //     child: StatusBar(
+        //       actualStatus: state.actualStep,
+        //       totalStatus: state.totalSteps,
+        //     ),
+        //   ),
+        // ),
 
 class PageNavigator extends StatelessWidget {
   final void Function()? back;

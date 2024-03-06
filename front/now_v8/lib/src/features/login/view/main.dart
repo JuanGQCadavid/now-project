@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:now_v8/src/features/login/model/login_state.dart';
-import 'package:now_v8/src/features/login/view/widgets/text_input.dart';
-import 'package:now_v8/src/features/login/view/widgets/code_input.dart';
-import 'package:now_v8/src/features/login/view/widgets/phone_input.dart';
+import 'package:now_v8/src/core/widgets/text_input.dart';
+import 'package:now_v8/src/core/widgets/code_input.dart';
+import 'package:now_v8/src/core/widgets/phone_input.dart';
 import 'package:now_v8/src/features/login/view_model/providers.dart';
-import 'package:now_v8/src/features/login/view_model/state_notifier.dart';
 
 class LoginFeature extends ConsumerWidget {
   LoginFeature({super.key});

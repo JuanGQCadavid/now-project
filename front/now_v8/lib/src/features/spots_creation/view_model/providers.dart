@@ -30,3 +30,5 @@ final locationNotiferProvider =
     core: core,
   );
 });
+
+final tagNotifierProvider = StateNotifierProvider<TagsState, List<String> >((ref) => TagsState());
