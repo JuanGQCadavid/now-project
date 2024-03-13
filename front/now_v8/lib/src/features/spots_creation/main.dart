@@ -75,6 +75,10 @@ class Body extends ConsumerWidget {
     spot = spot.copyWith(eventInfo: spot.eventInfo.copyWith(description: txt));
   }
 
+  void onTagsChange(List<String> tags) {
+    spot = spot.copyWith(topicInfo: spot.topicInfo.copyWith(secondaryTags: tags));
+  }
+
   void onLocationSeleted(PlaceInfo place) {
     spot = spot.copyWith(placeInfo: place);
   }
@@ -122,7 +126,9 @@ class Body extends ConsumerWidget {
         );
         break;
       case OnState.onTags:
-        pageBody = const TagsSelectorView();
+        pageBody = TagsSelectorView(
+          tagsSelected: onTagsChange,
+        );
         break;
       case OnState.onReview:
         pageBody = const ReviewView();

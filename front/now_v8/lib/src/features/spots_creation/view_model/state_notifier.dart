@@ -13,10 +13,9 @@ class TagsState extends StateNotifier<List<String>> {
   TagsState(): super([]);
   final TextEditingController controller = TextEditingController() ;
   final FocusNode focus = FocusNode();
+  late void Function(List<String>) callback = (tags) {};
 
   void addTag(String tag) {
-    print(tag);
-
     tag = tag.replaceAll(RegExp(" "), "");
 
     if(!tag.startsWith("#")) {
@@ -26,17 +25,23 @@ class TagsState extends StateNotifier<List<String>> {
     updateState(state);
   }
 
+  void setCallback(void Function(List<String>) callback) {
+    this.callback = callback;
+  }
+
   void removeTag(String tag) {
     if(state.remove(tag)){
-      state = state;
+      updateState(state);
     }
   }
 
   void updateState(List<String> newState ){
     state = [ ...newState];
-    // controller.text = "";
     controller.clear();
     focus.requestFocus();
+
+    // Calling the externals notifiers
+    callback(newState);
   }
 
 }
@@ -263,8 +268,15 @@ class SpotCreator extends StateNotifier<SpotCreatorState> {
 
   void onTags(bool next, LongSpot spot) {
     if (next) {
+      LongSpot newSpot = state.spot;
+      if (spot.topicInfo.secondaryTags.isNotEmpty) {
+        newSpot = newSpot.copyWith(topicInfo: spot.topicInfo);
+        print(spot.topicInfo.secondaryTags);
+      }
+
       state = state.copyWith(
         onState: OnState.onReview,
+        spot: newSpot,
         actualStep: 3,
         onError: "",
       );
@@ -278,6 +290,7 @@ class SpotCreator extends StateNotifier<SpotCreatorState> {
   }
 
   void onReview(bool next, LongSpot spot) {
+
     if (next) {
       state = state.copyWith(onState: OnState.onDone);
     } else {
