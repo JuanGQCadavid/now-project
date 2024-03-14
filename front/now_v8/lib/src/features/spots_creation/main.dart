@@ -131,7 +131,7 @@ class Body extends ConsumerWidget {
         );
         break;
       case OnState.onReview:
-        pageBody = const ReviewView();
+        pageBody = ReviewView();
         break;
       case OnState.onDone:
         pageBody = const DoneOrCancelView(

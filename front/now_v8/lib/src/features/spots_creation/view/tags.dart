@@ -2,6 +2,7 @@ import 'package:dartz/dartz_unsafe.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:now_v8/src/core/widgets/tags.dart';
 import 'package:now_v8/src/core/widgets/text_input.dart';
 import 'package:now_v8/src/features/spots_creation/view_model/providers.dart';
 
@@ -22,6 +23,7 @@ class TagsSelectorView extends ConsumerWidget {
         TagStringView(
           tagValue: state[i], 
           onDeleteTagPressed: notifier.removeTag,
+          
         ),
       );
     }
@@ -53,37 +55,3 @@ class TagsSelectorView extends ConsumerWidget {
   }
 }
 
-
-class TagStringView extends StatelessWidget {
-  final String tagValue;
-  final void Function(String) onDeleteTagPressed;
-
-  const TagStringView({super.key, required this.tagValue, required this.onDeleteTagPressed});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          Text(tagValue, style: Theme.of(context).textTheme.bodyLarge!.copyWith(color: Colors.white),),
-          IconButton(
-            onPressed: () {
-              onDeleteTagPressed(tagValue);
-            }, 
-            icon: const Icon(
-              Icons.close, 
-              color: Colors.white,
-            )
-          )
-        ],
-      ), 
-      padding: const  EdgeInsets.symmetric(horizontal: 15, vertical: 5),
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.primary,
-        borderRadius: BorderRadius.circular(50),
-        ),
-      );
-  }
-}
