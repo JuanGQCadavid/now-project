@@ -109,17 +109,7 @@ class LocationState extends StateNotifier<SimpleState<PlaceInfo>> {
       ],
       userLocation: currentLocation,
     );
-
-    // A
-    // controller.animateCamera(
-    //   CameraUpdate.newLatLngBounds(
-    //     bounds,
-    //     50,
-    //   ),
-    // );
-
-    //B
-
+  
     controller.animateCamera(
       CameraUpdate.newLatLngZoom(
         LatLng(placeInfo.lat, placeInfo.lon),
@@ -173,7 +163,7 @@ class SpotCreator extends StateNotifier<SpotCreatorState> {
           const SpotCreatorState(
             actualStep: 0,
             totalSteps: 4,
-            onState: OnState.onTags,
+            onState: OnState.onDescription,
             onError: "",
             spot: LongSpot(
               dateInfo: DateInfo(

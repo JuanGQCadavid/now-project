@@ -8,49 +8,51 @@ import 'package:now_v8/src/core/widgets/nowMap.dart';
 import 'package:now_v8/src/core/widgets/tags.dart';
 
 class ReviewView extends StatelessWidget {
-  late LongSpot spot = const LongSpot(
-    dateInfo: DateInfo(
-      dateTime: "",
-      id: "",
-      startTime: "",
-      durationApproximatedInSeconds: 0,
-    ),
-    eventInfo: EventInfo(
-      name: "This is the event name",
-      id: "",
-      description:
-          "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec quis libero nec eros ultricies volutpat. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Aliquam vel imperdiet mi, ac fermentum leo. Mauris ut ante eget ante dignissim consequat. Donec id est ornare, condimentum tortor porttitor",
-      maximunCapacty: 0,
-      emoji: ":p",
-    ),
-    hostInfo: HostInfo(
-      name: "Bolis, this is secret",
-    ),
-    placeInfo: PlaceInfo(
-      name: "Ranua de Juana -#AT#- Calle 1 # 1-1",
-      lat: 6.2379578,
-      lon: -75.5626034,
-      mapProviderId: "ThisIsTheProviderId",
-    ),
-    topicInfo: TopicsInfo(
-      principalTag: "",
-      secondaryTags: [
-        "#A",
-        "#B",
-        "#C",
-        "#D",
-        "#A",
-        "#B",
-        "#C",
-        "#D",
-        "#A",
-        "#B",
-        "#C",
-        "#D"
-      ],
-    ),
-  );
-  ReviewView({super.key});
+  // late LongSpot spot = const LongSpot(
+  //   dateInfo: DateInfo(
+  //     dateTime: "",
+  //     id: "",
+  //     startTime: "",
+  //     durationApproximatedInSeconds: 0,
+  //   ),
+  //   eventInfo: EventInfo(
+  //     name: "This is the event name",
+  //     id: "",
+  //     description:
+  //         "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec quis libero nec eros ultricies volutpat. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Aliquam vel imperdiet mi, ac fermentum leo. Mauris ut ante eget ante dignissim consequat. Donec id est ornare, condimentum tortor porttitor",
+  //     maximunCapacty: 0,
+  //     emoji: ":p",
+  //   ),
+  //   hostInfo: HostInfo(
+  //     name: "Bolis, this is secret",
+  //   ),
+  //   placeInfo: PlaceInfo(
+  //     name: "Ranua de Juana -#AT#- Calle 1 # 1-1",
+  //     lat: 6.2379578,
+  //     lon: -75.5626034,
+  //     mapProviderId: "ThisIsTheProviderId",
+  //   ),
+  //   topicInfo: TopicsInfo(
+  //     principalTag: "",
+  //     secondaryTags: [
+  //       "#A",
+  //       "#B",
+  //       "#C",
+  //       "#D",
+  //       "#A",
+  //       "#B",
+  //       "#C",
+  //       "#D",
+  //       "#A",
+  //       "#B",
+  //       "#C",
+  //       "#D"
+  //     ],
+  //   ),
+  // );
+
+  final LongSpot spot;
+  ReviewView({super.key, required this.spot});
   @override
   Widget build(BuildContext context) {
     var adresss = spot.placeInfo.name.split("-#AT#-");

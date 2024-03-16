@@ -17,19 +17,9 @@ class SpotsCreationFeature extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // resizeToAvoidBottomInset: false,
       body: SafeArea(
-        child: LayoutBuilder(
-          builder: (context, constraints) => SingleChildScrollView(
-            child: Container(
-              constraints: BoxConstraints(
-                minHeight: constraints.maxHeight,
-              ),
-              child: Center(
-                child: Body(),
-              ),
-            ),
-          ),
-        ),
+        child: Body(),
       ),
     );
   }
@@ -131,7 +121,9 @@ class Body extends ConsumerWidget {
         );
         break;
       case OnState.onReview:
-        pageBody = ReviewView();
+        pageBody = ReviewView(
+          spot: state.spot,
+        );
         break;
       case OnState.onDone:
         pageBody = const DoneOrCancelView(
@@ -204,16 +196,13 @@ class PageNavigator extends StatelessWidget {
         const SizedBox(
           height: 15,
         ),
-        Expanded(
-          child: child,
-        )
-        ,
+        child,
         const SizedBox(
           height: 15,
         ),
         next != null
             ? NavigationIconButton(
-                icon: (pageTotal -1 ) == pageNumber ? Icons.check: downIcon,
+                icon: (pageTotal - 1) == pageNumber ? Icons.check : downIcon,
                 onTap: next!,
               )
             : const SizedBox(height: 50),
@@ -288,7 +277,9 @@ class Status extends StatelessWidget {
         width: 10,
         margin: const EdgeInsets.symmetric(horizontal: 10),
         decoration: BoxDecoration(
-          color: actualStep ? Theme.of(context).primaryColor : Theme.of(context).primaryColor.withAlpha(100), // Colors.grey,
+          color: actualStep
+              ? Theme.of(context).primaryColor
+              : Theme.of(context).primaryColor.withAlpha(100), // Colors.grey,
           borderRadius: const BorderRadius.all(
             Radius.circular(50),
           ),
