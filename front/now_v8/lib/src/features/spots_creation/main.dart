@@ -76,7 +76,8 @@ class Body extends ConsumerWidget {
   }
 
   void onTagsChange(List<String> tags) {
-    spot = spot.copyWith(topicInfo: spot.topicInfo.copyWith(secondaryTags: tags));
+    spot =
+        spot.copyWith(topicInfo: spot.topicInfo.copyWith(secondaryTags: tags));
   }
 
   void onLocationSeleted(PlaceInfo place) {
@@ -86,7 +87,6 @@ class Body extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     Widget pageBody;
-
     SpotCreatorState state = ref.watch(spotsCreatorNotiferProvider);
     SpotCreator notifer = ref.watch(spotsCreatorNotiferProvider.notifier);
 
@@ -158,38 +158,32 @@ class Body extends ConsumerWidget {
           back: () {
             notifer.onBack();
           },
+          pageNumber: state.actualStep,
+          pageTotal: state.totalSteps,
         ),
       ),
     );
   }
 }
 
-
-        // Container(
-        //   constraints: const BoxConstraints(
-        //     maxHeight: double.infinity,
-        //     minWidth: 50,
-        //     maxWidth: 50,
-        //   ),
-        //   decoration: BoxDecoration(color: Colors.amber.shade100),
-        //   child: Center(
-        //     child: StatusBar(
-        //       actualStatus: state.actualStep,
-        //       totalStatus: state.totalSteps,
-        //     ),
-        //   ),
-        // ),
-
 class PageNavigator extends StatelessWidget {
   final void Function()? back;
   final void Function()? next;
   final Widget child;
+  final IconData upIcon;
+  final IconData downIcon;
+  final int pageNumber;
+  final int pageTotal;
 
   const PageNavigator({
     super.key,
     required this.child,
     this.back,
     this.next,
+    this.downIcon = Icons.arrow_downward,
+    this.upIcon = Icons.arrow_upward,
+    required this.pageTotal,
+    required this.pageNumber,
   });
 
   @override
@@ -199,14 +193,27 @@ class PageNavigator extends StatelessWidget {
       children: [
         back != null
             ? NavigationIconButton(
-                icon: Icons.arrow_upward,
+                icon: upIcon,
                 onTap: back!,
               )
             : const SizedBox(height: 50),
-        child,
+        StatusBar(
+          totalStatus: pageTotal,
+          actualStatus: pageNumber,
+        ),
+        const SizedBox(
+          height: 15,
+        ),
+        Expanded(
+          child: child,
+        )
+        ,
+        const SizedBox(
+          height: 15,
+        ),
         next != null
             ? NavigationIconButton(
-                icon: Icons.arrow_downward,
+                icon: (pageTotal -1 ) == pageNumber ? Icons.check: downIcon,
                 onTap: next!,
               )
             : const SizedBox(height: 50),
@@ -253,25 +260,15 @@ class StatusBar extends StatelessWidget {
     List<Widget> childrens = [];
 
     for (var i = 0; i < totalStatus; i++) {
-      if (i == actualStatus) {
-        childrens.add(
-          Status(
-            actualStep: true,
-            stepNumber: i,
-          ),
-        );
-      } else {
-        childrens.add(
-          Status(
-            actualStep: false,
-            stepNumber: i,
-          ),
-        );
-      }
+      childrens.add(
+        Status(
+          actualStep: i == actualStatus,
+        ),
+      );
     }
 
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: childrens,
     );
   }
@@ -279,44 +276,22 @@ class StatusBar extends StatelessWidget {
 
 class Status extends StatelessWidget {
   final bool actualStep;
-  final int stepNumber;
   const Status({
     super.key,
     required this.actualStep,
-    required this.stepNumber,
   });
 
   @override
   Widget build(BuildContext context) {
-    Color color = Colors.blue;
-
-    if (actualStep) {
-      color = Colors.redAccent;
-    }
     return Container(
-      height: 35,
-      width: 35,
-      decoration: const BoxDecoration(
-        color: Colors.green,
-        borderRadius: BorderRadius.all(
-          Radius.circular(50),
-        ),
-      ),
-      child: Center(
-        child: Container(
-          height: 30,
-          width: 30,
-          decoration: BoxDecoration(
-            color: color,
-            borderRadius: const BorderRadius.all(
-              Radius.circular(50),
-            ),
+        height: 10,
+        width: 10,
+        margin: const EdgeInsets.symmetric(horizontal: 10),
+        decoration: BoxDecoration(
+          color: actualStep ? Theme.of(context).primaryColor : Theme.of(context).primaryColor.withAlpha(100), // Colors.grey,
+          borderRadius: const BorderRadius.all(
+            Radius.circular(50),
           ),
-          child: Center(
-            child: Text((stepNumber + 1).toString()),
-          ),
-        ),
-      ),
-    );
+        ));
   }
 }

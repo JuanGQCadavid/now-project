@@ -36,6 +36,7 @@ class PlaceInfo with _$PlaceInfo {
 
   factory PlaceInfo.fromJson(Map<String, Object?> json) =>
       _$PlaceInfoFromJson(json);
+
 }
 
 @freezed

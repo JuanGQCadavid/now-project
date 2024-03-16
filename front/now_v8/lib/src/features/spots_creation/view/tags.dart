@@ -34,7 +34,7 @@ class TagsSelectorView extends ConsumerWidget {
         mainAxisSize: MainAxisSize.max,
         children: [
           Text(
-            "Do you want to add some tags to the event?", 
+            "Do you want to add some tags?", 
             style: Theme.of(context).textTheme.titleLarge,
           ),
           SizedBox(height: 25),

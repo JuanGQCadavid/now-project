@@ -1,5 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:now_v8/src/core/models/long_spot.dart';
+import 'package:now_v8/src/core/models/spot.dart';
+import 'package:now_v8/src/core/widgets/nowMap.dart';
 import 'package:now_v8/src/core/widgets/tags.dart';
 
 class ReviewView extends StatelessWidget {
@@ -23,8 +28,8 @@ class ReviewView extends StatelessWidget {
     ),
     placeInfo: PlaceInfo(
       name: "Ranua de Juana -#AT#- Calle 1 # 1-1",
-      lat: 171.0,
-      lon: 16.0,
+      lat: 6.2379578,
+      lon: -75.5626034,
       mapProviderId: "ThisIsTheProviderId",
     ),
     topicInfo: TopicsInfo(
@@ -48,6 +53,8 @@ class ReviewView extends StatelessWidget {
   ReviewView({super.key});
   @override
   Widget build(BuildContext context) {
+    var adresss = spot.placeInfo.name.split("-#AT#-");
+
     List<Widget> tags = [];
     for (var i = 0; i < spot.topicInfo.secondaryTags.length; i++) {
       tags.add(
@@ -67,19 +74,61 @@ class ReviewView extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(spot.eventInfo.name),
-          SizedBox(
+          const Text("Resume"),
+          const SizedBox(
+            height: 15,
+          ),
+          const Divider(),
+          Text(
+            spot.eventInfo.name,
+            style: Theme.of(context).textTheme.titleLarge,
+          ),
+          const SizedBox(
             height: 15,
           ),
           Text(spot.eventInfo.description),
-          SizedBox(
+          const SizedBox(
             height: 15,
           ),
-          tags.length > 0
+          tags.isNotEmpty
               ? Wrap(
                   children: tags,
                 )
               : const Text("Tags: No tags were selected"),
+          const SizedBox(
+            height: 15,
+          ),
+          Text("${adresss[0]}, ${adresss[1]}"),
+          const SizedBox(
+            height: 15,
+          ),
+          SizedBox(
+            height: 200,
+            width: double.infinity,
+            child: NowMapV2(
+              centerMapOnSpots: true,
+              includeUserLocation: false,
+              camaraPosition: LatLng(
+                spot.placeInfo.lat,
+                spot.placeInfo.lon,
+              ),
+              mapController: Completer(),
+              myLocationButtonEnabled: false,
+              blockMap: true,
+              spots: [
+                Spot.withOutSpotColors(
+                  principalTag: "",
+                  secondaryTags: [],
+                  latLng: LatLng(
+                    spot.placeInfo.lat,
+                    spot.placeInfo.lon,
+                  ),
+                  spotId: "",
+                  date: DateTime.now(),
+                )
+              ],
+            ),
+          ),
         ],
       ),
     );
