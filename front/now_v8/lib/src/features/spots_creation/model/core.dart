@@ -1,6 +1,8 @@
 import 'package:dartz/dartz.dart';
 import 'package:now_v8/src/core/contracts/gcp_services.dart';
 import 'package:now_v8/src/core/models/long_spot.dart';
+import 'package:now_v8/src/core/models/spot.dart';
+import 'package:now_v8/src/services/core/models/backend_errors.dart';
 
 class SpotsCreatorCore {
   final IGCPServices gpcService;
@@ -14,5 +16,9 @@ class SpotsCreatorCore {
   Future<Either<List<PlaceInfo>, String>> getAproximatedPlaces(
       double lat, lng) async {
     return await gpcService.findPlacesByLatLon(lat, lng);
+  }
+
+  Future<Either<LongSpot, BackendErrors>> createSpot(LongSpot spot) async{
+    return left(spot);
   }
 }
