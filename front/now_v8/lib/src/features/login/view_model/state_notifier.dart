@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:now_v8/src/core/contracts/auth_service.dart';
 import 'package:now_v8/src/core/contracts/user_service.dart';
 import 'package:now_v8/src/core/models/user.dart';
 import 'package:now_v8/src/features/login/model/login_state.dart';
@@ -7,13 +8,13 @@ import 'package:now_v8/src/services/core/notifiers.dart';
 import 'package:now_v8/src/services/core/services_api_configuration.dart';
 
 class LoginStateNotifer extends StateNotifier<LoginState> {
-  final IUserService userService = UserService(
-    apiConfig: ApiConfig.toProd(),
-  );
-  final OnAuthState auth;
+  final IUserService userService;
+  final AuthState auth;
 
-  LoginStateNotifer({required this.auth})
-      : super(
+  LoginStateNotifer({
+    required this.userService,
+    required this.auth,
+  }) : super(
           const LoginState(
             stateConfig: OnStateConfig(
               showPhoneNumber: true,

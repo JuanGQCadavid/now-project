@@ -7,8 +7,8 @@ class ProfileFeature extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var userDetails = ref.read(userDetailsProvider);
-    var autNotifier = ref.read(userDetailsProvider.notifier);
+    var userDetails = ref.read(authStateProvider);
+    var autNotifier = ref.read(authStateProvider.notifier);
 
     return Scaffold(
       body: Center(

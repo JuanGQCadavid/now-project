@@ -7,9 +7,11 @@ import 'package:now_v8/src/features/spots_creation/view_model/state_notifier.dar
 import 'package:now_v8/src/services/core/providers.dart';
 
 final coreProvider = Provider<SpotsCreatorCore>((ref) {
-  var provider = ref.read(gpcServicesProvider);
+  var gcpProvider = ref.read(gpcServicesProvider);
+  var spotsCoreProvider = ref.read(spotsCoreSeriveProvider);
   return SpotsCreatorCore(
-    gpcService: provider,
+    gpcService: gcpProvider,
+    coreService: spotsCoreProvider,
   );
 });
 
@@ -31,4 +33,5 @@ final locationNotiferProvider =
   );
 });
 
-final tagNotifierProvider = StateNotifierProvider<TagsState, List<String> >((ref) => TagsState());
+final tagNotifierProvider =
+    StateNotifierProvider<TagsState, List<String>>((ref) => TagsState());

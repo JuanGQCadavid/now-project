@@ -22,6 +22,8 @@ class ApiConfig {
 
   String getFilterEndpoint() => "${apiGatewayEndpoint}${filterServiceResource}";
 
+  String getSpotCoreEndpoint() => "${apiGatewayEndpoint}${spotServiceResource}";
+
   String getUserEndpoint() => "${apiGatewayEndpoint}${userServiceResource}";
 
   String getBaseURL() => "${apiGatewayEndpoint}/${stage}";

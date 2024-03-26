@@ -20,7 +20,7 @@ class GeneralViewHeader extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var userDetails = ref.watch(userDetailsProvider);
+    var userDetails = ref.watch(authStateProvider);
 
     return userDetails.fold(
       (l) => DefaultHeader(

@@ -1,11 +1,15 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:now_v8/src/core/contracts/auth_service.dart';
+import 'package:now_v8/src/core/contracts/user_service.dart';
 import 'package:now_v8/src/core/models/user.dart';
+import 'package:now_v8/src/services/cmd/user_service/service/service.dart';
 
-class OnAuthState extends StateNotifier<Either<UserDetails, None>> {
+class AuthState extends StateNotifier<Either<UserDetails, None>> {
   final IAuthService authService;
-  OnAuthState({required this.authService}) : super(right(const None())) {
+  // final IUserService userService;
+
+  AuthState({required this.authService}) : super(right(const None())) {
     initState();
   }
 

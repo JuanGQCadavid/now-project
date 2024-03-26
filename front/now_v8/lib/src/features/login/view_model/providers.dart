@@ -5,6 +5,10 @@ import 'package:now_v8/src/services/core/providers.dart';
 
 final loginStateNotifierProvider =
     StateNotifierProvider.autoDispose<LoginStateNotifer, LoginState>((ref) {
-  var auth = ref.read(userDetailsProvider.notifier);
-  return LoginStateNotifer(auth: auth);
+  var auth = ref.read(authStateProvider.notifier);
+  var userService = ref.read(userServiceProvider);
+  return LoginStateNotifer(
+    auth: auth,
+    userService: userService,
+  );
 });
