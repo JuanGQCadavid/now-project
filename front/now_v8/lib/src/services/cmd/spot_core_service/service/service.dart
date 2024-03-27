@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:now_v8/src/core/contracts/spot_core_service.dart';
 import 'package:now_v8/src/core/models/long_spot.dart';
 import 'package:now_v8/src/core/models/token.dart';
+import 'package:now_v8/src/services/cmd/spot_core_service/service/dtos/create_spot_response.dart';
 import 'package:now_v8/src/services/core/models/backend_errors.dart';
 import 'package:now_v8/src/services/core/models/methods.dart';
 import 'package:now_v8/src/services/core/now_services_caller.dart';
@@ -39,9 +40,14 @@ class SpotCoreService implements ISpotCoreService {
       return right(l);
     }, (r) {
       print("We sucesss!");
-      var spot = LongSpot.fromJson(r);
-      print("Id: ${spot.eventInfo.id}");
-      return left(spot);
+      var spotID = CreateSpotResponse.fromJson(r);
+      print("Id: ${spotID.eventInfo.id}");
+
+      var finalSpot = spot.copyWith(
+        eventInfo: spot.eventInfo.copyWith(id: spotID.eventInfo.id),
+      );
+
+      return left(finalSpot);
     });
   }
 
