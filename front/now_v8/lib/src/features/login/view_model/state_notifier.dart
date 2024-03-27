@@ -1,18 +1,12 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:now_v8/src/core/contracts/auth_service.dart';
-import 'package:now_v8/src/core/contracts/user_service.dart';
 import 'package:now_v8/src/core/models/user.dart';
 import 'package:now_v8/src/features/login/model/login_state.dart';
-import 'package:now_v8/src/services/cmd/user_service/service/service.dart';
 import 'package:now_v8/src/services/core/notifiers.dart';
-import 'package:now_v8/src/services/core/services_api_configuration.dart';
 
 class LoginStateNotifer extends StateNotifier<LoginState> {
-  final IUserService userService;
   final AuthState auth;
 
   LoginStateNotifer({
-    required this.userService,
     required this.auth,
   }) : super(
           const LoginState(
@@ -50,51 +44,13 @@ class LoginStateNotifer extends StateNotifier<LoginState> {
 
     var a = mapStates[state.onState];
     a!();
-
-    // if (state.onState == OnState.onInit) {
-    //   onUserAttemptToLogIn(userPhoneNumber);
-    // } else if (state.onState == OnState.onLogin) {
-    //   validate(userPhoneNumber, userCode);
-    // } else if (state.onState == OnState.onSingUp) {
-    //   initSignUp(userPhoneNumber, userName);
-    // } else if (state.onState == OnState.onSingUpPhoneValidation) {
-    //   validate(userPhoneNumber, userCode);
-    // }
-  }
-
-  Future done(UserDetails userDetails) async {
-    print("ID: " +
-        userDetails.userId +
-        "Tokens" +
-        "\n" +
-        userDetails.refreshToken +
-        "\n" +
-        userDetails.shortLiveToken +
-        "\n" +
-        userDetails.shortLiveTokenTTL +
-        "\n");
-
-    await auth.userLogIn(
-      UserDetails(
-        userId: userDetails.userId,
-        userName: state.userName,
-        refreshToken: userDetails.refreshToken,
-        shortLiveToken: userDetails.shortLiveToken,
-        shortLiveTokenTTL: userDetails.shortLiveTokenTTL,
-      ),
-    );
-
-    state = state.copyWith(
-      onState: OnState.onDone,
-    );
   }
 
   void initSignUp(
     String userPhoneNumber,
     String userName,
   ) async {
-    var serviceResponse =
-        await userService.initSingUp(userPhoneNumber, userName);
+    var serviceResponse = await auth.initSingUp(userPhoneNumber, userName);
 
     serviceResponse.fold(
       (l) => {
@@ -146,11 +102,17 @@ class LoginStateNotifer extends StateNotifier<LoginState> {
     String userPhoneNumber,
     List<String> userCode,
   ) async {
-    var serviceResponse = await userService.validate(userPhoneNumber, userCode);
+    var serviceResponse = await auth.validate(
+      state.userName,
+      userPhoneNumber,
+      userCode,
+    );
 
-    await serviceResponse.fold(
-      (l) async {
-        await done(l);
+    serviceResponse.fold(
+      (l) {
+        state = state.copyWith(
+          onState: OnState.onDone,
+        );
       },
       (r) => r.whenOrNull(
         wrongOTP: () {
@@ -176,7 +138,7 @@ class LoginStateNotifer extends StateNotifier<LoginState> {
   }
 
   void onUserAttemptToLogIn(String userPhoneNumber) async {
-    var serviceResponse = await userService.initLoging(userPhoneNumber);
+    var serviceResponse = await auth.initLoging(userPhoneNumber);
 
     serviceResponse.fold(
       (l) => {

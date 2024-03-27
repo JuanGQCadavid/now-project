@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:now_v8/src/features/general_view/views/generalView.dart';
 import 'package:now_v8/src/features/spots_creation/main.dart';
 
 void main() async {
@@ -24,7 +25,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: SpotsCreationFeature(),
+      home: GeneralViewFeature(),
     );
   }
 }
@@ -48,7 +49,7 @@ class Body extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return PageNavigator(
-      child:childViewTry(),  
+      child: childViewTry(),
       next: () {
         print("OnNetx");
       },
@@ -58,26 +59,25 @@ class Body extends ConsumerWidget {
     );
   }
 
-  Widget columnTry(){
+  Widget columnTry() {
     return const Column(
-        children: [
-          Text(
-            "Do you want to add some tags?",
-          ),
-           SizedBox(height: 25),
-           TextField(
-            autofocus: true,
-          )
-        ],
-      );
+      children: [
+        Text(
+          "Do you want to add some tags?",
+        ),
+        SizedBox(height: 25),
+        TextField(
+          autofocus: true,
+        )
+      ],
+    );
   }
 
-  Widget childViewTry(){
+  Widget childViewTry() {
     return SingleChildScrollView(
       child: columnTry(),
     );
   }
-
 }
 
 class PageNavigator extends StatelessWidget {

@@ -7,8 +7,9 @@ import 'package:now_v8/src/services/core/models/methods.dart';
 
 class NowServicesCaller {
   late Dio _dio;
+  late String baseUrl;
 
-  NowServicesCaller({required String baseUrl}) {
+  NowServicesCaller({required this.baseUrl}) {
     _dio = Dio(
       BaseOptions(
         baseUrl: baseUrl,
@@ -25,6 +26,10 @@ class NowServicesCaller {
   }) async {
     Response response;
 
+    print("~~~~~~~~~~~~~~~~~~~~~~~ Backend caller ~~~~~~~~~~~~~~~~~~~~~~~");
+    print("URL: ${baseUrl} ${path}");
+    print("");
+
     try {
       Options options = Options();
       if (headers != null) {
@@ -32,9 +37,11 @@ class NowServicesCaller {
       }
 
       if (method == Method.GET) {
+        print("Method: GET");
         response = await _dio.get(path,
             queryParameters: queryParameters, options: options);
       } else {
+        print("Method: POST");
         response = await _dio.post(path,
             data: data, queryParameters: queryParameters, options: options);
       }

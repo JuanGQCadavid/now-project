@@ -11,12 +11,12 @@ import 'package:now_v8/src/services/core/notifiers.dart';
 class SpotsCreatorCore {
   final IGCPServices gpcService;
   final ISpotCoreService coreService;
-  final Either<UserDetails, None<dynamic>> auth;
+  final AuthState authState;
 
   const SpotsCreatorCore({
     required this.gpcService,
     required this.coreService,
-    required this.auth,
+    required this.authState,
   });
 
   Future<Either<List<PlaceInfo>, String>> getOptions(String placeName) async {
@@ -29,23 +29,10 @@ class SpotsCreatorCore {
   }
 
   Future<Either<LongSpot, BackendErrors>> createSpot(LongSpot spot) async {
-    return auth.fold(
-      (l) => coreService.createSpot(
-          spot,
-          Token(
-            // TODO: WE SHOULD MOVE THIS TO A CENTRAL PLACE
-            header: "X-Authorization",
-            value: l.shortLiveToken,
-          )),
-      (r) => right(
-        BackendErrors.clientError(
-          ErrorMessage(
-            "LOCAL",
-            "User is not logged",
-            "LOCAL",
-          ),
-        ),
-      ),
+    var response = await authState.getToken();
+    return response.fold(
+      (token) => coreService.createSpot(spot, token),
+      (r) => right(r),
     );
   }
 }

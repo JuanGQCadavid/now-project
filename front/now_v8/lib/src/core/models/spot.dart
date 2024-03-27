@@ -13,13 +13,14 @@ class Spot {
 
   SpotsColors spotsColor;
 
-  Spot(
-      {required this.principalTag,
-      required this.secondaryTags,
-      required this.latLng,
-      required this.spotId,
-      required this.spotsColor,
-      required this.date,});
+  Spot({
+    required this.principalTag,
+    required this.secondaryTags,
+    required this.latLng,
+    required this.spotId,
+    required this.spotsColor,
+    required this.date,
+  });
 
   Spot.withOutSpotColors(
       {required this.principalTag,
@@ -30,16 +31,15 @@ class Spot {
       this.spotsColor = const SpotsColors.empty()});
 
   factory Spot.fromLongSpot(LongSpot longSpot) {
-
-    DateTime date  = DateTime.parse("${longSpot.dateInfo.dateTime}T${longSpot.dateInfo.startTime}");
+    DateTime date = DateTime.parse(
+        "${longSpot.dateInfo.dateTime}T${longSpot.dateInfo.startTime}");
 
     return Spot.withOutSpotColors(
-        principalTag: longSpot.topicInfo.principalTag,
-        secondaryTags: longSpot.topicInfo.secondaryTags,
-        latLng: LatLng(longSpot.placeInfo.lat, longSpot.placeInfo.lon),
-        spotId: longSpot.eventInfo.id,
-        date: date,
+      principalTag: longSpot.topicInfo.principalTopic,
+      secondaryTags: longSpot.topicInfo.secondaryTopics,
+      latLng: LatLng(longSpot.placeInfo.lat, longSpot.placeInfo.lon),
+      spotId: longSpot.eventInfo.id,
+      date: date,
     );
-
   }
 }

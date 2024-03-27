@@ -5,12 +5,13 @@ part 'long_spot.g.dart';
 
 @freezed
 class LongSpot with _$LongSpot {
-  const factory LongSpot(
-      {required DateInfo dateInfo,
-      required EventInfo eventInfo,
-      required HostInfo hostInfo,
-      required PlaceInfo placeInfo,
-      required TopicsInfo topicInfo}) = _LongSpot;
+  const factory LongSpot({
+    required DateInfo dateInfo,
+    required EventInfo eventInfo,
+    required HostInfo hostInfo,
+    required PlaceInfo placeInfo,
+    required TopicsInfo topicInfo,
+  }) = _LongSpot;
   factory LongSpot.fromJson(Map<String, Object?> json) =>
       _$LongSpotFromJson(json);
 }
@@ -18,8 +19,8 @@ class LongSpot with _$LongSpot {
 @freezed
 class TopicsInfo with _$TopicsInfo {
   const factory TopicsInfo({
-    required String principalTag,
-    required List<String> secondaryTags,
+    required String principalTopic,
+    required List<String> secondaryTopics,
   }) = _TopicsInfo;
 
   factory TopicsInfo.fromJson(Map<String, Object?> json) =>
@@ -36,7 +37,6 @@ class PlaceInfo with _$PlaceInfo {
 
   factory PlaceInfo.fromJson(Map<String, Object?> json) =>
       _$PlaceInfoFromJson(json);
-
 }
 
 @freezed

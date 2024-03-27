@@ -19,7 +19,7 @@ class BackendErrors with _$BackendErrors {
 
 @JsonSerializable(explicitToJson: true)
 class ErrorMessage {
-  @JsonKey(name: "id", required: true) //@JsonKey(name: "id", required: true)
+  @JsonKey(name: "id") //@JsonKey(name: "id", required: true)
   String id;
 
   @JsonKey(name: "message")

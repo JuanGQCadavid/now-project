@@ -6,17 +6,11 @@ part of 'backend_errors.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-ErrorMessage _$ErrorMessageFromJson(Map<String, dynamic> json) {
-  $checkKeys(
-    json,
-    requiredKeys: const ['id'],
-  );
-  return ErrorMessage(
-    json['id'] as String,
-    json['message'] as String,
-    json['internalError'] as String,
-  );
-}
+ErrorMessage _$ErrorMessageFromJson(Map<String, dynamic> json) => ErrorMessage(
+      json['id'] as String,
+      json['message'] as String,
+      json['internalError'] as String,
+    );
 
 Map<String, dynamic> _$ErrorMessageToJson(ErrorMessage instance) =>
     <String, dynamic>{

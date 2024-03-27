@@ -1,12 +1,9 @@
-
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-
 
 import '../../../../core/contracts/filterService.dart';
 import '../../../../core/models/long_spot.dart';
 import '../../../../core/models/spot.dart';
 import '../../../../core/models/state_response.dart';
-
 
 // What about a provider with configuration abput the server api gateway ?
 class FilterFakeService implements IFilterService {
@@ -35,11 +32,11 @@ class FilterFakeService implements IFilterService {
         date: date,
       ),
       Spot.withOutSpotColors(
-          principalTag: "StreePainting",
-          secondaryTags: List.empty(),
-          latLng: const LatLng(6.257743, -75.592771),
-          spotId: "spotId_3",
-          date: date,
+        principalTag: "StreePainting",
+        secondaryTags: List.empty(),
+        latLng: const LatLng(6.257743, -75.592771),
+        spotId: "spotId_3",
+        date: date,
       ),
       Spot.withOutSpotColors(
         principalTag: "Dance",
@@ -54,7 +51,8 @@ class FilterFakeService implements IFilterService {
   }
 
   @override
-  Future<StateResponse<List<LongSpot>, String>> getLongSpotByProximityWithState({
+  Future<StateResponse<List<LongSpot>, String>>
+      getLongSpotByProximityWithState({
     required double cpLat,
     required double cpLng,
     double radious = 10,
@@ -63,12 +61,11 @@ class FilterFakeService implements IFilterService {
     List<LongSpot> longSpots = [
       const LongSpot(
         eventInfo: EventInfo(
-          description: "Spot 1 Description",
-          emoji: ":p",
-          id: "SPOT_ID_1",
-          maximunCapacty: 1,
-          name: "Spot 1 Name"
-        ),
+            description: "Spot 1 Description",
+            emoji: ":p",
+            id: "SPOT_ID_1",
+            maximunCapacty: 1,
+            name: "Spot 1 Name"),
         hostInfo: HostInfo(
           name: "Juan Gonzalo",
         ),
@@ -79,25 +76,22 @@ class FilterFakeService implements IFilterService {
           mapProviderId: "MAP_PROV_ID_1",
         ),
         topicInfo: TopicsInfo(
-          principalTag: "Spot1principalTag",
-          secondaryTags: ["Spot1Secondarytags"]
-        ),
+            principalTopic: "Spot1principalTag",
+            secondaryTopics: ["Spot1Secondarytags"]),
         dateInfo: DateInfo(
-          dateTime: "", 
+          dateTime: "",
           id: "id",
-          startTime: "", 
+          startTime: "",
           durationApproximatedInSeconds: 0,
         ),
       ),
-
       const LongSpot(
         eventInfo: EventInfo(
-          description: "Spot 2 Description",
-          emoji: ":o",
-          id: "SPOT_ID_2",
-          maximunCapacty: 1,
-          name: "Spot 2 Name"
-        ),
+            description: "Spot 2 Description",
+            emoji: ":o",
+            id: "SPOT_ID_2",
+            maximunCapacty: 1,
+            name: "Spot 2 Name"),
         hostInfo: HostInfo(
           name: "Adriana Lucia",
         ),
@@ -108,25 +102,22 @@ class FilterFakeService implements IFilterService {
           mapProviderId: "MAP_PROV_ID_2",
         ),
         topicInfo: TopicsInfo(
-          principalTag: "Spot2principalTag",
-          secondaryTags: ["Spot2Secondarytags"]
-        ),
+            principalTopic: "Spot2principalTag",
+            secondaryTopics: ["Spot2Secondarytags"]),
         dateInfo: DateInfo(
-          dateTime: "", 
+          dateTime: "",
           id: "id",
-          startTime: "", 
+          startTime: "",
           durationApproximatedInSeconds: 0,
         ),
       ),
-
       const LongSpot(
         eventInfo: EventInfo(
-          description: "Spot 3 Description",
-          emoji: ":d",
-          id: "SPOT_ID_3",
-          maximunCapacty: 1,
-          name: "Spot 3 Name"
-        ),
+            description: "Spot 3 Description",
+            emoji: ":d",
+            id: "SPOT_ID_3",
+            maximunCapacty: 1,
+            name: "Spot 3 Name"),
         hostInfo: HostInfo(
           name: "Sandra Patricia",
         ),
@@ -137,25 +128,22 @@ class FilterFakeService implements IFilterService {
           mapProviderId: "MAP_PROV_ID_3",
         ),
         topicInfo: TopicsInfo(
-          principalTag: "Spot3principalTag",
-          secondaryTags: ["Spot3Secondarytags"]
-        ),
+            principalTopic: "Spot3principalTag",
+            secondaryTopics: ["Spot3Secondarytags"]),
         dateInfo: DateInfo(
-          dateTime: "", 
+          dateTime: "",
           id: "id",
-          startTime: "", 
+          startTime: "",
           durationApproximatedInSeconds: 0,
         ),
       ),
-
       const LongSpot(
         eventInfo: EventInfo(
-          description: "Spot 4 Description",
-          emoji: ":v",
-          id: "SPOT_ID_4",
-          maximunCapacty: 1,
-          name: "Spot 4 Name"
-        ),
+            description: "Spot 4 Description",
+            emoji: ":v",
+            id: "SPOT_ID_4",
+            maximunCapacty: 1,
+            name: "Spot 4 Name"),
         hostInfo: HostInfo(
           name: "Valeria Serna",
         ),
@@ -166,14 +154,13 @@ class FilterFakeService implements IFilterService {
           mapProviderId: "MAP_PROV_ID_4",
         ),
         topicInfo: TopicsInfo(
-          principalTag: "Spot4principalTag",
-          secondaryTags: ["Spot4Secondarytags"]
-        ),
+            principalTopic: "Spot4principalTag",
+            secondaryTopics: ["Spot4Secondarytags"]),
         // MISSING
         dateInfo: DateInfo(
-          dateTime: "", 
+          dateTime: "",
           id: "id",
-          startTime: "", 
+          startTime: "",
           durationApproximatedInSeconds: 0,
         ),
       ),
@@ -182,10 +169,13 @@ class FilterFakeService implements IFilterService {
     return StateResponse<List<LongSpot>, String>(
         response: longSpots, token: "FakeToken:(");
   }
-  
-  
+
   @override
-  Future<StateResponse<List<Spot>, String>> getSpotsByProximityWithState({required double cpLat, required double cpLng, double radious = 10, String token = ""}) {
+  Future<StateResponse<List<Spot>, String>> getSpotsByProximityWithState(
+      {required double cpLat,
+      required double cpLng,
+      double radious = 10,
+      String token = ""}) {
     // TODO: implement getSpotsByProximityWithState
     throw UnimplementedError();
   }

@@ -50,8 +50,8 @@ class Body extends ConsumerWidget {
       mapProviderId: "",
     ),
     topicInfo: TopicsInfo(
-      principalTag: "",
-      secondaryTags: [],
+      principalTopic: "",
+      secondaryTopics: [],
     ),
   );
 
@@ -66,8 +66,8 @@ class Body extends ConsumerWidget {
   }
 
   void onTagsChange(List<String> tags) {
-    spot =
-        spot.copyWith(topicInfo: spot.topicInfo.copyWith(secondaryTags: tags));
+    spot = spot.copyWith(
+        topicInfo: spot.topicInfo.copyWith(secondaryTopics: tags));
   }
 
   void onLocationSeleted(PlaceInfo place) {
@@ -126,12 +126,14 @@ class Body extends ConsumerWidget {
         );
         break;
       case OnState.onDone:
-        pageBody = const DoneOrCancelView(
+        pageBody = DoneOrCancelView(
+          id: state.spot.eventInfo.id,
           state: "DONE",
         );
         break;
       case OnState.onCancelle:
         pageBody = const DoneOrCancelView(
+          id: "None",
           state: "CANCELLED",
         );
         break;

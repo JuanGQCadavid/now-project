@@ -300,8 +300,8 @@ TopicsInfo _$TopicsInfoFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$TopicsInfo {
-  String get principalTag => throw _privateConstructorUsedError;
-  List<String> get secondaryTags => throw _privateConstructorUsedError;
+  String get principalTopic => throw _privateConstructorUsedError;
+  List<String> get secondaryTopics => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -315,7 +315,7 @@ abstract class $TopicsInfoCopyWith<$Res> {
           TopicsInfo value, $Res Function(TopicsInfo) then) =
       _$TopicsInfoCopyWithImpl<$Res, TopicsInfo>;
   @useResult
-  $Res call({String principalTag, List<String> secondaryTags});
+  $Res call({String principalTopic, List<String> secondaryTopics});
 }
 
 /// @nodoc
@@ -331,17 +331,17 @@ class _$TopicsInfoCopyWithImpl<$Res, $Val extends TopicsInfo>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? principalTag = null,
-    Object? secondaryTags = null,
+    Object? principalTopic = null,
+    Object? secondaryTopics = null,
   }) {
     return _then(_value.copyWith(
-      principalTag: null == principalTag
-          ? _value.principalTag
-          : principalTag // ignore: cast_nullable_to_non_nullable
+      principalTopic: null == principalTopic
+          ? _value.principalTopic
+          : principalTopic // ignore: cast_nullable_to_non_nullable
               as String,
-      secondaryTags: null == secondaryTags
-          ? _value.secondaryTags
-          : secondaryTags // ignore: cast_nullable_to_non_nullable
+      secondaryTopics: null == secondaryTopics
+          ? _value.secondaryTopics
+          : secondaryTopics // ignore: cast_nullable_to_non_nullable
               as List<String>,
     ) as $Val);
   }
@@ -355,7 +355,7 @@ abstract class _$$_TopicsInfoCopyWith<$Res>
       __$$_TopicsInfoCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String principalTag, List<String> secondaryTags});
+  $Res call({String principalTopic, List<String> secondaryTopics});
 }
 
 /// @nodoc
@@ -369,17 +369,17 @@ class __$$_TopicsInfoCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? principalTag = null,
-    Object? secondaryTags = null,
+    Object? principalTopic = null,
+    Object? secondaryTopics = null,
   }) {
     return _then(_$_TopicsInfo(
-      principalTag: null == principalTag
-          ? _value.principalTag
-          : principalTag // ignore: cast_nullable_to_non_nullable
+      principalTopic: null == principalTopic
+          ? _value.principalTopic
+          : principalTopic // ignore: cast_nullable_to_non_nullable
               as String,
-      secondaryTags: null == secondaryTags
-          ? _value._secondaryTags
-          : secondaryTags // ignore: cast_nullable_to_non_nullable
+      secondaryTopics: null == secondaryTopics
+          ? _value._secondaryTopics
+          : secondaryTopics // ignore: cast_nullable_to_non_nullable
               as List<String>,
     ));
   }
@@ -389,25 +389,26 @@ class __$$_TopicsInfoCopyWithImpl<$Res>
 @JsonSerializable()
 class _$_TopicsInfo implements _TopicsInfo {
   const _$_TopicsInfo(
-      {required this.principalTag, required final List<String> secondaryTags})
-      : _secondaryTags = secondaryTags;
+      {required this.principalTopic,
+      required final List<String> secondaryTopics})
+      : _secondaryTopics = secondaryTopics;
 
   factory _$_TopicsInfo.fromJson(Map<String, dynamic> json) =>
       _$$_TopicsInfoFromJson(json);
 
   @override
-  final String principalTag;
-  final List<String> _secondaryTags;
+  final String principalTopic;
+  final List<String> _secondaryTopics;
   @override
-  List<String> get secondaryTags {
-    if (_secondaryTags is EqualUnmodifiableListView) return _secondaryTags;
+  List<String> get secondaryTopics {
+    if (_secondaryTopics is EqualUnmodifiableListView) return _secondaryTopics;
     // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_secondaryTags);
+    return EqualUnmodifiableListView(_secondaryTopics);
   }
 
   @override
   String toString() {
-    return 'TopicsInfo(principalTag: $principalTag, secondaryTags: $secondaryTags)';
+    return 'TopicsInfo(principalTopic: $principalTopic, secondaryTopics: $secondaryTopics)';
   }
 
   @override
@@ -415,16 +416,16 @@ class _$_TopicsInfo implements _TopicsInfo {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$_TopicsInfo &&
-            (identical(other.principalTag, principalTag) ||
-                other.principalTag == principalTag) &&
+            (identical(other.principalTopic, principalTopic) ||
+                other.principalTopic == principalTopic) &&
             const DeepCollectionEquality()
-                .equals(other._secondaryTags, _secondaryTags));
+                .equals(other._secondaryTopics, _secondaryTopics));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, principalTag,
-      const DeepCollectionEquality().hash(_secondaryTags));
+  int get hashCode => Object.hash(runtimeType, principalTopic,
+      const DeepCollectionEquality().hash(_secondaryTopics));
 
   @JsonKey(ignore: true)
   @override
@@ -442,16 +443,16 @@ class _$_TopicsInfo implements _TopicsInfo {
 
 abstract class _TopicsInfo implements TopicsInfo {
   const factory _TopicsInfo(
-      {required final String principalTag,
-      required final List<String> secondaryTags}) = _$_TopicsInfo;
+      {required final String principalTopic,
+      required final List<String> secondaryTopics}) = _$_TopicsInfo;
 
   factory _TopicsInfo.fromJson(Map<String, dynamic> json) =
       _$_TopicsInfo.fromJson;
 
   @override
-  String get principalTag;
+  String get principalTopic;
   @override
-  List<String> get secondaryTags;
+  List<String> get secondaryTopics;
   @override
   @JsonKey(ignore: true)
   _$$_TopicsInfoCopyWith<_$_TopicsInfo> get copyWith =>

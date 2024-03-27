@@ -25,16 +25,16 @@ Map<String, dynamic> _$$_LongSpotToJson(_$_LongSpot instance) =>
 
 _$_TopicsInfo _$$_TopicsInfoFromJson(Map<String, dynamic> json) =>
     _$_TopicsInfo(
-      principalTag: json['principalTag'] as String,
-      secondaryTags: (json['secondaryTags'] as List<dynamic>)
+      principalTopic: json['principalTopic'] as String,
+      secondaryTopics: (json['secondaryTopics'] as List<dynamic>)
           .map((e) => e as String)
           .toList(),
     );
 
 Map<String, dynamic> _$$_TopicsInfoToJson(_$_TopicsInfo instance) =>
     <String, dynamic>{
-      'principalTag': instance.principalTag,
-      'secondaryTags': instance.secondaryTags,
+      'principalTopic': instance.principalTopic,
+      'secondaryTopics': instance.secondaryTopics,
     };
 
 _$_PlaceInfo _$$_PlaceInfoFromJson(Map<String, dynamic> json) => _$_PlaceInfo(

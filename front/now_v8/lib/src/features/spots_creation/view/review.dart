@@ -58,12 +58,12 @@ class ReviewView extends StatelessWidget {
     var adresss = spot.placeInfo.name.split("-#AT#-");
 
     List<Widget> tags = [];
-    for (var i = 0; i < spot.topicInfo.secondaryTags.length; i++) {
+    for (var i = 0; i < spot.topicInfo.secondaryTopics.length; i++) {
       tags.add(
         Container(
           margin: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
           child: TagStringView(
-            tagValue: spot.topicInfo.secondaryTags[i],
+            tagValue: spot.topicInfo.secondaryTopics[i],
             onDeleteTagPressed: (a) {},
             showDeleteButton: false,
           ),

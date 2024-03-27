@@ -9,9 +9,11 @@ import 'package:now_v8/src/services/core/providers.dart';
 final coreProvider = Provider<SpotsCreatorCore>((ref) {
   var gcpProvider = ref.read(gpcServicesProvider);
   var spotsCoreProvider = ref.read(spotsCoreSeriveProvider);
+  var authState = ref.watch(authStateProvider.notifier);
   return SpotsCreatorCore(
     gpcService: gcpProvider,
     coreService: spotsCoreProvider,
+    authState: authState,
   );
 });
 

@@ -158,8 +158,8 @@ class _Body extends ConsumerWidget {
               height: 15,
             ),
             TagsList(
-                primaryTag: onSpot.spot.topicInfo.principalTag,
-                secondaryTags: onSpot.spot.topicInfo.secondaryTags,
+                primaryTag: onSpot.spot.topicInfo.principalTopic,
+                secondaryTags: onSpot.spot.topicInfo.secondaryTopics,
                 appColor: appColor),
             const SizedBox(
               height: 15,

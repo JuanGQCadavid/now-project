@@ -10,15 +10,15 @@ import 'package:now_v8/src/features/spots_creation/model/core.dart';
 import 'package:now_v8/src/features/spots_creation/model/spot_creator_state.dart';
 
 class TagsState extends StateNotifier<List<String>> {
-  TagsState(): super([]);
-  final TextEditingController controller = TextEditingController() ;
+  TagsState() : super([]);
+  final TextEditingController controller = TextEditingController();
   final FocusNode focus = FocusNode();
   late void Function(List<String>) callback = (tags) {};
 
   void addTag(String tag) {
     tag = tag.replaceAll(RegExp(" "), "");
 
-    if(!tag.startsWith("#")) {
+    if (!tag.startsWith("#")) {
       tag = '#$tag';
     }
     state.add(tag);
@@ -30,21 +30,21 @@ class TagsState extends StateNotifier<List<String>> {
   }
 
   void removeTag(String tag) {
-    if(state.remove(tag)){
+    if (state.remove(tag)) {
       updateState(state);
     }
   }
 
-  void updateState(List<String> newState ){
-    state = [ ...newState];
+  void updateState(List<String> newState) {
+    state = [...newState];
     controller.clear();
     focus.requestFocus();
 
     // Calling the externals notifiers
     callback(newState);
   }
-
 }
+
 class LocationState extends StateNotifier<SimpleState<PlaceInfo>> {
   final ILocationService locationService;
   final SpotsCreatorCore core;
@@ -109,7 +109,7 @@ class LocationState extends StateNotifier<SimpleState<PlaceInfo>> {
       ],
       userLocation: currentLocation,
     );
-  
+
     controller.animateCamera(
       CameraUpdate.newLatLngZoom(
         LatLng(placeInfo.lat, placeInfo.lon),
@@ -189,8 +189,8 @@ class SpotCreator extends StateNotifier<SpotCreatorState> {
                 mapProviderId: "",
               ),
               topicInfo: TopicsInfo(
-                principalTag: "",
-                secondaryTags: [],
+                principalTopic: "",
+                secondaryTopics: [],
               ),
             ),
           ),
@@ -259,9 +259,9 @@ class SpotCreator extends StateNotifier<SpotCreatorState> {
   void onTags(bool next, LongSpot spot) {
     if (next) {
       LongSpot newSpot = state.spot;
-      if (spot.topicInfo.secondaryTags.isNotEmpty) {
+      if (spot.topicInfo.secondaryTopics.isNotEmpty) {
         newSpot = newSpot.copyWith(topicInfo: spot.topicInfo);
-        print(spot.topicInfo.secondaryTags);
+        print(spot.topicInfo.secondaryTopics);
       }
 
       state = state.copyWith(
@@ -279,9 +279,23 @@ class SpotCreator extends StateNotifier<SpotCreatorState> {
     }
   }
 
-  void onReview(bool next, LongSpot spot) {
-
+  Future onReview(bool next, LongSpot spot) async {
     if (next) {
+      var response = await core.createSpot(state.spot);
+
+      response.fold(
+          (l) => state = state.copyWith(onState: OnState.onDone, spot: l),
+          (r) => state = state.copyWith(
+                  onError: r.when<String>(
+                internalError: () => "Ups there where a problem",
+                resourceNotFound: () => "Ups there where a problem",
+                serviceUnavailable: () => "Ups there where a problem",
+                noInternetConnection: () => "Ups there where a problem",
+                badResponseFormat: () => "Ups there where a problem",
+                unknownError: () => "Ups there where a problem",
+                clientError: (err) => "${err.message} - ${err.internalError}",
+              )));
+
       state = state.copyWith(onState: OnState.onDone);
     } else {
       state = state.copyWith(

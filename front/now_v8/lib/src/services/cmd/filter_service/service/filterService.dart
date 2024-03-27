@@ -21,7 +21,7 @@ class FilterService implements IFilterService {
 
   FilterService({required this.apiConfig}) {
     print(apiConfig.getFilterEndpoint());
-    
+
     nowServicesCaller = NowServicesCaller(
       baseUrl: apiConfig.getFilterEndpoint(),
     );
@@ -39,7 +39,7 @@ class FilterService implements IFilterService {
         .request(Method.GET, proximityResource, queryParameters: {
       "cpLat": cpLat,
       "cpLon": cpLng,
-      "radious":  radious,
+      "radious": radious,
     });
 
     return response.fold<List<Spot>>((l) {
@@ -64,16 +64,15 @@ class FilterService implements IFilterService {
   }) async {
     StateResponse backendResponse;
 
-    backendResponse =  await  filterProximityState(
-      cpLat: cpLat, 
+    backendResponse = await filterProximityState(
+      cpLat: cpLat,
       cpLng: cpLng,
       token: token,
       format: "small",
-      radious: radious, 
+      radious: radious,
       castFunction: fromFilterSpotToSpot,
     );
-    
-    
+
     List<Spot> response = [];
 
     for (var dynSpot in cast<List<dynamic>>(backendResponse.response)) {
@@ -81,12 +80,13 @@ class FilterService implements IFilterService {
     }
     String tokenResponse = cast<String>(backendResponse.token);
 
-    return StateResponse<List<Spot> , String>(response: response, token: tokenResponse);
+    return StateResponse<List<Spot>, String>(
+        response: response, token: tokenResponse);
   }
 
-
   @override
-  Future<StateResponse<List<longSpot.LongSpot>, String>> getLongSpotByProximityWithState({
+  Future<StateResponse<List<longSpot.LongSpot>, String>>
+      getLongSpotByProximityWithState({
     required double cpLat,
     required double cpLng,
     double radious = 0.03,
@@ -94,16 +94,17 @@ class FilterService implements IFilterService {
   }) async {
     StateResponse backendResponse;
 
-    backendResponse =  await  filterProximityState(
-      cpLat: cpLat, 
+    backendResponse = await filterProximityState(
+      cpLat: cpLat,
       cpLng: cpLng,
       token: token,
       format: "full",
-      radious: radious, 
+      radious: radious,
       castFunction: fromFilterSpotToLongSpot,
     );
-    
-    return cast<StateResponse<List<longSpot.LongSpot>, String>>(backendResponse);
+
+    return cast<StateResponse<List<longSpot.LongSpot>, String>>(
+        backendResponse);
   }
 
   Future<StateResponse> filterProximityState({
@@ -111,7 +112,6 @@ class FilterService implements IFilterService {
     required double cpLng,
     required String token,
     required Function(List<FilterSpot> places) castFunction,
-
     double radious = 0.5,
     String format = "small",
   }) async {
@@ -119,32 +119,27 @@ class FilterService implements IFilterService {
     bool createSession = false;
     Map<String, dynamic>? headers;
 
-    if (token.isEmpty) { 
+    if (token.isEmpty) {
       print("token is empty then send with the create option");
       createSession = true;
-
-    }else {
+    } else {
       print("token is not empty send it with the token header");
       createSession = false;
-      headers = {
-          "X-Now-Search-Session-Id": token
-      };
+      headers = {"X-Now-Search-Session-Id": token};
     }
 
-  backendResponse = await nowServicesCaller.request(
-        Method.GET,
-        proximityResource,
-        queryParameters: {
-          "cpLat": cpLat,
-          "cpLon": cpLng,
-          "format": format,
-          "createSession": createSession ? "true" : "false",
-          "radious": radious
-        },
-        headers: headers
-      );
+    backendResponse =
+        await nowServicesCaller.request(Method.GET, proximityResource,
+            queryParameters: {
+              "cpLat": cpLat,
+              "cpLon": cpLng,
+              "format": format,
+              "createSession": createSession ? "true" : "false",
+              "radious": radious
+            },
+            headers: headers);
 
-  return backendResponse.fold((error) {
+    return backendResponse.fold((error) {
       print(error.toString());
       return StateResponse(response: [], token: "");
     }, (bodyResponse) {
@@ -154,14 +149,13 @@ class FilterService implements IFilterService {
           response: castFunction(response.result.places),
           token: response.search_session.session_details.session_id);
     });
-    
   }
-  
+
   List<longSpot.LongSpot> fromFilterSpotToLongSpot(List<FilterSpot> places) {
     List<longSpot.LongSpot> spots = [];
 
     for (var spot in places) {
-      String hostName = spot.hostInfo?.name ?? "" ;
+      String hostName = spot.hostInfo?.name ?? "";
       spots.add(
         longSpot.LongSpot(
           hostInfo: longSpot.HostInfo(name: hostName),
@@ -177,14 +171,13 @@ class FilterService implements IFilterService {
               mapProviderId: spot.placeInfo.mapProviderId,
               name: spot.placeInfo.name),
           topicInfo: longSpot.TopicsInfo(
-            principalTag: spot.topicInfo.principalTopic,
-            secondaryTags: spot.topicInfo.secondaryTopics
-          ),
+              principalTopic: spot.topicInfo.principalTopic,
+              secondaryTopics: spot.topicInfo.secondaryTopics),
           // MISSING
           dateInfo: longSpot.DateInfo(
-            dateTime: spot.dateInfo.dateTime, 
+            dateTime: spot.dateInfo.dateTime,
             id: spot.dateInfo.id,
-            startTime: spot.dateInfo.startTime, 
+            startTime: spot.dateInfo.startTime,
             durationApproximatedInSeconds: spot.dateInfo.durationApproximated,
           ),
         ),
@@ -193,25 +186,27 @@ class FilterService implements IFilterService {
     return spots;
   }
 
-  List<Spot> fromFilterSpotToSpot(List<FilterSpot>  places) {
+  List<Spot> fromFilterSpotToSpot(List<FilterSpot> places) {
     List<Spot> spots = [];
 
     for (var spot in places) {
-      DateTime date  = DateTime.parse("${spot.dateInfo.dateTime}T${spot.dateInfo.startTime}");
+      DateTime date = DateTime.parse(
+          "${spot.dateInfo.dateTime}T${spot.dateInfo.startTime}");
       spots.add(
         Spot.withOutSpotColors(
-          principalTag: spot.topicInfo.principalTopic.isNotEmpty ||
-                  spot.topicInfo.secondaryTopics.isNotEmpty
-              ? spot.topicInfo.principalTopic
-              : spot.eventInfo.name.toLowerCase().replaceAll(RegExp(r' '), ""),
-          secondaryTags: spot.topicInfo.secondaryTopics,
-          latLng: LatLng(
-            spot.placeInfo.lat,
-            spot.placeInfo.lon,
-          ),
-          spotId: spot.dateInfo.id,
-          date: date
-        ),
+            principalTag: spot.topicInfo.principalTopic.isNotEmpty ||
+                    spot.topicInfo.secondaryTopics.isNotEmpty
+                ? spot.topicInfo.principalTopic
+                : spot.eventInfo.name
+                    .toLowerCase()
+                    .replaceAll(RegExp(r' '), ""),
+            secondaryTags: spot.topicInfo.secondaryTopics,
+            latLng: LatLng(
+              spot.placeInfo.lat,
+              spot.placeInfo.lon,
+            ),
+            spotId: spot.dateInfo.id,
+            date: date),
       );
     }
     return spots;

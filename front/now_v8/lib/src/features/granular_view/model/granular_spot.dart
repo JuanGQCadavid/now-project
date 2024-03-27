@@ -25,13 +25,13 @@ class GranularSpot {
         name: "",
       ),
       topicInfo: TopicsInfo(
-        principalTag: "",
-        secondaryTags: [],
+        principalTopic: "",
+        secondaryTopics: [],
       ),
       dateInfo: DateInfo(
-        dateTime: "", 
+        dateTime: "",
         id: "id",
-        startTime: "", 
+        startTime: "",
         durationApproximatedInSeconds: 0,
       ),
     );
@@ -54,7 +54,7 @@ class SpotWindow {
     this.previousOne = "",
   });
 
-  bool isEmpty(){
+  bool isEmpty() {
     return nextOne.isEmpty && actualOne.isEmpty && previousOne.isEmpty;
   }
 }

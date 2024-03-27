@@ -54,7 +54,11 @@ final authProvider = Provider<IAuthService>((ref) {
 final authStateProvider =
     StateNotifierProvider<AuthState, Either<UserDetails, None>>((ref) {
   final authService = ref.read(authProvider);
-  return AuthState(authService: authService);
+  final userService = ref.read(userServiceProvider);
+  return AuthState(
+    authService: authService,
+    userService: userService,
+  );
 });
 
 //////////////////////////////////////////////////////////////////////////////

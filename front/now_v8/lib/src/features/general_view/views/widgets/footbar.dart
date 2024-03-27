@@ -4,6 +4,7 @@ import 'package:now_v8/src/core/widgets/buttons.dart';
 import 'package:now_v8/src/features/general_view/views/widgets/spotTagWidget.dart';
 import 'package:now_v8/src/features/granular_view/views/greanular_view.dart';
 import 'package:now_v8/src/features/granular_view/views_model/providers.dart';
+import 'package:now_v8/src/features/spots_creation/main.dart';
 
 class BottomBar extends ConsumerWidget {
   const BottomBar({Key? key}) : super(key: key);
@@ -22,7 +23,15 @@ class BottomBar extends ConsumerWidget {
           ),
           NowTextCTA(
             ctaText: "Create",
-            onPressed: () {},
+            onPressed: () {
+              // HEREEEE
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const SpotsCreationFeature(),
+                ),
+              );
+            },
           ),
           NowTextCTA(
             ctaText: "Zoom in!",
