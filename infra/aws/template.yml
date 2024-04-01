@@ -1,0 +1,129 @@
+---
+AWSTemplateFormatVersion: 2010-09-09
+Description: Bearing tokyo ecs cluster.
+Parameters:
+  PululappEnv:
+    Type: String
+    Default: staging
+    AllowedValues:
+      - staging
+      - prod
+    Description: Pululapp enviroment
+Mappings:
+  SubnetConfig:
+    staging:
+      ReverseProxyDNS: "staging.pululapp.com"
+    prod:
+      ReverseProxyDNS: "api.pululapp.com"
+
+Resources:
+  ############################################################
+  #
+  # Central ApiGateway
+  #
+  ############################################################
+  CentralGateway:
+    Type: AWS::ApiGatewayV2::Api
+    Properties:
+      # CorsConfiguration: 
+      #   Cors
+      # CredentialsArn: String
+      Description: All backend services are bieng expose by this reverse proxy 
+      # DisableExecuteApiEndpoint: Boolean
+      Name: !Sub pululapp-central-${PululappEnv}
+      ProtocolType: HTTP
+      # RouteSelectionExpression: String
+      Tags: 
+        App: Pululapp
+        Env: !Ref PululappEnv
+      # Target: String
+      # Version: String
+  
+  ############################################################
+  #
+  # DynamoDB tables
+  #
+  ############################################################
+
+  TokensTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions: 
+        - AttributeName: TokenId
+          AttributeType: S
+      BillingMode: PROVISIONED
+      ContributorInsightsSpecification: 
+        Enabled: True
+      DeletionProtectionEnabled: True
+      KeySchema: 
+        - AttributeName: TokenId
+          KeyType: HASH 
+      ProvisionedThroughput: 
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+      TableClass: STANDARD 
+      TableName: !Sub Tokens-${PululappEnv}
+      Tags: 
+        - Key: App
+          Value: Pululapp
+        - Key: Env
+          Value: !Ref PululappEnv
+
+  ############################################################
+  #
+  # ECR Repositories
+  #
+  ############################################################
+
+  AisApiEcrRepository:
+    Type: AWS::ECR::Repository
+    Properties:
+      RepositoryName: london-ais-api
+      ImageTagMutability: IMMUTABLE
+      EncryptionConfiguration:
+        EncryptionType: KMS
+        KmsKey: !GetAtt KmsKey.Arn
+      ImageScanningConfiguration:
+        ScanOnPush: true
+      LifecyclePolicy:
+        LifecyclePolicyText: |
+          {
+            "rules": [
+              {
+                "rulePriority": 1,
+                "description": "Only last 50 release images",
+                "selection": {
+                  "tagStatus": "tagged",
+                  "tagPatternList": [
+                    "*.*.*"
+                  ],
+                  "countType": "imageCountMoreThan",
+                  "countNumber": 50
+                },
+                "action": { "type": "expire" }
+              },
+              {
+                "rulePriority": 2,
+                "description": "Only last 20 no release images",
+                "selection": {
+                  "tagStatus": "any",
+                  "countType": "imageCountMoreThan",
+                  "countNumber": 20
+                },
+                "action": { "type": "expire" }
+              }
+            ]
+          }
+Outputs:
+  ApiGatewayID:
+    Value: !Ref CentralGateway
+    Export:
+      Name: !Sub ${PululappEnv}-central-gateway-id
+  TokensTableId:
+    Value: !Ref TokensTable
+    Export:
+      Name: !Sub ${PululappEnv}-tokens-table-id
+  TokensTableArn:
+    Value: !GetAtt TokensTable.Arn
+    Export:
+      Name: !Sub ${PululappEnv}-tokens-table-arn
