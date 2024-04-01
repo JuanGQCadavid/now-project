@@ -12,7 +12,9 @@ import {
   aws_ssm as ssm,
   aws_events as events,
   aws_events_targets as eventsTargets,
+  aws_apigatewayv2 as apigwv2,
 } from "aws-cdk-lib";
+import * as cdk from 'aws-cdk-lib';
 import { RuleTargetInput } from "aws-cdk-lib/aws-events";
 
 import { Construct } from "constructs";
@@ -34,16 +36,23 @@ export class InfraStack extends Stack {
     function addMethodToApiGateway(
       lambdaToAdd: lambda.Function,
       apigatewayToHandle: apigateway.RestApi,
-      methodName: string
+      methodName: string,
+      token: apigateway.TokenAuthorizer
     ): apigateway.Resource {
-      const method = apigatewayToHandle.root.addResource(methodName);
-      const proxyMethod = method.addResource(`{${methodName}+}`);
 
+      const method = apigatewayToHandle.root.addResource(methodName, {
+        defaultMethodOptions: {
+          authorizationType: apigateway.AuthorizationType.CUSTOM,
+          authorizer: token,
+        } 
+      });
+
+      const proxyMethod = method.addResource(`{${methodName}+}`);
       const lambdaIntegration = new apigateway.LambdaIntegration(lambdaToAdd, {
         proxy: true,
       });
-      method.addMethod("ANY", lambdaIntegration);
 
+      method.addMethod("ANY", lambdaIntegration);
       proxyMethod.addMethod("GET", lambdaIntegration);
       proxyMethod.addMethod("POST", lambdaIntegration);
       proxyMethod.addMethod("PUT", lambdaIntegration);
@@ -55,16 +64,21 @@ export class InfraStack extends Stack {
     function addResourceToMethod(
       lambdaToAdd: lambda.Function,
       baseResource: apigateway.Resource,
-      methodName: string
+      methodName: string,
+      token: apigateway.TokenAuthorizer
     ): apigateway.Resource {
-      var methodResource = baseResource.addResource(methodName);
+      var methodResource = baseResource.addResource(methodName,{
+        defaultMethodOptions: {
+          authorizationType: apigateway.AuthorizationType.CUSTOM,
+          authorizer: token,
+        } 
+      });
       var methoodProxy = methodResource.addResource(`{${methodName}+}`);
-
       const lambdaIntegration = new apigateway.LambdaIntegration(lambdaToAdd, {
         proxy: true,
       });
-      methodResource.addMethod("ANY", lambdaIntegration);
 
+      methodResource.addMethod("ANY", lambdaIntegration);
       methoodProxy.addMethod("GET", lambdaIntegration);
       methoodProxy.addMethod("POST", lambdaIntegration);
       methoodProxy.addMethod("PUT", lambdaIntegration);
@@ -74,15 +88,6 @@ export class InfraStack extends Stack {
     }
 
     // ssm parameters
-
-    // neo4jUser: "neo4jUser",
-    // neo4jPassword: "neo4jPassword",
-    // neo4jUri: "neo4jUri",
-    // dbUser: "dbUser",
-    // dbPassword: "dbPassword",
-    // dbName: "dbName",
-    // dbUrl: "dbUrl",
-
     const neo4jUserParameter = new ssm.StringParameter(
       this,
       "neo4jUserParameter",
@@ -134,10 +139,52 @@ export class InfraStack extends Stack {
       stringValue: "dbName",
     });
 
+    // LAMBDAS
+
+    let path = join(__dirname, "assets", "main.zip");
+    console.log(path);
+
     // MAIN API GATEWAY
     const mainApiGateway = new apigateway.RestApi(this, "mainApiGateway", {});
 
+    const mainApiGatewayV2 = new apigwv2.HttpApi(this, "mainApiGatewayV2", {
+      apiName: "pululapp",
+      createDefaultStage: true,
+    });
+
+    // Authorizers
+    const tokenAuthorizers = new lambda.Function(this, "tokenAuthorizers", {
+      runtime: lambda.Runtime.PROVIDED_AL2023 ,
+      handler: "main",
+      code: lambda.Code.fromAsset(path),
+      functionName: "TokenAuthorizers",
+      environment: {
+        tokenTable: "Tokens",
+      },
+    });
+
+    var httpAuthorizerV2 = new apigwv2.HttpAuthorizer(this, 'httpAuthorizerV2', {
+      httpApi: mainApiGatewayV2,
+      identitySource: ['$request.header.X-Auth'],
+      type: apigwv2.HttpAuthorizerType.IAM,
+      resultsCacheTtl: cdk.Duration.minutes(30),
+      authorizerUri: tokenAuthorizers.functionArn,
+      // the properties below are optional
+      authorizerName: 'tokensAuth',
+      enableSimpleResponses: false,
+    });
+
+
     mainApiGateway.root.addMethod("ANY");
+
+    
+
+    const authorizer = new apigateway.TokenAuthorizer(this, 'Authorizer', {
+      handler: tokenAuthorizers,
+      authorizerName: 'tokenAuthorizers',
+      identitySource: 'method.request.header.X-Auth',
+    });
+    
 
     // SNS
     // TODO -> extra config ?
@@ -185,10 +232,7 @@ export class InfraStack extends Stack {
       })
     );
 
-    // LAMBDAS
 
-    let path = join(__dirname, "assets", "main.zip");
-    console.log(path);
 
     // SPOTS FAMILY
 
@@ -226,7 +270,7 @@ export class InfraStack extends Stack {
     );
 
     const spotsCoreLambda = new lambda.Function(this, "spotsCoreLambda", {
-      runtime: lambda.Runtime.GO_1_X,
+      runtime: lambda.Runtime.PROVIDED_AL2023 ,
       handler: "main",
       role: spotsCoreLambdaRole,
       code: lambda.Code.fromAsset(path),
@@ -243,7 +287,8 @@ export class InfraStack extends Stack {
     const spotsCoredMethod = addResourceToMethod(
       spotsCoreLambda,
       rootMethod,
-      "core"
+      "core",
+      authorizer
     );
     Tags.of(spotsCoreLambda).add("Type", SERVICE_TYPE);
     Tags.of(spotsCoreLambda).add("Family", SPOT_FAMILY);
@@ -281,7 +326,7 @@ export class InfraStack extends Stack {
     );
 
     const spotsOnlineLambda = new lambda.Function(this, "spotsOnlineLambda", {
-      runtime: lambda.Runtime.GO_1_X,
+      runtime: lambda.Runtime.PROVIDED_AL2023 ,
       handler: "main",
       role: spotsOnlineLambdaRole,
       code: lambda.Code.fromAsset(path),
@@ -301,7 +346,8 @@ export class InfraStack extends Stack {
     const spotsOnlineLambdaMethod = addResourceToMethod(
       spotsOnlineLambda,
       rootMethod,
-      "online"
+      "online",
+      authorizer
     );
 
     // const onlineSubscription  = new subscriptions.SqsSubscription(updateLocationDataSQS, {
@@ -355,7 +401,7 @@ export class InfraStack extends Stack {
       this,
       "spotsScheduledLambda",
       {
-        runtime: lambda.Runtime.GO_1_X,
+        runtime: lambda.Runtime.PROVIDED_AL2023 ,
         handler: "main",
         role: spotsScheduledLambdaRole,
         code: lambda.Code.fromAsset(path),
@@ -374,7 +420,8 @@ export class InfraStack extends Stack {
     const spotsScheduledMethod = addResourceToMethod(
       spotsScheduledLambda,
       rootMethod,
-      "scheduled"
+      "scheduled",
+      authorizer
     );
     Tags.of(spotsScheduledLambda).add("Type", SERVICE_TYPE);
     Tags.of(spotsScheduledLambda).add("Family", SPOT_FAMILY);
@@ -403,7 +450,7 @@ export class InfraStack extends Stack {
     );
 
     const spotHandlerLambda = new lambda.Function(this, "spotHandlerLambda", {
-      runtime: lambda.Runtime.GO_1_X,
+      runtime: lambda.Runtime.PROVIDED_AL2023 ,
       handler: "main",
       role: spotHandlerLambdaRole,
       code: lambda.Code.fromAsset(path),
@@ -418,7 +465,8 @@ export class InfraStack extends Stack {
     const spotsHandlerMethod = addResourceToMethod(
       spotHandlerLambda,
       rootMethod,
-      "handler"
+      "handler",
+      authorizer
     );
     Tags.of(spotHandlerLambda).add("Type", SERVICE_TYPE);
     Tags.of(spotHandlerLambda).add("Family", SPOT_FAMILY);
@@ -462,7 +510,7 @@ export class InfraStack extends Stack {
       this,
       "confirmationSpotRESTLambda",
       {
-        runtime: lambda.Runtime.GO_1_X,
+        runtime: lambda.Runtime.PROVIDED_AL2023 ,
         handler: "main",
         role: confirmationSpotLambdaRole,
         code: lambda.Code.fromAsset(path),
@@ -482,14 +530,15 @@ export class InfraStack extends Stack {
     addMethodToApiGateway(
       confirmationSpotRESTLambda,
       mainApiGateway,
-      "confirmation"
+      "confirmation",
+      authorizer
     );
 
     const confirmationSpotSQSLambda = new lambda.Function(
       this,
       "confirmationSpotSQSLambda",
       {
-        runtime: lambda.Runtime.GO_1_X,
+        runtime: lambda.Runtime.PROVIDED_AL2023 ,
         handler: "main",
         role: confirmationSpotLambdaRole,
         code: lambda.Code.fromAsset(path),
@@ -576,25 +625,27 @@ export class InfraStack extends Stack {
 
     userRepositoryDynamodbTable.grantReadWriteData(userServiceLambdaRole);
 
-    const TokensRepositoryDynamodbTable = new dynamodb.Table(
-      this,
-      "TokensRepositoryDynamodbTable",
-      {
-        partitionKey: {
-          name: "TokenId",
-          type: dynamodb.AttributeType.STRING,
-        },
-        billingMode: dynamodb.BillingMode.PROVISIONED,
-        writeCapacity: 5,
-        readCapacity: 5,
-        tableName: "Tokens",
-      }
-    );
+    // const TokensRepositoryDynamodbTable = new dynamodb.Table(
+    //   this,
+    //   "TokensRepositoryDynamodbTable",
+    //   {
+    //     partitionKey: {
+    //       name: "TokenId",
+    //       type: dynamodb.AttributeType.STRING,
+    //     },
+    //     billingMode: dynamodb.BillingMode.PROVISIONED,
+    //     writeCapacity: 5,
+    //     readCapacity: 5,
+    //     tableName: "Tokens",
+    //   }
+    // );
 
-    TokensRepositoryDynamodbTable.grantReadWriteData(userServiceLambdaRole);
+    // TokensRepositoryDynamodbTable.grantReadWriteData(userServiceLambdaRole);
+
+
 
     const userService = new lambda.Function(this, "userService", {
-      runtime: lambda.Runtime.GO_1_X,
+      runtime: lambda.Runtime.PROVIDED_AL2023 ,
       handler: "main",
       code: lambda.Code.fromAsset(path),
       functionName: "UserService",
@@ -605,7 +656,7 @@ export class InfraStack extends Stack {
       },
     });
 
-    addMethodToApiGateway(userService, mainApiGateway, "user");
+    addMethodToApiGateway(userService, mainApiGateway, "user", authorizer);
     Tags.of(userService).add("Type", SERVICE_TYPE);
     Tags.of(userService).add("Family", USER_FAMILY);
 
@@ -656,7 +707,7 @@ export class InfraStack extends Stack {
 
     // -> filterLambda
     const filterLambda = new lambda.Function(this, "filterLambda", {
-      runtime: lambda.Runtime.GO_1_X,
+      runtime: lambda.Runtime.PROVIDED_AL2023 ,
       handler: "main",
       code: lambda.Code.fromAsset(path),
       functionName: "FilterService",
@@ -671,7 +722,7 @@ export class InfraStack extends Stack {
       },
     });
 
-    addMethodToApiGateway(filterLambda, mainApiGateway, "filter");
+    addMethodToApiGateway(filterLambda, mainApiGateway, "filter", authorizer);
     Tags.of(filterLambda).add("Type", SERVICE_TYPE);
     Tags.of(filterLambda).add("Family", FILTER_FAMILY);
 
@@ -702,7 +753,7 @@ export class InfraStack extends Stack {
       this,
       "locationDataUpdater",
       {
-        runtime: lambda.Runtime.GO_1_X,
+        runtime: lambda.Runtime.PROVIDED_AL2023 ,
         handler: "main",
         code: lambda.Code.fromAsset(path),
         functionName: "LocationDataUpdater",
@@ -731,7 +782,7 @@ export class InfraStack extends Stack {
       this,
       "userTrackFilterSearchSession",
       {
-        runtime: lambda.Runtime.GO_1_X,
+        runtime: lambda.Runtime.PROVIDED_AL2023 ,
         handler: "main",
         code: lambda.Code.fromAsset(path),
         functionName: "UserTrackFilterSearchSession",
@@ -792,7 +843,7 @@ export class InfraStack extends Stack {
       this,
       "scheduledPatternsChecker",
       {
-        runtime: lambda.Runtime.GO_1_X,
+        runtime: lambda.Runtime.PROVIDED_AL2023 ,
         handler: "main",
         role: scheduledPatternsCheckerRole,
         code: lambda.Code.fromAsset(path),
