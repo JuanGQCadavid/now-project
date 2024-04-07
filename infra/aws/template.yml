@@ -1,6 +1,6 @@
 ---
 AWSTemplateFormatVersion: 2010-09-09
-Description: Bearing tokyo ecs cluster.
+Description: Pululapp services.
 Parameters:
   PululappEnv:
     Type: String
@@ -15,6 +15,11 @@ Mappings:
       ReverseProxyDNS: "staging.pululapp.com"
     prod:
       ReverseProxyDNS: "api.pululapp.com"
+
+Conditions:
+  CreateProdResources: !Equals
+    - !Ref PululappEnv
+    - prod
 
 Resources:
   ############################################################
@@ -71,49 +76,52 @@ Resources:
 
   ############################################################
   #
-  # ECR Repositories
+  # ECR Repositories - Prod only in order to have one per both envs
   #
   ############################################################
 
-  AisApiEcrRepository:
+  AuthRepository:
     Type: AWS::ECR::Repository
+    Condition: CreateProdResources
     Properties:
-      RepositoryName: london-ais-api
-      ImageTagMutability: IMMUTABLE
-      EncryptionConfiguration:
-        EncryptionType: KMS
-        KmsKey: !GetAtt KmsKey.Arn
       ImageScanningConfiguration:
         ScanOnPush: true
+      ImageTagMutability: IMMUTABLE
+      RepositoryName: auth-service
       LifecyclePolicy:
         LifecyclePolicyText: |
           {
             "rules": [
               {
                 "rulePriority": 1,
-                "description": "Only last 50 release images",
+                "description": "Keep the latest 5 release images",
                 "selection": {
                   "tagStatus": "tagged",
                   "tagPatternList": [
                     "*.*.*"
                   ],
                   "countType": "imageCountMoreThan",
-                  "countNumber": 50
+                  "countNumber": 5
                 },
                 "action": { "type": "expire" }
               },
               {
                 "rulePriority": 2,
-                "description": "Only last 20 no release images",
+                "description": "Keep the last 5 untagged images",
                 "selection": {
                   "tagStatus": "any",
                   "countType": "imageCountMoreThan",
-                  "countNumber": 20
+                  "countNumber": 5
                 },
                 "action": { "type": "expire" }
               }
             ]
           }
+      Tags: 
+        - Key: App
+          Value: Pululapp
+        - Key: Env
+          Value: !Ref PululappEnv
 Outputs:
   ApiGatewayID:
     Value: !Ref CentralGateway
@@ -127,3 +135,9 @@ Outputs:
     Value: !GetAtt TokensTable.Arn
     Export:
       Name: !Sub ${PululappEnv}-tokens-table-arn
+  AuthRepoUri:
+    Condition: CreateProdResources
+    Value: !GetAtt AuthRepository.RepositoryUri
+    Export:
+      Name: auth-ecr-uri
+

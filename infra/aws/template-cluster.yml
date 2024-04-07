@@ -1,0 +1,436 @@
+---
+AWSTemplateFormatVersion: 2010-09-09
+Description: Pululapp cluster
+Parameters:
+  PululappEnv:
+    Type: String
+    Default: staging
+    AllowedValues:
+      - staging
+      - prod
+    Description: Pululapp enviroment
+Mappings:
+  SubnetConfig: 
+    staging:
+      PublicSubnetOneCIDR: '10.0.0.0/20'
+      PublicSubnetTwoCIDR: '10.0.16.0/20'
+      PrivateSubnetOneCIDR: '10.0.128.0/20'
+      PrivateSubnetTwoCIDR: '10.0.144.0/20'
+      ReverseProxyDNS: "staging.pululapp.com"
+      VpcCIDR: '10.0.0.0/16'
+    prod:
+      PublicSubnetOneCIDR: '11.0.0.0/20'
+      PublicSubnetTwoCIDR: '11.0.16.0/20'
+      PrivateSubnetOneCIDR: '11.0.128.0/20'
+      PrivateSubnetTwoCIDR: '11.0.144.0/20'
+      ReverseProxyDNS: "api.pululapp.com"
+      VpcCIDR: '11.0.0.0/16'
+  ServerConfig:
+    staging:
+      ASGDesiredCapacity: 1
+      ASGMaxCapacity: 1
+      ASGMinCapacity: 0
+    prod:
+      ASGDesiredCapacity: 1
+      ASGMaxCapacity: 1
+      ASGMinCapacity: 0
+
+Resources:
+  VPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: !FindInMap ['SubnetConfig', !Ref PululappEnv, 'VpcCIDR']
+      EnableDnsHostnames: true
+      EnableDnsSupport: true
+      Tags: 
+        - Key: App
+          Value: Pululapp
+        - Key: Env
+          Value: !Ref PululappEnv
+
+  InternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags: 
+        - Key: App
+          Value: Pululapp
+        - Key: Env
+          Value: !Ref PululappEnv
+
+  GatewayAttachment:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId: !Ref VPC
+      InternetGatewayId: !Ref InternetGateway
+
+  PublicRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+        - Key: App
+          Value: Pululapp
+        - Key: Env
+          Value: !Ref PululappEnv
+        - Key: Name
+          Value: !Sub public-route-table-${PululappEnv}
+
+  PublicRoute:
+    Type: AWS::EC2::Route
+    DependsOn: GatewayAttachment
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGateway
+
+  ############################################################
+  #
+  # Public subnet one
+  #
+  ############################################################
+
+  PublicSubnetOne:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: !Select
+        - 0
+        - Fn::GetAZs: !Ref 'AWS::Region'
+      CidrBlock: !FindInMap ['SubnetConfig', !Ref PululappEnv, 'PublicSubnetOneCIDR']
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: App
+          Value: Pululapp
+        - Key: Env
+          Value: !Ref PululappEnv
+        - Key: Name
+          Value: !Sub public-subnet-one-${PululappEnv}
+      VpcId: !Ref VPC
+
+  PublicSubnetOneRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PublicSubnetOne
+      RouteTableId: !Ref PublicRouteTable
+
+  ############################################################
+  #
+  # Public subnet Two
+  #
+  ############################################################
+
+  PublicSubnetTwo:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: !Select
+        - 1
+        - Fn::GetAZs: !Ref 'AWS::Region'
+      CidrBlock: !FindInMap ['SubnetConfig', !Ref PululappEnv, 'PublicSubnetTwoCIDR']
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: App
+          Value: Pululapp
+        - Key: Env
+          Value: !Ref PululappEnv
+        - Key: Name
+          Value: !Sub public-subnet-two-${PululappEnv}
+      VpcId: !Ref VPC
+
+  PublicSubnetTwoRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PublicSubnetTwo
+      RouteTableId: !Ref PublicRouteTable
+
+  ############################################################
+  #
+  # ECS Cluster
+  #
+  ############################################################
+
+  EcsCluster:
+    Type: AWS::ECS::Cluster
+    Properties:
+      ClusterName: !Sub ${PululappEnv}-services-cluster
+      ClusterSettings:
+        - Name: containerInsights
+          Value: enabled
+      Tags:
+        - Key: App
+          Value: Pululapp
+        - Key: Env
+          Value: !Ref PululappEnv
+  
+  ECSAutoScalingGroup:
+    Type: AWS::AutoScaling::AutoScalingGroup
+    DependsOn:
+      # This is to ensure that the ASG gets deleted first before these
+      # resources, when it comes to stack teardown.
+      - EcsCluster
+      - InternetGateway
+      - EC2Role # Pending
+    UpdatePolicy:
+      AutoScalingReplacingUpdate:
+        WillReplace: 'true'
+    Properties:
+      AutoScalingGroupName: !Sub ${PululappEnv}-ecs-ec2
+      DesiredCapacity: !FindInMap ['ServerConfig', !Ref PululappEnv, 'ASGDesiredCapacity']
+      DesiredCapacityType: units
+      LaunchTemplate:
+        LaunchTemplateId: !Ref ContainerInstances
+        Version: !GetAtt ContainerInstances.LatestVersionNumber
+      MaxSize: !FindInMap ['ServerConfig', !Ref PululappEnv, 'ASGMaxCapacity'] 
+      MinSize: !FindInMap ['ServerConfig', !Ref PululappEnv, 'ASGMinCapacity'] 
+      # NewInstancesProtectedFromScaleIn: true
+      Tags:
+        - Key: App
+          Value: Pululapp
+        - Key: Env
+          Value: !Ref PululappEnv
+      VPCZoneIdentifier:
+        - !Ref PublicSubnetOne
+        - !Ref PublicSubnetTwo
+  
+  ContainerInstances:
+    Type: AWS::EC2::LaunchTemplate
+    Properties:
+      LaunchTemplateData:
+        ImageId: !Ref ECSAMI
+        InstanceType: !Ref InstanceType
+        IamInstanceProfile:
+        Name: !Ref EC2InstanceProfile
+        SecurityGroupIds:
+        - !Ref ContainerHostSecurityGroup
+        UserData:
+        # This injected configuration file is how the EC2 instance
+        # knows which ECS cluster on your AWS account it should be joining
+        Fn::Base64: !Sub |
+        [settings.ecs]
+          cluster = "${ECSCluster}"
+      # Disable IMDSv1, and require IMDSv2
+        MetadataOptions:
+        HttpEndpoint: enabled
+        HttpTokens: required
+    
+
+
+#   # Security group for all ApiGateways vpc links
+#   ApiGatewayVpcLinkSg:
+#     Type: AWS::EC2::SecurityGroup
+#     Properties:
+#       VpcId: !Ref VPC
+#       GroupName: !Sub tokyo-vpclink-security-group-${env}
+#       GroupDescription: Api Gateway vpclink security group
+#       SecurityGroupIngress:
+#         - IpProtocol: tcp
+#           FromPort: 80
+#           ToPort: 80
+#           CidrIp: 0.0.0.0/0
+
+#   TokyoALBv2:
+#     Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+#     Properties:
+#       Name: !Sub tokyo-ecs-alb-${env}
+#       Scheme: internal
+#       Type: application
+#       Subnets:
+#         - !Ref PrivateSubnetOne
+#         - !Ref PrivateSubnetTwo
+#       SecurityGroups:
+#         - !Ref TokyoALBsg
+#       IpAddressType: ipv4
+#       LoadBalancerAttributes:
+#         - Key: deletion_protection.enabled
+#           Value: false
+#         - Key: load_balancing.cross_zone.enabled
+#           Value: true
+#         - Key: access_logs.s3.enabled
+#           Value: true
+#         - Key: access_logs.s3.bucket
+#           Value: !ImportValue LogBucket
+#         - Key: access_logs.s3.prefix
+#           Value: alb-logs
+#         - Key: idle_timeout.timeout_seconds
+#           Value: 4000
+#         - Key: routing.http.desync_mitigation_mode
+#           Value: defensive
+#         - Key: routing.http.drop_invalid_header_fields.enabled
+#           Value: true
+#         - Key: routing.http.preserve_host_header.enabled
+#           Value: false
+#         - Key: routing.http.x_amzn_tls_version_and_cipher_suite.enabled
+#           Value: false
+#         - Key: routing.http.xff_client_port.enabled
+#           Value: false
+#         - Key: routing.http.xff_header_processing.mode
+#           Value: append
+#         - Key: routing.http2.enabled
+#           Value: true
+#         - Key: waf.fail_open.enabled
+#           Value: false
+#   TokyoALBsg:
+#     Type: AWS::EC2::SecurityGroup
+#     Properties:
+#       GroupDescription: !Sub Security group for tokyo-${env} ALB
+#       GroupName: !Sub tokyo-elb-sg-${env}
+#       VpcId: !Ref VPC
+#       SecurityGroupIngress:
+#         - Description: All from api gateways
+#           SourceSecurityGroupId: !Ref ApiGatewayVpcLinkSg
+#           IpProtocol: "-1"
+#       SecurityGroupEgress:
+#         - Description: any output
+#           CidrIp: "0.0.0.0/0"
+#           IpProtocol: "-1"
+#       Tags:
+#         - Key: AppDomain
+#           Value: Tokyo
+
+#   ContainerSecurityGroup:
+#     Type: AWS::EC2::SecurityGroup
+#     Properties:
+#       GroupDescription: Access to the Fargate containers for for tokyo-${env} ecs
+#       GroupName: !Sub tokyo-ecs-task-sg-${env}
+#       VpcId: !Ref VPC
+#       SecurityGroupIngress:
+#         - Description: All from ELB sg
+#           SourceSecurityGroupId: !Ref TokyoALBsg
+#           IpProtocol: "-1"
+#       SecurityGroupEgress:
+#         - Description: any output
+#           CidrIp: "0.0.0.0/0"
+#           IpProtocol: "-1"
+#       Tags:
+#         - Key: AppDomain
+#           Value: Tokyo
+
+#   ContainerALBIngresRule:
+#     Type: AWS::EC2::SecurityGroupIngress
+#     Properties:
+#       Description: Allow acces from containers to ALB
+#       GroupId: !Ref TokyoALBsg
+#       SourceSecurityGroupId: !Ref ContainerSecurityGroup
+#       IpProtocol: "-1"
+
+#   # It is needed in order to let the task pull images, send logs ans so on.
+#   TaskExecutionRole:
+#     Type: AWS::IAM::Role
+#     Properties:
+#       RoleName: !Sub tokyo-ecs-task-execution-role-${env}
+#       AssumeRolePolicyDocument:
+#         Statement:
+#           - Effect: Allow
+#             Principal:
+#               Service: ecs-tasks.amazonaws.com
+#             Action: 'sts:AssumeRole'
+#       ManagedPolicyArns:
+#         - 'arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy'
+#       Tags:
+#         - Key: AppDomain
+#           Value: Tokyo
+
+#   ############################################################
+#   #
+#   # Application Auto scaling
+#   #
+#   ############################################################
+
+#   AutoScalingRole:
+#     Type: AWS::IAM::Role
+#     Properties:
+#       AssumeRolePolicyDocument:
+#         Version: '2012-10-17'
+#         Statement:
+#           - Effect: Allow
+#             Principal:
+#               Service:
+#                 - ecs-tasks.amazonaws.com
+#             Action:
+#               - 'sts:AssumeRole'
+#       Path: '/'
+#       Policies:
+#         - PolicyName: root
+#           PolicyDocument:
+#             Version: '2012-10-17'
+#             Statement:
+#               - Effect: Allow
+#                 Action:
+#                   - application-autoscaling:*
+#                   - ecs:DescribeServices
+#                   - ecs:UpdateService
+#                   - cloudwatch:DescribeAlarms
+#                   - cloudwatch:PutMetricAlarm
+#                   - cloudwatch:DeleteAlarms
+#                   - cloudwatch:DescribeAlarmHistory
+#                   - cloudwatch:DescribeAlarmsForMetric
+#                   - cloudwatch:GetMetricStatistics
+#                   - cloudwatch:ListMetrics
+#                   - cloudwatch:DisableAlarmActions
+#                   - cloudwatch:EnableAlarmActions
+#                   - iam:CreateServiceLinkedRole
+#                   - sns:CreateTopic
+#                   - sns:Subscribe
+#                   - sns:Get*
+#                   - sns:List*
+#                 Resource: '*'
+
+# Outputs:
+#   Cluster:
+#     Value: !Ref EcsCluster
+#     Export:
+#       Name: !Sub tokyo-${env}-cluster
+#   PrivateSubnetOne:
+#     Value: !Ref PrivateSubnetOne
+#     Export:
+#       Name: !Sub tokyo-${env}-private-subnet-one
+#   PrivateSubnetTwo:
+#     Value: !Ref PrivateSubnetTwo
+#     Export:
+#       Name: !Sub tokyo-${env}-private-subnet-two
+#   PublicSubnetOne:
+#     Value: !Ref PublicSubnetOne
+#     Export:
+#       Name: !Sub tokyo-${env}-public-subnet-one
+#   PublicSubnetTwo:
+#     Value: !Ref PublicSubnetTwo
+#     Export:
+#       Name: !Sub tokyo-${env}-public-subnet-two
+#   PrivateRouteTableOne:
+#     Value: !Ref PrivateRouteTableOne
+#     Export:
+#       Name: !Sub tokyo-${env}-private-rt-one
+#   PrivateRouteTableTwo:
+#     Value: !Ref PrivateRouteTableTwo
+#     Export:
+#       Name: !Sub tokyo-${env}-private-rt-two
+#   AlbArn:
+#     Value: !Ref TokyoALBv2
+#     Export:
+#       Name: !Sub tokyo-${env}-alb-arn
+#   AlbDnsName:
+#     Value: !GetAtt TokyoALBv2.DNSName
+#     Export:
+#       Name: !Sub tokyo-${env}-alb-dns-name
+#   VpcTokyoEcs:
+#     Value: !Ref VPC
+#     Export:
+#       Name: !Sub tokyo-${env}-vpc-arn
+#   TaskSgId:
+#     Value: !Ref ContainerSecurityGroup
+#     Export:
+#       Name: !Sub tokyo-${env}-task-sg-id
+#   ALBSecurityGroupId:
+#     Value: !Ref TokyoALBsg
+#     Export:
+#       Name: !Sub tokyo-${env}-alb-sg-id
+#   TaskExecutionRoleId:
+#     Value: !Ref TaskExecutionRole
+#     Export:
+#       Name: !Sub tokyo-${env}-task-execution-role
+#   TaskExecutionRole:
+#     Value: !GetAtt TaskExecutionRole.Arn
+#     Export:
+#       Name: !Sub cluster-task-execution-role-${env}
+#   AutoScalingRoleARN:
+#     Value: !GetAtt AutoScalingRole.Arn
+#     Export:
+#       Name: !Sub tokyo-${env}-scaling-role-arn
