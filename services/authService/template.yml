@@ -1,0 +1,120 @@
+---
+AWSTemplateFormatVersion: 2010-09-09
+Description: Pululapp Auth Service.
+Parameters:
+  PululappEnv:
+    Type: String
+    Default: staging
+    AllowedValues:
+      - staging
+      - prod
+    Description: Pululapp enviroment
+  ServiceImage:
+    Type: String
+    Description: Service image
+  ServiceName:
+    Type: String
+    Description: Service name
+    Default: auth
+  ServiceDescription:
+    Type: String
+    Description: Service description
+    Default: Transform a valid token into proper user headers on request
+
+Mappings:
+  ServiceConfig:
+    staging:
+      RAM: 128
+      TimeOut: 60
+    prod:
+      RAM: 128
+      TimeOut: 60
+
+Resources:
+  ServiceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      MaxSessionDuration: 3600
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+        - arn:aws:iam::aws:policy/AWSXrayFullAccess
+      Policies:
+        - PolicyName: !Sub ${ServiceName}-dynamodb 
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - dynamodb:GetItem
+                  - dynamodb:Scan
+                  - dynamodb:Query
+                  - dynamodb:GetResourcePolicy
+                  - dynamodb:ListStreams
+                  - dynamodb:GetRecords
+                Resource:
+                  - Fn::ImportValue:
+                      !Sub ${PululappEnv}-tokens-table-arn
+  AuthLambda:
+    Type: AWS::Lambda::Function
+    Properties:
+      Architectures: 
+        - arm64
+      Code: 
+        ImageUri: !Ref ServiceImage
+      Description: !Ref ServiceDescription
+      Environment: 
+        TokensTable: 
+          Fn::ImportValue:
+            !Sub ${PululappEnv}-tokens-table-id
+      FunctionName: !Sub ${ServiceName}-${PululappEnv}
+      # ImageConfig: 
+      #   ImageConfig
+      KmsKeyArn: String
+      LoggingConfig: 
+        ApplicationLogLevel: INFO
+        LogFormat: Text
+        SystemLogLevel: DEBUG
+      MemorySize: !FindInMap ['ServiceConfig', !Ref PululappEnv, 'RAM']
+      PackageType: Image
+      Role: !GetAtt ServiceRole.Arn
+      Tags: 
+        - Key: App
+          Value: Pululapp
+        - Key: Env
+          Value: !Ref PululappEnv
+      Timeout: !FindInMap ['ServiceConfig', !Ref PululappEnv, 'TimeOut']
+      TracingConfig: 
+        Mode: Active
+
+
+  # DefaultAuthorizer:
+  #   Type: AWS::ApiGatewayV2::Authorizer
+  #   Properties:
+  #     ApiId: !Ref CentralGateway
+  #     # AuthorizerCredentialsArn: String
+  #     AuthorizerPayloadFormatVersion: "2.0"
+  #     AuthorizerResultTtlInSeconds: 3600 # TODO -> make it short once we are carefull about tokens TTL
+  #     AuthorizerType: REQUEST
+  #     AuthorizerUri: String -------
+  #     EnableSimpleResponses: False
+  #     IdentitySource: 
+  #       - "$request.header.X-Auth"
+  #     Name: defaultAuth
+
+
+
+
+# Outputs:
+#   ApiGatewayID:
+#     Value: !Ref CentralGateway
+#     Export:
+#       Name: !Sub ${PululappEnv}-central-gateway-id
