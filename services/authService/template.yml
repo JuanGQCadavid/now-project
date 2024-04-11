@@ -9,17 +9,22 @@ Parameters:
       - staging
       - prod
     Description: Pululapp enviroment
-  ServiceImage:
+  ServiceImageVersion:
     Type: String
     Description: Service image
   ServiceName:
     Type: String
     Description: Service name
-    Default: auth
+    Default: auth-svc
   ServiceDescription:
     Type: String
     Description: Service description
     Default: Transform a valid token into proper user headers on request
+  ECROutput:
+    Type: String
+    Description: Service ECR cloudformation output
+    Default: auth-ecr-uri
+
 
 Mappings:
   ServiceConfig:
@@ -48,7 +53,7 @@ Resources:
         - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
         - arn:aws:iam::aws:policy/AWSXrayFullAccess
       Policies:
-        - PolicyName: !Sub ${ServiceName}-dynamodb 
+        - PolicyName: !Sub ${PululappEnv}-${ServiceName}-dynamodb 
           PolicyDocument:
             Version: '2012-10-17'
             Statement:
@@ -63,25 +68,32 @@ Resources:
                 Resource:
                   - Fn::ImportValue:
                       !Sub ${PululappEnv}-tokens-table-arn
+
   AuthLambda:
     Type: AWS::Lambda::Function
     Properties:
       Architectures: 
         - arm64
       Code: 
-        ImageUri: !Ref ServiceImage
+        ImageUri: 
+          Fn::Sub:
+            - "${ECR_URI}:${VERSION}"
+            - VERSION: !Ref ServiceImageVersion
+              ECR_URI: 
+                Fn::ImportValue:
+                  !Ref ECROutput
       Description: !Ref ServiceDescription
-      Environment: 
-        TokensTable: 
-          Fn::ImportValue:
-            !Sub ${PululappEnv}-tokens-table-id
-      FunctionName: !Sub ${ServiceName}-${PululappEnv}
+      Environment:
+        Variables:
+          TokensTable: 
+            Fn::ImportValue:
+              !Sub ${PululappEnv}-tokens-table-id
+      FunctionName: !Sub ${PululappEnv}-${ServiceName}
       # ImageConfig: 
       #   ImageConfig
-      KmsKeyArn: String
       LoggingConfig: 
         ApplicationLogLevel: INFO
-        LogFormat: Text
+        LogFormat: JSON
         SystemLogLevel: DEBUG
       MemorySize: !FindInMap ['ServiceConfig', !Ref PululappEnv, 'RAM']
       PackageType: Image
@@ -91,6 +103,8 @@ Resources:
           Value: Pululapp
         - Key: Env
           Value: !Ref PululappEnv
+        - Key: Service
+          Value: !Ref ServiceName
       Timeout: !FindInMap ['ServiceConfig', !Ref PululappEnv, 'TimeOut']
       TracingConfig: 
         Mode: Active
