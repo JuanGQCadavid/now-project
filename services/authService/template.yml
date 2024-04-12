@@ -91,10 +91,10 @@ Resources:
       FunctionName: !Sub ${PululappEnv}-${ServiceName}
       # ImageConfig: 
       #   ImageConfig
-      LoggingConfig: 
-        ApplicationLogLevel: INFO
-        LogFormat: JSON
-        SystemLogLevel: DEBUG
+      # LoggingConfig: 
+      #   ApplicationLogLevel: INFO
+      #   LogFormat: JSON
+      #   SystemLogLevel: DEBUG
       MemorySize: !FindInMap ['ServiceConfig', !Ref PululappEnv, 'RAM']
       PackageType: Image
       Role: !GetAtt ServiceRole.Arn

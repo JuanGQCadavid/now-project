@@ -2,6 +2,7 @@ SHELL := /bin/sh
 CLOUD_REGION_NAME := $(if $(CLOUD_REGION_NAME),$(CLOUD_REGION_NAME),us-east-2)
 ENV := 	$(if $(ENV),$(ENV),staging)
 STACK := $(if $(STACK),$(STACK),auth-service)
+PLATFORM := $(if $(PLATFORM),$(PLATFORM),arm64)
 VERSION := $(if $(VERSION),$(VERSION),)
 ECR_URI := $(shell aws cloudformation --region $(CLOUD_REGION_NAME) describe-stacks --stack-name pululapp-core-prod --query  "Stacks[0].Outputs[?ExportName=='auth-ecr-uri'].OutputValue" --output text)
 
@@ -15,10 +16,10 @@ ecr-login:
 	aws ecr get-login-password --region $(CLOUD_REGION_NAME) | docker login --username AWS --password-stdin 732596568988.dkr.ecr.$(CLOUD_REGION_NAME).amazonaws.com
 
 # ecr-deploy: ecr-login
-# 	docker buildx build --platform=linux/amd64 --build-arg CMD="lambda" -t $(ECR_URI):$(VERSION) --push  . 
+# 	docker buildx build --platform=linux/$(PLATFORM) --build-arg CMD="lambda" --build-arg GOARCH="$(PLATFORM)" -t $(ECR_URI):$(VERSION) --push  . 
 
 ecr-deploy: ecr-login
-	docker buildx build --platform=linux/arm64 --build-arg CMD="lambda" -t $(STACK):$(VERSION) --load . \
+	docker buildx build --platform=linux/$(PLATFORM) --build-arg CMD="lambda" --build-arg GOARCH="$(PLATFORM)" -t $(STACK):$(VERSION) --load . \
 	&& docker tag $(STACK):$(VERSION) $(ECR_URI):$(VERSION) \
 	&& docker push $(ECR_URI):$(VERSION)
 
