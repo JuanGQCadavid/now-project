@@ -24,8 +24,6 @@ Parameters:
     Type: String
     Description: Service ECR cloudformation output
     Default: auth-ecr-uri
-
-
 Mappings:
   ServiceConfig:
     staging:
@@ -53,7 +51,7 @@ Resources:
         - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
         - arn:aws:iam::aws:policy/AWSXrayFullAccess
       Policies:
-        - PolicyName: !Sub ${PululappEnv}-${ServiceName}-dynamodb 
+        - PolicyName: !Sub ${ServiceName}-dynamodb-${PululappEnv}
           PolicyDocument:
             Version: '2012-10-17'
             Statement:
@@ -88,7 +86,13 @@ Resources:
           TokensTable: 
             Fn::ImportValue:
               !Sub ${PululappEnv}-tokens-table-id
-      FunctionName: !Sub ${PululappEnv}-${ServiceName}
+          UsersTable: 
+            Fn::ImportValue:
+              !Sub ${PululappEnv}-users-table-id
+          UsersIndexTable: 
+            Fn::ImportValue:
+              !Sub ${PululappEnv}-users-id
+      FunctionName: !Sub ${ServiceName}-${PululappEnv}
       # ImageConfig: 
       #   ImageConfig
       # LoggingConfig: 
