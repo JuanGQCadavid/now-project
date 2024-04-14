@@ -44,11 +44,13 @@ func (svc *AuthService) GetUserDetailsFromToken(tokenEncoded string) (*domain.Us
 		return nil, ErrWhileDecryptingToken
 	}
 
-	if err := svc.tokensRepo.IsTokenValid(token); err != nil {
+	tokenData, err := svc.tokensRepo.GetTokenData(token)
+
+	if err != nil {
 		return nil, err
 	}
 
-	user, err = svc.userRepo.GetUserData(token)
+	user, err = svc.userRepo.GetUserData(tokenData)
 
 	if err != nil {
 		return nil, err

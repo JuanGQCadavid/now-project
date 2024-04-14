@@ -13,8 +13,9 @@ var (
 
 type TokensRepository interface {
 	IsTokenValid(domain.Token) error
+	GetTokenData(token domain.Token) (*domain.Tokens, error)
 }
 
 type UserRepository interface {
-	GetUserData(token domain.Token) (*domain.User, error)
+	GetUserData(token *domain.Tokens) (*domain.User, error)
 }

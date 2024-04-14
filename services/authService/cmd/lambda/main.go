@@ -83,19 +83,29 @@ func generatePolicy(principalId, effect, resource string, userDetails *domain.Us
 }
 
 func init() {
-	session := session.Must(session.NewSessionWithOptions(session.Options{
+	var (
+		sess            *session.Session
+		tokensTableName string
+		userTableName   string
+		usersIndex      string
+		token           *tokens.DynamoDBTokensRepository
+		repo            *user.DynamoDBUserRepository
+		encryptor       *encrypters.SimpleEncrypt
+	)
+
+	sess = session.Must(session.NewSessionWithOptions(session.Options{
 		SharedConfigState: session.SharedConfigEnable,
 	}))
+	encryptor = encrypters.NewSimpleEncrypt()
 
-	tokensTableName := utils.Getenv("tokensTableName", "Tokens")
-	tokens := tokens.NewDynamoDBTokensRepository(tokensTableName, session)
+	tokensTableName = utils.Getenv("TokensTable", "Tokens-staging")
+	token = tokens.NewDynamoDBTokensRepository(tokensTableName, sess, encryptor)
 
-	userTableName := utils.Getenv("usersTableName", "Users")
-	repo := user.NewDynamoDBUserRepository(userTableName, "UserId-index", session)
+	userTableName = utils.Getenv("UsersTable", "Users-staging")
+	usersIndex = utils.Getenv("UsersIndexTable", "UserID-index")
+	repo = user.NewDynamoDBUserRepository(userTableName, usersIndex, sess)
 
-	encryptor := encrypters.NewSimpleEncrypt()
-
-	appService = service.NewAuthService(tokens, encryptor, repo)
+	appService = service.NewAuthService(token, encryptor, repo)
 }
 
 func main() {

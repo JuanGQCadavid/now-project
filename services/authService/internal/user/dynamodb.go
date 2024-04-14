@@ -31,7 +31,7 @@ func NewDynamoDBUserRepository(tableName, indexName string, session *session.Ses
 
 // Fetch user data from repository
 
-func (repo *DynamoDBUserRepository) GetUserData(token domain.Token) (*domain.User, error) {
+func (repo *DynamoDBUserRepository) GetUserData(token *domain.Tokens) (*domain.User, error) {
 	user := &domain.User{}
 
 	if err := utils.DynamoQueryOneAndMapTo(repo.keyName, token.UserID, repo.tableName, repo.indexName, user, repo.svc); err != nil {

@@ -1,17 +1,31 @@
 package main
 
 import (
-	"github.com/JuanGQCadavid/now-project/services/authService/internal/core/domain"
+	"github.com/JuanGQCadavid/now-project/services/authService/internal/core/service"
+	"github.com/JuanGQCadavid/now-project/services/authService/internal/encrypters"
 	"github.com/JuanGQCadavid/now-project/services/authService/internal/tokens"
+	"github.com/JuanGQCadavid/now-project/services/authService/internal/user"
 	"github.com/JuanGQCadavid/now-project/services/authService/internal/utils"
 	"github.com/JuanGQCadavid/now-project/services/pkgs/common/logs"
 	"github.com/aws/aws-sdk-go/aws/session"
 )
 
 func main() {
-	session := session.Must(session.NewSessionWithOptions(session.Options{
-		SharedConfigState: session.SharedConfigEnable,
-	}))
+	serviceTest()
+}
+
+func reposTest() {
+	// session := session.Must(session.NewSessionWithOptions(session.Options{
+	// 	SharedConfigState: session.SharedConfigEnable,
+	// }))
+
+	// encryptor := encrypters.NewSimpleEncrypt()
+
+	// if resp, err := encryptor.DecodeToken("YjgxYjUyMjQtZGUyNS00NjIzLWExNDAtNTlkMjkyNjI3ZjZhKzhjZGQzN2M2LWNmNWUtNDc5Yi1iMzczLTY2MjJkOTQ3YjlkMg=="); err != nil {
+	// 	logs.Error.Fatalln(err.Error())
+	// } else {
+	// 	logs.Info.Printf("Token: %+v", resp)
+	// }
 
 	// userTableName := utils.Getenv("usersTableName", "Users")
 	// // tokensTableName := utils.getenv("tokensTableName", "Tokens")
@@ -25,15 +39,49 @@ func main() {
 	// 	logs.Info.Printf("Resp: %+v\n", resp)
 	// }
 
-	tokensTableName := utils.Getenv("tokensTableName", "Tokens")
-	tokens := tokens.NewDynamoDBTokensRepository(tokensTableName, session)
+	// tokensTableName := utils.Getenv("tokensTableName", "Tokens")
+	// tokens := tokens.NewDynamoDBTokensRepository(tokensTableName, session)
 
-	if err := tokens.IsTokenValid(domain.Token{
-		UserID:  "bcc1fc6e-aec9-4234-9e78-2c360219df70",
-		TokenID: "ed956a1f-1731-4400-b76b-0f3480d0df36",
-	}); err != nil {
-		logs.Error.Println("Token err:= !", err.Error())
+	// if err := tokens.IsTokenValid(domain.Token{
+	// 	TokenValue: "8cdd37c6-cf5e-479b-b373-6622d947b9d2",
+	// 	TokenID:    "ed956a1f-1731-4400-b76b-0f3480d0df36",
+	// }); err != nil {
+	// 	logs.Error.Println("Token err:= !", err.Error())
+	// } else {
+	// 	logs.Info.Println("We did it!")
+	// }
+}
+
+func serviceTest() {
+	var (
+		sess            *session.Session
+		tokensTableName string
+		userTableName   string
+		usersIndex      string
+		token           *tokens.DynamoDBTokensRepository
+		repo            *user.DynamoDBUserRepository
+		encryptor       *encrypters.SimpleEncrypt
+	)
+
+	sess = session.Must(session.NewSessionWithOptions(session.Options{
+		SharedConfigState: session.SharedConfigEnable,
+	}))
+
+	encryptor = encrypters.NewSimpleEncrypt()
+
+	tokensTableName = utils.Getenv("TokensTable", "Tokens-staging")
+	token = tokens.NewDynamoDBTokensRepository(tokensTableName, sess, encryptor)
+
+	userTableName = utils.Getenv("UsersTable", "Users-staging")
+	usersIndex = utils.Getenv("UsersIndexTable", "UserId-index")
+	repo = user.NewDynamoDBUserRepository(userTableName, usersIndex, sess)
+
+	appService := service.NewAuthService(token, encryptor, repo)
+
+	if resp, err := appService.GetUserDetailsFromToken("YjgxYjUyMjQtZGUyNS00NjIzLWExNDAtNTlkMjkyNjI3ZjZhKzhjZGQzN2M2LWNmNWUtNDc5Yi1iMzczLTY2MjJkOTQ3YjlkMg=="); err != nil {
+		logs.Error.Fatalln(err.Error())
 	} else {
-		logs.Info.Println("We did it!")
+		logs.Info.Printf("%+v", resp)
 	}
+
 }

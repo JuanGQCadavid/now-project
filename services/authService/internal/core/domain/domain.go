@@ -24,6 +24,6 @@ type UserDetails struct {
 }
 
 type Token struct {
-	UserID  string
-	TokenID string
+	TokenID    string
+	TokenValue string
 }
