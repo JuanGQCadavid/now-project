@@ -81,7 +81,7 @@ Resources:
       AttributeDefinitions: 
         - AttributeName: PhoneNumber
           AttributeType: S
-        - AttributeName: UserID
+        - AttributeName: UserId
           AttributeType: S
       BillingMode: PAY_PER_REQUEST
       ContributorInsightsSpecification: 
@@ -90,9 +90,9 @@ Resources:
       GlobalSecondaryIndexes:
         - ContributorInsightsSpecification: 
             Enabled: True
-          IndexName: UserID-index
+          IndexName: UserId-index
           KeySchema: 
-            - AttributeName: UserID
+            - AttributeName: UserId
               KeyType: HASH 
           Projection: 
             ProjectionType: ALL
@@ -169,7 +169,7 @@ Outputs:
     Export:
       Name: !Sub ${PululappEnv}-users-table-id
   UsersIdIndex:
-    Value: UserID-index
+    Value: UserId-index
     Export:
       Name: !Sub ${PululappEnv}-users-id
   TokensTableArn:
