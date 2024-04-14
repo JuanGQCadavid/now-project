@@ -56,18 +56,51 @@ Resources:
       AttributeDefinitions: 
         - AttributeName: TokenId
           AttributeType: S
-      BillingMode: PROVISIONED
+      BillingMode: PAY_PER_REQUEST
       ContributorInsightsSpecification: 
         Enabled: True
       DeletionProtectionEnabled: True
       KeySchema: 
         - AttributeName: TokenId
           KeyType: HASH 
-      ProvisionedThroughput: 
-        ReadCapacityUnits: 5
-        WriteCapacityUnits: 5
+      # BillingMode: PROVISIONED 
+      # ProvisionedThroughput: 
+      #   ReadCapacityUnits: 5
+      #   WriteCapacityUnits: 5
       TableClass: STANDARD 
       TableName: !Sub Tokens-${PululappEnv}
+      Tags: 
+        - Key: App
+          Value: Pululapp
+        - Key: Env
+          Value: !Ref PululappEnv
+
+  UsersTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions: 
+        - AttributeName: PhoneNumber
+          AttributeType: S
+        - AttributeName: UserID
+          AttributeType: S
+      BillingMode: PAY_PER_REQUEST
+      ContributorInsightsSpecification: 
+        Enabled: True
+      DeletionProtectionEnabled: True
+      GlobalSecondaryIndexes:
+        - ContributorInsightsSpecification: 
+            Enabled: True
+          IndexName: UserID-index
+          KeySchema: 
+            - AttributeName: UserID
+              KeyType: HASH 
+          Projection: 
+            ProjectionType: ALL
+      KeySchema: 
+        - AttributeName: PhoneNumber
+          KeyType: HASH 
+      TableClass: STANDARD 
+      TableName: !Sub Users-${PululappEnv}
       Tags: 
         - Key: App
           Value: Pululapp
@@ -131,6 +164,14 @@ Outputs:
     Value: !Ref TokensTable
     Export:
       Name: !Sub ${PululappEnv}-tokens-table-id
+  UsersTableId:
+    Value: !Ref UsersTable
+    Export:
+      Name: !Sub ${PululappEnv}-users-table-id
+  UsersIdIndex:
+    Value: UserID-index
+    Export:
+      Name: !Sub ${PululappEnv}-users-id
   TokensTableArn:
     Value: !GetAtt TokensTable.Arn
     Export:
