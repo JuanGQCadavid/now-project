@@ -24,14 +24,20 @@ Parameters:
     Type: String
     Description: Service ECR cloudformation output
     Default: auth-ecr-uri
+  AuthHeader:
+    Type: String
+    Description: Auth header
+    Default: X-Auth
 Mappings:
   ServiceConfig:
     staging:
       RAM: 128
       TimeOut: 60
+      AuthTTL: 3600 # TODO -> make it short once we are carefull about tokens TTL
     prod:
       RAM: 128
       TimeOut: 60
+      AuthTTL: 3600 # TODO -> make it short once we are carefull about tokens TTL
 
 Resources:
   ServiceRole:
@@ -66,6 +72,11 @@ Resources:
                 Resource:
                   - Fn::ImportValue:
                       !Sub ${PululappEnv}-tokens-table-arn
+                  - Fn::Sub:
+                    - "${TABLE_ARN}/index/*"
+                    - TABLE_ARN: 
+                        Fn::ImportValue:
+                          !Sub ${PululappEnv}-users-table-arn
 
   AuthLambda:
     Type: AWS::Lambda::Function
@@ -113,26 +124,30 @@ Resources:
       TracingConfig: 
         Mode: Active
 
+  LambdaApiGatewayPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref AuthLambda
+      Principal: apigateway.amazonaws.com
 
-  # DefaultAuthorizer:
-  #   Type: AWS::ApiGatewayV2::Authorizer
-  #   Properties:
-  #     ApiId: !Ref CentralGateway
-  #     # AuthorizerCredentialsArn: String
-  #     AuthorizerPayloadFormatVersion: "2.0"
-  #     AuthorizerResultTtlInSeconds: 3600 # TODO -> make it short once we are carefull about tokens TTL
-  #     AuthorizerType: REQUEST
-  #     AuthorizerUri: String -------
-  #     EnableSimpleResponses: False
-  #     IdentitySource: 
-  #       - "$request.header.X-Auth"
-  #     Name: defaultAuth
+  DefaultAuthorizer:
+    Type: AWS::ApiGatewayV2::Authorizer
+    Properties:
+      ApiId: 
+        Fn::ImportValue: 
+          !Sub ${PululappEnv}-central-gateway-id
+      AuthorizerPayloadFormatVersion: "2.0"
+      AuthorizerResultTtlInSeconds: !FindInMap ['ServiceConfig', !Ref PululappEnv, 'AuthTTL']
+      AuthorizerType: REQUEST
+      AuthorizerUri:  !Sub  arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${AuthLambda}/invocations
+      EnableSimpleResponses: False
+      IdentitySource: 
+        - !Sub "$request.header.${AuthHeader}"
+      Name: !Sub default-${PululappEnv}
 
-
-
-
-# Outputs:
-#   ApiGatewayID:
-#     Value: !Ref CentralGateway
-#     Export:
-#       Name: !Sub ${PululappEnv}-central-gateway-id
+Outputs:
+  AuthorizerID:
+    Value: !Ref DefaultAuthorizer
+    Export:
+      Name: !Sub ${PululappEnv}-auth-default-id

@@ -6,6 +6,8 @@ ARG GOARCH="arm64"
 
 ARG CMD="http"
 
+COPY tmp/pkgs /pkgs
+
 WORKDIR /app
 
 COPY cmd/${CMD} cmd/${CMD}
