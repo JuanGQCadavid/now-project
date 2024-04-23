@@ -27,6 +27,7 @@ Resources:
   # Central ApiGateway
   #
   ############################################################
+
   CentralGateway:
     Type: AWS::ApiGatewayV2::Api
     Properties:
@@ -164,6 +165,10 @@ Outputs:
     Value: !Ref TokensTable
     Export:
       Name: !Sub ${PululappEnv}-tokens-table-id
+  TokensTableArn:
+    Value: !GetAtt TokensTable.Arn
+    Export:
+      Name: !Sub ${PululappEnv}-tokens-table-arn
   UsersTableId:
     Value: !Ref UsersTable
     Export:
@@ -172,10 +177,10 @@ Outputs:
     Value: UserId-index
     Export:
       Name: !Sub ${PululappEnv}-users-id
-  TokensTableArn:
-    Value: !GetAtt TokensTable.Arn
+  UsersTableARN:
+    Value: !GetAtt UsersTable.Arn
     Export:
-      Name: !Sub ${PululappEnv}-tokens-table-arn
+      Name: !Sub ${PululappEnv}-users-table-arn
   AuthRepoUri:
     Condition: CreateProdResources
     Value: !GetAtt AuthRepository.RepositoryUri
