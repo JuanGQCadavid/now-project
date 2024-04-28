@@ -15,6 +15,11 @@ Mappings:
       ReverseProxyDNS: "staging.pululapp.com"
     prod:
       ReverseProxyDNS: "api.pululapp.com"
+  TopicsDefaultConfig:
+    staging:
+      ArchivePolicy: 5
+    prod:
+      ArchivePolicy: 5
 
 Conditions:
   CreateProdResources: !Equals
@@ -38,12 +43,80 @@ Resources:
       # DisableExecuteApiEndpoint: Boolean
       Name: !Sub pululapp-central-${PululappEnv}
       ProtocolType: HTTP
+      # RouteKey: "$default"
       # RouteSelectionExpression: String
       Tags: 
         App: Pululapp
         Env: !Ref PululappEnv
       # Target: String
       # Version: String
+
+
+  
+  ############################################################
+  #
+  # App Topics
+  #
+  ############################################################
+
+  SpotActivityTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      # DeliveryStatusLogging: 
+      #   - LoggingConfig
+      DisplayName: !Sub "spot-activity-${PululappEnv}"
+      Tags: 
+        - Key: App
+          Value: Pululapp
+        - Key: Env
+          Value: !Ref PululappEnv
+      TopicName: !Sub "spot-activity-${PululappEnv}"
+      # TracingConfig: String
+
+  ############################################################
+  #
+  # SSM Parameters
+  #
+  ############################################################
+
+  Neo4jUser:
+    Type: AWS::SSM::Parameter
+    Properties:
+      DataType: text
+      Description: Username for Neo4j database
+      Name: !Sub "neo4j-user-${PululappEnv}"
+      Tags: 
+        App: Pululapp
+        Env: !Ref PululappEnv
+      Tier: Standard
+      Type: String
+      Value: PLACE_HOLDER
+  
+  Neo4jPassword:
+    Type: AWS::SSM::Parameter
+    Properties:
+      DataType: text
+      Description: Password for Neo4j database
+      Name: !Sub "neo4j-pass-${PululappEnv}"
+      Tags: 
+        App: Pululapp
+        Env: !Ref PululappEnv
+      Tier: Standard
+      Type: String
+      Value: PLACE_HOLDER
+
+  Neo4jURI:
+    Type: AWS::SSM::Parameter
+    Properties:
+      DataType: text
+      Description: URI for Neo4j database
+      Name: !Sub "neo4j-uri-${PululappEnv}"
+      Tags: 
+        App: Pululapp
+        Env: !Ref PululappEnv
+      Tier: Standard
+      Type: String
+      Value: PLACE_HOLDER
   
   ############################################################
   #
@@ -156,6 +229,49 @@ Resources:
           Value: Pululapp
         - Key: Env
           Value: !Ref PululappEnv
+
+  SpotCoreRepository:
+    Type: AWS::ECR::Repository
+    Condition: CreateProdResources
+    Properties:
+      ImageScanningConfiguration:
+        ScanOnPush: true
+      ImageTagMutability: IMMUTABLE
+      RepositoryName: spot-core-service
+      LifecyclePolicy:
+        LifecyclePolicyText: |
+          {
+            "rules": [
+              {
+                "rulePriority": 1,
+                "description": "Keep the latest 5 release images",
+                "selection": {
+                  "tagStatus": "tagged",
+                  "tagPatternList": [
+                    "*.*.*"
+                  ],
+                  "countType": "imageCountMoreThan",
+                  "countNumber": 5
+                },
+                "action": { "type": "expire" }
+              },
+              {
+                "rulePriority": 2,
+                "description": "Keep the last 5 untagged images",
+                "selection": {
+                  "tagStatus": "any",
+                  "countType": "imageCountMoreThan",
+                  "countNumber": 5
+                },
+                "action": { "type": "expire" }
+              }
+            ]
+          }
+      Tags: 
+        - Key: App
+          Value: Pululapp
+        - Key: Env
+          Value: !Ref PululappEnv
 Outputs:
   ApiGatewayID:
     Value: !Ref CentralGateway
@@ -186,4 +302,42 @@ Outputs:
     Value: !GetAtt AuthRepository.RepositoryUri
     Export:
       Name: auth-ecr-uri
+  SpotRepoUri:
+    Condition: CreateProdResources
+    Value: !GetAtt SpotCoreRepository.RepositoryUri
+    Export:
+      Name: spot-creator-ecr-uri
 
+  ############################################################
+  #
+  # Topics outputs
+  #
+  ############################################################
+
+  SpotActivityTopicARN:
+    Value: !GetAtt SpotActivityTopic.TopicArn
+    Export:
+      Name: !Sub ${PululappEnv}-spot-activity-arn
+  SpotActivityTopicName:
+    Value: !GetAtt SpotActivityTopic.TopicName
+    Export:
+      Name: !Sub ${PululappEnv}-spot-activity-name
+  
+  ############################################################
+  #
+  # SSM outputs
+  #
+  ############################################################
+
+  Neo4jUserName:
+    Value: !Ref Neo4jUser
+    Export:
+      Name: !Sub ${PululappEnv}-neo4j-user
+  Neo4jPasswordName:
+    Value: !Ref Neo4jPassword
+    Export:
+      Name: !Sub ${PululappEnv}-neo4j-pass
+  Neo4jURIName:
+    Value: !Ref Neo4jURI
+    Export:
+      Name: !Sub ${PululappEnv}-neo4j-uri

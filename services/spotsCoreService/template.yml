@@ -1,0 +1,129 @@
+---
+AWSTemplateFormatVersion: 2010-09-09
+Description: Pululapp Spot core Service.
+Parameters:
+  PululappEnv:
+    Type: String
+    Default: staging
+    AllowedValues:
+      - staging
+      - prod
+    Description: Pululapp enviroment
+  ServiceImageVersion:
+    Type: String
+    Description: Service image
+  ServiceName:
+    Type: String
+    Description: Service name
+    Default: spot-core-svc
+  ServiceDescription:
+    Type: String
+    Description: Service description
+    Default: Spot core operation service
+  ECROutput:
+    Type: String
+    Description: Service ECR cloudformation output
+    Default: spot-creator-ecr-uri
+Mappings:
+  ServiceConfig:
+    staging:
+      RAM: 128
+      TimeOut: 60
+    prod:
+      RAM: 128
+      TimeOut: 60
+
+Resources:
+  ServiceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      MaxSessionDuration: 3600
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaRole
+        - arn:aws:iam::aws:policy/AWSXrayFullAccess
+      Policies:
+        - PolicyName: !Sub ${ServiceName}-sns-${PululappEnv}
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - sns:*
+                Resource:
+                  - Fn::ImportValue:
+                      !Sub ${PululappEnv}-spot-activity-arn
+        - PolicyName: !Sub ${ServiceName}-ssm-${PululappEnv}
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - ssm:GetParameters
+                Resource:
+                  - "*"
+  ServiceLambda:
+    Type: AWS::Lambda::Function
+    Properties:
+      Architectures: 
+        - arm64
+      Code: 
+        ImageUri: 
+          Fn::Sub:
+            - "${ECR_URI}:${VERSION}"
+            - VERSION: !Ref ServiceImageVersion
+              ECR_URI: 
+                Fn::ImportValue:
+                  !Ref ECROutput
+      Description: !Ref ServiceDescription
+      Environment:
+        Variables:
+          neo4jUser:
+            Fn::ImportValue:
+              !Sub ${PululappEnv}-neo4j-user
+          neo4jPassword:
+            Fn::ImportValue:
+              !Sub ${PululappEnv}-neo4j-pass
+          neo4jUri:
+            Fn::ImportValue:
+              !Sub ${PululappEnv}-neo4j-uri
+          snsArn:
+            Fn::ImportValue:
+              !Sub ${PululappEnv}-spot-activity-arn
+      FunctionName: !Sub ${ServiceName}-${PululappEnv}
+      MemorySize: !FindInMap ['ServiceConfig', !Ref PululappEnv, 'RAM']
+      PackageType: Image
+      Role: !GetAtt ServiceRole.Arn
+      Tags: 
+        - Key: App
+          Value: Pululapp
+        - Key: Env
+          Value: !Ref PululappEnv
+        - Key: Service
+          Value: !Ref ServiceName
+      Timeout: !FindInMap ['ServiceConfig', !Ref PululappEnv, 'TimeOut']
+      TracingConfig:
+        Mode: Active
+
+  LambdaApiGatewayPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref ServiceLambda
+      Principal: apigateway.amazonaws.com
+
+
+# Outputs:
+#   AuthorizerID:
+#     Value: !Ref DefaultAuthorizer
+#     Export:
+#       Name: !Sub ${PululappEnv}-auth-default-id
