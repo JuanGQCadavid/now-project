@@ -40,6 +40,10 @@ func Handler(ctx context.Context, event events.APIGatewayV2CustomAuthorizerV2Req
 	token := event.Headers[APP_TOKEN]
 	fmt.Println("token:", token)
 
+	if token == ANONYMOUS_KEY {
+		return generatePolicy(anonymousUser.Name, "Allow", event.RouteArn, anonymousUser), nil
+	}
+
 	userDetails, err = appService.GetUserDetailsFromToken(token)
 
 	if err != nil {
@@ -50,7 +54,7 @@ func Handler(ctx context.Context, event events.APIGatewayV2CustomAuthorizerV2Req
 		userDetails = anonymousUser
 	}
 
-	return generatePolicy("user", "Allow", event.RouteArn, userDetails), nil
+	return generatePolicy(userDetails.Name, "Allow", event.RouteArn, userDetails), nil
 }
 
 func generatePolicy(principalId, effect, resource string, userDetails *domain.UserDetails) events.APIGatewayCustomAuthorizerResponse {
