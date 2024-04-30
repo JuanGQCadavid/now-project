@@ -2,6 +2,22 @@ package domain
 
 import "time"
 
+const (
+	APP_TOKEN         = "x-auth"
+	ANONYMOUS_KEY     = "ANONYMOUS"
+	USER_NAME_HEADER  = "x-internal-user-name"
+	USER_PHONE_HEADER = "x-internal-user-phone-number"
+	USER_ID_HEADER    = "x-internal-user-id"
+)
+
+var (
+	AnonymousUser *UserDetails = &UserDetails{
+		UserID:      ANONYMOUS_KEY,
+		Name:        ANONYMOUS_KEY,
+		PhoneNumber: ANONYMOUS_KEY,
+	}
+)
+
 type User struct {
 	Name           string `json:"name" dynamodbav:"Name"`
 	PhoneNumber    string `json:"phoneNumber" dynamodbav:"PhoneNumber"`

@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"strings"
 
+	authDomain "github.com/JuanGQCadavid/now-project/services/authService/internal/core/domain"
+	authUtils "github.com/JuanGQCadavid/now-project/services/authService/internal/utils"
 	"github.com/JuanGQCadavid/now-project/services/pkgs/common/logs"
 	"github.com/JuanGQCadavid/now-project/services/spotsCoreService/internal/core/domain"
 	"github.com/JuanGQCadavid/now-project/services/spotsCoreService/internal/core/ports"
@@ -90,6 +92,8 @@ func (hdl *HTTPHandler) CreateSpot(context *gin.Context) {
 	spot := domain.Spot{}
 	context.BindJSON(&spot)
 
+	var userDetails authDomain.UserDetails = *authUtils.GetHeaders(context.Request.Header)
+
 	logs.Info.Printf("\nHandler: CreateSpot \n\tSpot: %+v", spot)
 
 	if !hdl.isSpotCorrect(spot) {
@@ -99,7 +103,7 @@ func (hdl *HTTPHandler) CreateSpot(context *gin.Context) {
 		return
 	}
 
-	spot, err := hdl.spotService.CreateSpot(spot)
+	spot, err := hdl.spotService.CreateSpot(spot, userDetails)
 
 	if err != nil {
 		logs.Error.Println(err.Error())

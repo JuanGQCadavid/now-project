@@ -21,27 +21,18 @@ var (
 	appService *service.AuthService
 )
 
-const (
-	APP_TOKEN     = "x-auth"
-	ANONYMOUS_KEY = "ANONYMOUS"
-)
-
 func Handler(ctx context.Context, event events.APIGatewayV2CustomAuthorizerV2Request) (events.APIGatewayCustomAuthorizerResponse, error) {
 	var (
-		userDetails   *domain.UserDetails = nil
-		anonymousUser *domain.UserDetails = &domain.UserDetails{
-			UserID:      ANONYMOUS_KEY,
-			Name:        ANONYMOUS_KEY,
-			PhoneNumber: ANONYMOUS_KEY,
-		}
+		userDetails *domain.UserDetails = nil
+
 		err error = nil
 	)
 
-	token := event.Headers[APP_TOKEN]
+	token := event.Headers[domain.APP_TOKEN]
 	fmt.Println("token:", token)
 
-	if token == ANONYMOUS_KEY {
-		return generatePolicy(anonymousUser.Name, "Allow", event.RouteArn, anonymousUser), nil
+	if token == domain.ANONYMOUS_KEY {
+		return generatePolicy(domain.AnonymousUser.Name, "Allow", event.RouteArn, domain.AnonymousUser), nil
 	}
 
 	userDetails, err = appService.GetUserDetailsFromToken(token)
@@ -51,7 +42,7 @@ func Handler(ctx context.Context, event events.APIGatewayV2CustomAuthorizerV2Req
 	}
 
 	if userDetails == nil || len(userDetails.UserID) == 0 {
-		userDetails = anonymousUser
+		userDetails = domain.AnonymousUser
 	}
 
 	return generatePolicy(userDetails.Name, "Allow", event.RouteArn, userDetails), nil
