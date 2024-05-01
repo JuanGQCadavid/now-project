@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	authDomain "github.com/JuanGQCadavid/now-project/services/authService/internal/core/domain"
 	"github.com/JuanGQCadavid/now-project/services/pkgs/common/logs"
 	"github.com/JuanGQCadavid/now-project/services/spotsCoreService/internal/core/domain"
 	"github.com/JuanGQCadavid/now-project/services/spotsCoreService/internal/core/ports"
@@ -66,10 +67,20 @@ func (s *service) GetSpotsByDatesIds(datesIds []string, format ports.OutputForma
 
 */
 
-func (s *service) CreateSpot(spot domain.Spot) (domain.Spot, error) {
+func (s *service) CreateSpot(spot domain.Spot, userDetails authDomain.UserDetails) (domain.Spot, error) {
 
-	logs.Info.Println("Service: CreateSpot -> ", fmt.Sprintf("%+v", spot))
+	logs.Info.Printf("Service: CreateSpot, Spot: %+v \n UserDetails: %+v\n", spot, userDetails)
 	//TODO -> Missing body validation
+
+	if len(userDetails.UserID) == 0 || userDetails.UserID == authDomain.AnonymousUser.UserID {
+		return domain.Spot{}, ports.ErrUserIDMissing
+	}
+
+	spot.HostInfo = domain.Person{
+		Id:          userDetails.UserID,
+		Name:        userDetails.Name,
+		PhoneNumber: userDetails.PhoneNumber,
+	}
 
 	spotUuid := s.uuidGen.New()
 

@@ -24,34 +24,28 @@ var (
 func Handler(ctx context.Context, event events.APIGatewayV2CustomAuthorizerV2Request) (events.APIGatewayCustomAuthorizerResponse, error) {
 	var (
 		userDetails *domain.UserDetails = nil
-		err         error               = nil
+
+		err error = nil
 	)
-	fmt.Printf("The event: %+v\n", event)
-	token := event.Headers["x-auth"]
 
+	token := event.Headers[domain.APP_TOKEN]
 	fmt.Println("token:", token)
-	fmt.Println("Headers:", event.Headers)
 
-	if len(token) > 0 {
-		userDetails, err = appService.GetUserDetailsFromToken(token)
-		if err != nil {
-			logs.Error.Println("Auth service fail: err: ", err.Error())
-			userDetails = nil
-		}
+	if token == domain.ANONYMOUS_KEY {
+		return generatePolicy(domain.AnonymousUser.Name, "Allow", event.RouteArn, domain.AnonymousUser), nil
 	}
 
-	return generatePolicy("user", "Allow", event.RouteArn, userDetails), nil
+	userDetails, err = appService.GetUserDetailsFromToken(token)
 
-	// switch strings.ToLower(token) {
-	// case "allow":
-	// 	return generatePolicy("user", "Allow", event.RouteArn), nil
-	// case "deny":
-	// 	return generatePolicy("user", "Deny", event.RouteArn), nil
-	// case "unauthorized":
-	// 	return events.APIGatewayCustomAuthorizerResponse{}, errors.New("Unauthorized") // Return a 401 Unauthorized response
-	// default:
-	// 	return events.APIGatewayCustomAuthorizerResponse{}, errors.New("err: Invalid token")
-	// }
+	if err != nil {
+		logs.Error.Println("Auth service fail: err: ", err.Error())
+	}
+
+	if userDetails == nil || len(userDetails.UserID) == 0 {
+		userDetails = domain.AnonymousUser
+	}
+
+	return generatePolicy(userDetails.Name, "Allow", event.RouteArn, userDetails), nil
 }
 
 func generatePolicy(principalId, effect, resource string, userDetails *domain.UserDetails) events.APIGatewayCustomAuthorizerResponse {
