@@ -20,6 +20,10 @@ Parameters:
     Type: String
     Description: Service description
     Default: Spot core operation service
+  ServiceRoute:
+    Type: String
+    Description: Service description
+    Default: ANY /spots/core
   ECROutput:
     Type: String
     Description: Service ECR cloudformation output
@@ -120,6 +124,65 @@ Resources:
       Action: lambda:InvokeFunction
       FunctionName: !Ref ServiceLambda
       Principal: apigateway.amazonaws.com
+
+  ServiceAPIGatewayIntegration:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId:
+        Fn::ImportValue: 
+            !Sub ${PululappEnv}-central-gateway-id
+      Description: !Ref ServiceDescription
+      IntegrationMethod: POST
+      IntegrationType: AWS_PROXY
+      IntegrationUri: !Join
+        - ''
+        - - 'arn:'
+          - !Ref 'AWS::Partition'
+          - ':apigateway:'
+          - !Ref 'AWS::Region'
+          - ':lambda:path/2015-03-31/functions/'
+          - !GetAtt ServiceLambda.Arn
+          - /invocations
+      PayloadFormatVersion: '1.0'
+      RequestParameters:
+        "append:header.x-internal-user-name": "$context.authorizer.Name"
+        "append:header.x-internal-user-id": "$context.authorizer.UserID"
+        "append:header.x-internal-user-phone-number": "$context.authorizer.PhoneNumber"
+
+  APIGatewayIntegration:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: 
+        Fn::ImportValue: 
+            !Sub ${PululappEnv}-central-gateway-id
+      AuthorizationType: CUSTOM
+      AuthorizerId:
+        Fn::ImportValue: 
+          !Sub ${PululappEnv}-auth-default-id
+      OperationName: !Sub ${ServiceName}-${PululappEnv}
+      RouteKey: !Ref ServiceRoute
+      Target: !Join
+        - /
+        - - integrations
+          - !Ref ServiceAPIGatewayIntegration
+
+  APIGatewayIntegrationProxy:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: 
+        Fn::ImportValue: 
+            !Sub ${PululappEnv}-central-gateway-id
+      AuthorizationType: CUSTOM
+      AuthorizerId:
+        Fn::ImportValue: 
+          !Sub ${PululappEnv}-auth-default-id
+      OperationName: !Sub ${ServiceName}-${PululappEnv}-proxy
+      RouteKey: !Sub ${ServiceRoute}/{proxy+}
+      Target: !Join
+        - /
+        - - integrations
+          - !Ref ServiceAPIGatewayIntegration
+
 
 
 # Outputs:
