@@ -131,8 +131,8 @@ Resources:
         - AttributeName: TokenId
           AttributeType: S
       BillingMode: PAY_PER_REQUEST
-      ContributorInsightsSpecification: 
-        Enabled: True
+      # ContributorInsightsSpecification: 
+      #   Enabled: True
       DeletionProtectionEnabled: True
       KeySchema: 
         - AttributeName: TokenId
@@ -158,8 +158,8 @@ Resources:
         - AttributeName: UserId
           AttributeType: S
       BillingMode: PAY_PER_REQUEST
-      ContributorInsightsSpecification: 
-        Enabled: True
+      # ContributorInsightsSpecification: 
+      #   Enabled: True
       DeletionProtectionEnabled: True
       GlobalSecondaryIndexes:
         - ContributorInsightsSpecification: 
