@@ -7,15 +7,20 @@ on:
 
 jobs:
   build-container:
-    runs-on: ubuntu-latest
+    uses: ./.github/workflows/container-build-push.yml
+    secrets: inherit
     environment: general
-    steps:
-      - name: checkout
-        uses: actions/checkout@v4
+    with:
+      docker-image-name: spots-core-service
+      docker-context: ./services/spotsCoreService
 
-      - name: Docker build and push
-        uses: ./.github/actions/container_build_push
-        with:
-          docker-image-name: spots-core-service
-          docker-context: ./services/spotsCoreService
-
+  #
+  # build-container:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: checkout
+  #       uses: actions/checkout@v4
+  #
+  #     - name: Docker build and push
+  #       uses: ./.github/actions/container_build_push
+  #       with:
