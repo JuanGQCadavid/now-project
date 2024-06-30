@@ -11,7 +11,7 @@ COPY tmp/pkgs /pkgs
 WORKDIR /app
 
 COPY cmd/${CMD} cmd/${CMD}
-COPY internal internal
+COPY core core
 
 COPY go.mod go.mod
 COPY go.sum go.sum

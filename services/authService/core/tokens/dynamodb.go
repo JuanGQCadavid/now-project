@@ -1,10 +1,10 @@
 package tokens
 
 import (
-	"github.com/JuanGQCadavid/now-project/services/authService/internal/core/domain"
-	"github.com/JuanGQCadavid/now-project/services/authService/internal/core/ports"
-	"github.com/JuanGQCadavid/now-project/services/authService/internal/encrypters"
-	"github.com/JuanGQCadavid/now-project/services/authService/internal/utils"
+	"github.com/JuanGQCadavid/now-project/services/authService/core/core/domain"
+	"github.com/JuanGQCadavid/now-project/services/authService/core/core/ports"
+	"github.com/JuanGQCadavid/now-project/services/authService/core/encrypters"
+	"github.com/JuanGQCadavid/now-project/services/authService/core/utils"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 )

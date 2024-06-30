@@ -3,7 +3,7 @@ package utils
 import (
 	"net/http"
 
-	"github.com/JuanGQCadavid/now-project/services/authService/internal/core/domain"
+	"github.com/JuanGQCadavid/now-project/services/authService/core/core/domain"
 )
 
 func GetHeaders(headers http.Header) *domain.UserDetails {

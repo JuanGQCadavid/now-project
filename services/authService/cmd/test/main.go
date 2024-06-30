@@ -1,11 +1,11 @@
 package main
 
 import (
-	"github.com/JuanGQCadavid/now-project/services/authService/internal/core/service"
-	"github.com/JuanGQCadavid/now-project/services/authService/internal/encrypters"
-	"github.com/JuanGQCadavid/now-project/services/authService/internal/tokens"
-	"github.com/JuanGQCadavid/now-project/services/authService/internal/user"
-	"github.com/JuanGQCadavid/now-project/services/authService/internal/utils"
+	"github.com/JuanGQCadavid/now-project/services/authService/core/core/service"
+	"github.com/JuanGQCadavid/now-project/services/authService/core/encrypters"
+	"github.com/JuanGQCadavid/now-project/services/authService/core/tokens"
+	"github.com/JuanGQCadavid/now-project/services/authService/core/user"
+	"github.com/JuanGQCadavid/now-project/services/authService/core/utils"
 	"github.com/JuanGQCadavid/now-project/services/pkgs/common/logs"
 	"github.com/aws/aws-sdk-go/aws/session"
 )

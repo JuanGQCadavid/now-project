@@ -3,7 +3,7 @@ package ports
 import (
 	"errors"
 
-	"github.com/JuanGQCadavid/now-project/services/authService/internal/core/domain"
+	"github.com/JuanGQCadavid/now-project/services/authService/core/core/domain"
 )
 
 var (

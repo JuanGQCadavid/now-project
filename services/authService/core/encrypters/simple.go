@@ -4,8 +4,8 @@ import (
 	b64 "encoding/base64"
 	"strings"
 
-	"github.com/JuanGQCadavid/now-project/services/authService/internal/core/domain"
-	"github.com/JuanGQCadavid/now-project/services/authService/internal/core/ports"
+	"github.com/JuanGQCadavid/now-project/services/authService/core/core/domain"
+	"github.com/JuanGQCadavid/now-project/services/authService/core/core/ports"
 	"github.com/JuanGQCadavid/now-project/services/pkgs/common/logs"
 )
 
