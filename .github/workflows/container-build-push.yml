@@ -38,6 +38,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      
+      - name: Where am i
+        run: cd ${{ github.docker-context }} && ls -la
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
