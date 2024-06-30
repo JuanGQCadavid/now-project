@@ -12,7 +12,8 @@ jobs:
     with:
       docker-image-name: spots-core-service
       docker-context: ./services/spotsCoreService
-      docker-tag: ${{ github.sha }} 
+      docker-tag: ${{ github.sha }}
+      docker-build-arg: "CMD=lambda"
   #
   # build-container:
   #   runs-on: ubuntu-latest

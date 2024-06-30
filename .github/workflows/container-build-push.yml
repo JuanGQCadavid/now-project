@@ -16,10 +16,19 @@ on:
         description: "Path to the dockerfile"
         required: true
         type: string
+      docker-build-args:
+        description: "Docker build args"
+        required: false
+        type: string
       environment:
         description: 'Environment to run tests against'
         type: string
         default: general
+        required: false
+      pkgs-location:
+        description: 'Folder for pkgs to move locally'
+        type: string
+        default: "./services/pkgs"
         required: false
     secrets:
       DOCKERHUB_USERNAME: 
@@ -54,6 +63,9 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
+  
+      - name: Pkgs coping
+        run: mkdir -p ${{ inputs.docker-context }}/tmp/pkgs && cp -r ${{ pkgs-location }} ${{ inputs.docker-context }}/tmp/pkgs  
 
       - name: Build and push
         uses: docker/build-push-action@v6
@@ -61,5 +73,5 @@ jobs:
           context: ${{ inputs.docker-context }} 
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/${{ inputs.docker-image-name }}:${{ inputs.docker-tag }}
-
+          build-args: ${{ inputs.docker-build-args }}
  
