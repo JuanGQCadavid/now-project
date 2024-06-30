@@ -3,7 +3,6 @@ module github.com/JuanGQCadavid/now-project/services/spotsCoreService
 go 1.17
 
 require (
-	github.com/JuanGQCadavid/now-project/services/authService v0.0.0-00010101000000-000000000000
 	github.com/JuanGQCadavid/now-project/services/pkgs/common v0.0.0-00010101000000-000000000000
 	github.com/JuanGQCadavid/now-project/services/pkgs/credentialsFinder v0.0.0-00010101000000-000000000000
 	github.com/aws/aws-lambda-go v1.46.0
@@ -15,6 +14,7 @@ require (
 )
 
 require (
+	github.com/JuanGQCadavid/now-project/services/authService v0.0.0-20240630141658-e526fb69902c // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
 	github.com/go-playground/locales v0.13.0 // indirect
 	github.com/go-playground/universal-translator v0.17.0 // indirect
@@ -35,7 +35,5 @@ require (
 )
 
 replace github.com/JuanGQCadavid/now-project/services/pkgs/credentialsFinder => ../pkgs/credentialsFinder
-
-replace github.com/JuanGQCadavid/now-project/services/authService => ../authService
 
 replace github.com/JuanGQCadavid/now-project/services/pkgs/common => ../pkgs/common
