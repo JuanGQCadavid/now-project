@@ -3,7 +3,7 @@ package ports
 import (
 	"errors"
 
-	authDomain "github.com/JuanGQCadavid/now-project/services/authService/internal/core/domain"
+	authDomain "github.com/JuanGQCadavid/now-project/services/authService/core/core/domain"
 	"github.com/JuanGQCadavid/now-project/services/spotsCoreService/internal/core/domain"
 )
 

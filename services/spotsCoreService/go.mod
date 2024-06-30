@@ -3,7 +3,7 @@ module github.com/JuanGQCadavid/now-project/services/spotsCoreService
 go 1.17
 
 require (
-	github.com/JuanGQCadavid/now-project/services/authService v0.0.0-20240630141658-e526fb69902c
+	github.com/JuanGQCadavid/now-project/services/authService v0.0.0-20240630164740-9dee7f4a9b4d
 	github.com/JuanGQCadavid/now-project/services/pkgs/common v0.0.0-20240630160128-a0f0632669ec
 	github.com/JuanGQCadavid/now-project/services/pkgs/credentialsFinder v0.0.0-20240630160128-a0f0632669ec
 	github.com/aws/aws-lambda-go v1.46.0

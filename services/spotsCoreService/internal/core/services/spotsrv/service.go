@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	authDomain "github.com/JuanGQCadavid/now-project/services/authService/internal/core/domain"
+	authDomain "github.com/JuanGQCadavid/now-project/services/authService/core/core/domain"
 	"github.com/JuanGQCadavid/now-project/services/pkgs/common/logs"
 	"github.com/JuanGQCadavid/now-project/services/spotsCoreService/internal/core/domain"
 	"github.com/JuanGQCadavid/now-project/services/spotsCoreService/internal/core/ports"
