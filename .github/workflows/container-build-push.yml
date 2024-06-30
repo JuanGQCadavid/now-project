@@ -26,6 +26,7 @@ defaults:
 jobs:
   Docker-build-push:
     runs-on: ubuntu-latest
+    environment: general
     steps:
       - name: Checkout
         uses: actions/checkout@v4
