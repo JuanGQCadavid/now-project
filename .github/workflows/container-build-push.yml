@@ -7,12 +7,20 @@ on:
       docker-tag:
         description: 'Docker tag for the image'
         required: false
+        type: string
       docker-image-name:
         description: 'Docker image name.'
         required: true
+        type: string
       docker-context:
         description: "Path to the dockerfile"
         required: true
+        type: string
+      environment:
+        description: 'Environment to run tests against'
+        type: environment
+        default: general
+        required: false
     secrets:
       DOCKERHUB_USERNAME: 
         required: true
@@ -26,7 +34,7 @@ defaults:
 jobs:
   Docker-build-push:
     runs-on: ubuntu-latest
-    environment: general
+    environment: ${{ inputs.environment }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
