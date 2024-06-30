@@ -67,6 +67,9 @@ jobs:
       - name: Pkgs coping
         run: mkdir -p ${{ inputs.docker-context }}/tmp/pkgs && cp -r ${{ inputs.pkgs-location }} ${{ inputs.docker-context }}/tmp/pkgs  
 
+      - name: Pkgs content
+        run: cd ${{ inputs.docker-context }}/tmp/pkgs && ls -la
+      
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
