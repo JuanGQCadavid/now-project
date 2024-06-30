@@ -8,9 +8,10 @@ on:
 jobs:
   build-container:
     runs-on: ubuntu-latest
+    environment: general
     steps:
       - name: checkout
-        actions: actions/checkout@v4
+        uses: actions/checkout@v4
 
       - name: Docker build and push
         uses: ./.github/actions/container_build_push
