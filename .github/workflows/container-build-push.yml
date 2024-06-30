@@ -58,7 +58,7 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
-          contex: ${{ inputs.docker-context }} 
+          context: ${{ inputs.docker-context }} 
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/${{ inputs.docker-image-name }}:${{ inputs.docker-tag }}
 
