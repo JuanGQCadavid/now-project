@@ -47,7 +47,6 @@ func init() {
 
 	service := spotsrv.New(repoSpot, notifier, uuid)
 	httpHandler := httphdl.NewHTTPHandler(service)
-
 	router := gin.Default()
 	router.POST("/spots/core/", httpHandler.CreateSpot)                 // OK
 	router.POST("/spots/core/bulk/fetch", httpHandler.GetMultipleSpots) // OK

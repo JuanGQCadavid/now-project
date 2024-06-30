@@ -1,0 +1,20 @@
+---
+name: CI and CD
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-container:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        actions: actions/checkout@v4
+
+      - name: Docker build and push
+        uses: ./.github/actions/container_build_push
+        with:
+          docker-image-name: spots-core-service
+          docker-context: ./services/spotsCoreService
+
