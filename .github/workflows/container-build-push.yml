@@ -126,6 +126,6 @@ jobs:
           tags: |
             ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ inputs.docker-image-name }}:${{ inputs.docker-tag }}
             ${{ secrets.DOCKERHUB_USERNAME }}/${{ inputs.docker-image-name }}:${{ inputs.docker-tag }}
-            ghcr.io/juangqcadavid/now-project/${{ inputs.docker-image-name }}:latest
+            ghcr.io/juangqcadavid/${{ inputs.docker-image-name }}:latest
           build-args: ${{ inputs.docker-build-args }}
  
