@@ -58,7 +58,6 @@ jobs:
       # AWS ECR Repository
       - name: AWS Credentials Setup
         uses: aws-actions/configure-aws-credentials@v4
-        working-directory: ${{ inputs.workdir }}
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -73,7 +72,7 @@ jobs:
       - uses: aws-actions/aws-cloudformation-github-deploy@v1
         with:
           name: ${{ inputs.stack-name }}-${{ inputs.pululapp-env }}
-          template: template.yml
+          template: ${{ inputs.workdir }}/template.yml
           no-fail-on-empty-changeset: "1"
           capabilities: CAPABILITY_NAMED_IAM, CAPABILITY_IAM
           parameter-overrides: PululappEnv=${{ inputs.pululapp-env }}, ServiceImageVersion=${{ inputs.service-docker-tag }} 
