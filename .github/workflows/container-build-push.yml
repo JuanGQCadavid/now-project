@@ -51,7 +51,6 @@ defaults:
 jobs:
   Docker-build-push:
     runs-on: ubuntu-latest
-    # environment: ${{ inputs.environment }}
     steps:
      
       #######################################################
@@ -112,12 +111,6 @@ jobs:
       #
       # #####################################################
 
-      # - name: Pkgs coping
-      #   run: mkdir -p ${{ inputs.docker-context }}/tmp && cp -r ${{ inputs.pkgs-location }} ${{ inputs.docker-context }}/tmp  
-      #
-      # - name: Pkgs content
-      #   run: cd ${{ inputs.docker-context }}/tmp/pkgs && ls -la
-      
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
@@ -128,4 +121,5 @@ jobs:
             ${{ secrets.DOCKERHUB_USERNAME }}/${{ inputs.docker-image-name }}:${{ inputs.docker-tag }}
             ghcr.io/juangqcadavid/now-project/${{ inputs.docker-image-name }}:latest
           build-args: ${{ inputs.docker-build-args }}
- 
+          cache-from: type=registry,ref=ghcr.io/juangqcadavid/now-project/${{ inputs.docker-image-name }}:latest
+          cache-to: type=inline
