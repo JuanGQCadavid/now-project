@@ -98,6 +98,14 @@ jobs:
         with:
           registry: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
 
+      # Github repository
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
       #######################################################
       #
       # Build and publish image 
@@ -118,5 +126,6 @@ jobs:
           tags: |
             ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ inputs.docker-image-name }}:${{ inputs.docker-tag }}
             ${{ secrets.DOCKERHUB_USERNAME }}/${{ inputs.docker-image-name }}:${{ inputs.docker-tag }}
+            ghcr.io/now-project/${{ inputs.docker-image-name }}:latest
           build-args: ${{ inputs.docker-build-args }}
  
