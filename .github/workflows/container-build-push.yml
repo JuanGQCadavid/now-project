@@ -20,11 +20,11 @@ on:
         description: "Docker build args"
         required: false
         type: string
-      environment:
-        description: 'Environment to run tests against'
-        type: string
-        default: general
-        required: false
+      # environment:
+      #   description: 'Environment to run tests against'
+      #   type: string
+      #   default: general
+      #   required: false
       pkgs-location:
         description: 'Folder for pkgs to move locally'
         type: string
@@ -35,6 +35,14 @@ on:
         required: true
       DOCKERHUB_TOKEN:
         required: true
+      AWS_ACCES_KEY_ID: 
+        required: true
+      AWS_SECRET_ACCESS_KEY:
+        required: true
+      AWS_REGION:
+        required: true
+      AWS_ACCOUNT_ID:
+        required: true
 
 defaults:
   run:
@@ -43,8 +51,15 @@ defaults:
 jobs:
   Docker-build-push:
     runs-on: ubuntu-latest
-    environment: ${{ inputs.environment }}
+    # environment: ${{ inputs.environment }}
     steps:
+     
+      #######################################################
+      #
+      # Basic configuration 
+      #
+      # #####################################################
+      
       - name: Checkout
         uses: actions/checkout@v4
       
@@ -56,25 +71,52 @@ jobs:
       
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-        
-        # Setting up repository credentials for pushing immages 
+      
+      #######################################################
+      #
+      # Setting up repository credentials for pushing immages 
+      #
+      # #####################################################
+      
+      # Docker hub
       - name: Logging to Docker hub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
   
-      - name: Pkgs coping
-        run: mkdir -p ${{ inputs.docker-context }}/tmp && cp -r ${{ inputs.pkgs-location }} ${{ inputs.docker-context }}/tmp  
+      # AWS ECR Repository
+      - name: AWS Credentials Setup
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCES_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
 
-      - name: Pkgs content
-        run: cd ${{ inputs.docker-context }}/tmp/pkgs && ls -la
+      - name: Login on ECR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
+
+      #######################################################
+      #
+      # Build and publish image 
+      #
+      # #####################################################
+
+      # - name: Pkgs coping
+      #   run: mkdir -p ${{ inputs.docker-context }}/tmp && cp -r ${{ inputs.pkgs-location }} ${{ inputs.docker-context }}/tmp  
+      #
+      # - name: Pkgs content
+      #   run: cd ${{ inputs.docker-context }}/tmp/pkgs && ls -la
       
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
           context: ${{ inputs.docker-context }} 
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/${{ inputs.docker-image-name }}:${{ inputs.docker-tag }}
+          tags: |
+            ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.DOCKER-IMAGE-NAME }}:${{ inputs.docker-tag }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/${{ inputs.docker-image-name }}:${{ inputs.docker-tag }}
           build-args: ${{ inputs.docker-build-args }}
  
