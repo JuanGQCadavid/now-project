@@ -1,0 +1,79 @@
+---
+name: 'Cloudformation deploy'
+
+on:
+  workflow_call:
+    inputs:
+      stack_name:
+        description: "The name of the CloudFormation stack"
+        required: true
+        type: string
+      workdir:
+        description: "The path to the CloudFormation template"
+        required: true
+        type: string
+      service-docker-tag:
+        description: 'Image tag from ecr'
+        required: false
+        type: string
+      pululapp-env:
+        description: 'Pululapp Env'
+        required: true
+        type: string
+    secrets:
+      AWS_ACCESS_KEY_ID: 
+        required: true
+      AWS_SECRET_ACCESS_KEY:
+        required: true
+      AWS_REGION:
+        required: true
+      AWS_ACCOUNT_ID:
+        required: true
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  Docker-build-push:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.pululapp-env }}
+    steps:
+     
+      #######################################################
+      #
+      # Basic configuration 
+      #
+      # #####################################################
+      
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      #######################################################
+      #
+      # AWS Setup 
+      #
+      # #####################################################
+      
+      # AWS ECR Repository
+      - name: AWS Credentials Setup
+        uses: aws-actions/configure-aws-credentials@v4
+        working-directory: ${{ inputs.workdir }}
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      #######################################################
+      #
+      # Publish Service 
+      #
+      # #####################################################
+
+      - uses: aws-actions/aws-cloudformation-github-deploy@v1
+        with:
+          name: ${{ inputs.stack_name }}
+          template: template.yml
+          no-fail-on-empty-changeset: "1"
+          capabilities: CAPABILITY_NAMED_IAM, CAPABILITY_IAM
+          parameter-overrides: !Sub PululappEnv=${{ inputs.pululapp-env }}, ServiceImageVersion=${{ inputs.service-docker-tag }} 
