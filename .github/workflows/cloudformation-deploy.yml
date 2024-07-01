@@ -35,7 +35,7 @@ defaults:
     shell: bash
 
 jobs:
-  Docker-build-push:
+  Cloudformation-publish:
     runs-on: ubuntu-latest
     environment: ${{ inputs.pululapp-env }}
     steps:
@@ -76,4 +76,4 @@ jobs:
           template: template.yml
           no-fail-on-empty-changeset: "1"
           capabilities: CAPABILITY_NAMED_IAM, CAPABILITY_IAM
-          parameter-overrides: !Sub PululappEnv=${{ inputs.pululapp-env }}, ServiceImageVersion=${{ inputs.service-docker-tag }} 
+          parameter-overrides: PululappEnv=${{ inputs.pululapp-env }}, ServiceImageVersion=${{ inputs.service-docker-tag }} 
