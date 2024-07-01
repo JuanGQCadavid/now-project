@@ -10,7 +10,7 @@ jobs:
     uses: ./.github/workflows/container-build-push.yml
     secrets: inherit
     with:
-      docker-image-name: spots-core-service
+      docker-image-name: spot-core-service 
       docker-context: ./services/spotsCoreService
       docker-tag: ${{ github.sha }}
       docker-build-args: "CMD=lambda"
