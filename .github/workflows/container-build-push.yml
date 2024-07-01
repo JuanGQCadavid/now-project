@@ -116,7 +116,7 @@ jobs:
           context: ${{ inputs.docker-context }} 
           push: true
           tags: |
-            ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.DOCKER-IMAGE-NAME }}:${{ inputs.docker-tag }}
+            ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ inputs.docker-image-name }}:${{ inputs.docker-tag }}
             ${{ secrets.DOCKERHUB_USERNAME }}/${{ inputs.docker-image-name }}:${{ inputs.docker-tag }}
           build-args: ${{ inputs.docker-build-args }}
  
