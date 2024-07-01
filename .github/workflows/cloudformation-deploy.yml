@@ -4,7 +4,7 @@ name: 'Cloudformation deploy'
 on:
   workflow_call:
     inputs:
-      stack_name:
+      stack-name:
         description: "The name of the CloudFormation stack"
         required: true
         type: string
@@ -72,7 +72,7 @@ jobs:
 
       - uses: aws-actions/aws-cloudformation-github-deploy@v1
         with:
-          name: ${{ inputs.stack_name }}
+          name: ${{ inputs.stack-name }}-${{ inputs.pululapp-env }}
           template: template.yml
           no-fail-on-empty-changeset: "1"
           capabilities: CAPABILITY_NAMED_IAM, CAPABILITY_IAM

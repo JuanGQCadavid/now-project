@@ -14,12 +14,13 @@ jobs:
       docker-context: ./services/spotsCoreService
       docker-tag: ${{ github.sha }}
       docker-build-args: "CMD=lambda"
-  # build-container:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: checkout
-  #       uses: actions/checkout@v4
-  #
-  #     - name: Docker build and push
-  #       uses: ./.github/actions/container_build_push
-  #       with:
+  
+  deploy-cloudformation:
+    uses: ./.github/workflows/cloudformation-deploy.yml
+    secrets: inherit
+    needs: [build-container]
+    with:
+      stack-name: spots-core-service
+      work-dir: ./services/spotsCoreService 
+      service-docker-tag: ${{ github.sha }}
+      pululapp-env: staging
