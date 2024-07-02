@@ -11,12 +11,20 @@ jobs:
       matrix:
         lookup: [{"auth-service": { "stack-name": "auth-service", "docker-image-name": "auth-service", "service-dir": "./services/authService" }}]
         services: [auth-service]
-    uses: ./.github/workflows/service-build-deploy.yml
-    secrets: inherit
-    with:
-      stack-name: ${{ matrix.lookup[format('{0}',matrix.services)][stack-name] }}
-      docker-image-name: auth-service
-      service-dir: ./services/authService
+      runs-on: ubuntu-latest
+      steps:
+        - name: echoing
+          run: |
+            echo ${{ matrix.lookup[format('{0}',matrix.services)][stack-name] }}
+ 
+    # uses: ./.github/workflows/service-build-deploy.yml
+    # secrets: inherit
+    # with:
+    #   stack-name: ${{ matrix.lookup[format('{0}',matrix.services)][stack-name] }}
+    #   docker-image-name: auth-service
+    #   service-dir: ./services/authService
+  
+
   # service-build-push:
   #   uses: ./.github/workflows/service-build-deploy.yml
   #   secrets: inherit
