@@ -50,19 +50,19 @@ jobs:
         ]
         services: [auth-service, spots-core-service]
     name:  ${{ matrix.lookup[matrix.services].stack-name }}
-    if: ${{ needs.changes.outputs.matrix.services == 'true' }} 
-    uses: ./.github/workflows/service-build-deploy.yml
-    secrets: inherit
-    with:
-      stack-name: ${{ matrix.lookup[matrix.services].stack-name }}
-      docker-image-name: ${{ matrix.lookup[matrix.services].docker-image-name }}
-      service-dir: ${{ matrix.lookup[matrix.services].service-dir }}
+    # if: ${{ needs.changes.outputs.matrix.services == 'true' }} 
+    # uses: ./.github/workflows/service-build-deploy.yml
+    # secrets: inherit
+    # with:
+    #   stack-name: ${{ matrix.lookup[matrix.services].stack-name }}
+    #   docker-image-name: ${{ matrix.lookup[matrix.services].docker-image-name }}
+    #   service-dir: ${{ matrix.lookup[matrix.services].service-dir }}
 
 
 
-    # runs-on: ubuntu-latest
-    # steps:
-    #   - name: echoing
-    #     run: |
-    #       echo ${{ matrix.lookup[matrix.services].stack-name }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: echoing
+        run: |
+          echo ${{ needs.changes.outputs}}
 
