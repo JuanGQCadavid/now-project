@@ -1,0 +1,60 @@
+---
+name: Service build and deploy
+
+on:
+  workflow_call:
+    inputs:
+      stack-name:
+        description: "The name of the CloudFormation stack"
+        required: true
+        type: string
+      service-dir:
+        description: "The path to the CloudFormation template"
+        required: true
+        type: string
+      docker-image-name:
+        description: 'Docker image name.'
+        required: true
+        type: string
+    secrets:
+      AWS_ACCESS_KEY_ID: 
+        required: true
+      AWS_SECRET_ACCESS_KEY:
+        required: true
+      AWS_REGION:
+        required: true
+      AWS_ACCOUNT_ID:
+        required: true
+      DOCKERHUB_USERNAME: 
+        required: true
+      DOCKERHUB_TOKEN:
+        required: true
+jobs:
+  build-container:
+    uses: ./.github/workflows/container-build-push.yml
+    secrets: inherit
+    with:
+      docker-image-name: ${{ inputs.docker-image-name }}
+      docker-context: ${{ inputs.service-dir }}
+      docker-tag: ${{ github.sha }}
+      docker-build-args: "CMD=lambda"
+  
+  deploy-cloudformation-staging:
+    uses: ./.github/workflows/cloudformation-deploy.yml
+    secrets: inherit
+    needs: [build-container]
+    with:
+      stack-name: ${{ inputs.stack-name }}
+      workdir:  ${{ inputs.service-dir }}
+      service-docker-tag: ${{ github.sha }}
+      pululapp-env: staging
+
+  deploy-cloudformation-prod:
+    uses: ./.github/workflows/cloudformation-deploy.yml
+    secrets: inherit
+    needs: [deploy-cloudformation-staging]
+    with:
+      stack-name: ${{ inputs.stack-name }}
+      workdir: ${{ inputs.service-dir }}
+      service-docker-tag: ${{ github.sha }}
+      pululapp-env: prod
