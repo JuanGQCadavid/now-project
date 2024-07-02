@@ -15,7 +15,7 @@ jobs:
       docker-tag: ${{ github.sha }}
       docker-build-args: "CMD=lambda"
   
-  deploy-cloudformation:
+  deploy-cloudformation-staging:
     uses: ./.github/workflows/cloudformation-deploy.yml
     secrets: inherit
     needs: [build-container]
@@ -24,3 +24,14 @@ jobs:
       workdir: ./services/spotsCoreService 
       service-docker-tag: ${{ github.sha }}
       pululapp-env: staging
+
+  deploy-cloudformation-prod:
+    uses: ./.github/workflows/cloudformation-deploy.yml
+    secrets: inherit
+    needs: [deploy-cloudformation-staging]
+    with:
+      stack-name: spots-core-service
+      workdir: ./services/spotsCoreService 
+      service-docker-tag: ${{ github.sha }}
+      pululapp-env: prod
+
