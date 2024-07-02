@@ -16,7 +16,7 @@ jobs:
   service-build-push:
     strategy:
       matrix:
-        lookup: [{"auth-service": $auth-service }]
+        lookup: [{"auth-service": ${{ env.auth-service }}}]
         services: ["auth-service"]
     runs-on: ubuntu-latest
     steps:
