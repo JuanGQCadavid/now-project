@@ -22,9 +22,7 @@ jobs:
               "stack-name": "auth-service",
               "docker-image-name": "auth-service",
               "service-dir": "./services/authService"
-            }
-          },
-          {
+            },
             "spots-core-service": { 
               "stack-name": "spots-core-service",
               "docker-image-name": "spot-core-service",
