@@ -19,15 +19,16 @@ jobs:
       auth-service: ${{ steps.filter.outputs.authService }}
       spots-core-service: ${{ steps.filter.outputs.spotsCoreService }}
     steps:
-    # For pull requests it's not necessary to checkout the code
-    - uses: dorny/paths-filter@v3
-      id: filter
-      with:
-        filters: |
-          authService:
-            - 'services/authService/**'
-          spotsCoreService:
-            - 'services/spotsCoreService/**'
+      - name: Checkout
+        uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            authService:
+              - 'services/authService/**'
+            spotsCoreService:
+              - 'services/spotsCoreService/**'
 
   service-build-push:
     strategy:
