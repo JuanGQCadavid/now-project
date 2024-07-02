@@ -31,6 +31,7 @@ jobs:
           }
         ]
         services: [auth-service, spots-core-service]
+    name:  ${{ matrix.lookup[matrix.services].stack-name }}
     runs-on: ubuntu-latest
     steps:
       - name: echoing
