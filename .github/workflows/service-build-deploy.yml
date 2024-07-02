@@ -5,7 +5,7 @@ on:
   workflow_call:
     inputs:
       deploy: 
-        description: "The name of the CloudFormation stack"
+        description: "Dependency on files changed filter, this aborts the process if deploy is false"
         required: true
         type: boolean
       stack-name:
