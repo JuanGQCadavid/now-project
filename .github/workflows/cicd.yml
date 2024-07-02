@@ -14,7 +14,7 @@ jobs:
     uses: ./.github/workflows/service-build-deploy.yml
     secrets: inherit
     with:
-      stack-name: ${{ matrix.lookup[format('{0}',matrix.arch)][stack-name] }}
+      stack-name: ${{ matrix.lookup[format('{0}',matrix.arch)]["stack-name"] }}
       docker-image-name: auth-service
       service-dir: ./services/authService
   # service-build-push:
