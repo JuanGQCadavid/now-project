@@ -31,6 +31,7 @@ jobs:
               - 'services/spotsCoreService/**'
 
   service-build-push:
+    needs: [changes]
     strategy:
       matrix:
         lookup: [
