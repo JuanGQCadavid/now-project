@@ -1,3 +1,5 @@
+github.com/JuanGQCadavid/now-project/services/pkgs/common v0.0.0-20240702152707-8fb93a64a95a h1:LPAq5ZYsXgHvSIudKFPucg81kziqokCTELFz4wUJ6hg=
+github.com/JuanGQCadavid/now-project/services/pkgs/common v0.0.0-20240702152707-8fb93a64a95a/go.mod h1:Z+TBa4qMSueBnxIpbnx633Di6Fx6pvqvEh2qQKtZdBY=
 github.com/aws/aws-lambda-go v1.46.0 h1:UWVnvh2h2gecOlFhHQfIPQcD8pL/f7pVCutmFl+oXU8=
 github.com/aws/aws-lambda-go v1.46.0/go.mod h1:dpMpZgvWx5vuQJfBt0zqBha60q7Dd7RfgJv23DymV8A=
 github.com/aws/aws-sdk-go v1.51.21 h1:UrT6JC9R9PkYYXDZBV0qDKTualMr+bfK2eboTknMgbs=
