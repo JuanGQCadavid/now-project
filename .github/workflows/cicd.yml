@@ -6,32 +6,11 @@ on:
       - main
 
 jobs:
-  build-container:
-    uses: ./.github/workflows/container-build-push.yml
+  service-build-push:
+    uses: ./.github/workflows/service-build-deploy.yml
     secrets: inherit
     with:
+      stack-name: spots-core-service
       docker-image-name: spot-core-service 
-      docker-context: ./services/spotsCoreService
-      docker-tag: ${{ github.sha }}
-      docker-build-args: "CMD=lambda"
-  
-  deploy-cloudformation-staging:
-    uses: ./.github/workflows/cloudformation-deploy.yml
-    secrets: inherit
-    needs: [build-container]
-    with:
-      stack-name: spots-core-service
-      workdir: ./services/spotsCoreService 
-      service-docker-tag: ${{ github.sha }}
-      pululapp-env: staging
-
-  deploy-cloudformation-prod:
-    uses: ./.github/workflows/cloudformation-deploy.yml
-    secrets: inherit
-    needs: [deploy-cloudformation-staging]
-    with:
-      stack-name: spots-core-service
-      workdir: ./services/spotsCoreService 
-      service-docker-tag: ${{ github.sha }}
-      pululapp-env: prod
+      service-dir: ./services/spotsCoreService
 
