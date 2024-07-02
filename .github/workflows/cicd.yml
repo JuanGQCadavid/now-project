@@ -10,7 +10,14 @@ jobs:
     uses: ./.github/workflows/service-build-deploy.yml
     secrets: inherit
     with:
-      stack-name: spots-core-service
-      docker-image-name: spot-core-service 
-      service-dir: ./services/spotsCoreService
-
+      stack-name: auth-service
+      docker-image-name: auth-service
+      service-dir: ./services/authService
+  # service-build-push:
+  #   uses: ./.github/workflows/service-build-deploy.yml
+  #   secrets: inherit
+  #   with:
+  #     stack-name: spots-core-service
+  #     docker-image-name: spot-core-service 
+  #     service-dir: ./services/spotsCoreService
+  #
