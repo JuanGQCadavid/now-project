@@ -9,9 +9,6 @@ defaults:
   run:
     shell: bash
 
-env:
-  services-test: [{ "stack-name": "auth-service", "docker-image-name": "auth-service", "service-dir": "./services/authService" }]
-
 jobs:    
   changes:
     runs-on: ubuntu-latest
@@ -57,9 +54,7 @@ jobs:
       stack-name: ${{ matrix.lookup[matrix.services].stack-name }}
       docker-image-name: ${{ matrix.lookup[matrix.services].docker-image-name }}
       service-dir: ${{ matrix.lookup[matrix.services].service-dir }}
-    #
-    #
-    #
+  
     # runs-on: ubuntu-latest
     # steps:
     #   - name: echoing
