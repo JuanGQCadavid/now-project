@@ -4,6 +4,10 @@ name: Service build and deploy
 on:
   workflow_call:
     inputs:
+      deploy: 
+        description: "The name of the CloudFormation stack"
+        required: true
+        type: boolean
       stack-name:
         description: "The name of the CloudFormation stack"
         required: true
@@ -33,6 +37,7 @@ jobs:
   build-container:
     uses: ./.github/workflows/container-build-push.yml
     secrets: inherit
+    if: ${{ inputs.deploy }}
     with:
       docker-image-name: ${{ inputs.docker-image-name }}
       docker-context: ${{ inputs.service-dir }}
