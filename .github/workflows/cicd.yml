@@ -12,7 +12,23 @@ defaults:
 # env:
 #   auth-service: { "stack-name": "auth-service", "docker-image-name": "auth-service", "service-dir": "./services/authService" }
 
-jobs:
+jobs:    
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      auth-service: ${{ steps.filter.outputs.authService }}
+      spots-core-service: ${{ steps.filter.outputs.spotsCoreService }}
+    steps:
+    # For pull requests it's not necessary to checkout the code
+    - uses: dorny/paths-filter@v3
+      id: filter
+      with:
+        filters: |
+          authService:
+            - 'services/authService/**'
+          spotsCoreService:
+            - 'services/spotsCoreService/**'
+
   service-build-push:
     strategy:
       matrix:
@@ -32,26 +48,19 @@ jobs:
         ]
         services: [auth-service, spots-core-service]
     name:  ${{ matrix.lookup[matrix.services].stack-name }}
-    
-    # runs-on: ubuntu-latest
-    # steps:
-    #   - name: echoing
-    #     run: |
-    #       echo ${{ matrix.lookup[matrix.services].stack-name }}
- 
+    if: ${{ needs.changes.outputs.auth-service == 'true' }} 
     uses: ./.github/workflows/service-build-deploy.yml
     secrets: inherit
     with:
       stack-name: ${{ matrix.lookup[matrix.services].stack-name }}
       docker-image-name: ${{ matrix.lookup[matrix.services].docker-image-name }}
       service-dir: ${{ matrix.lookup[matrix.services].service-dir }}
-  
 
-  # service-build-push:
-  #   uses: ./.github/workflows/service-build-deploy.yml
-  #   secrets: inherit
-  #   with:
-  #     stack-name: spots-core-service
-  #     docker-image-name: spot-core-service 
-  #     service-dir: ./services/spotsCoreService
-  #
+
+
+    # runs-on: ubuntu-latest
+    # steps:
+    #   - name: echoing
+    #     run: |
+    #       echo ${{ matrix.lookup[matrix.services].stack-name }}
+
