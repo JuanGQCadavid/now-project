@@ -18,7 +18,7 @@ jobs:
     steps:
       - name: echoing
         run: |
-          echo ${{ fromJson(matrix.lookup[format('{0}',matrix.services)]).stack-name }}
+          echo ${{ fromJson(matrix.lookup[matrix.services]).stack-name }}
  
     # uses: ./.github/workflows/service-build-deploy.yml
     # secrets: inherit
