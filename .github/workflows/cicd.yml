@@ -16,8 +16,7 @@ jobs:
   changes:
     runs-on: ubuntu-latest
     outputs:
-      services-with-changes: ${{ [{"auth-service": steps.filter.outputs.authService }] }}
-
+      services-with-changes: ${{ {"auth-service": steps.filter.outputs.authService }}}
       auth-service: ${{ steps.filter.outputs.authService }}
       spots-core-service: ${{ steps.filter.outputs.spotsCoreService }}
     steps:
