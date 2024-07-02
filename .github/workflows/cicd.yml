@@ -21,9 +21,10 @@ jobs:
             "auth-service": { 
               "stack-name": "auth-service",
               "docker-image-name": "auth-service",
-              "service-dir": "./services/authService"}
+              "service-dir": "./services/authService"
             }
-          ]
+          }
+        ]
         services: ["auth-service"]
     runs-on: ubuntu-latest
     steps:
