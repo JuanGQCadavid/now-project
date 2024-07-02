@@ -64,5 +64,5 @@ jobs:
     steps:
       - name: echoing
         run: |
-          echo ${{ needs.changes.outputs}}
+          echo ${{ needs.changes.outputs[matrix.services] }}
 
