@@ -23,9 +23,16 @@ jobs:
               "docker-image-name": "auth-service",
               "service-dir": "./services/authService"
             }
+          },
+          {
+            "spots-core-service": { 
+              "stack-name": "spots-core-service",
+              "docker-image-name": "spot-core-service",
+              "service-dir": "./services/spotsCoreService"
+            }
           }
         ]
-        services: [auth-service]
+        services: [auth-service, spots-core-service]
     runs-on: ubuntu-latest
     steps:
       - name: echoing
