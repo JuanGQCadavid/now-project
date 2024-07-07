@@ -37,5 +37,5 @@ jobs:
     needs: [deploy-cloudformation-staging]
     with:
       stack-name: ${{ inputs.stack-name }}
-      workdir: ${{ inputs.service-dir }}
+      workdir:  ${{ inputs.workdir }}
       pululapp-env: prod
