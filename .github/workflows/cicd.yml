@@ -15,6 +15,7 @@ jobs:
     outputs:
       auth-service: ${{ steps.filter.outputs.authService }}
       spots-core-service: ${{ steps.filter.outputs.spotsCoreService }}
+      infra-stack: ${{ steps.filter.outputs.infraAWS }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -26,6 +27,18 @@ jobs:
               - 'services/authService/**'
             spotsCoreService:
               - 'services/spotsCoreService/**'
+            infraAWS:
+              - 'infra/aws/template.yml'
+
+  # infra-stack:
+  #   needs: [changes]
+  #   name:  Main core infra CI/CD
+  #   uses: ./.github/workflows/infra-deploy.yml
+  #   secrets: inherit
+  #   if:  ${{ needs.changes.outputs.infra-stack == 'true' }} 
+  #   with:
+  #     stack-name: pululapp-core
+  #     workdir: ./infra/aws 
 
   service-build-push:
     needs: [changes]

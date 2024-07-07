@@ -12,8 +12,8 @@ on:
         description: "The path to the CloudFormation template"
         required: true
         type: string
-      service-docker-tag:
-        description: 'Image tag from ecr'
+      parameter-overrides:
+        description: 'Parameters for cloudformartion, comma delimited'
         required: false
         type: string
       pululapp-env:
@@ -69,10 +69,24 @@ jobs:
       #
       # #####################################################
 
+      - name: Generate parameter-overrides
+        run: |
+          newParams:="PululappEnv=${{ inputs.pululapp-env }}"
+          if [ -z "${{ inputs.parameter-overrides }}" ]
+          then
+                echo "${{ inputs.parameter-overrides }}  is empty"
+          else
+            newParams:="PululappEnv=${{ inputs.pululapp-env }}, ${{ inputs.parameter-overrides }}"
+          fi
+
+          echo "The resulting params are $newParams" 
+          echo "PARAMS_OVERVIEW=$newParams" >> "${GITHUB_ENV}"
+
       - uses: aws-actions/aws-cloudformation-github-deploy@v1
         with:
           name: ${{ inputs.stack-name }}-${{ inputs.pululapp-env }}
           template: ${{ inputs.workdir }}/template.yml
           no-fail-on-empty-changeset: "1"
           capabilities: CAPABILITY_NAMED_IAM, CAPABILITY_IAM
-          parameter-overrides: PululappEnv=${{ inputs.pululapp-env }}, ServiceImageVersion=${{ inputs.service-docker-tag }} 
+          parameter-overrides: ${{ env.PARAMS_OVERVIEW }} 
+
