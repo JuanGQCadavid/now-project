@@ -37,7 +37,6 @@ Resources:
   # Central ApiGateway
   #
   ############################################################
-
   CentralGateway:
     Type: AWS::ApiGatewayV2::Api
     Properties:
