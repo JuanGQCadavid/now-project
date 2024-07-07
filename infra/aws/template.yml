@@ -13,8 +13,12 @@ Mappings:
   SubnetConfig:
     staging:
       ReverseProxyDNS: "staging.pululapp.com"
+      DomainName: "pululapp.com" 
+      DomainHostedZoneId: "Z05194622U3QC4KFX487P"
     prod:
-      ReverseProxyDNS: "api.pululapp.com"
+      ReverseProxyDNS: "prod.pululapp.com"
+      DomainName: "pululapp.com" 
+      DomainHostedZoneId: "Z05194622U3QC4KFX487P"
   TopicsDefaultConfig:
     staging:
       ArchivePolicy: 5
@@ -27,6 +31,7 @@ Conditions:
     - prod
 
 Resources:
+
   ############################################################
   #
   # Central ApiGateway
@@ -51,8 +56,61 @@ Resources:
       # Target: String
       # Version: String
 
+  DefaultStage:
+    DependsOn:
+      - CentralGateway
+    Type: AWS::ApiGatewayV2::Stage
+    Properties:
+      ApiId: !Ref CentralGateway
+      AutoDeploy: true
+      StageName: "$default"
 
-  
+  ApiGatewayCertificate:
+    Type: AWS::CertificateManager::Certificate
+    Properties:
+      DomainName: !FindInMap [SubnetConfig, !Ref PululappEnv, ReverseProxyDNS]
+      ValidationMethod: DNS
+      CertificateTransparencyLoggingPreference: ENABLED
+      SubjectAlternativeNames:
+        - !FindInMap [SubnetConfig, !Ref PululappEnv, ReverseProxyDNS]
+      DomainValidationOptions:
+        - DomainName: !FindInMap [SubnetConfig, !Ref PululappEnv, DomainName]
+          HostedZoneId: !FindInMap [SubnetConfig, !Ref PululappEnv, DomainHostedZoneId]
+
+  ApiGatewayCustomDomain:
+    Type: AWS::ApiGatewayV2::DomainName
+    Properties:
+      DomainName: !FindInMap [SubnetConfig, !Ref PululappEnv, ReverseProxyDNS]
+      DomainNameConfigurations: 
+        - CertificateArn: !Ref ApiGatewayCertificate
+          CertificateName: !FindInMap [SubnetConfig, !Ref PululappEnv, ReverseProxyDNS] 
+      Tags: 
+        App: Pululapp
+        Env: !Ref PululappEnv
+        Stackish: Core
+
+  ApiMapping:
+    DependsOn:
+      - CentralGateway
+      - ApiGatewayCustomDomain
+      - DefaultStage 
+    Type: AWS::ApiGatewayV2::ApiMapping
+    Properties:
+      ApiId: !Ref CentralGateway
+      Stage: "$default" 
+      DomainName: !Ref ApiGatewayCustomDomain
+
+  ApiGatewayRoute53:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      HostedZoneId: !FindInMap [SubnetConfig, !Ref PululappEnv, DomainHostedZoneId]
+      Name: !FindInMap [SubnetConfig, !Ref PululappEnv, ReverseProxyDNS]
+      Type: A
+      AliasTarget:
+        HostedZoneId: !GetAtt ApiGatewayCustomDomain.RegionalHostedZoneId
+        DNSName: !GetAtt ApiGatewayCustomDomain.RegionalDomainName
+
+
   ############################################################
   #
   # App Topics
