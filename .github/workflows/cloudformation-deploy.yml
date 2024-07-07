@@ -69,25 +69,44 @@ jobs:
       #
       # #####################################################
 
-      - name: Generate parameter-overrides
-        run: |
-          # newParams:='PululappEnv=${{ inputs.pululapp-env }}'
-          if [ -z "${{ inputs.parameter-overrides }}" ]
-          then
-                echo "${{ inputs.parameter-overrides }}  is empty"
-                echo "PARAMS_OVERVIEW='PululappEnv=${{ inputs.pululapp-env }}'"  >> "${GITHUB_ENV}"
-          else
-            # newParams:='PululappEnv=${{ inputs.pululapp-env }}, ${{ inputs.parameter-overrides }}'
-            echo "PARAMS_OVERVIEW='PululappEnv=${{ inputs.pululapp-env }},${{ inputs.parameter-overrides }}'" >> "${GITHUB_ENV}"
-          fi
-
-          # echo "The resulting params are $newParams" 
-
+      # - name: Generate parameter-overrides
+      #   run: |
+      #     # newParams:='PululappEnv=${{ inputs.pululapp-env }}'
+      #     if [ -z "${{ inputs.parameter-overrides }}" ]
+      #     then
+      #           echo "${{ inputs.parameter-overrides }}  is empty"
+      #           echo "PARAMS_OVERVIEW='PululappEnv=${{ inputs.pululapp-env }}'"  >> "${GITHUB_ENV}"
+      #     else
+      #       # newParams:='PululappEnv=${{ inputs.pululapp-env }}, ${{ inputs.parameter-overrides }}'
+      #       echo "PARAMS_OVERVIEW='PululappEnv=${{ inputs.pululapp-env }},${{ inputs.parameter-overrides }}'" >> "${GITHUB_ENV}"
+      #     fi
+      #
+      #     # echo "The resulting params are $newParams" 
+      #
+      # - uses: aws-actions/aws-cloudformation-github-deploy@v1
+      #   with:
+      #     name: ${{ inputs.stack-name }}-${{ inputs.pululapp-env }}
+      #     template: ${{ inputs.workdir }}/template.yml
+      #     no-fail-on-empty-changeset: "1"
+      #     capabilities: CAPABILITY_NAMED_IAM, CAPABILITY_IAM
+      #     parameter-overrides: ${{ env.PARAMS_OVERVIEW }} 
+      
       - uses: aws-actions/aws-cloudformation-github-deploy@v1
+        name: Deploying Cloudformation with extra parameters
+        if: ${{ inputs.parameter-overrides != "" }}
         with:
           name: ${{ inputs.stack-name }}-${{ inputs.pululapp-env }}
           template: ${{ inputs.workdir }}/template.yml
           no-fail-on-empty-changeset: "1"
           capabilities: CAPABILITY_NAMED_IAM, CAPABILITY_IAM
-          parameter-overrides: ${{ env.PARAMS_OVERVIEW }} 
+          parameter-overrides: PululappEnv=${{ inputs.pululapp-env }},${{ inputs.parameter-overrides }}
 
+      - uses: aws-actions/aws-cloudformation-github-deploy@v1
+        name: Deploying Cloudformation with no extra parameters
+        if: ${{ inputs.parameter-overrides == "" }}
+        with:
+          name: ${{ inputs.stack-name }}-${{ inputs.pululapp-env }}
+          template: ${{ inputs.workdir }}/template.yml
+          no-fail-on-empty-changeset: "1"
+          capabilities: CAPABILITY_NAMED_IAM, CAPABILITY_IAM
+          parameter-overrides: PululappEnv=${{ inputs.pululapp-env }}
