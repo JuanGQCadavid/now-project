@@ -30,15 +30,15 @@ jobs:
             infraAWS:
               - 'infra/aws/template.yml'
 
-  # infra-stack:
-  #   needs: [changes]
-  #   name:  Main core infra CI/CD
-  #   uses: ./.github/workflows/infra-deploy.yml
-  #   secrets: inherit
-  #   if:  ${{ needs.changes.outputs.infra-stack == 'true' }} 
-  #   with:
-  #     stack-name: pululapp-core
-  #     workdir: ./infra/aws 
+  infra-stack:
+    needs: [changes]
+    name:  Main core infra CI/CD
+    uses: ./.github/workflows/infra-deploy.yml
+    secrets: inherit
+    if:  ${{ needs.changes.outputs.infra-stack == 'true' }} 
+    with:
+      stack-name: pululapp-core
+      workdir: ./infra/aws 
 
   service-build-push:
     needs: [changes]

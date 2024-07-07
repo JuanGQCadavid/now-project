@@ -29,8 +29,7 @@ jobs:
     needs: [build-container]
     with:
       stack-name: ${{ inputs.stack-name }}
-      workdir:  ${{ inputs.service-dir }}
-      service-docker-tag: ${{ github.sha }}
+      workdir:  ${{ inputs.workdir }}
       pululapp-env: staging
 
   deploy-cloudformation-prod:
@@ -40,5 +39,4 @@ jobs:
     with:
       stack-name: ${{ inputs.stack-name }}
       workdir: ${{ inputs.service-dir }}
-      service-docker-tag: ${{ github.sha }}
       pululapp-env: prod
