@@ -15,6 +15,7 @@ on:
       parameter-overrides:
         description: 'Parameters for cloudformartion, comma delimited'
         required: false
+        default: ""
         type: string
       pululapp-env:
         description: 'Pululapp Env'
@@ -93,7 +94,7 @@ jobs:
       
       - uses: aws-actions/aws-cloudformation-github-deploy@v1
         name: Deploying Cloudformation with extra parameters
-        if: ${{ inputs.parameter-overrides != "" }}
+        if: ${{ inputs.parameter-overrides != '' }}
         with:
           name: ${{ inputs.stack-name }}-${{ inputs.pululapp-env }}
           template: ${{ inputs.workdir }}/template.yml
@@ -103,7 +104,7 @@ jobs:
 
       - uses: aws-actions/aws-cloudformation-github-deploy@v1
         name: Deploying Cloudformation with no extra parameters
-        if: ${{ inputs.parameter-overrides == "" }}
+        if: ${{ inputs.parameter-overrides == '' }}
         with:
           name: ${{ inputs.stack-name }}-${{ inputs.pululapp-env }}
           template: ${{ inputs.workdir }}/template.yml
