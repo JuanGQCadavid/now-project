@@ -3,14 +3,14 @@ module github.com/JuanGQCadavid/now-project/services/confirmationService
 go 1.20
 
 require (
-	github.com/JuanGQCadavid/now-project/services/pkgs/common v0.0.0-00010101000000-000000000000
-	github.com/JuanGQCadavid/now-project/services/pkgs/credentialsFinder v0.0.0-00010101000000-000000000000
 	github.com/awslabs/aws-lambda-go-api-proxy v0.14.0
 	github.com/gin-gonic/gin v1.9.1
 	github.com/neo4j/neo4j-go-driver/v4 v4.4.7
 )
 
 require (
+	github.com/JuanGQCadavid/now-project/services/pkgs/common v0.0.0-20240707171709-8017e89d8c1d // indirect
+	github.com/JuanGQCadavid/now-project/services/pkgs/credentialsFinder v0.0.0-20240707171709-8017e89d8c1d // indirect
 	github.com/aws/aws-lambda-go v1.19.1 // indirect
 	github.com/aws/aws-sdk-go v1.44.245 // indirect
 	github.com/bytedance/sonic v1.9.1 // indirect
@@ -40,7 +40,3 @@ require (
 	google.golang.org/protobuf v1.30.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
-
-replace github.com/JuanGQCadavid/now-project/services/pkgs/credentialsFinder => ../pkgs/credentialsFinder
-
-replace github.com/JuanGQCadavid/now-project/services/pkgs/common => ../pkgs/common
