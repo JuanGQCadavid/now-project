@@ -330,6 +330,49 @@ Resources:
           Value: Pululapp
         - Key: Env
           Value: !Ref PululappEnv
+  
+  ConfirmationSvcRepository:
+    Type: AWS::ECR::Repository
+    Condition: CreateProdResources
+    Properties:
+      ImageScanningConfiguration:
+        ScanOnPush: true
+      ImageTagMutability: IMMUTABLE
+      RepositoryName: confirmation-service
+      LifecyclePolicy:
+        LifecyclePolicyText: |
+          {
+            "rules": [
+              {
+                "rulePriority": 1,
+                "description": "Keep the latest 5 release images",
+                "selection": {
+                  "tagStatus": "tagged",
+                  "tagPatternList": [
+                    "*.*.*"
+                  ],
+                  "countType": "imageCountMoreThan",
+                  "countNumber": 5
+                },
+                "action": { "type": "expire" }
+              },
+              {
+                "rulePriority": 2,
+                "description": "Keep the last 5 untagged images",
+                "selection": {
+                  "tagStatus": "any",
+                  "countType": "imageCountMoreThan",
+                  "countNumber": 5
+                },
+                "action": { "type": "expire" }
+              }
+            ]
+          }
+      Tags: 
+        - Key: App
+          Value: Pululapp
+        - Key: Env
+          Value: !Ref PululappEnv
 Outputs:
   ApiGatewayID:
     Value: !Ref CentralGateway
@@ -365,6 +408,11 @@ Outputs:
     Value: !GetAtt SpotCoreRepository.RepositoryUri
     Export:
       Name: spot-creator-ecr-uri
+  ConfirmationRepoUri:
+    Condition: CreateProdResources
+    Value: !GetAtt ConfirmationSvcRepository.RepositoryUri
+    Export:
+      Name: confirmation-ecr-uri
 
   ############################################################
   #
