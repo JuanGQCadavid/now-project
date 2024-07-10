@@ -11,7 +11,6 @@ ARG CMD="http"
 WORKDIR /app
 
 COPY cmd/${CMD} cmd/${CMD}
-COPY pkg/ pkg/
 COPY internal internal
 
 COPY go.mod go.mod
