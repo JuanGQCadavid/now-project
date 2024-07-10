@@ -16,6 +16,7 @@ jobs:
       auth-service: ${{ steps.filter.outputs.authService }}
       spots-core-service: ${{ steps.filter.outputs.spotsCoreService }}
       infra-stack: ${{ steps.filter.outputs.infraAWS }}
+      confirmation-service: ${{ steps.filter.outputs.confirmationService }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -29,6 +30,8 @@ jobs:
               - 'services/spotsCoreService/**'
             infraAWS:
               - 'infra/aws/template.yml'
+            confirmationService:
+              - 'services/confirmationService/**'
 
   infra-stack:
     needs: [changes]
@@ -55,10 +58,15 @@ jobs:
               "stack-name": "spots-core-service",
               "docker-image-name": "spot-core-service",
               "service-dir": "./services/spotsCoreService"
+            },
+            "confirmation-service": {
+              "stack-name": "confirmation-service",
+              "docker-image-name": "confirmation-service",
+              "service-dir": "./services/confirmationService"
             }
           }
         ]
-        services: [auth-service, spots-core-service]
+        services: [auth-service, spots-core-service, confirmation-service]
     name:  ${{ matrix.lookup[matrix.services].stack-name }}
     uses: ./.github/workflows/service-build-deploy.yml
     secrets: inherit
