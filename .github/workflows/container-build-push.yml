@@ -20,11 +20,6 @@ on:
         description: "Docker build args"
         required: false
         type: string
-      pkgs-location:
-        description: 'Folder for pkgs to move locally'
-        type: string
-        default: "./services/pkgs"
-        required: false
     secrets:
       DOCKERHUB_USERNAME: 
         required: true
