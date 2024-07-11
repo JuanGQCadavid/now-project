@@ -3,8 +3,8 @@ module github.com/JuanGQCadavid/now-project/services/spotsScheduledService
 go 1.18
 
 require (
-	github.com/JuanGQCadavid/now-project/services/pkgs/common v0.0.0-00010101000000-000000000000
-	github.com/JuanGQCadavid/now-project/services/pkgs/credentialsFinder v0.0.0-00010101000000-000000000000
+	github.com/JuanGQCadavid/now-project/services/pkgs/common v0.0.0-20240711110703-97f6b6abed0d
+	github.com/JuanGQCadavid/now-project/services/pkgs/credentialsFinder v0.0.0-20240711110703-97f6b6abed0d
 	github.com/aws/aws-lambda-go v1.40.0
 	github.com/awslabs/aws-lambda-go-api-proxy v0.14.0
 	github.com/gin-gonic/gin v1.9.0
@@ -40,7 +40,3 @@ require (
 	google.golang.org/protobuf v1.28.1 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
-
-replace github.com/JuanGQCadavid/now-project/services/pkgs/credentialsFinder => ../pkgs/credentialsFinder
-
-replace github.com/JuanGQCadavid/now-project/services/pkgs/common => ../pkgs/common
