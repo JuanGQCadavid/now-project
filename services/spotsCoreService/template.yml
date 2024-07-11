@@ -145,9 +145,9 @@ Resources:
           - /invocations
       PayloadFormatVersion: '1.0'
       RequestParameters:
-        "append:header.x-internal-user-name": "$context.authorizer.Name"
-        "append:header.x-internal-user-id": "$context.authorizer.UserID"
-        "append:header.x-internal-user-phone-number": "$context.authorizer.PhoneNumber"
+        "overwrite:header.x-internal-user-name": "$context.authorizer.Name"
+        "overwrite:header.x-internal-user-id": "$context.authorizer.UserID"
+        "overwrite:header.x-internal-user-phone-number": "$context.authorizer.PhoneNumber"
 
   APIGatewayIntegration:
     Type: AWS::ApiGatewayV2::Route
@@ -183,10 +183,3 @@ Resources:
         - - integrations
           - !Ref ServiceAPIGatewayIntegration
 
-
-
-# Outputs:
-#   AuthorizerID:
-#     Value: !Ref DefaultAuthorizer
-#     Export:
-#       Name: !Sub ${PululappEnv}-auth-default-id
