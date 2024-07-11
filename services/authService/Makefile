@@ -19,11 +19,7 @@ ecr-login:
 # 	docker buildx build --platform=linux/$(PLATFORM) --build-arg CMD="lambda" --build-arg GOARCH="$(PLATFORM)" -t $(ECR_URI):$(VERSION) --push  . 
 
 ecr-deploy: ecr-login
-	rm -rf tmp \
-	&& mkdir tmp \
-	&& cp -r ../pkgs tmp/pkgs \
-	&& docker buildx build --platform=linux/$(PLATFORM) --build-arg CMD="lambda" --build-arg GOARCH="$(PLATFORM)" -t $(STACK):$(VERSION) --load . \
-	&& rm -rf tmp \
+	docker buildx build --platform=linux/$(PLATFORM) --build-arg CMD="lambda" --build-arg GOARCH="$(PLATFORM)" -t $(STACK):$(VERSION) --load . \
 	&& docker tag $(STACK):$(VERSION) $(ECR_URI):$(VERSION) \
 	&& docker push $(ECR_URI):$(VERSION)
 
