@@ -241,7 +241,7 @@ func geneateDatesFromRepoWithDrivers() {
 		os.Exit(1)
 	}
 
-	f, _ := os.Create("/Users/personal/Pululapp/now-project/services/scheduledPatternsChecker/cmd/http/ouput.json")
+	f, _ := os.Create("ouput.json")
 
 	resultOutput := Result{
 		Result: result,

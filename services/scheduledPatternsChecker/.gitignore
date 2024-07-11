@@ -1,4 +1,6 @@
 /swagger
 .DS_Store
 main
+*ouput.json
 .back*
+.env
