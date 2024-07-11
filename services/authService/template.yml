@@ -33,11 +33,11 @@ Mappings:
     staging:
       RAM: 128
       TimeOut: 60
-      AuthTTL: 3600 # TODO -> make it short once we are carefull about tokens TTL
+      AuthTTL: 0 #3600 # TODO -> make it short once we are carefull about tokens TTL
     prod:
       RAM: 128
       TimeOut: 60
-      AuthTTL: 3600 # TODO -> make it short once we are carefull about tokens TTL
+      AuthTTL: 0 #3600 # TODO -> make it short once we are carefull about tokens TTL
 
 Resources:
   ServiceRole:
