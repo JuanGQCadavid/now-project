@@ -373,6 +373,49 @@ Resources:
           Value: Pululapp
         - Key: Env
           Value: !Ref PululappEnv
+  
+  ScheduleSvcRepository:
+    Type: AWS::ECR::Repository
+    Condition: CreateProdResources
+    Properties:
+      ImageScanningConfiguration:
+        ScanOnPush: true
+      ImageTagMutability: IMMUTABLE
+      RepositoryName: spot-schedule-service
+      LifecyclePolicy:
+        LifecyclePolicyText: |
+          {
+            "rules": [
+              {
+                "rulePriority": 1,
+                "description": "Keep the latest 5 release images",
+                "selection": {
+                  "tagStatus": "tagged",
+                  "tagPatternList": [
+                    "*.*.*"
+                  ],
+                  "countType": "imageCountMoreThan",
+                  "countNumber": 5
+                },
+                "action": { "type": "expire" }
+              },
+              {
+                "rulePriority": 2,
+                "description": "Keep the last 5 untagged images",
+                "selection": {
+                  "tagStatus": "any",
+                  "countType": "imageCountMoreThan",
+                  "countNumber": 5
+                },
+                "action": { "type": "expire" }
+              }
+            ]
+          }
+      Tags: 
+        - Key: App
+          Value: Pululapp
+        - Key: Env
+          Value: !Ref PululappEnv
 Outputs:
   ApiGatewayID:
     Value: !Ref CentralGateway
@@ -398,6 +441,13 @@ Outputs:
     Value: !GetAtt UsersTable.Arn
     Export:
       Name: !Sub ${PululappEnv}-users-table-arn
+
+  ############################################################
+  #
+  # ECR Ouputs
+  #
+  ############################################################
+
   AuthRepoUri:
     Condition: CreateProdResources
     Value: !GetAtt AuthRepository.RepositoryUri
@@ -413,7 +463,11 @@ Outputs:
     Value: !GetAtt ConfirmationSvcRepository.RepositoryUri
     Export:
       Name: confirmation-ecr-uri
-
+  SpotScheduleRepoUri:
+    Condition: CreateProdResources
+    Value: !GetAtt  ScheduleSvcRepository.RepositoryUri
+    Export:
+      Name: spot-schedule-ecr-uri
   ############################################################
   #
   # Topics outputs
