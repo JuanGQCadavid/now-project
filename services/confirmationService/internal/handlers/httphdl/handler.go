@@ -3,6 +3,8 @@ package httphdl
 import (
 	"errors"
 
+	authDomain "github.com/JuanGQCadavid/now-project/services/authService/core/core/domain"
+	authUtils "github.com/JuanGQCadavid/now-project/services/authService/core/utils"
 	"github.com/JuanGQCadavid/now-project/services/confirmationService/internal/core/ports"
 	"github.com/JuanGQCadavid/now-project/services/pkgs/common/logs"
 	"github.com/gin-gonic/gin"
@@ -33,7 +35,11 @@ PUT /confirmation/date/:date_uuid/confirm
 */
 func (hdl *HttpHandler) ConfirmDate(context *gin.Context) {
 	dateId := context.Param("date_uuid")
-	requesterId := context.Request.Header.Get("Authorization")
+
+	userDetails := authUtils.GetHeaders(context.Request.Header)
+
+	logs.Info.Printf("%+v\n", userDetails)
+	// requesterId := context.Request.Header.Get("Authorization")
 
 	if len(dateId) == 0 {
 		logs.Error.Println(ErrMissingDateIdOnParam.Error())
@@ -43,7 +49,7 @@ func (hdl *HttpHandler) ConfirmDate(context *gin.Context) {
 		return
 	}
 
-	if len(requesterId) == 0 {
+	if userDetails != nil && userDetails.UserID == authDomain.AnonymousUser.UserID {
 		logs.Error.Println(ErrUserIsNotAllowedToPerformThisOperation.Error())
 		context.AbortWithStatusJSON(400, ErrorMessage{
 			Message: ErrUserIsNotAllowedToPerformThisOperation.Error(),
@@ -51,7 +57,7 @@ func (hdl *HttpHandler) ConfirmDate(context *gin.Context) {
 		return
 	}
 
-	err := hdl.service.ConfirmDate(dateId, requesterId)
+	err := hdl.service.ConfirmDate(dateId, userDetails.UserID)
 
 	if err != nil {
 		logs.Error.Println(err.Error())
@@ -82,7 +88,9 @@ PUT /confirmation/date/:date_uuid/unconfirm
 */
 func (hdl *HttpHandler) UnconfirmDate(context *gin.Context) {
 	dateId := context.Param("date_uuid")
-	requesterId := context.Request.Header.Get("Authorization")
+	userDetails := authUtils.GetHeaders(context.Request.Header)
+
+	logs.Info.Printf("%+v\n", userDetails)
 
 	if len(dateId) == 0 {
 		logs.Error.Println(ErrMissingDateIdOnParam.Error())
@@ -92,7 +100,7 @@ func (hdl *HttpHandler) UnconfirmDate(context *gin.Context) {
 		return
 	}
 
-	if len(requesterId) == 0 {
+	if userDetails != nil && userDetails.UserID == authDomain.AnonymousUser.UserID {
 		logs.Error.Println(ErrUserIsNotAllowedToPerformThisOperation.Error())
 		context.AbortWithStatusJSON(400, ErrorMessage{
 			Message: ErrUserIsNotAllowedToPerformThisOperation.Error(),
@@ -100,7 +108,7 @@ func (hdl *HttpHandler) UnconfirmDate(context *gin.Context) {
 		return
 	}
 
-	err := hdl.service.UnconfirmDate(dateId, requesterId)
+	err := hdl.service.UnconfirmDate(dateId, userDetails.UserID)
 
 	if err != nil {
 		logs.Error.Println(err.Error())

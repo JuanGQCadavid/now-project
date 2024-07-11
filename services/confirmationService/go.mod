@@ -3,16 +3,17 @@ module github.com/JuanGQCadavid/now-project/services/confirmationService
 go 1.20
 
 require (
+	github.com/JuanGQCadavid/now-project/services/authService v0.0.0-20240711200633-fbf1b64c0c18
 	github.com/JuanGQCadavid/now-project/services/pkgs/common v0.0.0-20240707171709-8017e89d8c1d
 	github.com/JuanGQCadavid/now-project/services/pkgs/credentialsFinder v0.0.0-20240707171709-8017e89d8c1d
-	github.com/aws/aws-lambda-go v1.19.1
+	github.com/aws/aws-lambda-go v1.46.0
 	github.com/awslabs/aws-lambda-go-api-proxy v0.14.0
 	github.com/gin-gonic/gin v1.9.1
 	github.com/neo4j/neo4j-go-driver/v4 v4.4.7
 )
 
 require (
-	github.com/aws/aws-sdk-go v1.44.245 // indirect
+	github.com/aws/aws-sdk-go v1.51.21 // indirect
 	github.com/bytedance/sonic v1.9.1 // indirect
 	github.com/chenzhuoyu/base64x v0.0.0-20221115062448-fe3a3abad311 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.2 // indirect
@@ -33,10 +34,10 @@ require (
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
 	github.com/ugorji/go/codec v1.2.11 // indirect
 	golang.org/x/arch v0.3.0 // indirect
-	golang.org/x/crypto v0.9.0 // indirect
-	golang.org/x/net v0.10.0 // indirect
-	golang.org/x/sys v0.8.0 // indirect
-	golang.org/x/text v0.9.0 // indirect
+	golang.org/x/crypto v0.14.0 // indirect
+	golang.org/x/net v0.17.0 // indirect
+	golang.org/x/sys v0.13.0 // indirect
+	golang.org/x/text v0.13.0 // indirect
 	google.golang.org/protobuf v1.30.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
