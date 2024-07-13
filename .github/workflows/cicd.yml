@@ -18,6 +18,7 @@ jobs:
       infra-stack: ${{ steps.filter.outputs.infraAWS }}
       confirmation-service: ${{ steps.filter.outputs.confirmationService }}
       schedule-service: ${{ steps.filter.outputs.scheduleService }}
+      schedule-checker-prc: ${{ steps.filter.outputs.scheduleCheckerPrc }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -35,6 +36,8 @@ jobs:
               - 'services/confirmationService/**'
             scheduleService :
               - 'services/spotsScheduledService/**'
+            scheduleCheckerPrc:
+              - 'services/scheduledPatternsChecker/**'
 
   infra-stack:
     needs: [changes]
@@ -71,10 +74,16 @@ jobs:
               "stack-name": "spots-schedule-service",
               "docker-image-name": "spot-schedule-service",
               "service-dir": "./services/spotsScheduledService"
+            },
+            "schedule-checker-prc": {
+              "stack-name": "schedule-checker-prc",
+              "docker-image-name": "schedule-checker-ecr-uri",
+              "service-dir": "./services/scheduledPatternsChecker"
             }
+
           }
         ]
-        services: [auth-service, spots-core-service, confirmation-service, schedule-service]
+        services: [auth-service, spots-core-service, confirmation-service, schedule-service, schedule-checker-prc]
     name:  ${{ matrix.lookup[matrix.services].stack-name }}
     uses: ./.github/workflows/service-build-deploy.yml
     secrets: inherit
