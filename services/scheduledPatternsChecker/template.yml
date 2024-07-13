@@ -1,0 +1,223 @@
+---
+AWSTemplateFormatVersion: 2010-09-09
+Description: Pululapp Schedule pattern checker process.
+Parameters:
+  PululappEnv:
+    Type: String
+    Default: staging
+    AllowedValues:
+      - staging
+      - prod
+    Description: Pululapp enviroment
+  ServiceImageVersion:
+    Type: String
+    Description: Service image
+  ServiceName:
+    Type: String
+    Description: Service name
+    Default: schedule-checker-prc
+  ServiceDescription:
+    Type: String
+    Description: Service description
+    Default: Schedule checker process
+  ECROutput:
+    Type: String
+    Description: Service ECR cloudformation output
+    Default: schedule-checker-ecr-uri
+Mappings:
+  ServiceConfig:
+    staging:
+      BatchSize: 10
+      DefaultTimeWindow: 604800 # 7 Days
+      DLQRetryes: 2
+      EnableProcess: true
+      MessageRetentionPeriod: 345600 # 4 Days
+      MaximumConcurrency: 100
+      RAM: 5308
+      TimeOut: 900
+    prod:
+      BatchSize: 10
+      DefaultTimeWindow: 604800 # 7 Days
+      DLQRetryes: 2
+      EnableProcess: true
+      MessageRetentionPeriod: 345600 # 4 Days
+      MaximumConcurrency: 100
+      RAM: 128
+      TimeOut: 900
+
+Resources:
+  ScheduleCheckerDLQ:
+    Type: AWS::SQS::Queue
+    Properties:
+      MessageRetentionPeriod: !FindInMap ['ServiceConfig', !Ref PululappEnv, 'MessageRetentionPeriod']
+      QueueName: !Sub Schedule-checker-dlq-${PululappEnv}
+      RedriveAllowPolicy: 
+        redrivePermission: allowAll
+      Tags: 
+        - Key: App
+          Value: Pululapp
+        - Key: Env
+          Value: !Ref PululappEnv
+        - Key: Service
+          Value: !Ref ServiceName
+      VisibilityTimeout: !FindInMap ['ServiceConfig', !Ref PululappEnv, 'TimeOut']
+  
+  ScheduleCheckerSQS:
+    Type: AWS::SQS::Queue
+    Properties:
+      MessageRetentionPeriod: !FindInMap ['ServiceConfig', !Ref PululappEnv, 'MessageRetentionPeriod']
+      QueueName: !Sub Schedule-checker-${PululappEnv}
+      RedrivePolicy:
+        deadLetterTargetArn: !GetAtt ScheduleCheckerDLQ.Arn 
+        maxReceiveCount : !FindInMap ['ServiceConfig', !Ref PululappEnv, 'DLQRetryes']
+      Tags: 
+        - Key: App
+          Value: Pululapp
+        - Key: Env
+          Value: !Ref PululappEnv
+        - Key: Service
+          Value: !Ref ServiceName
+      VisibilityTimeout: !FindInMap ['ServiceConfig', !Ref PululappEnv, 'TimeOut']
+
+  ############################################################
+  #
+  # TODO: Manual check on Filter policy
+  #
+  ############################################################
+
+  SNSToSQSIntegration:
+    DependsOn:
+      - ScheduleCheckerSQS
+    Type: AWS::SNS::Subscription
+    Properties:
+      Endpoint: !GetAtt ScheduleCheckerSQS.Arn
+      FilterPolicy:
+        Operation:
+          - prefix: "schedule"
+      Protocol: sqs
+      RawMessageDelivery: true
+      Region: !Ref AWS::Region
+      TopicArn: 
+        Fn::ImportValue:
+          !Sub ${PululappEnv}-spot-activity-arn
+  
+  ############################################################
+  #
+  # TODO: Manual check on Filter policy
+  #
+  ############################################################
+  
+  ServiceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      MaxSessionDuration: 3600
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaRole
+        - arn:aws:iam::aws:policy/AWSXrayFullAccess
+      Policies:
+        - PolicyName: !Sub ${ServiceName}-sns-${PululappEnv}
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - sns:*
+                Resource:
+                  - Fn::ImportValue:
+                      !Sub ${PululappEnv}-spot-activity-arn
+        - PolicyName: !Sub ${ServiceName}-ssm-${PululappEnv}
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - ssm:GetParameters
+                Resource:
+                  - "*"
+        - PolicyName: !Sub ${ServiceName}-sqs-${PululappEnv}
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - sqs:DeleteMessage
+                  - sqs:SendMessage
+                  - sqs:ChangeMessageVisibility
+                  - sqs:GetQueueAttributes
+                  - sqs:GetQueueUrl
+                  - sqs:ReceiveMessage
+                Resource:
+                  - !GetAtt ScheduleCheckerSQS.Arn
+       
+  ServiceLambda:
+    Type: AWS::Lambda::Function
+    Properties:
+      Architectures: 
+        - arm64
+      Code: 
+        ImageUri: 
+          Fn::Sub:
+            - "${ECR_URI}:${VERSION}"
+            - VERSION: !Ref ServiceImageVersion
+              ECR_URI: 
+                Fn::ImportValue:
+                  !Ref ECROutput
+      Description: !Ref ServiceDescription
+      Environment:
+        Variables:
+          defaultTimeWindow: !FindInMap ['ServiceConfig', !Ref PululappEnv, 'DefaultTimeWindow']
+          neo4jUser:
+            Fn::ImportValue:
+              !Sub ${PululappEnv}-neo4j-user
+          neo4jPassword:
+            Fn::ImportValue:
+              !Sub ${PululappEnv}-neo4j-pass
+          neo4jUri:
+            Fn::ImportValue:
+              !Sub ${PululappEnv}-neo4j-uri
+          snsArn:
+            Fn::ImportValue:
+              !Sub ${PululappEnv}-spot-activity-arn
+          sqsConfirmationArn: "I am missing bro" # TODO - Import from stack 
+      FunctionName: !Sub ${ServiceName}-${PululappEnv}
+      MemorySize: !FindInMap ['ServiceConfig', !Ref PululappEnv, 'RAM']
+      PackageType: Image
+      Role: !GetAtt ServiceRole.Arn
+      Tags: 
+        - Key: App
+          Value: Pululapp
+        - Key: Env
+          Value: !Ref PululappEnv
+        - Key: Service
+          Value: !Ref ServiceName
+      Timeout: !FindInMap ['ServiceConfig', !Ref PululappEnv, 'TimeOut']
+      TracingConfig:
+        Mode: Active
+
+  LambdaApiGatewayPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref ServiceLambda
+      Principal: sqs.amazonaws.com
+
+  LambdaSQSMapping:
+    Type: AWS::Lambda::EventSourceMapping
+    Properties:
+      BatchSize: !FindInMap ['ServiceConfig', !Ref PululappEnv, 'BatchSize']
+      Enabled: !FindInMap ['ServiceConfig', !Ref PululappEnv, 'EnableProcess']
+      EventSourceArn: !GetAtt ScheduleCheckerSQS.Arn
+      FunctionName: !Ref ServiceLambda
+      ScalingConfig: 
+        MaximumConcurrency: !FindInMap ['ServiceConfig', !Ref PululappEnv, 'MaximumConcurrency']
+

@@ -4,3 +4,4 @@ main
 *ouput.json
 .back*
 .env
+*.null-ls*
