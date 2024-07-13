@@ -220,4 +220,3 @@ Resources:
       FunctionName: !Ref ServiceLambda
       ScalingConfig: 
         MaximumConcurrency: !FindInMap ['ServiceConfig', !Ref PululappEnv, 'MaximumConcurrency']
-
