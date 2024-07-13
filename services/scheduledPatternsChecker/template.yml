@@ -85,6 +85,21 @@ Resources:
   #
   ############################################################
 
+  QueuePolicy:
+    Type: AWS::SQS::QueuePolicy
+    Properties:
+      PolicyDocument:
+        Statement: 
+        - Action: 
+            - "SQS:SendMessage" 
+            - "SQS:ReceiveMessage"
+          Effect: "Allow"
+          Resource: !GetAtt ScheduleCheckerSQS.Arn
+          Principal:  
+            Service: "sns.amazonaws.com"
+      Queues: 
+        - !Ref ScheduleCheckerSQS
+
   SNSToSQSIntegration:
     DependsOn:
       - ScheduleCheckerSQS
@@ -100,7 +115,7 @@ Resources:
       TopicArn: 
         Fn::ImportValue:
           !Sub ${PululappEnv}-spot-activity-arn
-  
+
   ############################################################
   #
   # TODO: Manual check on Filter policy
