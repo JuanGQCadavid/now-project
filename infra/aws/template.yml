@@ -416,6 +416,48 @@ Resources:
           Value: Pululapp
         - Key: Env
           Value: !Ref PululappEnv
+
+  ScheduleCheckerProcessRepository:
+    Type: AWS::ECR::Repository
+    Condition: CreateProdResources
+    Properties:
+      ImageScanningConfiguration:
+        ScanOnPush: true
+      ImageTagMutability: IMMUTABLE
+      RepositoryName: schedule-checker-process
+      LifecyclePolicy:
+        LifecyclePolicyText: |
+          {
+            "rules": [
+              {
+                "rulePriority": 1,
+                "description": "Keep the latest 5 release images",
+                "selection": {
+                  "tagStatus": "tagged",
+                  "tagPatternList": [
+                    "*.*.*"
+                  ],
+                  "countType": "imageCountMoreThan",
+                  "countNumber": 5
+                },
+                "action": { "type": "expire" }
+              },
+              {
+                "rulePriority": 2,
+                "description": "Keep the last 5 untagged images",
+                "selection": {
+                  "tagStatus": "any",
+                  "countType": "imageCountMoreThan",
+                  "countNumber": 5
+                },
+                "action": { "type": "expire" }
+              }
+            ]
+          }
+      Tags: 
+        - Key: App
+          Value: Pululapp
+        - Key: Env
 Outputs:
   ApiGatewayID:
     Value: !Ref CentralGateway
@@ -468,6 +510,12 @@ Outputs:
     Value: !GetAtt  ScheduleSvcRepository.RepositoryUri
     Export:
       Name: spot-schedule-ecr-uri
+  ScheduleCheckerProcessURI:
+    Condition: CreateProdResources
+    Value: !GetAtt  ScheduleCheckerProcessRepository.RepositoryUri
+    Export:
+      Name: schedule-checker-ecr-uri
+
   ############################################################
   #
   # Topics outputs
