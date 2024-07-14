@@ -31,11 +31,21 @@ Parameters:
 Mappings:
   ServiceConfig:
     staging:
-      RAM: 128
-      TimeOut: 60
+      BatchSize: 10
+      DLQRetryes: 2
+      EnableProcess: false
+      MessageRetentionPeriod: 345600 # 4 Days
+      MaximumConcurrency: 100
+      RAM: 5308
+      TimeOut: 900
     prod:
-      RAM: 128
-      TimeOut: 60
+      BatchSize: 10
+      DLQRetryes: 2
+      EnableProcess: false
+      MessageRetentionPeriod: 345600 # 4 Days
+      MaximumConcurrency: 100
+      RAM: 5308
+      TimeOut: 900
 
 Resources:
   ServiceRole:
@@ -75,6 +85,131 @@ Resources:
                   - ssm:GetParameters
                 Resource:
                   - "*"
+  
+  ############################################################
+  #
+  # Confirmation SQS CMD
+  #
+  ############################################################
+  ConfirmationDLQ:
+    Type: AWS::SQS::Queue
+    Properties:
+      MessageRetentionPeriod: !FindInMap ['ServiceConfig', !Ref PululappEnv, 'MessageRetentionPeriod']
+      QueueName: !Sub confirmation-dlq-${PululappEnv}
+      RedriveAllowPolicy: 
+        redrivePermission: allowAll
+      Tags: 
+        - Key: App
+          Value: Pululapp
+        - Key: Env
+          Value: !Ref PululappEnv
+        - Key: Service
+          Value: !Ref ServiceName
+      VisibilityTimeout: !FindInMap ['ServiceConfig', !Ref PululappEnv, 'TimeOut']
+  
+  ConfirmationSQS:
+    Type: AWS::SQS::Queue
+    Properties:
+      MessageRetentionPeriod: !FindInMap ['ServiceConfig', !Ref PululappEnv, 'MessageRetentionPeriod']
+      QueueName: !Sub confirmation-${PululappEnv}
+      RedrivePolicy:
+        deadLetterTargetArn: !GetAtt ConfirmationDLQ.Arn 
+        maxReceiveCount : !FindInMap ['ServiceConfig', !Ref PululappEnv, 'DLQRetryes']
+      Tags: 
+        - Key: App
+          Value: Pululapp
+        - Key: Env
+          Value: !Ref PululappEnv
+        - Key: Service
+          Value: !Ref ServiceName
+      VisibilityTimeout: !FindInMap ['ServiceConfig', !Ref PululappEnv, 'TimeOut']
+
+  SQSAllowPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - sqs:ReceiveMessage
+              - sqs:ChangeMessageVisibility
+              - sqs:GetQueueUrl
+              - sqs:DeleteMessage
+              - sqs:GetQueueAttributes
+            Resource:
+                - !GetAtt ConfirmationSQS.Arn
+      PolicyName: !Sub ${ServiceName}-sqs-${PululappEnv}
+      Roles: 
+        - !Ref ServiceRole 
+
+  SQSLambda:
+    Type: AWS::Lambda::Function
+    Properties:
+      Architectures: 
+        - arm64
+      Code: 
+        ImageUri: 
+          Fn::Sub:
+            - "${ECR_URI}:${VERSION}"
+            - VERSION: !Ref ServiceImageVersion
+              ECR_URI: 
+                Fn::ImportValue:
+                  !Ref ECROutput
+      Description: !Ref ServiceDescription
+      Environment:
+        Variables:
+          neo4jUser:
+            Fn::ImportValue:
+              !Sub ${PululappEnv}-neo4j-user
+          neo4jPassword:
+            Fn::ImportValue:
+              !Sub ${PululappEnv}-neo4j-pass
+          neo4jUri:
+            Fn::ImportValue:
+              !Sub ${PululappEnv}-neo4j-uri
+          snsArn:
+            Fn::ImportValue:
+              !Sub ${PululappEnv}-spot-activity-arn
+      FunctionName: !Sub ${ServiceName}-sqs-${PululappEnv}
+      MemorySize: !FindInMap ['ServiceConfig', !Ref PululappEnv, 'RAM']
+      PackageType: Image
+      Role: !GetAtt ServiceRole.Arn
+      Tags: 
+        - Key: App
+          Value: Pululapp
+        - Key: Env
+          Value: !Ref PululappEnv
+        - Key: Service
+          Value: !Ref ServiceName
+      Timeout: !FindInMap ['ServiceConfig', !Ref PululappEnv, 'TimeOut']
+      TracingConfig:
+        Mode: Active
+
+  LambdaSQSPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref SQSLambda
+      Principal: sqs.amazonaws.com
+
+  LambdaSQSMapping:
+    Type: AWS::Lambda::EventSourceMapping
+    Properties:
+      BatchSize: !FindInMap ['ServiceConfig', !Ref PululappEnv, 'BatchSize']
+      Enabled: !FindInMap ['ServiceConfig', !Ref PululappEnv, 'EnableProcess']
+      EventSourceArn: !GetAtt ConfirmationSQS.Arn
+      FunctionName: !Ref SQSLambda
+      ScalingConfig: 
+        MaximumConcurrency: !FindInMap ['ServiceConfig', !Ref PululappEnv, 'MaximumConcurrency']
+
+
+  ############################################################
+  #
+  # Confirmation Lambda REST/Json CMD
+  #
+  ############################################################
+
   ServiceLambda:
     Type: AWS::Lambda::Function
     Properties:
