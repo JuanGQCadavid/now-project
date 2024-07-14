@@ -28,6 +28,9 @@ Mappings:
   ServiceConfig:
     staging:
       BatchSize: 10
+      DailyChecksCron: cron(0 0 * * ? *)
+      DailyChecksInput: '{"Operation":"generateDatesFromSchedulePatterns","TimeWindow":604800}'
+      DailyChecksState: ENABLED
       DefaultTimeWindow: 604800 # 7 Days
       DLQRetryes: 2
       EnableProcess: true
@@ -38,6 +41,9 @@ Mappings:
     prod:
       BatchSize: 10
       DefaultTimeWindow: 604800 # 7 Days
+      DailyChecksCron: cron(0 0 * * ? *)
+      DailyChecksInput: '{"Operation":"generateDatesFromSchedulePatterns","TimeWindow":604800}'
+      DailyChecksState: ENABLED
       DLQRetryes: 2
       EnableProcess: true
       MessageRetentionPeriod: 345600 # 4 Days
@@ -84,6 +90,17 @@ Resources:
   # TODO: Manual check on Filter policy
   #
   ############################################################
+  
+  EventBridgeScheduleEvent:
+    Type: AWS::Events::Rule
+    Properties:
+      Name: !Sub ${ServiceName}-dailychecks-${PululappEnv}
+      ScheduleExpression: !FindInMap ['ServiceConfig', !Ref PululappEnv, 'DailyChecksCron']
+      State: !FindInMap ['ServiceConfig', !Ref PululappEnv, 'DailyChecksState']
+      Targets:
+        - Arn: !GetAtt ScheduleCheckerSQS.Arn
+          Id: generateDatesFromSchedulePatterns
+          Input: !FindInMap ['ServiceConfig', !Ref PululappEnv, 'DailyChecksInput']
 
   QueuePolicy:
     Type: AWS::SQS::QueuePolicy
