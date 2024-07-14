@@ -317,3 +317,13 @@ Resources:
         - /
         - - integrations
           - !Ref ServiceAPIGatewayIntegration
+Outputs:
+  ConfirmationSQSID:
+    Value: !Ref ConfirmationSQS
+    Export:
+      Name: !Sub ${PululappEnv}-confirmation-sqs-id
+  ConfirmationSQSArn:
+    Value: !GetAtt ConfirmationSQS.Arn
+    Export:
+      Name: !Sub ${PululappEnv}-confirmation-sqs-arn
+
