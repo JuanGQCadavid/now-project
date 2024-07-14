@@ -190,7 +190,8 @@ Resources:
                   - sqs:ReceiveMessage
                 Resource:
                   - !GetAtt ScheduleCheckerSQS.Arn
-       
+                  - Fn::ImportValue:
+                      !Sub ${PululappEnv}-confirmation-sqs-arn
   ServiceLambda:
     Type: AWS::Lambda::Function
     Properties:
@@ -220,7 +221,9 @@ Resources:
           snsArn:
             Fn::ImportValue:
               !Sub ${PululappEnv}-spot-activity-arn
-          sqsConfirmationArn: "I am missing bro" # TODO - Import from stack 
+          sqsConfirmationArn: 
+            Fn::ImportValue:
+              !Sub ${PululappEnv}-confirmation-sqs-arn
       FunctionName: !Sub ${ServiceName}-${PululappEnv}
       MemorySize: !FindInMap ['ServiceConfig', !Ref PululappEnv, 'RAM']
       PackageType: Image
