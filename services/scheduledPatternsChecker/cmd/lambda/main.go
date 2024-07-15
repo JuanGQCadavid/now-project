@@ -9,7 +9,8 @@ import (
 	"github.com/JuanGQCadavid/now-project/services/pkgs/common/logs"
 	"github.com/JuanGQCadavid/now-project/services/pkgs/credentialsFinder/cmd/ssm"
 	"github.com/JuanGQCadavid/now-project/services/scheduledPatternsChecker/cmd/lambda/utils"
-	"github.com/JuanGQCadavid/now-project/services/scheduledPatternsChecker/internal/confirmation/queue"
+	"github.com/JuanGQCadavid/now-project/services/scheduledPatternsChecker/internal/confirmation/localconfirmation"
+	// "github.com/JuanGQCadavid/now-project/services/scheduledPatternsChecker/internal/confirmation/queue"
 	"github.com/JuanGQCadavid/now-project/services/scheduledPatternsChecker/internal/core/domain"
 	"github.com/JuanGQCadavid/now-project/services/scheduledPatternsChecker/internal/core/ports"
 	"github.com/JuanGQCadavid/now-project/services/scheduledPatternsChecker/internal/core/service"
@@ -213,7 +214,8 @@ func init() {
 		logs.Error.Fatalln(err.Error())
 	}
 	repo := neo4jrepo.NewNeo4jRepoWithDriver(neo4jDriver)
-	queueConfirmation, err := queue.NewSQSConfirmationFromEnv(SqsConfirmationArn)
+	// queueConfirmation, err := queue.NewSQSConfirmationFromEnv(SqsConfirmationArn)
+	queueConfirmation := localconfirmation.NewLocalConfirmation()
 
 	if err != nil {
 		logs.Error.Fatalln("error while creatin repo", err.Error())
