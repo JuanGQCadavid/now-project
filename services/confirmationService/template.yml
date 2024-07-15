@@ -33,7 +33,7 @@ Mappings:
     staging:
       BatchSize: 10
       DLQRetryes: 2
-      EnableProcess: false
+      EnableProcess: true
       MessageRetentionPeriod: 345600 # 4 Days
       MaximumConcurrency: 100
       RAM: 5308
@@ -41,7 +41,7 @@ Mappings:
     prod:
       BatchSize: 10
       DLQRetryes: 2
-      EnableProcess: false
+      EnableProcess: true
       MessageRetentionPeriod: 345600 # 4 Days
       MaximumConcurrency: 100
       RAM: 5308
@@ -172,6 +172,9 @@ Resources:
             Fn::ImportValue:
               !Sub ${PululappEnv}-spot-activity-arn
       FunctionName: !Sub ${ServiceName}-sqs-${PululappEnv}
+      ImageConfig:
+        EntryPoint:
+          - "/bin/sqs/main"
       MemorySize: !FindInMap ['ServiceConfig', !Ref PululappEnv, 'RAM']
       PackageType: Image
       Role: !GetAtt ServiceRole.Arn
