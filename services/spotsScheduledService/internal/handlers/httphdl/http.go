@@ -2,7 +2,8 @@ package httphdl
 
 import (
 	"errors"
-
+	authDomain "github.com/JuanGQCadavid/now-project/services/authService/core/core/domain"
+	authUtils "github.com/JuanGQCadavid/now-project/services/authService/core/utils"
 	"github.com/JuanGQCadavid/now-project/services/pkgs/common/logs"
 	"github.com/JuanGQCadavid/now-project/services/spotsScheduledService/internal/core/domain"
 	"github.com/JuanGQCadavid/now-project/services/spotsScheduledService/internal/core/ports"
@@ -41,7 +42,7 @@ GET /spots/schedule/<spot_UUID>/
 */
 func (hdl *HttpHandler) GetSchedule(context *gin.Context) {
 	spotId := context.Param("spot_uuid")
-	requesterId := context.Request.Header.Get("Authorization")
+	userDetails := authUtils.GetHeaders(context.Request.Header)
 
 	if len(spotId) == 0 {
 		logs.Error.Println(ErrMissingSpotIdOnParam.Error())
@@ -51,11 +52,7 @@ func (hdl *HttpHandler) GetSchedule(context *gin.Context) {
 		return
 	}
 
-	if len(requesterId) == 0 {
-		logs.Info.Println("Anonymous user")
-	}
-
-	spot, err := hdl.service.GetSchedules(spotId, requesterId, domain.ActivateFlag|domain.ConcludeFlag|domain.FreezeFlag)
+	spot, err := hdl.service.GetSchedules(spotId, userDetails.UserID, domain.ActivateFlag|domain.ConcludeFlag|domain.FreezeFlag)
 
 	if err != nil {
 		logs.Error.Println(err.Error())
@@ -86,7 +83,7 @@ GET /spots/schedule/<spot_UUID>/
 */
 func (hdl *HttpHandler) GetDates(context *gin.Context) {
 	spotId := context.Param("spot_uuid")
-	requesterId := context.Request.Header.Get("Authorization")
+	userDetails := authUtils.GetHeaders(context.Request.Header)
 
 	if len(spotId) == 0 {
 		logs.Error.Println(ErrMissingSpotIdOnParam.Error())
@@ -96,11 +93,7 @@ func (hdl *HttpHandler) GetDates(context *gin.Context) {
 		return
 	}
 
-	if len(requesterId) == 0 {
-		logs.Info.Println("Anonymous user")
-	}
-
-	dates, err := hdl.service.GetDates(spotId, requesterId)
+	dates, err := hdl.service.GetDates(spotId, userDetails.UserID)
 
 	if err != nil {
 		logs.Error.Println(err.Error())
@@ -131,7 +124,7 @@ POST /spots/schedule/<spot_UUID>/append
 */
 func (hdl *HttpHandler) AppendSchedule(context *gin.Context) {
 	spotId := context.Param("spot_uuid")
-	requesterId := context.Request.Header.Get("Authorization")
+	userDetails := authUtils.GetHeaders(context.Request.Header)
 
 	var scheduleSpotRequest domain.ScheduledSpot = domain.ScheduledSpot{}
 	context.BindJSON(&scheduleSpotRequest)
@@ -144,7 +137,7 @@ func (hdl *HttpHandler) AppendSchedule(context *gin.Context) {
 		return
 	}
 
-	if len(requesterId) == 0 {
+	if userDetails.UserID == authDomain.AnonymousUser.UserID {
 		logs.Error.Println(ErrUserIsNotAllowedToPerformThisOperation.Error())
 		context.AbortWithStatusJSON(400, ErrorMessage{
 			Message: ErrUserIsNotAllowedToPerformThisOperation.Error(),
@@ -160,7 +153,7 @@ func (hdl *HttpHandler) AppendSchedule(context *gin.Context) {
 		return
 	}
 
-	scheduleSpot, timeConflicts, err := hdl.service.AppendSchedule(spotId, requesterId, scheduleSpotRequest.Patterns)
+	scheduleSpot, timeConflicts, err := hdl.service.AppendSchedule(spotId, userDetails.UserID, scheduleSpotRequest.Patterns)
 
 	if timeConflicts != nil && len(*timeConflicts) > 0 {
 		logs.Error.Println(err.Error())
@@ -173,9 +166,7 @@ func (hdl *HttpHandler) AppendSchedule(context *gin.Context) {
 	} else if err != nil {
 		logs.Error.Println(err.Error())
 		context.AbortWithStatusJSON(400, ErrorMessage{
-			Message: err.Error(),
-		})
-
+			Message: err.Error()})
 		return
 	}
 
@@ -189,7 +180,7 @@ PUT /spots/schedule/<spot_UUID>/sheduled/<scheduled_uuid>/resume
 func (hdl *HttpHandler) Resume(context *gin.Context) {
 	spotId := context.Param("spot_uuid")
 	scheduleId := context.Param("scheduled_uuid")
-	requesterId := context.Request.Header.Get("Authorization")
+	userDetails := authUtils.GetHeaders(context.Request.Header)
 
 	if len(spotId) == 0 {
 		logs.Error.Println(ErrMissingSpotIdOnParam.Error())
@@ -203,7 +194,7 @@ func (hdl *HttpHandler) Resume(context *gin.Context) {
 			Message: ErrMissingScheduleIdOnParam.Error(),
 		})
 		return
-	} else if len(scheduleId) == 0 {
+	} else if userDetails.UserID == authDomain.AnonymousUser.UserID {
 		logs.Error.Println(ErrUserIsNotAllowedToPerformThisOperation.Error())
 		context.AbortWithStatusJSON(400, ErrorMessage{
 			Message: ErrUserIsNotAllowedToPerformThisOperation.Error(),
@@ -211,7 +202,7 @@ func (hdl *HttpHandler) Resume(context *gin.Context) {
 		return
 	}
 
-	err := hdl.service.ResumeSchedule(spotId, scheduleId, requesterId)
+	err := hdl.service.ResumeSchedule(spotId, scheduleId, userDetails.UserID)
 
 	if err != nil {
 		logs.Error.Println(err.Error())
@@ -231,7 +222,7 @@ PUT /spots/schedule/<spot_UUID>/sheduled/<scheduled_uuid>/freeze
 func (hdl *HttpHandler) Freeze(context *gin.Context) {
 	spotId := context.Param("spot_uuid")
 	scheduleId := context.Param("scheduled_uuid")
-	requesterId := context.Request.Header.Get("Authorization")
+	userDetails := authUtils.GetHeaders(context.Request.Header)
 
 	if len(spotId) == 0 {
 		logs.Error.Println(ErrMissingSpotIdOnParam.Error())
@@ -245,7 +236,7 @@ func (hdl *HttpHandler) Freeze(context *gin.Context) {
 			Message: ErrMissingScheduleIdOnParam.Error(),
 		})
 		return
-	} else if len(scheduleId) == 0 {
+	} else if userDetails.UserID == authDomain.AnonymousUser.UserID {
 		logs.Error.Println(ErrUserIsNotAllowedToPerformThisOperation.Error())
 		context.AbortWithStatusJSON(400, ErrorMessage{
 			Message: ErrUserIsNotAllowedToPerformThisOperation.Error(),
@@ -253,7 +244,7 @@ func (hdl *HttpHandler) Freeze(context *gin.Context) {
 		return
 	}
 
-	err := hdl.service.FreezeSchedule(spotId, scheduleId, requesterId)
+	err := hdl.service.FreezeSchedule(spotId, scheduleId, userDetails.UserID)
 
 	if err != nil {
 		logs.Error.Println(err.Error())
@@ -273,7 +264,7 @@ PUT /spots/schedule/<spot_UUID>/sheduled/<scheduled_uuid>/conclude
 func (hdl *HttpHandler) Conclude(context *gin.Context) {
 	spotId := context.Param("spot_uuid")
 	scheduleId := context.Param("scheduled_uuid")
-	requesterId := context.Request.Header.Get("Authorization")
+	userDetails := authUtils.GetHeaders(context.Request.Header)
 
 	if len(spotId) == 0 {
 		logs.Error.Println(ErrMissingSpotIdOnParam.Error())
@@ -287,7 +278,7 @@ func (hdl *HttpHandler) Conclude(context *gin.Context) {
 			Message: ErrMissingScheduleIdOnParam.Error(),
 		})
 		return
-	} else if len(scheduleId) == 0 {
+	} else if userDetails.UserID == authDomain.AnonymousUser.UserID {
 		logs.Error.Println(ErrUserIsNotAllowedToPerformThisOperation.Error())
 		context.AbortWithStatusJSON(400, ErrorMessage{
 			Message: ErrUserIsNotAllowedToPerformThisOperation.Error(),
@@ -295,7 +286,7 @@ func (hdl *HttpHandler) Conclude(context *gin.Context) {
 		return
 	}
 
-	err := hdl.service.ConcludeSchedule(spotId, scheduleId, requesterId)
+	err := hdl.service.ConcludeSchedule(spotId, scheduleId, userDetails.UserID)
 
 	if err != nil {
 		logs.Error.Println(err.Error())

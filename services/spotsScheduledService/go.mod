@@ -5,7 +5,7 @@ go 1.18
 require (
 	github.com/JuanGQCadavid/now-project/services/pkgs/common v0.0.0-20240711110703-97f6b6abed0d
 	github.com/JuanGQCadavid/now-project/services/pkgs/credentialsFinder v0.0.0-20240711110703-97f6b6abed0d
-	github.com/aws/aws-lambda-go v1.40.0
+	github.com/aws/aws-lambda-go v1.46.0
 	github.com/awslabs/aws-lambda-go-api-proxy v0.14.0
 	github.com/gin-gonic/gin v1.9.0
 	github.com/google/uuid v1.3.0
@@ -13,7 +13,8 @@ require (
 )
 
 require (
-	github.com/aws/aws-sdk-go v1.44.245 // indirect
+	github.com/JuanGQCadavid/now-project/services/authService v0.0.0-20240715090330-bc960bdae3da // indirect
+	github.com/aws/aws-sdk-go v1.51.21 // indirect
 	github.com/bytedance/sonic v1.8.0 // indirect
 	github.com/chenzhuoyu/base64x v0.0.0-20221115062448-fe3a3abad311 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
@@ -33,10 +34,10 @@ require (
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
 	github.com/ugorji/go/codec v1.2.9 // indirect
 	golang.org/x/arch v0.0.0-20210923205945-b76863e36670 // indirect
-	golang.org/x/crypto v0.5.0 // indirect
-	golang.org/x/net v0.7.0 // indirect
-	golang.org/x/sys v0.5.0 // indirect
-	golang.org/x/text v0.7.0 // indirect
+	golang.org/x/crypto v0.14.0 // indirect
+	golang.org/x/net v0.17.0 // indirect
+	golang.org/x/sys v0.13.0 // indirect
+	golang.org/x/text v0.13.0 // indirect
 	google.golang.org/protobuf v1.28.1 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
