@@ -112,7 +112,7 @@ Resources:
             - "sqs:GetQueueAttributes"
             - "sqs:GetQueueUrl"
           Effect: "Allow"
-          Resource: !GetAtt EventBridgeScheduleEvent.Arn
+          Resource: !GetAtt ScheduleCheckerSQS.Arn
           Principal:  
             Service: "events.amazonaws.com"
         - Action: 
