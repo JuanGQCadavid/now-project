@@ -3,6 +3,8 @@ package httphdl
 import (
 	"log"
 
+	authDomain "github.com/JuanGQCadavid/now-project/services/authService/core/core/domain"
+	authUtils "github.com/JuanGQCadavid/now-project/services/authService/core/utils"
 	"github.com/JuanGQCadavid/now-project/services/spotsOnlineService/internal/core/domain"
 	"github.com/JuanGQCadavid/now-project/services/spotsOnlineService/internal/core/ports"
 	"github.com/gin-gonic/gin"
@@ -69,9 +71,9 @@ func (hdl *HTTPHandler) Start(context *gin.Context) {
 	log.Println("HTTPHandler: Start")
 	// Path Variables
 	spot_uudi, is_spot_uudi_present := context.Params.Get("spot_uuid")
-	userId := context.Request.Header.Get("Authorization")
+	userDetails := authUtils.GetHeaders(context.Request.Header)
 
-	if len(userId) == 0 {
+	if userDetails.UserID == authDomain.AnonymousUser.UserID {
 		log.Println("User id is missinbg in Authorization header")
 		context.AbortWithStatusJSON(401, ErrorMessage{
 			Message: "We could not found the user",
@@ -103,7 +105,7 @@ func (hdl *HTTPHandler) Start(context *gin.Context) {
 	// context.JSON(200, date)
 
 	// spot, err := hdl.spotService.GoOnline(spot)
-	onlineSpot, err := hdl.spotOnlineService.Start(spot_uudi, userId, date.DurationApproximated, date.MaximunCapacity)
+	onlineSpot, err := hdl.spotOnlineService.Start(spot_uudi, userDetails.UserID, date.DurationApproximated, date.MaximunCapacity)
 
 	if err != nil {
 		log.Println("We found an error while calling servide start \n", err.Error())
@@ -132,9 +134,9 @@ func (hdl *HTTPHandler) Stop(context *gin.Context) {
 	log.Println("HTTPHandler: Stop")
 	// Path Variables
 	spot_uudi, is_spot_uudi_present := context.Params.Get("spot_uuid")
-	userId := context.Request.Header.Get("Authorization")
-
-	if len(userId) == 0 {
+	userDetails := authUtils.GetHeaders(context.Request.Header)
+	
+  if userDetails.UserID == authDomain.AnonymousUser.UserID {
 		log.Println("User id is missinbg in Authorization header")
 		context.AbortWithStatusJSON(401, ErrorMessage{
 			Message: "We could not found the user",
@@ -150,12 +152,12 @@ func (hdl *HTTPHandler) Stop(context *gin.Context) {
 		// return not id sent
 		return
 	}
-	log.Printf("\nHandler: Stop \n\tSpot UUID: %s,\n\tuserId: %+v", spot_uudi, userId)
+	log.Printf("\nHandler: Stop \n\tSpot UUID: %s,\n\tuserId: %+v", spot_uudi, userDetails.UserID)
 
 	// context.JSON(200, date)
 
 	// spot, err := hdl.spotService.GoOnline(spot)
-	err := hdl.spotOnlineService.Stop(spot_uudi, userId)
+	err := hdl.spotOnlineService.Stop(spot_uudi, userDetails.UserID)
 
 	if err != nil {
 		log.Println("We found an error while calling servide stop \n", err.Error())
@@ -184,9 +186,9 @@ func (hdl *HTTPHandler) Finalize(context *gin.Context) {
 	log.Println("HTTPHandler: Finalize")
 	// Path Variables
 	spot_uudi, is_spot_uudi_present := context.Params.Get("spot_uuid")
-	userId := context.Request.Header.Get("Authorization")
-
-	if len(userId) == 0 {
+	userDetails := authUtils.GetHeaders(context.Request.Header)
+	
+  if userDetails.UserID == authDomain.AnonymousUser.UserID {
 		log.Println("User id is missinbg in Authorization header")
 		context.AbortWithStatusJSON(401, ErrorMessage{
 			Message: "We could not found the user",
@@ -202,12 +204,12 @@ func (hdl *HTTPHandler) Finalize(context *gin.Context) {
 		// return not id sent
 		return
 	}
-	log.Printf("\nHandler: Finalize \n\tSpot UUID: %s,\n\tuserId: %+v", spot_uudi, userId)
+	log.Printf("\nHandler: Finalize \n\tSpot UUID: %s,\n\tuserId: %+v", spot_uudi, userDetails.UserID)
 
 	// context.JSON(200, date)
 
 	// spot, err := hdl.spotService.GoOnline(spot)
-	err := hdl.spotOnlineService.Finalize(spot_uudi, userId)
+	err := hdl.spotOnlineService.Finalize(spot_uudi, userDetails.UserID)
 
 	if err != nil {
 		log.Println("We found an error while calling servide Finalize \n", err.Error())
@@ -236,9 +238,9 @@ func (hdl *HTTPHandler) Resume(context *gin.Context) {
 	log.Println("HTTPHandler: Resume")
 	// Path Variables
 	spot_uudi, is_spot_uudi_present := context.Params.Get("spot_uuid")
-	userId := context.Request.Header.Get("Authorization")
+	userDetails := authUtils.GetHeaders(context.Request.Header)
 
-	if len(userId) == 0 {
+	if userDetails.UserID == authDomain.AnonymousUser.UserID {
 		log.Println("User id is missinbg in Authorization header")
 		context.AbortWithStatusJSON(401, ErrorMessage{
 			Message: "We could not found the user",
@@ -254,12 +256,9 @@ func (hdl *HTTPHandler) Resume(context *gin.Context) {
 		// return not id sent
 		return
 	}
-	log.Printf("\nHandler: Resume \n\tSpot UUID: %s,\n\tuserId: %+v", spot_uudi, userId)
+	log.Printf("\nHandler: Resume \n\tSpot UUID: %s,\n\tuserId: %+v", spot_uudi, userDetails.UserID)
 
-	// context.JSON(200, date)
-
-	// spot, err := hdl.spotService.GoOnline(spot)
-	err := hdl.spotOnlineService.Resume(spot_uudi, userId)
+	err := hdl.spotOnlineService.Resume(spot_uudi, userDetails.UserID)
 
 	if err != nil {
 		log.Println("We found an error while calling servide Resume \n", err.Error())
@@ -273,71 +272,3 @@ func (hdl *HTTPHandler) Resume(context *gin.Context) {
 	context.Status(204)
 }
 
-// func (hdl *HTTPHandler) GetEvent(context *gin.Context) {
-
-// 	id := context.Param("id")
-
-// 	if len(id) == 0 {
-// 		context.AbortWithStatusJSON(400, ErrorMessage{
-// 			Message: "Missing Id param",
-// 		})
-// 		return
-// 	}
-
-// 	format := hdl.getOuputFormat(context.DefaultQuery("format", "empty"))
-
-// 	log.Printf("\nHandler: GetEvent \n\tId: %s, \n\tFormat: %s", id, string(format))
-
-// 	event, err := hdl.spotService.Get(id, format)
-
-// 	if err != nil {
-// 		log.Println(err)
-// 		context.AbortWithStatusJSON(400, ErrorMessage{
-// 			Message:       "We face an error while fethcing the data",
-// 			InternalError: err.Error(),
-// 		})
-// 		return
-// 	}
-
-// 	context.JSON(200, event)
-// }
-
-// func (hdl *HTTPHandler) GetEvents(context *gin.Context) {
-
-// 	// Getting data from call
-// 	spotIds := SpotsIdsRequest{}
-// 	context.BindJSON(&spotIds)
-
-// 	format := hdl.getOuputFormat(context.DefaultQuery("format", "empty"))
-
-// 	log.Printf("\nHandler: GetEvents \n\tSpotIds: %+v, \n\tFormat: %s", spotIds, string(format))
-
-// 	multipleSpots, err := hdl.spotService.GetSpots(spotIds.SpotIds, format)
-
-// 	if err != nil {
-// 		log.Println(err)
-// 		context.AbortWithStatusJSON(400, ErrorMessage{
-// 			Message:       "We face an error while fethcing the data",
-// 			InternalError: err.Error(),
-// 		})
-// 		return
-// 	}
-
-// 	context.JSON(200, multipleSpots)
-// }
-
-// func (hdl *HTTPHandler) getOuputFormat(query string) ports.OutputFormat {
-// 	switch strings.ToUpper(query) {
-// 	case string(ports.FULL_FORMAT):
-// 		return ports.FULL_FORMAT
-// 	case string(ports.SMALL_FORMAT):
-// 		return ports.SMALL_FORMAT
-// 	}
-// 	return ports.FULL_FORMAT
-// }
-
-// func (hdl *HTTPHandler) isSpotCorrect(spot domain.Spot) bool {
-// 	// TODO -> Could we use json schemas here ?
-
-// 	return true
-// }
