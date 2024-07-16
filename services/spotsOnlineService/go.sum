@@ -44,8 +44,10 @@ github.com/BurntSushi/xgb v0.0.0-20160522181843-27f122750802/go.mod h1:IVnqGOEym
 github.com/CloudyKit/fastprinter v0.0.0-20200109182630-33d98a066a53/go.mod h1:+3IMCy2vIlbG1XG/0ggNQv0SvxCAIpPM5b1nCz56Xno=
 github.com/CloudyKit/jet/v6 v6.1.0/go.mod h1:d3ypHeIRNo2+XyqnGA8s+aphtcVpjP5hPwP/Lzo7Ro4=
 github.com/Joker/hpp v1.0.0/go.mod h1:8x5n+M1Hp5hC0g8okX3sR3vFQwynaX/UgSOM9MeBKzY=
-github.com/JuanGQCadavid/now-project/services/spotsScheduledService v0.0.0-20230421002411-21e2931cf24e h1:Ae+YpCDddlWMHFwTFbTVJA0iGV+VwHCFCmdczRWHKp0=
-github.com/JuanGQCadavid/now-project/services/spotsScheduledService v0.0.0-20230421002411-21e2931cf24e/go.mod h1:eUvfptsXYro7pg4PpEOJ62QhCuYopPMvi/HG0Ao7EKo=
+github.com/JuanGQCadavid/now-project/services/pkgs/common v0.0.0-20240716104326-ccad5b9345f0 h1:/iMu04Ndqp++TTMYSv+cs5BDR+ZzFF9KUUwiIzSmQnQ=
+github.com/JuanGQCadavid/now-project/services/pkgs/common v0.0.0-20240716104326-ccad5b9345f0/go.mod h1:Z+TBa4qMSueBnxIpbnx633Di6Fx6pvqvEh2qQKtZdBY=
+github.com/JuanGQCadavid/now-project/services/pkgs/credentialsFinder v0.0.0-20240716104326-ccad5b9345f0 h1:XFCvHKNmGFIq5H5NYMiCh4vSk3Wy/suzj063IXgQ3tI=
+github.com/JuanGQCadavid/now-project/services/pkgs/credentialsFinder v0.0.0-20240716104326-ccad5b9345f0/go.mod h1:cIGHX9UdJtnDHfbMvpQzeUr5LJVqO6qk7ANlECE1nhI=
 github.com/OneOfOne/xxhash v1.2.2/go.mod h1:HSdplMjZKSmBqAxg5vPj2TmRDmfkzw+cTzAElWljhcU=
 github.com/Shopify/goreferrer v0.0.0-20210630161223-536fa16abd6f/go.mod h1:a1uqRtAwp2Xwc6WNPJEufxJ7fx3npB4UV/JOLmbu5I0=
 github.com/ajg/form v1.5.1/go.mod h1:uL1WgH+h2mgNtvBq0339dVnzXdBETtL2LeUXaIv25UY=

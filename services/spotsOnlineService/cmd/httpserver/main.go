@@ -13,18 +13,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// import (
-// 	"log"
-
-// 	"github.com/JuanGQCadavid/now-project/services/pkgs/credentialsFinder/cmd/ssm"
-// 	"github.com/JuanGQCadavid/now-project/services/spotsCore/internal/core/services/spotsrv"
-// 	"github.com/JuanGQCadavid/now-project/services/spotsCore/internal/handlers/httphdl"
-// 	"github.com/JuanGQCadavid/now-project/services/spotsCore/internal/repositories/neo4jRepository"
-// 	spotactivityservices "github.com/JuanGQCadavid/now-project/services/spotsCore/internal/repositories/spotActivityServices"
-// 	"github.com/JuanGQCadavid/now-project/services/spotsCore/pkg/uuidgen"
-// 	"github.com/gin-gonic/gin"
-// )
-
 var (
 	repoSpot *neo4j.Neo4jRepo
 	notifier ports.Notify

@@ -2,3 +2,5 @@
 .DS_Store
 main
 .vscode
+*.null-ls*
+.env
