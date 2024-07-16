@@ -8,15 +8,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// import (
-// 	"log"
-// 	"strings"
-
-// 	"github.com/JuanGQCadavid/now-project/services/spotsCore/internal/core/domain"
-// 	"github.com/JuanGQCadavid/now-project/services/spotsCore/internal/core/ports"
-// 	"github.com/gin-gonic/gin"
-// )
-
 type HTTPHandler struct {
 	spotOnlineService ports.SpotOnlineService
 }
