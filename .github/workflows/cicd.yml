@@ -19,6 +19,7 @@ jobs:
       confirmation-service: ${{ steps.filter.outputs.confirmationService }}
       schedule-service: ${{ steps.filter.outputs.scheduleService }}
       schedule-checker-prc: ${{ steps.filter.outputs.scheduleCheckerPrc }}
+      online-service: ${{ steps.filter.outputs.onlineService }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -38,6 +39,9 @@ jobs:
               - 'services/spotsScheduledService/**'
             scheduleCheckerPrc:
               - 'services/scheduledPatternsChecker/**'
+            onlineService :
+              - 'services/spotsOnlineService/**'
+
 
   infra-stack:
     needs: [changes]
@@ -79,11 +83,15 @@ jobs:
               "stack-name": "schedule-checker-prc",
               "docker-image-name": "schedule-checker-process",
               "service-dir": "./services/scheduledPatternsChecker"
-            }
-
+            },
+            "online-service": {
+              "stack-name": "spot-online-service",
+              "docker-image-name": "spot-online-service",
+              "service-dir": "./services/spotsOnlineService"
+            },
           }
         ]
-        services: [auth-service, spots-core-service, confirmation-service, schedule-service, schedule-checker-prc]
+        services: [auth-service, spots-core-service, confirmation-service, schedule-service, schedule-checker-prc, online-service]
     name:  ${{ matrix.lookup[matrix.services].stack-name }}
     uses: ./.github/workflows/service-build-deploy.yml
     secrets: inherit
