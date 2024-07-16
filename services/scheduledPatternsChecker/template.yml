@@ -108,8 +108,18 @@ Resources:
       PolicyDocument:
         Statement: 
         - Action: 
-            - "SQS:SendMessage" 
-            - "SQS:ReceiveMessage"
+            - "sqs:SendMessage" 
+            - "sqs:GetQueueAttributes"
+            - "sqs:GetQueueUrl"
+          Effect: "Allow"
+          Resource: !GetAtt EventBridgeScheduleEvent.Arn
+          Principal:  
+            Service: "events.amazonaws.com"
+        - Action: 
+            - "sqs:SendMessage" 
+            - "sqs:GetQueueAttributes"
+            - "sqs:GetQueueUrl"
+            - "sqs:ReceiveMessage"
           Effect: "Allow"
           Resource: !GetAtt ScheduleCheckerSQS.Arn
           Principal:  
