@@ -459,6 +459,92 @@ Resources:
           Value: Pululapp
         - Key: Env
           Value: !Ref PululappEnv
+  
+  SpotOnlineServiceRepository:
+    Type: AWS::ECR::Repository
+    Condition: CreateProdResources
+    Properties:
+      ImageScanningConfiguration:
+        ScanOnPush: true
+      ImageTagMutability: IMMUTABLE
+      RepositoryName: spot-online-service
+      LifecyclePolicy:
+        LifecyclePolicyText: |
+          {
+            "rules": [
+              {
+                "rulePriority": 1,
+                "description": "Keep the latest 5 release images",
+                "selection": {
+                  "tagStatus": "tagged",
+                  "tagPatternList": [
+                    "*.*.*"
+                  ],
+                  "countType": "imageCountMoreThan",
+                  "countNumber": 5
+                },
+                "action": { "type": "expire" }
+              },
+              {
+                "rulePriority": 2,
+                "description": "Keep the last 5 untagged images",
+                "selection": {
+                  "tagStatus": "any",
+                  "countType": "imageCountMoreThan",
+                  "countNumber": 5
+                },
+                "action": { "type": "expire" }
+              }
+            ]
+          }
+      Tags: 
+        - Key: App
+          Value: Pululapp
+        - Key: Env
+          Value: !Ref PululappEnv
+
+  LocationUpdaterProcessRepository:
+    Type: AWS::ECR::Repository
+    Condition: CreateProdResources
+    Properties:
+      ImageScanningConfiguration:
+        ScanOnPush: true
+      ImageTagMutability: IMMUTABLE
+      RepositoryName: location-updater-process
+      LifecyclePolicy:
+        LifecyclePolicyText: |
+          {
+            "rules": [
+              {
+                "rulePriority": 1,
+                "description": "Keep the latest 5 release images",
+                "selection": {
+                  "tagStatus": "tagged",
+                  "tagPatternList": [
+                    "*.*.*"
+                  ],
+                  "countType": "imageCountMoreThan",
+                  "countNumber": 5
+                },
+                "action": { "type": "expire" }
+              },
+              {
+                "rulePriority": 2,
+                "description": "Keep the last 5 untagged images",
+                "selection": {
+                  "tagStatus": "any",
+                  "countType": "imageCountMoreThan",
+                  "countNumber": 5
+                },
+                "action": { "type": "expire" }
+              }
+            ]
+          }
+      Tags: 
+        - Key: App
+          Value: Pululapp
+        - Key: Env
+          Value: !Ref PululappEnv
 Outputs:
   ApiGatewayID:
     Value: !Ref CentralGateway
@@ -516,6 +602,16 @@ Outputs:
     Value: !GetAtt  ScheduleCheckerProcessRepository.RepositoryUri
     Export:
       Name: schedule-checker-ecr-uri
+  SpotOnlineServiceURI:
+    Condition: CreateProdResources
+    Value: !GetAtt  SpotOnlineServiceRepository.RepositoryUri
+    Export:
+      Name: spot-online-ecr-uri
+  LocationUpdaterProcessURI:
+    Condition: CreateProdResources
+    Value: !GetAtt  LocationUpdaterProcessRepository.RepositoryUri
+    Export:
+      Name: location-updater-ecr-uri
 
   ############################################################
   #
