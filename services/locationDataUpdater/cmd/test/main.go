@@ -3,17 +3,24 @@ package main
 import (
 	"github.com/JuanGQCadavid/now-project/services/locationDataUpdater/internal/core/domain"
 	"github.com/JuanGQCadavid/now-project/services/locationDataUpdater/internal/repositories/rds"
+	"github.com/JuanGQCadavid/now-project/services/pkgs/common/logs"
+	"github.com/JuanGQCadavid/now-project/services/pkgs/credentialsFinder/cmd/ssm"
 )
 
 func main() {
-	connector, err := rds.NewConector("admin", "admin", "pululapp", "localhost")
+	credsFinder := ssm.NewSSMCredentialsFinder()
+	credentials, err := credsFinder.GetDBCredentialsFromDefaultEnv()
+
+	if err != nil {
+		logs.Error.Fatalln("we fail to Fetch the envs")
+	}
+
+	connector, err := rds.NewConector(credentials.User, credentials.Password, credentials.Name, credentials.Url)
 	connector.Migrate()
 
 	if err != nil {
 		panic(err)
 	}
-
-	connector.Migrate()
 
 	repo, err := rds.NewRDSRepo(connector)
 
