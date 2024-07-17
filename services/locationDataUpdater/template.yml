@@ -43,6 +43,7 @@ Mappings:
       RAM: 5308
       TimeOut: 900
 
+
 Resources:
   QueueDLQ:
     Type: AWS::SQS::Queue
