@@ -175,7 +175,59 @@ Resources:
       Tier: Standard
       Type: String
       Value: PLACE_HOLDER
-  
+
+  DBName:
+    Type: AWS::SSM::Parameter
+    Properties:
+      DataType: text
+      Description: Name for Postgresql database
+      Name: !Sub "db-name-${PululappEnv}"
+      Tags: 
+        App: Pululapp
+        Env: !Ref PululappEnv
+      Tier: Standard
+      Type: String
+      Value: PLACE_HOLDER
+
+  DBPassword:
+    Type: AWS::SSM::Parameter
+    Properties:
+      DataType: text
+      Description: Password for Postgresql database
+      Name: !Sub "db-password-${PululappEnv}"
+      Tags: 
+        App: Pululapp
+        Env: !Ref PululappEnv
+      Tier: Standard
+      Type: String
+      Value: PLACE_HOLDER
+
+  DBURL:
+    Type: AWS::SSM::Parameter
+    Properties:
+      DataType: text
+      Description: URL for Postgresql database
+      Name: !Sub "db-url-${PululappEnv}"
+      Tags: 
+        App: Pululapp
+        Env: !Ref PululappEnv
+      Tier: Standard
+      Type: String
+      Value: PLACE_HOLDER
+
+  DBUser:
+    Type: AWS::SSM::Parameter
+    Properties:
+      DataType: text
+      Description: User for Postgresql database
+      Name: !Sub "db-user-${PululappEnv}"
+      Tags: 
+        App: Pululapp
+        Env: !Ref PululappEnv
+      Tier: Standard
+      Type: String
+      Value: PLACE_HOLDER
+
   ############################################################
   #
   # DynamoDB tables
@@ -646,3 +698,20 @@ Outputs:
     Value: !Ref Neo4jURI
     Export:
       Name: !Sub ${PululappEnv}-neo4j-uri
+  DBUserName:
+    Value: !Ref DBUser
+    Export:
+      Name: !Sub ${PululappEnv}-db-user
+  DBPasswordName:
+    Value: !Ref DBPassword
+    Export:
+      Name: !Sub ${PululappEnv}-db-password
+  DBURLName:
+    Value: !Ref DBURL
+    Export:
+      Name: !Sub ${PululappEnv}-db-url
+  DBNameName:
+    Value: !Ref DBName
+    Export:
+      Name: !Sub ${PululappEnv}-db-name
+
