@@ -597,6 +597,49 @@ Resources:
           Value: Pululapp
         - Key: Env
           Value: !Ref PululappEnv
+
+  FilterServiceRepository:
+    Type: AWS::ECR::Repository
+    Condition: CreateProdResources
+    Properties:
+      ImageScanningConfiguration:
+        ScanOnPush: true
+      ImageTagMutability: IMMUTABLE
+      RepositoryName: filter-service 
+      LifecyclePolicy:
+        LifecyclePolicyText: |
+          {
+            "rules": [
+              {
+                "rulePriority": 1,
+                "description": "Keep the latest 5 release images",
+                "selection": {
+                  "tagStatus": "tagged",
+                  "tagPatternList": [
+                    "*.*.*"
+                  ],
+                  "countType": "imageCountMoreThan",
+                  "countNumber": 5
+                },
+                "action": { "type": "expire" }
+              },
+              {
+                "rulePriority": 2,
+                "description": "Keep the last 5 untagged images",
+                "selection": {
+                  "tagStatus": "any",
+                  "countType": "imageCountMoreThan",
+                  "countNumber": 5
+                },
+                "action": { "type": "expire" }
+              }
+            ]
+          }
+      Tags: 
+        - Key: App
+          Value: Pululapp
+        - Key: Env
+          Value: !Ref PululappEnv
 Outputs:
   ApiGatewayID:
     Value: !Ref CentralGateway
@@ -664,6 +707,11 @@ Outputs:
     Value: !GetAtt  LocationUpdaterProcessRepository.RepositoryUri
     Export:
       Name: location-updater-ecr-uri
+  FilterServiceURI:
+    Condition: CreateProdResources
+    Value: !GetAtt  FilterServiceRepository.RepositoryUri
+    Export:
+      Name: filter-service-ecr-uri
 
   ############################################################
   #
