@@ -11,6 +11,7 @@ import (
 
 	"github.com/JuanGQCadavid/now-project/services/filter/internal/core/domain"
 	"github.com/JuanGQCadavid/now-project/services/filter/internal/core/ports"
+	"github.com/JuanGQCadavid/now-project/services/pkgs/common/logs"
 )
 
 type SpotServiceLambda struct {
@@ -49,7 +50,24 @@ func (srv *SpotServiceLambda) GetSpotsCardsInfo(datesIds []string, format ports.
 		return nil, ports.ErrBodyRequestUnmarshal
 	}
 
-	resp, err := http.Post(fmt.Sprintf("%s/%s?format=%s", srv.SpotServiceURL, srv.GetSpotsURI, string(format)), "application/json", bytes.NewBuffer(body))
+	//resp, err := http.Post(fmt.Sprintf("%s/%s?format=%s", srv.SpotServiceURL, srv.GetSpotsURI, string(format)), "application/json", bytes.NewBuffer(body))
+
+	// FROM HERE
+	client := &http.Client{}
+	req, err := http.NewRequest("POST", fmt.Sprintf("%s/%s?format=%s", srv.SpotServiceURL, srv.GetSpotsURI, string(format)), bytes.NewBuffer(body))
+
+	if err != nil {
+		log.Println("[ERROR] An error while creating the req: ", err.Error())
+		return nil, ports.ErrSendingRequest
+	}
+
+	req.Header.Add("Content-Type", "application/json")
+	req.Header.Add("X-Auth", "AVOID")
+
+	resp, err := client.Do(req)
+
+	logs.Info.Println("Call to Spot core done, respond status.", resp.StatusCode)
+	/// UNTIL HERE
 
 	if err != nil {
 		log.Println("[ERROR] An error while making the request: ", err.Error())
