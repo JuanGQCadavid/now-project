@@ -3,14 +3,17 @@ module github.com/JuanGQCadavid/now-project/services/filter
 go 1.18
 
 require (
-	github.com/JuanGQCadavid/now-project/services/pkgs/common v0.0.0-00010101000000-000000000000
-	github.com/JuanGQCadavid/now-project/services/pkgs/credentialsFinder v0.0.0-00010101000000-000000000000
+	github.com/JuanGQCadavid/now-project/services/pkgs/common v0.0.0-20240717184144-288f58f3096b
+	github.com/JuanGQCadavid/now-project/services/pkgs/credentialsFinder v0.0.0-20240717184144-288f58f3096b
 	github.com/aws/aws-lambda-go v1.28.0
 	github.com/aws/aws-sdk-go v1.44.245
 	github.com/awslabs/aws-lambda-go-api-proxy v0.12.0
 	github.com/gin-gonic/gin v1.7.7
 	github.com/go-sql-driver/mysql v1.7.0
 	github.com/google/uuid v1.3.0
+	gonum.org/v1/plot v0.13.0
+	gorm.io/driver/mysql v1.5.1
+	gorm.io/gorm v1.25.2
 )
 
 require (
@@ -39,13 +42,6 @@ require (
 	golang.org/x/image v0.7.0 // indirect
 	golang.org/x/sys v0.7.0 // indirect
 	golang.org/x/text v0.9.0 // indirect
-	gonum.org/v1/plot v0.13.0 // indirect
 	google.golang.org/protobuf v1.26.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
-	gorm.io/driver/mysql v1.5.1 // indirect
-	gorm.io/gorm v1.25.2 // indirect
 )
-
-replace github.com/JuanGQCadavid/now-project/services/pkgs/credentialsFinder => ../pkgs/credentialsFinder/
-
-replace github.com/JuanGQCadavid/now-project/services/pkgs/common => ../pkgs/common
