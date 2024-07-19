@@ -639,6 +639,10 @@ Resources:
         - Key: Env
           Value: !Ref PululappEnv
 Outputs:
+  CentralApIGateway:
+    Value: !FindInMap [SubnetConfig, !Ref PululappEnv, ReverseProxyDNS]
+    Export:
+      Name: !Sub ${PululappEnv}-central-gateway-url
   ApiGatewayID:
     Value: !Ref CentralGateway
     Export:
