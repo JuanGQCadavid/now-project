@@ -272,9 +272,7 @@ Resources:
       #   Enabled: True
       DeletionProtectionEnabled: True
       GlobalSecondaryIndexes:
-        - ContributorInsightsSpecification: 
-            Enabled: True
-          IndexName: UserId-index
+        - IndexName: UserId-index
           KeySchema: 
             - AttributeName: UserId
               KeyType: HASH 
