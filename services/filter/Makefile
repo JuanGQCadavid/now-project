@@ -16,7 +16,7 @@ ecr-login:
 	aws ecr get-login-password --region $(CLOUD_REGION_NAME) | docker login --username AWS --password-stdin 732596568988.dkr.ecr.$(CLOUD_REGION_NAME).amazonaws.com
 
 ecr-deploy: ecr-login
-	docker buildx build --platform=linux/$(PLATFORM) --build-arg CMD="lambda" --build-arg GOARCH="$(PLATFORM)" -t $(STACK):$(VERSION) --load . \
+	docker buildx build --provenance=false --platform=linux/$(PLATFORM) --build-arg CMD="lambda" --build-arg GOARCH="$(PLATFORM)" -t $(STACK):$(VERSION) --load . \
 	&& docker tag $(STACK):$(VERSION) $(ECR_URI):$(VERSION) \
 	&& docker push $(ECR_URI):$(VERSION)
 
