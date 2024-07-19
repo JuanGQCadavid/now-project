@@ -33,11 +33,38 @@ Mappings:
     staging:
       RAM: 5308
       TimeOut: 60
+      SpotCoreResource: "/spots/core"
     prod:
       RAM: 5308
       TimeOut: 60
-
+      SpotCoreResource: "/spots/core"
 Resources:
+  FilterSessionsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions: 
+        - AttributeName: SessionId
+          AttributeType: S
+        - AttributeName: State
+          AttributeType: S
+      BillingMode: PAY_PER_REQUEST
+      DeletionProtectionEnabled: True
+      KeySchema: 
+        - AttributeName: SessionId
+          KeyType: HASH 
+        - AttributeName: State
+          KeyType: RANGE 
+      TableClass: STANDARD 
+      TableName: !Sub Filter-sessions-${PululappEnv}
+      TimeToLiveSpecification:
+        AttributeName: "TTL"
+        Enabled: true
+      Tags: 
+        - Key: App
+          Value: Pululapp
+        - Key: Env
+          Value: !Ref PululappEnv
+
   ServiceRole:
     Type: AWS::IAM::Role
     Properties:
@@ -75,6 +102,15 @@ Resources:
                   - ssm:GetParameters
                 Resource:
                   - "*"
+        - PolicyName: !Sub ${ServiceName}-dynamodb-${PululappEnv}
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - dynamodb:*
+                Resource:
+                  - !GetAtt FilterSessionsTable.Arn
   ServiceLambda:
     Type: AWS::Lambda::Function
     Properties:
@@ -103,8 +139,13 @@ Resources:
           dbUser:
             Fn::ImportValue:
               !Sub ${PululappEnv}-db-user
-          sessionTableName: "TODO"
-          spotServiceURL: "TODO"
+          sessionTableName: !Ref FilterSessionsTable
+          spotServiceURL:
+            Fn::Sub:
+              - "https://${DNS}${RESOURCE}"
+              - DNS:
+                  Fn::ImportValue: !Sub ${PululappEnv}-central-gateway-url
+                RESOURCE: !FindInMap  ['ServiceConfig', !Ref PululappEnv, 'SpotCoreResource']
       FunctionName: !Sub ${ServiceName}-${PululappEnv}
       MemorySize: !FindInMap ['ServiceConfig', !Ref PululappEnv, 'RAM']
       PackageType: Image
