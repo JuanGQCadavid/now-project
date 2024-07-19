@@ -21,6 +21,7 @@ jobs:
       schedule-checker-prc: ${{ steps.filter.outputs.scheduleCheckerPrc }}
       online-service: ${{ steps.filter.outputs.onlineService }}
       location-updater-prc: ${{ steps.filter.outputs.locationUpdaterPrc }}
+      filter-service: ${{ steps.filter.outputs.filterService }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -44,6 +45,9 @@ jobs:
               - 'services/spotsOnlineService/**'
             locationUpdaterPrc:
               - 'services/locationDataUpdater/**'
+            filterService :
+              - 'services/filter/**'
+
   infra-stack:
     needs: [changes]
     name:  Main core infra CI/CD
@@ -95,9 +99,14 @@ jobs:
               "docker-image-name": "location-updater-process",
               "service-dir": "./services/locationDataUpdater"
             },
+            "filter-service": {
+              "stack-name": "filter-service",
+              "docker-image-name": "filter-service",
+              "service-dir": "./services/filter"
+            },
           }
         ]
-        services: [auth-service, spots-core-service, confirmation-service, schedule-service, schedule-checker-prc, online-service, location-updater-prc]
+        services: [auth-service, spots-core-service, confirmation-service, schedule-service, schedule-checker-prc, online-service, location-updater-prc, filter-service]
     name:  ${{ matrix.lookup[matrix.services].stack-name }}
     uses: ./.github/workflows/service-build-deploy.yml
     secrets: inherit
@@ -107,9 +116,3 @@ jobs:
       docker-image-name: ${{ matrix.lookup[matrix.services].docker-image-name }}
       service-dir: ${{ matrix.lookup[matrix.services].service-dir }}
   
-    # runs-on: ubuntu-latest
-    # steps:
-    #   - name: echoing
-    #     run: |
-    #       echo ${{ needs.changes.outputs[matrix.services] }}
-    #
