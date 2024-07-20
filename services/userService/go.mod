@@ -3,20 +3,19 @@ module github.com/JuanGQCadavid/now-project/services/userService
 go 1.20
 
 require (
-	github.com/JuanGQCadavid/now-project/services/pkgs/common v0.0.0-00010101000000-000000000000
+	github.com/JuanGQCadavid/now-project/services/pkgs/common v0.0.0-20240720092858-56ae328b366c
+	github.com/aws/aws-lambda-go v1.41.0
 	github.com/aws/aws-sdk-go v1.48.0
+	github.com/awslabs/aws-lambda-go-api-proxy v0.16.0
+	github.com/gin-gonic/gin v1.9.1
 	github.com/google/uuid v1.3.0
 )
 
 require (
-	github.com/aws/aws-lambda-go v1.41.0 // indirect
-	github.com/awslabs/aws-lambda-go-api-proxy v0.16.0 // indirect
 	github.com/bytedance/sonic v1.9.1 // indirect
 	github.com/chenzhuoyu/base64x v0.0.0-20221115062448-fe3a3abad311 // indirect
-	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.2 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
-	github.com/gin-gonic/gin v1.9.1 // indirect
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-playground/universal-translator v0.18.1 // indirect
 	github.com/go-playground/validator/v10 v10.14.0 // indirect
@@ -40,5 +39,3 @@ require (
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
-
-replace github.com/JuanGQCadavid/now-project/services/pkgs/common => ../pkgs/common
