@@ -22,6 +22,7 @@ jobs:
       online-service: ${{ steps.filter.outputs.onlineService }}
       location-updater-prc: ${{ steps.filter.outputs.locationUpdaterPrc }}
       filter-service: ${{ steps.filter.outputs.filterService }}
+      user-service: ${{ steps.filter.outputs.userService }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -47,6 +48,8 @@ jobs:
               - 'services/locationDataUpdater/**'
             filterService :
               - 'services/filter/**'
+            userService :
+              - 'services/userService/**'
 
   infra-stack:
     needs: [changes]
@@ -104,9 +107,14 @@ jobs:
               "docker-image-name": "filter-service",
               "service-dir": "./services/filter"
             },
+            "user-service": {
+              "stack-name": "user-service",
+              "docker-image-name": "user-service",
+              "service-dir": "./services/userService"
+            },
           }
         ]
-        services: [auth-service, spots-core-service, confirmation-service, schedule-service, schedule-checker-prc, online-service, location-updater-prc, filter-service]
+        services: [auth-service, spots-core-service, confirmation-service, schedule-service, schedule-checker-prc, online-service, location-updater-prc, filter-service, user-service]
     name:  ${{ matrix.lookup[matrix.services].stack-name }}
     uses: ./.github/workflows/service-build-deploy.yml
     secrets: inherit
