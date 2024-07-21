@@ -12,7 +12,7 @@ part of 'simple_state.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
 /// @nodoc
 mixin _$SimpleState<T> {
@@ -63,22 +63,22 @@ class _$SimpleStateCopyWithImpl<T, $Res, $Val extends SimpleState<T>>
 }
 
 /// @nodoc
-abstract class _$$_SimpleStateCopyWith<T, $Res>
+abstract class _$$SimpleStateImplCopyWith<T, $Res>
     implements $SimpleStateCopyWith<T, $Res> {
-  factory _$$_SimpleStateCopyWith(
-          _$_SimpleState<T> value, $Res Function(_$_SimpleState<T>) then) =
-      __$$_SimpleStateCopyWithImpl<T, $Res>;
+  factory _$$SimpleStateImplCopyWith(_$SimpleStateImpl<T> value,
+          $Res Function(_$SimpleStateImpl<T>) then) =
+      __$$SimpleStateImplCopyWithImpl<T, $Res>;
   @override
   @useResult
   $Res call({T value, SimpleOnState onState});
 }
 
 /// @nodoc
-class __$$_SimpleStateCopyWithImpl<T, $Res>
-    extends _$SimpleStateCopyWithImpl<T, $Res, _$_SimpleState<T>>
-    implements _$$_SimpleStateCopyWith<T, $Res> {
-  __$$_SimpleStateCopyWithImpl(
-      _$_SimpleState<T> _value, $Res Function(_$_SimpleState<T>) _then)
+class __$$SimpleStateImplCopyWithImpl<T, $Res>
+    extends _$SimpleStateCopyWithImpl<T, $Res, _$SimpleStateImpl<T>>
+    implements _$$SimpleStateImplCopyWith<T, $Res> {
+  __$$SimpleStateImplCopyWithImpl(
+      _$SimpleStateImpl<T> _value, $Res Function(_$SimpleStateImpl<T>) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -87,7 +87,7 @@ class __$$_SimpleStateCopyWithImpl<T, $Res>
     Object? value = freezed,
     Object? onState = null,
   }) {
-    return _then(_$_SimpleState<T>(
+    return _then(_$SimpleStateImpl<T>(
       value: freezed == value
           ? _value.value
           : value // ignore: cast_nullable_to_non_nullable
@@ -102,10 +102,10 @@ class __$$_SimpleStateCopyWithImpl<T, $Res>
 
 /// @nodoc
 
-class _$_SimpleState<T>
+class _$SimpleStateImpl<T>
     with DiagnosticableTreeMixin
     implements _SimpleState<T> {
-  const _$_SimpleState({required this.value, required this.onState});
+  const _$SimpleStateImpl({required this.value, required this.onState});
 
   @override
   final T value;
@@ -127,10 +127,10 @@ class _$_SimpleState<T>
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_SimpleState<T> &&
+            other is _$SimpleStateImpl<T> &&
             const DeepCollectionEquality().equals(other.value, value) &&
             (identical(other.onState, onState) || other.onState == onState));
   }
@@ -142,14 +142,15 @@ class _$_SimpleState<T>
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_SimpleStateCopyWith<T, _$_SimpleState<T>> get copyWith =>
-      __$$_SimpleStateCopyWithImpl<T, _$_SimpleState<T>>(this, _$identity);
+  _$$SimpleStateImplCopyWith<T, _$SimpleStateImpl<T>> get copyWith =>
+      __$$SimpleStateImplCopyWithImpl<T, _$SimpleStateImpl<T>>(
+          this, _$identity);
 }
 
 abstract class _SimpleState<T> implements SimpleState<T> {
   const factory _SimpleState(
       {required final T value,
-      required final SimpleOnState onState}) = _$_SimpleState<T>;
+      required final SimpleOnState onState}) = _$SimpleStateImpl<T>;
 
   @override
   T get value;
@@ -157,6 +158,6 @@ abstract class _SimpleState<T> implements SimpleState<T> {
   SimpleOnState get onState;
   @override
   @JsonKey(ignore: true)
-  _$$_SimpleStateCopyWith<T, _$_SimpleState<T>> get copyWith =>
+  _$$SimpleStateImplCopyWith<T, _$SimpleStateImpl<T>> get copyWith =>
       throw _privateConstructorUsedError;
 }

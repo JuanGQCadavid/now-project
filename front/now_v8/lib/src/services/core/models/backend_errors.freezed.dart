@@ -12,7 +12,7 @@ part of 'backend_errors.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
 /// @nodoc
 mixin _$BackendErrors {
@@ -105,25 +105,27 @@ class _$BackendErrorsCopyWithImpl<$Res, $Val extends BackendErrors>
 }
 
 /// @nodoc
-abstract class _$$InternalErrorCopyWith<$Res> {
-  factory _$$InternalErrorCopyWith(
-          _$InternalError value, $Res Function(_$InternalError) then) =
-      __$$InternalErrorCopyWithImpl<$Res>;
+abstract class _$$InternalErrorImplCopyWith<$Res> {
+  factory _$$InternalErrorImplCopyWith(
+          _$InternalErrorImpl value, $Res Function(_$InternalErrorImpl) then) =
+      __$$InternalErrorImplCopyWithImpl<$Res>;
 }
 
 /// @nodoc
-class __$$InternalErrorCopyWithImpl<$Res>
-    extends _$BackendErrorsCopyWithImpl<$Res, _$InternalError>
-    implements _$$InternalErrorCopyWith<$Res> {
-  __$$InternalErrorCopyWithImpl(
-      _$InternalError _value, $Res Function(_$InternalError) _then)
+class __$$InternalErrorImplCopyWithImpl<$Res>
+    extends _$BackendErrorsCopyWithImpl<$Res, _$InternalErrorImpl>
+    implements _$$InternalErrorImplCopyWith<$Res> {
+  __$$InternalErrorImplCopyWithImpl(
+      _$InternalErrorImpl _value, $Res Function(_$InternalErrorImpl) _then)
       : super(_value, _then);
 }
 
 /// @nodoc
 
-class _$InternalError with DiagnosticableTreeMixin implements InternalError {
-  const _$InternalError();
+class _$InternalErrorImpl
+    with DiagnosticableTreeMixin
+    implements InternalError {
+  const _$InternalErrorImpl();
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
@@ -137,9 +139,9 @@ class _$InternalError with DiagnosticableTreeMixin implements InternalError {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$InternalError);
+        (other.runtimeType == runtimeType && other is _$InternalErrorImpl);
   }
 
   @override
@@ -239,31 +241,31 @@ class _$InternalError with DiagnosticableTreeMixin implements InternalError {
 }
 
 abstract class InternalError implements BackendErrors {
-  const factory InternalError() = _$InternalError;
+  const factory InternalError() = _$InternalErrorImpl;
 }
 
 /// @nodoc
-abstract class _$$ResourceNotFoundCopyWith<$Res> {
-  factory _$$ResourceNotFoundCopyWith(
-          _$ResourceNotFound value, $Res Function(_$ResourceNotFound) then) =
-      __$$ResourceNotFoundCopyWithImpl<$Res>;
+abstract class _$$ResourceNotFoundImplCopyWith<$Res> {
+  factory _$$ResourceNotFoundImplCopyWith(_$ResourceNotFoundImpl value,
+          $Res Function(_$ResourceNotFoundImpl) then) =
+      __$$ResourceNotFoundImplCopyWithImpl<$Res>;
 }
 
 /// @nodoc
-class __$$ResourceNotFoundCopyWithImpl<$Res>
-    extends _$BackendErrorsCopyWithImpl<$Res, _$ResourceNotFound>
-    implements _$$ResourceNotFoundCopyWith<$Res> {
-  __$$ResourceNotFoundCopyWithImpl(
-      _$ResourceNotFound _value, $Res Function(_$ResourceNotFound) _then)
+class __$$ResourceNotFoundImplCopyWithImpl<$Res>
+    extends _$BackendErrorsCopyWithImpl<$Res, _$ResourceNotFoundImpl>
+    implements _$$ResourceNotFoundImplCopyWith<$Res> {
+  __$$ResourceNotFoundImplCopyWithImpl(_$ResourceNotFoundImpl _value,
+      $Res Function(_$ResourceNotFoundImpl) _then)
       : super(_value, _then);
 }
 
 /// @nodoc
 
-class _$ResourceNotFound
+class _$ResourceNotFoundImpl
     with DiagnosticableTreeMixin
     implements ResourceNotFound {
-  const _$ResourceNotFound();
+  const _$ResourceNotFoundImpl();
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
@@ -278,9 +280,9 @@ class _$ResourceNotFound
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$ResourceNotFound);
+        (other.runtimeType == runtimeType && other is _$ResourceNotFoundImpl);
   }
 
   @override
@@ -380,31 +382,31 @@ class _$ResourceNotFound
 }
 
 abstract class ResourceNotFound implements BackendErrors {
-  const factory ResourceNotFound() = _$ResourceNotFound;
+  const factory ResourceNotFound() = _$ResourceNotFoundImpl;
 }
 
 /// @nodoc
-abstract class _$$ServiceUnavailableCopyWith<$Res> {
-  factory _$$ServiceUnavailableCopyWith(_$ServiceUnavailable value,
-          $Res Function(_$ServiceUnavailable) then) =
-      __$$ServiceUnavailableCopyWithImpl<$Res>;
+abstract class _$$ServiceUnavailableImplCopyWith<$Res> {
+  factory _$$ServiceUnavailableImplCopyWith(_$ServiceUnavailableImpl value,
+          $Res Function(_$ServiceUnavailableImpl) then) =
+      __$$ServiceUnavailableImplCopyWithImpl<$Res>;
 }
 
 /// @nodoc
-class __$$ServiceUnavailableCopyWithImpl<$Res>
-    extends _$BackendErrorsCopyWithImpl<$Res, _$ServiceUnavailable>
-    implements _$$ServiceUnavailableCopyWith<$Res> {
-  __$$ServiceUnavailableCopyWithImpl(
-      _$ServiceUnavailable _value, $Res Function(_$ServiceUnavailable) _then)
+class __$$ServiceUnavailableImplCopyWithImpl<$Res>
+    extends _$BackendErrorsCopyWithImpl<$Res, _$ServiceUnavailableImpl>
+    implements _$$ServiceUnavailableImplCopyWith<$Res> {
+  __$$ServiceUnavailableImplCopyWithImpl(_$ServiceUnavailableImpl _value,
+      $Res Function(_$ServiceUnavailableImpl) _then)
       : super(_value, _then);
 }
 
 /// @nodoc
 
-class _$ServiceUnavailable
+class _$ServiceUnavailableImpl
     with DiagnosticableTreeMixin
     implements ServiceUnavailable {
-  const _$ServiceUnavailable();
+  const _$ServiceUnavailableImpl();
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
@@ -419,9 +421,9 @@ class _$ServiceUnavailable
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$ServiceUnavailable);
+        (other.runtimeType == runtimeType && other is _$ServiceUnavailableImpl);
   }
 
   @override
@@ -521,31 +523,31 @@ class _$ServiceUnavailable
 }
 
 abstract class ServiceUnavailable implements BackendErrors {
-  const factory ServiceUnavailable() = _$ServiceUnavailable;
+  const factory ServiceUnavailable() = _$ServiceUnavailableImpl;
 }
 
 /// @nodoc
-abstract class _$$NoInternetConnectionCopyWith<$Res> {
-  factory _$$NoInternetConnectionCopyWith(_$NoInternetConnection value,
-          $Res Function(_$NoInternetConnection) then) =
-      __$$NoInternetConnectionCopyWithImpl<$Res>;
+abstract class _$$NoInternetConnectionImplCopyWith<$Res> {
+  factory _$$NoInternetConnectionImplCopyWith(_$NoInternetConnectionImpl value,
+          $Res Function(_$NoInternetConnectionImpl) then) =
+      __$$NoInternetConnectionImplCopyWithImpl<$Res>;
 }
 
 /// @nodoc
-class __$$NoInternetConnectionCopyWithImpl<$Res>
-    extends _$BackendErrorsCopyWithImpl<$Res, _$NoInternetConnection>
-    implements _$$NoInternetConnectionCopyWith<$Res> {
-  __$$NoInternetConnectionCopyWithImpl(_$NoInternetConnection _value,
-      $Res Function(_$NoInternetConnection) _then)
+class __$$NoInternetConnectionImplCopyWithImpl<$Res>
+    extends _$BackendErrorsCopyWithImpl<$Res, _$NoInternetConnectionImpl>
+    implements _$$NoInternetConnectionImplCopyWith<$Res> {
+  __$$NoInternetConnectionImplCopyWithImpl(_$NoInternetConnectionImpl _value,
+      $Res Function(_$NoInternetConnectionImpl) _then)
       : super(_value, _then);
 }
 
 /// @nodoc
 
-class _$NoInternetConnection
+class _$NoInternetConnectionImpl
     with DiagnosticableTreeMixin
     implements NoInternetConnection {
-  const _$NoInternetConnection();
+  const _$NoInternetConnectionImpl();
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
@@ -560,9 +562,10 @@ class _$NoInternetConnection
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$NoInternetConnection);
+        (other.runtimeType == runtimeType &&
+            other is _$NoInternetConnectionImpl);
   }
 
   @override
@@ -662,31 +665,31 @@ class _$NoInternetConnection
 }
 
 abstract class NoInternetConnection implements BackendErrors {
-  const factory NoInternetConnection() = _$NoInternetConnection;
+  const factory NoInternetConnection() = _$NoInternetConnectionImpl;
 }
 
 /// @nodoc
-abstract class _$$BadResponseFormatCopyWith<$Res> {
-  factory _$$BadResponseFormatCopyWith(
-          _$BadResponseFormat value, $Res Function(_$BadResponseFormat) then) =
-      __$$BadResponseFormatCopyWithImpl<$Res>;
+abstract class _$$BadResponseFormatImplCopyWith<$Res> {
+  factory _$$BadResponseFormatImplCopyWith(_$BadResponseFormatImpl value,
+          $Res Function(_$BadResponseFormatImpl) then) =
+      __$$BadResponseFormatImplCopyWithImpl<$Res>;
 }
 
 /// @nodoc
-class __$$BadResponseFormatCopyWithImpl<$Res>
-    extends _$BackendErrorsCopyWithImpl<$Res, _$BadResponseFormat>
-    implements _$$BadResponseFormatCopyWith<$Res> {
-  __$$BadResponseFormatCopyWithImpl(
-      _$BadResponseFormat _value, $Res Function(_$BadResponseFormat) _then)
+class __$$BadResponseFormatImplCopyWithImpl<$Res>
+    extends _$BackendErrorsCopyWithImpl<$Res, _$BadResponseFormatImpl>
+    implements _$$BadResponseFormatImplCopyWith<$Res> {
+  __$$BadResponseFormatImplCopyWithImpl(_$BadResponseFormatImpl _value,
+      $Res Function(_$BadResponseFormatImpl) _then)
       : super(_value, _then);
 }
 
 /// @nodoc
 
-class _$BadResponseFormat
+class _$BadResponseFormatImpl
     with DiagnosticableTreeMixin
     implements BadResponseFormat {
-  const _$BadResponseFormat();
+  const _$BadResponseFormatImpl();
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
@@ -701,9 +704,9 @@ class _$BadResponseFormat
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$BadResponseFormat);
+        (other.runtimeType == runtimeType && other is _$BadResponseFormatImpl);
   }
 
   @override
@@ -803,29 +806,29 @@ class _$BadResponseFormat
 }
 
 abstract class BadResponseFormat implements BackendErrors {
-  const factory BadResponseFormat() = _$BadResponseFormat;
+  const factory BadResponseFormat() = _$BadResponseFormatImpl;
 }
 
 /// @nodoc
-abstract class _$$UnknownErrorCopyWith<$Res> {
-  factory _$$UnknownErrorCopyWith(
-          _$UnknownError value, $Res Function(_$UnknownError) then) =
-      __$$UnknownErrorCopyWithImpl<$Res>;
+abstract class _$$UnknownErrorImplCopyWith<$Res> {
+  factory _$$UnknownErrorImplCopyWith(
+          _$UnknownErrorImpl value, $Res Function(_$UnknownErrorImpl) then) =
+      __$$UnknownErrorImplCopyWithImpl<$Res>;
 }
 
 /// @nodoc
-class __$$UnknownErrorCopyWithImpl<$Res>
-    extends _$BackendErrorsCopyWithImpl<$Res, _$UnknownError>
-    implements _$$UnknownErrorCopyWith<$Res> {
-  __$$UnknownErrorCopyWithImpl(
-      _$UnknownError _value, $Res Function(_$UnknownError) _then)
+class __$$UnknownErrorImplCopyWithImpl<$Res>
+    extends _$BackendErrorsCopyWithImpl<$Res, _$UnknownErrorImpl>
+    implements _$$UnknownErrorImplCopyWith<$Res> {
+  __$$UnknownErrorImplCopyWithImpl(
+      _$UnknownErrorImpl _value, $Res Function(_$UnknownErrorImpl) _then)
       : super(_value, _then);
 }
 
 /// @nodoc
 
-class _$UnknownError with DiagnosticableTreeMixin implements UnknownError {
-  const _$UnknownError();
+class _$UnknownErrorImpl with DiagnosticableTreeMixin implements UnknownError {
+  const _$UnknownErrorImpl();
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
@@ -839,9 +842,9 @@ class _$UnknownError with DiagnosticableTreeMixin implements UnknownError {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$UnknownError);
+        (other.runtimeType == runtimeType && other is _$UnknownErrorImpl);
   }
 
   @override
@@ -941,24 +944,24 @@ class _$UnknownError with DiagnosticableTreeMixin implements UnknownError {
 }
 
 abstract class UnknownError implements BackendErrors {
-  const factory UnknownError() = _$UnknownError;
+  const factory UnknownError() = _$UnknownErrorImpl;
 }
 
 /// @nodoc
-abstract class _$$ClientErrorCopyWith<$Res> {
-  factory _$$ClientErrorCopyWith(
-          _$ClientError value, $Res Function(_$ClientError) then) =
-      __$$ClientErrorCopyWithImpl<$Res>;
+abstract class _$$ClientErrorImplCopyWith<$Res> {
+  factory _$$ClientErrorImplCopyWith(
+          _$ClientErrorImpl value, $Res Function(_$ClientErrorImpl) then) =
+      __$$ClientErrorImplCopyWithImpl<$Res>;
   @useResult
   $Res call({ErrorMessage errorMessage});
 }
 
 /// @nodoc
-class __$$ClientErrorCopyWithImpl<$Res>
-    extends _$BackendErrorsCopyWithImpl<$Res, _$ClientError>
-    implements _$$ClientErrorCopyWith<$Res> {
-  __$$ClientErrorCopyWithImpl(
-      _$ClientError _value, $Res Function(_$ClientError) _then)
+class __$$ClientErrorImplCopyWithImpl<$Res>
+    extends _$BackendErrorsCopyWithImpl<$Res, _$ClientErrorImpl>
+    implements _$$ClientErrorImplCopyWith<$Res> {
+  __$$ClientErrorImplCopyWithImpl(
+      _$ClientErrorImpl _value, $Res Function(_$ClientErrorImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -966,7 +969,7 @@ class __$$ClientErrorCopyWithImpl<$Res>
   $Res call({
     Object? errorMessage = null,
   }) {
-    return _then(_$ClientError(
+    return _then(_$ClientErrorImpl(
       null == errorMessage
           ? _value.errorMessage
           : errorMessage // ignore: cast_nullable_to_non_nullable
@@ -977,8 +980,8 @@ class __$$ClientErrorCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$ClientError with DiagnosticableTreeMixin implements ClientError {
-  const _$ClientError(this.errorMessage);
+class _$ClientErrorImpl with DiagnosticableTreeMixin implements ClientError {
+  const _$ClientErrorImpl(this.errorMessage);
 
   @override
   final ErrorMessage errorMessage;
@@ -997,10 +1000,10 @@ class _$ClientError with DiagnosticableTreeMixin implements ClientError {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$ClientError &&
+            other is _$ClientErrorImpl &&
             (identical(other.errorMessage, errorMessage) ||
                 other.errorMessage == errorMessage));
   }
@@ -1011,8 +1014,8 @@ class _$ClientError with DiagnosticableTreeMixin implements ClientError {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$ClientErrorCopyWith<_$ClientError> get copyWith =>
-      __$$ClientErrorCopyWithImpl<_$ClientError>(this, _$identity);
+  _$$ClientErrorImplCopyWith<_$ClientErrorImpl> get copyWith =>
+      __$$ClientErrorImplCopyWithImpl<_$ClientErrorImpl>(this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -1108,10 +1111,11 @@ class _$ClientError with DiagnosticableTreeMixin implements ClientError {
 }
 
 abstract class ClientError implements BackendErrors {
-  const factory ClientError(final ErrorMessage errorMessage) = _$ClientError;
+  const factory ClientError(final ErrorMessage errorMessage) =
+      _$ClientErrorImpl;
 
   ErrorMessage get errorMessage;
   @JsonKey(ignore: true)
-  _$$ClientErrorCopyWith<_$ClientError> get copyWith =>
+  _$$ClientErrorImplCopyWith<_$ClientErrorImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

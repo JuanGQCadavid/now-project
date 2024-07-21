@@ -12,7 +12,7 @@ part of 'user_service.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
 /// @nodoc
 mixin _$UserError {
@@ -111,25 +111,25 @@ class _$UserErrorCopyWithImpl<$Res, $Val extends UserError>
 }
 
 /// @nodoc
-abstract class _$$UserDoesNotExistCopyWith<$Res> {
-  factory _$$UserDoesNotExistCopyWith(
-          _$UserDoesNotExist value, $Res Function(_$UserDoesNotExist) then) =
-      __$$UserDoesNotExistCopyWithImpl<$Res>;
+abstract class _$$UserDoesNotExistImplCopyWith<$Res> {
+  factory _$$UserDoesNotExistImplCopyWith(_$UserDoesNotExistImpl value,
+          $Res Function(_$UserDoesNotExistImpl) then) =
+      __$$UserDoesNotExistImplCopyWithImpl<$Res>;
 }
 
 /// @nodoc
-class __$$UserDoesNotExistCopyWithImpl<$Res>
-    extends _$UserErrorCopyWithImpl<$Res, _$UserDoesNotExist>
-    implements _$$UserDoesNotExistCopyWith<$Res> {
-  __$$UserDoesNotExistCopyWithImpl(
-      _$UserDoesNotExist _value, $Res Function(_$UserDoesNotExist) _then)
+class __$$UserDoesNotExistImplCopyWithImpl<$Res>
+    extends _$UserErrorCopyWithImpl<$Res, _$UserDoesNotExistImpl>
+    implements _$$UserDoesNotExistImplCopyWith<$Res> {
+  __$$UserDoesNotExistImplCopyWithImpl(_$UserDoesNotExistImpl _value,
+      $Res Function(_$UserDoesNotExistImpl) _then)
       : super(_value, _then);
 }
 
 /// @nodoc
 
-class _$UserDoesNotExist implements UserDoesNotExist {
-  _$UserDoesNotExist();
+class _$UserDoesNotExistImpl implements UserDoesNotExist {
+  _$UserDoesNotExistImpl();
 
   @override
   String toString() {
@@ -137,9 +137,9 @@ class _$UserDoesNotExist implements UserDoesNotExist {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$UserDoesNotExist);
+        (other.runtimeType == runtimeType && other is _$UserDoesNotExistImpl);
   }
 
   @override
@@ -246,29 +246,31 @@ class _$UserDoesNotExist implements UserDoesNotExist {
 }
 
 abstract class UserDoesNotExist implements UserError {
-  factory UserDoesNotExist() = _$UserDoesNotExist;
+  factory UserDoesNotExist() = _$UserDoesNotExistImpl;
 }
 
 /// @nodoc
-abstract class _$$phoneNumberAlreadyTakenCopyWith<$Res> {
-  factory _$$phoneNumberAlreadyTakenCopyWith(_$phoneNumberAlreadyTaken value,
-          $Res Function(_$phoneNumberAlreadyTaken) then) =
-      __$$phoneNumberAlreadyTakenCopyWithImpl<$Res>;
+abstract class _$$phoneNumberAlreadyTakenImplCopyWith<$Res> {
+  factory _$$phoneNumberAlreadyTakenImplCopyWith(
+          _$phoneNumberAlreadyTakenImpl value,
+          $Res Function(_$phoneNumberAlreadyTakenImpl) then) =
+      __$$phoneNumberAlreadyTakenImplCopyWithImpl<$Res>;
 }
 
 /// @nodoc
-class __$$phoneNumberAlreadyTakenCopyWithImpl<$Res>
-    extends _$UserErrorCopyWithImpl<$Res, _$phoneNumberAlreadyTaken>
-    implements _$$phoneNumberAlreadyTakenCopyWith<$Res> {
-  __$$phoneNumberAlreadyTakenCopyWithImpl(_$phoneNumberAlreadyTaken _value,
-      $Res Function(_$phoneNumberAlreadyTaken) _then)
+class __$$phoneNumberAlreadyTakenImplCopyWithImpl<$Res>
+    extends _$UserErrorCopyWithImpl<$Res, _$phoneNumberAlreadyTakenImpl>
+    implements _$$phoneNumberAlreadyTakenImplCopyWith<$Res> {
+  __$$phoneNumberAlreadyTakenImplCopyWithImpl(
+      _$phoneNumberAlreadyTakenImpl _value,
+      $Res Function(_$phoneNumberAlreadyTakenImpl) _then)
       : super(_value, _then);
 }
 
 /// @nodoc
 
-class _$phoneNumberAlreadyTaken implements phoneNumberAlreadyTaken {
-  _$phoneNumberAlreadyTaken();
+class _$phoneNumberAlreadyTakenImpl implements phoneNumberAlreadyTaken {
+  _$phoneNumberAlreadyTakenImpl();
 
   @override
   String toString() {
@@ -276,10 +278,10 @@ class _$phoneNumberAlreadyTaken implements phoneNumberAlreadyTaken {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$phoneNumberAlreadyTaken);
+            other is _$phoneNumberAlreadyTakenImpl);
   }
 
   @override
@@ -386,28 +388,29 @@ class _$phoneNumberAlreadyTaken implements phoneNumberAlreadyTaken {
 }
 
 abstract class phoneNumberAlreadyTaken implements UserError {
-  factory phoneNumberAlreadyTaken() = _$phoneNumberAlreadyTaken;
+  factory phoneNumberAlreadyTaken() = _$phoneNumberAlreadyTakenImpl;
 }
 
 /// @nodoc
-abstract class _$$otpAliveCopyWith<$Res> {
-  factory _$$otpAliveCopyWith(
-          _$otpAlive value, $Res Function(_$otpAlive) then) =
-      __$$otpAliveCopyWithImpl<$Res>;
+abstract class _$$otpAliveImplCopyWith<$Res> {
+  factory _$$otpAliveImplCopyWith(
+          _$otpAliveImpl value, $Res Function(_$otpAliveImpl) then) =
+      __$$otpAliveImplCopyWithImpl<$Res>;
 }
 
 /// @nodoc
-class __$$otpAliveCopyWithImpl<$Res>
-    extends _$UserErrorCopyWithImpl<$Res, _$otpAlive>
-    implements _$$otpAliveCopyWith<$Res> {
-  __$$otpAliveCopyWithImpl(_$otpAlive _value, $Res Function(_$otpAlive) _then)
+class __$$otpAliveImplCopyWithImpl<$Res>
+    extends _$UserErrorCopyWithImpl<$Res, _$otpAliveImpl>
+    implements _$$otpAliveImplCopyWith<$Res> {
+  __$$otpAliveImplCopyWithImpl(
+      _$otpAliveImpl _value, $Res Function(_$otpAliveImpl) _then)
       : super(_value, _then);
 }
 
 /// @nodoc
 
-class _$otpAlive implements otpAlive {
-  _$otpAlive();
+class _$otpAliveImpl implements otpAlive {
+  _$otpAliveImpl();
 
   @override
   String toString() {
@@ -415,9 +418,9 @@ class _$otpAlive implements otpAlive {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$otpAlive);
+        (other.runtimeType == runtimeType && other is _$otpAliveImpl);
   }
 
   @override
@@ -524,27 +527,29 @@ class _$otpAlive implements otpAlive {
 }
 
 abstract class otpAlive implements UserError {
-  factory otpAlive() = _$otpAlive;
+  factory otpAlive() = _$otpAliveImpl;
 }
 
 /// @nodoc
-abstract class _$$otpDiedCopyWith<$Res> {
-  factory _$$otpDiedCopyWith(_$otpDied value, $Res Function(_$otpDied) then) =
-      __$$otpDiedCopyWithImpl<$Res>;
+abstract class _$$otpDiedImplCopyWith<$Res> {
+  factory _$$otpDiedImplCopyWith(
+          _$otpDiedImpl value, $Res Function(_$otpDiedImpl) then) =
+      __$$otpDiedImplCopyWithImpl<$Res>;
 }
 
 /// @nodoc
-class __$$otpDiedCopyWithImpl<$Res>
-    extends _$UserErrorCopyWithImpl<$Res, _$otpDied>
-    implements _$$otpDiedCopyWith<$Res> {
-  __$$otpDiedCopyWithImpl(_$otpDied _value, $Res Function(_$otpDied) _then)
+class __$$otpDiedImplCopyWithImpl<$Res>
+    extends _$UserErrorCopyWithImpl<$Res, _$otpDiedImpl>
+    implements _$$otpDiedImplCopyWith<$Res> {
+  __$$otpDiedImplCopyWithImpl(
+      _$otpDiedImpl _value, $Res Function(_$otpDiedImpl) _then)
       : super(_value, _then);
 }
 
 /// @nodoc
 
-class _$otpDied implements otpDied {
-  _$otpDied();
+class _$otpDiedImpl implements otpDied {
+  _$otpDiedImpl();
 
   @override
   String toString() {
@@ -552,9 +557,9 @@ class _$otpDied implements otpDied {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$otpDied);
+        (other.runtimeType == runtimeType && other is _$otpDiedImpl);
   }
 
   @override
@@ -661,28 +666,29 @@ class _$otpDied implements otpDied {
 }
 
 abstract class otpDied implements UserError {
-  factory otpDied() = _$otpDied;
+  factory otpDied() = _$otpDiedImpl;
 }
 
 /// @nodoc
-abstract class _$$wrongOTPCopyWith<$Res> {
-  factory _$$wrongOTPCopyWith(
-          _$wrongOTP value, $Res Function(_$wrongOTP) then) =
-      __$$wrongOTPCopyWithImpl<$Res>;
+abstract class _$$wrongOTPImplCopyWith<$Res> {
+  factory _$$wrongOTPImplCopyWith(
+          _$wrongOTPImpl value, $Res Function(_$wrongOTPImpl) then) =
+      __$$wrongOTPImplCopyWithImpl<$Res>;
 }
 
 /// @nodoc
-class __$$wrongOTPCopyWithImpl<$Res>
-    extends _$UserErrorCopyWithImpl<$Res, _$wrongOTP>
-    implements _$$wrongOTPCopyWith<$Res> {
-  __$$wrongOTPCopyWithImpl(_$wrongOTP _value, $Res Function(_$wrongOTP) _then)
+class __$$wrongOTPImplCopyWithImpl<$Res>
+    extends _$UserErrorCopyWithImpl<$Res, _$wrongOTPImpl>
+    implements _$$wrongOTPImplCopyWith<$Res> {
+  __$$wrongOTPImplCopyWithImpl(
+      _$wrongOTPImpl _value, $Res Function(_$wrongOTPImpl) _then)
       : super(_value, _then);
 }
 
 /// @nodoc
 
-class _$wrongOTP implements wrongOTP {
-  _$wrongOTP();
+class _$wrongOTPImpl implements wrongOTP {
+  _$wrongOTPImpl();
 
   @override
   String toString() {
@@ -690,9 +696,9 @@ class _$wrongOTP implements wrongOTP {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$wrongOTP);
+        (other.runtimeType == runtimeType && other is _$wrongOTPImpl);
   }
 
   @override
@@ -799,29 +805,29 @@ class _$wrongOTP implements wrongOTP {
 }
 
 abstract class wrongOTP implements UserError {
-  factory wrongOTP() = _$wrongOTP;
+  factory wrongOTP() = _$wrongOTPImpl;
 }
 
 /// @nodoc
-abstract class _$$noPendingOTPCopyWith<$Res> {
-  factory _$$noPendingOTPCopyWith(
-          _$noPendingOTP value, $Res Function(_$noPendingOTP) then) =
-      __$$noPendingOTPCopyWithImpl<$Res>;
+abstract class _$$noPendingOTPImplCopyWith<$Res> {
+  factory _$$noPendingOTPImplCopyWith(
+          _$noPendingOTPImpl value, $Res Function(_$noPendingOTPImpl) then) =
+      __$$noPendingOTPImplCopyWithImpl<$Res>;
 }
 
 /// @nodoc
-class __$$noPendingOTPCopyWithImpl<$Res>
-    extends _$UserErrorCopyWithImpl<$Res, _$noPendingOTP>
-    implements _$$noPendingOTPCopyWith<$Res> {
-  __$$noPendingOTPCopyWithImpl(
-      _$noPendingOTP _value, $Res Function(_$noPendingOTP) _then)
+class __$$noPendingOTPImplCopyWithImpl<$Res>
+    extends _$UserErrorCopyWithImpl<$Res, _$noPendingOTPImpl>
+    implements _$$noPendingOTPImplCopyWith<$Res> {
+  __$$noPendingOTPImplCopyWithImpl(
+      _$noPendingOTPImpl _value, $Res Function(_$noPendingOTPImpl) _then)
       : super(_value, _then);
 }
 
 /// @nodoc
 
-class _$noPendingOTP implements noPendingOTP {
-  _$noPendingOTP();
+class _$noPendingOTPImpl implements noPendingOTP {
+  _$noPendingOTPImpl();
 
   @override
   String toString() {
@@ -829,9 +835,9 @@ class _$noPendingOTP implements noPendingOTP {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$noPendingOTP);
+        (other.runtimeType == runtimeType && other is _$noPendingOTPImpl);
   }
 
   @override
@@ -938,29 +944,29 @@ class _$noPendingOTP implements noPendingOTP {
 }
 
 abstract class noPendingOTP implements UserError {
-  factory noPendingOTP() = _$noPendingOTP;
+  factory noPendingOTP() = _$noPendingOTPImpl;
 }
 
 /// @nodoc
-abstract class _$$otpMaxTriesReachedCopyWith<$Res> {
-  factory _$$otpMaxTriesReachedCopyWith(_$otpMaxTriesReached value,
-          $Res Function(_$otpMaxTriesReached) then) =
-      __$$otpMaxTriesReachedCopyWithImpl<$Res>;
+abstract class _$$otpMaxTriesReachedImplCopyWith<$Res> {
+  factory _$$otpMaxTriesReachedImplCopyWith(_$otpMaxTriesReachedImpl value,
+          $Res Function(_$otpMaxTriesReachedImpl) then) =
+      __$$otpMaxTriesReachedImplCopyWithImpl<$Res>;
 }
 
 /// @nodoc
-class __$$otpMaxTriesReachedCopyWithImpl<$Res>
-    extends _$UserErrorCopyWithImpl<$Res, _$otpMaxTriesReached>
-    implements _$$otpMaxTriesReachedCopyWith<$Res> {
-  __$$otpMaxTriesReachedCopyWithImpl(
-      _$otpMaxTriesReached _value, $Res Function(_$otpMaxTriesReached) _then)
+class __$$otpMaxTriesReachedImplCopyWithImpl<$Res>
+    extends _$UserErrorCopyWithImpl<$Res, _$otpMaxTriesReachedImpl>
+    implements _$$otpMaxTriesReachedImplCopyWith<$Res> {
+  __$$otpMaxTriesReachedImplCopyWithImpl(_$otpMaxTriesReachedImpl _value,
+      $Res Function(_$otpMaxTriesReachedImpl) _then)
       : super(_value, _then);
 }
 
 /// @nodoc
 
-class _$otpMaxTriesReached implements otpMaxTriesReached {
-  _$otpMaxTriesReached();
+class _$otpMaxTriesReachedImpl implements otpMaxTriesReached {
+  _$otpMaxTriesReachedImpl();
 
   @override
   String toString() {
@@ -968,9 +974,9 @@ class _$otpMaxTriesReached implements otpMaxTriesReached {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$otpMaxTriesReached);
+        (other.runtimeType == runtimeType && other is _$otpMaxTriesReachedImpl);
   }
 
   @override
@@ -1077,24 +1083,24 @@ class _$otpMaxTriesReached implements otpMaxTriesReached {
 }
 
 abstract class otpMaxTriesReached implements UserError {
-  factory otpMaxTriesReached() = _$otpMaxTriesReached;
+  factory otpMaxTriesReached() = _$otpMaxTriesReachedImpl;
 }
 
 /// @nodoc
-abstract class _$$InternalErrorCopyWith<$Res> {
-  factory _$$InternalErrorCopyWith(
-          _$InternalError value, $Res Function(_$InternalError) then) =
-      __$$InternalErrorCopyWithImpl<$Res>;
+abstract class _$$InternalErrorImplCopyWith<$Res> {
+  factory _$$InternalErrorImplCopyWith(
+          _$InternalErrorImpl value, $Res Function(_$InternalErrorImpl) then) =
+      __$$InternalErrorImplCopyWithImpl<$Res>;
   @useResult
   $Res call({String error});
 }
 
 /// @nodoc
-class __$$InternalErrorCopyWithImpl<$Res>
-    extends _$UserErrorCopyWithImpl<$Res, _$InternalError>
-    implements _$$InternalErrorCopyWith<$Res> {
-  __$$InternalErrorCopyWithImpl(
-      _$InternalError _value, $Res Function(_$InternalError) _then)
+class __$$InternalErrorImplCopyWithImpl<$Res>
+    extends _$UserErrorCopyWithImpl<$Res, _$InternalErrorImpl>
+    implements _$$InternalErrorImplCopyWith<$Res> {
+  __$$InternalErrorImplCopyWithImpl(
+      _$InternalErrorImpl _value, $Res Function(_$InternalErrorImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -1102,7 +1108,7 @@ class __$$InternalErrorCopyWithImpl<$Res>
   $Res call({
     Object? error = null,
   }) {
-    return _then(_$InternalError(
+    return _then(_$InternalErrorImpl(
       null == error
           ? _value.error
           : error // ignore: cast_nullable_to_non_nullable
@@ -1113,8 +1119,8 @@ class __$$InternalErrorCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$InternalError implements InternalError {
-  _$InternalError(this.error);
+class _$InternalErrorImpl implements InternalError {
+  _$InternalErrorImpl(this.error);
 
   @override
   final String error;
@@ -1125,10 +1131,10 @@ class _$InternalError implements InternalError {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$InternalError &&
+            other is _$InternalErrorImpl &&
             (identical(other.error, error) || other.error == error));
   }
 
@@ -1138,8 +1144,8 @@ class _$InternalError implements InternalError {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$InternalErrorCopyWith<_$InternalError> get copyWith =>
-      __$$InternalErrorCopyWithImpl<_$InternalError>(this, _$identity);
+  _$$InternalErrorImplCopyWith<_$InternalErrorImpl> get copyWith =>
+      __$$InternalErrorImplCopyWithImpl<_$InternalErrorImpl>(this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -1242,10 +1248,10 @@ class _$InternalError implements InternalError {
 }
 
 abstract class InternalError implements UserError {
-  factory InternalError(final String error) = _$InternalError;
+  factory InternalError(final String error) = _$InternalErrorImpl;
 
   String get error;
   @JsonKey(ignore: true)
-  _$$InternalErrorCopyWith<_$InternalError> get copyWith =>
+  _$$InternalErrorImplCopyWith<_$InternalErrorImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

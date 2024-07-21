@@ -12,7 +12,7 @@ part of 'spot_creator_state.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
 /// @nodoc
 mixin _$SpotCreatorState {
@@ -96,11 +96,11 @@ class _$SpotCreatorStateCopyWithImpl<$Res, $Val extends SpotCreatorState>
 }
 
 /// @nodoc
-abstract class _$$_SpotCreatorStateCopyWith<$Res>
+abstract class _$$SpotCreatorStateImplCopyWith<$Res>
     implements $SpotCreatorStateCopyWith<$Res> {
-  factory _$$_SpotCreatorStateCopyWith(
-          _$_SpotCreatorState value, $Res Function(_$_SpotCreatorState) then) =
-      __$$_SpotCreatorStateCopyWithImpl<$Res>;
+  factory _$$SpotCreatorStateImplCopyWith(_$SpotCreatorStateImpl value,
+          $Res Function(_$SpotCreatorStateImpl) then) =
+      __$$SpotCreatorStateImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call(
@@ -115,11 +115,11 @@ abstract class _$$_SpotCreatorStateCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$_SpotCreatorStateCopyWithImpl<$Res>
-    extends _$SpotCreatorStateCopyWithImpl<$Res, _$_SpotCreatorState>
-    implements _$$_SpotCreatorStateCopyWith<$Res> {
-  __$$_SpotCreatorStateCopyWithImpl(
-      _$_SpotCreatorState _value, $Res Function(_$_SpotCreatorState) _then)
+class __$$SpotCreatorStateImplCopyWithImpl<$Res>
+    extends _$SpotCreatorStateCopyWithImpl<$Res, _$SpotCreatorStateImpl>
+    implements _$$SpotCreatorStateImplCopyWith<$Res> {
+  __$$SpotCreatorStateImplCopyWithImpl(_$SpotCreatorStateImpl _value,
+      $Res Function(_$SpotCreatorStateImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -131,7 +131,7 @@ class __$$_SpotCreatorStateCopyWithImpl<$Res>
     Object? spot = null,
     Object? onError = null,
   }) {
-    return _then(_$_SpotCreatorState(
+    return _then(_$SpotCreatorStateImpl(
       onState: null == onState
           ? _value.onState
           : onState // ignore: cast_nullable_to_non_nullable
@@ -158,10 +158,10 @@ class __$$_SpotCreatorStateCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$_SpotCreatorState
+class _$SpotCreatorStateImpl
     with DiagnosticableTreeMixin
     implements _SpotCreatorState {
-  const _$_SpotCreatorState(
+  const _$SpotCreatorStateImpl(
       {required this.onState,
       required this.totalSteps,
       required this.actualStep,
@@ -197,10 +197,10 @@ class _$_SpotCreatorState
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_SpotCreatorState &&
+            other is _$SpotCreatorStateImpl &&
             (identical(other.onState, onState) || other.onState == onState) &&
             (identical(other.totalSteps, totalSteps) ||
                 other.totalSteps == totalSteps) &&
@@ -217,8 +217,9 @@ class _$_SpotCreatorState
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_SpotCreatorStateCopyWith<_$_SpotCreatorState> get copyWith =>
-      __$$_SpotCreatorStateCopyWithImpl<_$_SpotCreatorState>(this, _$identity);
+  _$$SpotCreatorStateImplCopyWith<_$SpotCreatorStateImpl> get copyWith =>
+      __$$SpotCreatorStateImplCopyWithImpl<_$SpotCreatorStateImpl>(
+          this, _$identity);
 }
 
 abstract class _SpotCreatorState implements SpotCreatorState {
@@ -227,7 +228,7 @@ abstract class _SpotCreatorState implements SpotCreatorState {
       required final int totalSteps,
       required final int actualStep,
       required final LongSpot spot,
-      required final String onError}) = _$_SpotCreatorState;
+      required final String onError}) = _$SpotCreatorStateImpl;
 
   @override
   OnState get onState;
@@ -241,6 +242,6 @@ abstract class _SpotCreatorState implements SpotCreatorState {
   String get onError;
   @override
   @JsonKey(ignore: true)
-  _$$_SpotCreatorStateCopyWith<_$_SpotCreatorState> get copyWith =>
+  _$$SpotCreatorStateImplCopyWith<_$SpotCreatorStateImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

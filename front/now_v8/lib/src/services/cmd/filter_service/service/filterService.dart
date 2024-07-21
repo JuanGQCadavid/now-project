@@ -190,8 +190,9 @@ class FilterService implements IFilterService {
     List<Spot> spots = [];
 
     for (var spot in places) {
-      DateTime date = DateTime.parse(
-          "${spot.dateInfo.dateTime}T${spot.dateInfo.startTime}");
+      var timeFormatted = spot.dateInfo.startTime.split(" ");
+
+      DateTime date = DateTime.parse("${timeFormatted[0]} ${timeFormatted[1]}");
       spots.add(
         Spot.withOutSpotColors(
             principalTag: spot.topicInfo.principalTopic.isNotEmpty ||

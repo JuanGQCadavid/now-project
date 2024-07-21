@@ -6,7 +6,8 @@ part of 'long_spot.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$_LongSpot _$$_LongSpotFromJson(Map<String, dynamic> json) => _$_LongSpot(
+_$LongSpotImpl _$$LongSpotImplFromJson(Map<String, dynamic> json) =>
+    _$LongSpotImpl(
       dateInfo: DateInfo.fromJson(json['dateInfo'] as Map<String, dynamic>),
       eventInfo: EventInfo.fromJson(json['eventInfo'] as Map<String, dynamic>),
       hostInfo: HostInfo.fromJson(json['hostInfo'] as Map<String, dynamic>),
@@ -14,7 +15,7 @@ _$_LongSpot _$$_LongSpotFromJson(Map<String, dynamic> json) => _$_LongSpot(
       topicInfo: TopicsInfo.fromJson(json['topicInfo'] as Map<String, dynamic>),
     );
 
-Map<String, dynamic> _$$_LongSpotToJson(_$_LongSpot instance) =>
+Map<String, dynamic> _$$LongSpotImplToJson(_$LongSpotImpl instance) =>
     <String, dynamic>{
       'dateInfo': instance.dateInfo,
       'eventInfo': instance.eventInfo,
@@ -23,28 +24,29 @@ Map<String, dynamic> _$$_LongSpotToJson(_$_LongSpot instance) =>
       'topicInfo': instance.topicInfo,
     };
 
-_$_TopicsInfo _$$_TopicsInfoFromJson(Map<String, dynamic> json) =>
-    _$_TopicsInfo(
+_$TopicsInfoImpl _$$TopicsInfoImplFromJson(Map<String, dynamic> json) =>
+    _$TopicsInfoImpl(
       principalTopic: json['principalTopic'] as String,
       secondaryTopics: (json['secondaryTopics'] as List<dynamic>)
           .map((e) => e as String)
           .toList(),
     );
 
-Map<String, dynamic> _$$_TopicsInfoToJson(_$_TopicsInfo instance) =>
+Map<String, dynamic> _$$TopicsInfoImplToJson(_$TopicsInfoImpl instance) =>
     <String, dynamic>{
       'principalTopic': instance.principalTopic,
       'secondaryTopics': instance.secondaryTopics,
     };
 
-_$_PlaceInfo _$$_PlaceInfoFromJson(Map<String, dynamic> json) => _$_PlaceInfo(
+_$PlaceInfoImpl _$$PlaceInfoImplFromJson(Map<String, dynamic> json) =>
+    _$PlaceInfoImpl(
       name: json['name'] as String,
       lat: (json['lat'] as num).toDouble(),
       lon: (json['lon'] as num).toDouble(),
       mapProviderId: json['mapProviderId'] as String,
     );
 
-Map<String, dynamic> _$$_PlaceInfoToJson(_$_PlaceInfo instance) =>
+Map<String, dynamic> _$$PlaceInfoImplToJson(_$PlaceInfoImpl instance) =>
     <String, dynamic>{
       'name': instance.name,
       'lat': instance.lat,
@@ -52,24 +54,26 @@ Map<String, dynamic> _$$_PlaceInfoToJson(_$_PlaceInfo instance) =>
       'mapProviderId': instance.mapProviderId,
     };
 
-_$_HostInfo _$$_HostInfoFromJson(Map<String, dynamic> json) => _$_HostInfo(
+_$HostInfoImpl _$$HostInfoImplFromJson(Map<String, dynamic> json) =>
+    _$HostInfoImpl(
       name: json['name'] as String,
     );
 
-Map<String, dynamic> _$$_HostInfoToJson(_$_HostInfo instance) =>
+Map<String, dynamic> _$$HostInfoImplToJson(_$HostInfoImpl instance) =>
     <String, dynamic>{
       'name': instance.name,
     };
 
-_$_EventInfo _$$_EventInfoFromJson(Map<String, dynamic> json) => _$_EventInfo(
+_$EventInfoImpl _$$EventInfoImplFromJson(Map<String, dynamic> json) =>
+    _$EventInfoImpl(
       name: json['name'] as String,
       id: json['id'] as String,
       description: json['description'] as String,
-      maximunCapacty: json['maximunCapacty'] as int,
+      maximunCapacty: (json['maximunCapacty'] as num).toInt(),
       emoji: json['emoji'] as String,
     );
 
-Map<String, dynamic> _$$_EventInfoToJson(_$_EventInfo instance) =>
+Map<String, dynamic> _$$EventInfoImplToJson(_$EventInfoImpl instance) =>
     <String, dynamic>{
       'name': instance.name,
       'id': instance.id,
@@ -78,15 +82,16 @@ Map<String, dynamic> _$$_EventInfoToJson(_$_EventInfo instance) =>
       'emoji': instance.emoji,
     };
 
-_$_DateInfo _$$_DateInfoFromJson(Map<String, dynamic> json) => _$_DateInfo(
+_$DateInfoImpl _$$DateInfoImplFromJson(Map<String, dynamic> json) =>
+    _$DateInfoImpl(
       dateTime: json['dateTime'] as String,
       id: json['id'] as String,
       startTime: json['startTime'] as String,
       durationApproximatedInSeconds:
-          json['durationApproximatedInSeconds'] as int,
+          (json['durationApproximatedInSeconds'] as num).toInt(),
     );
 
-Map<String, dynamic> _$$_DateInfoToJson(_$_DateInfo instance) =>
+Map<String, dynamic> _$$DateInfoImplToJson(_$DateInfoImpl instance) =>
     <String, dynamic>{
       'dateTime': instance.dateTime,
       'id': instance.id,

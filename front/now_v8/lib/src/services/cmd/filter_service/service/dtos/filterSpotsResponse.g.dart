@@ -48,7 +48,7 @@ SessionDetails _$SessionDetailsFromJson(Map<String, dynamic> json) =>
     SessionDetails(
       session_id: json['session_id'] as String? ?? "",
       header_name: json['header_name'] as String? ?? "",
-      ttl: json['ttl'] as int? ?? 0,
+      ttl: (json['ttl'] as num?)?.toInt() ?? 0,
     );
 
 Map<String, dynamic> _$SessionDetailsToJson(SessionDetails instance) =>
@@ -86,8 +86,8 @@ Map<String, dynamic> _$FilterSpotToJson(FilterSpot instance) =>
     };
 
 HostInfo _$HostInfoFromJson(Map<String, dynamic> json) => HostInfo(
-      name: json['name'] as String,
-      id: json['id'] as String,
+      name: json['name'] as String? ?? "",
+      id: json['id'] as String? ?? "",
     );
 
 Map<String, dynamic> _$HostInfoToJson(HostInfo instance) => <String, dynamic>{
@@ -113,7 +113,7 @@ DateInfo _$DateInfoFromJson(Map<String, dynamic> json) => DateInfo(
       dateTime: json['dateTime'] as String,
       id: json['id'] as String,
       startTime: json['startTime'] as String,
-      durationApproximated: json['durationApproximated'] as int,
+      durationApproximated: (json['durationApproximated'] as num).toInt(),
     );
 
 Map<String, dynamic> _$DateInfoToJson(DateInfo instance) => <String, dynamic>{

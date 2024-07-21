@@ -98,8 +98,8 @@ class HostInfo {
   final String name;
 
   HostInfo({
-    required this.name,
-    required this.id
+    this.name = "",
+    this.id = ""
   });
 
   factory HostInfo.fromJson(Map<String, dynamic> json) =>

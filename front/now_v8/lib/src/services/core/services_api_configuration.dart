@@ -14,7 +14,7 @@ class ApiConfig {
 
   ApiConfig.toProd({
     this.filterServiceResource = "/filter",
-    this.apiGatewayEndpoint = "https://api.pululapp.com",
+    this.apiGatewayEndpoint = "https://staging.pululapp.com",
     this.userServiceResource = "/user",
     this.spotServiceResource = "/spots/core",
     this.stage = "prod",

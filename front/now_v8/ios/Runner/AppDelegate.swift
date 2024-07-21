@@ -1,7 +1,6 @@
-import UIKit
 import Flutter
+import UIKit
 import GoogleMaps
-import Darwin
 
 @UIApplicationMain
 @objc class AppDelegate: FlutterAppDelegate {
@@ -9,8 +8,8 @@ import Darwin
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
-    
     GeneratedPluginRegistrant.register(with: self)
+    GMSServices.provideAPIKey("") // TODO: Insert here api key
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
 }

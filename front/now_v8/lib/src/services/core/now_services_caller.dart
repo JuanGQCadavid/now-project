@@ -56,6 +56,8 @@ class NowServicesCaller {
           const ServiceUnavailable(),
         );
       }
+
+      print(response.data);
       return right(response.data);
     } on SocketException catch (e) {
       return left(

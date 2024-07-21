@@ -12,7 +12,7 @@ part of 'login_state.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
 /// @nodoc
 mixin _$OnStateConfig {
@@ -69,22 +69,22 @@ class _$OnStateConfigCopyWithImpl<$Res, $Val extends OnStateConfig>
 }
 
 /// @nodoc
-abstract class _$$_OnStateConfigCopyWith<$Res>
+abstract class _$$OnStateConfigImplCopyWith<$Res>
     implements $OnStateConfigCopyWith<$Res> {
-  factory _$$_OnStateConfigCopyWith(
-          _$_OnStateConfig value, $Res Function(_$_OnStateConfig) then) =
-      __$$_OnStateConfigCopyWithImpl<$Res>;
+  factory _$$OnStateConfigImplCopyWith(
+          _$OnStateConfigImpl value, $Res Function(_$OnStateConfigImpl) then) =
+      __$$OnStateConfigImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call({bool showPhoneNumber, bool showCodeInput, bool showUserName});
 }
 
 /// @nodoc
-class __$$_OnStateConfigCopyWithImpl<$Res>
-    extends _$OnStateConfigCopyWithImpl<$Res, _$_OnStateConfig>
-    implements _$$_OnStateConfigCopyWith<$Res> {
-  __$$_OnStateConfigCopyWithImpl(
-      _$_OnStateConfig _value, $Res Function(_$_OnStateConfig) _then)
+class __$$OnStateConfigImplCopyWithImpl<$Res>
+    extends _$OnStateConfigCopyWithImpl<$Res, _$OnStateConfigImpl>
+    implements _$$OnStateConfigImplCopyWith<$Res> {
+  __$$OnStateConfigImplCopyWithImpl(
+      _$OnStateConfigImpl _value, $Res Function(_$OnStateConfigImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -94,7 +94,7 @@ class __$$_OnStateConfigCopyWithImpl<$Res>
     Object? showCodeInput = null,
     Object? showUserName = null,
   }) {
-    return _then(_$_OnStateConfig(
+    return _then(_$OnStateConfigImpl(
       showPhoneNumber: null == showPhoneNumber
           ? _value.showPhoneNumber
           : showPhoneNumber // ignore: cast_nullable_to_non_nullable
@@ -113,8 +113,10 @@ class __$$_OnStateConfigCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$_OnStateConfig with DiagnosticableTreeMixin implements _OnStateConfig {
-  const _$_OnStateConfig(
+class _$OnStateConfigImpl
+    with DiagnosticableTreeMixin
+    implements _OnStateConfig {
+  const _$OnStateConfigImpl(
       {required this.showPhoneNumber,
       required this.showCodeInput,
       required this.showUserName});
@@ -142,10 +144,10 @@ class _$_OnStateConfig with DiagnosticableTreeMixin implements _OnStateConfig {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_OnStateConfig &&
+            other is _$OnStateConfigImpl &&
             (identical(other.showPhoneNumber, showPhoneNumber) ||
                 other.showPhoneNumber == showPhoneNumber) &&
             (identical(other.showCodeInput, showCodeInput) ||
@@ -161,15 +163,15 @@ class _$_OnStateConfig with DiagnosticableTreeMixin implements _OnStateConfig {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_OnStateConfigCopyWith<_$_OnStateConfig> get copyWith =>
-      __$$_OnStateConfigCopyWithImpl<_$_OnStateConfig>(this, _$identity);
+  _$$OnStateConfigImplCopyWith<_$OnStateConfigImpl> get copyWith =>
+      __$$OnStateConfigImplCopyWithImpl<_$OnStateConfigImpl>(this, _$identity);
 }
 
 abstract class _OnStateConfig implements OnStateConfig {
   const factory _OnStateConfig(
       {required final bool showPhoneNumber,
       required final bool showCodeInput,
-      required final bool showUserName}) = _$_OnStateConfig;
+      required final bool showUserName}) = _$OnStateConfigImpl;
 
   @override
   bool get showPhoneNumber;
@@ -179,7 +181,7 @@ abstract class _OnStateConfig implements OnStateConfig {
   bool get showUserName;
   @override
   @JsonKey(ignore: true)
-  _$$_OnStateConfigCopyWith<_$_OnStateConfig> get copyWith =>
+  _$$OnStateConfigImplCopyWith<_$OnStateConfigImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
@@ -265,11 +267,11 @@ class _$LoginStateCopyWithImpl<$Res, $Val extends LoginState>
 }
 
 /// @nodoc
-abstract class _$$_LoginStateCopyWith<$Res>
+abstract class _$$LoginStateImplCopyWith<$Res>
     implements $LoginStateCopyWith<$Res> {
-  factory _$$_LoginStateCopyWith(
-          _$_LoginState value, $Res Function(_$_LoginState) then) =
-      __$$_LoginStateCopyWithImpl<$Res>;
+  factory _$$LoginStateImplCopyWith(
+          _$LoginStateImpl value, $Res Function(_$LoginStateImpl) then) =
+      __$$LoginStateImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call(
@@ -284,11 +286,11 @@ abstract class _$$_LoginStateCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$_LoginStateCopyWithImpl<$Res>
-    extends _$LoginStateCopyWithImpl<$Res, _$_LoginState>
-    implements _$$_LoginStateCopyWith<$Res> {
-  __$$_LoginStateCopyWithImpl(
-      _$_LoginState _value, $Res Function(_$_LoginState) _then)
+class __$$LoginStateImplCopyWithImpl<$Res>
+    extends _$LoginStateCopyWithImpl<$Res, _$LoginStateImpl>
+    implements _$$LoginStateImplCopyWith<$Res> {
+  __$$LoginStateImplCopyWithImpl(
+      _$LoginStateImpl _value, $Res Function(_$LoginStateImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -300,7 +302,7 @@ class __$$_LoginStateCopyWithImpl<$Res>
     Object? errorMessage = null,
     Object? stateConfig = null,
   }) {
-    return _then(_$_LoginState(
+    return _then(_$LoginStateImpl(
       phoneNumber: null == phoneNumber
           ? _value.phoneNumber
           : phoneNumber // ignore: cast_nullable_to_non_nullable
@@ -327,8 +329,8 @@ class __$$_LoginStateCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$_LoginState with DiagnosticableTreeMixin implements _LoginState {
-  const _$_LoginState(
+class _$LoginStateImpl with DiagnosticableTreeMixin implements _LoginState {
+  const _$LoginStateImpl(
       {required this.phoneNumber,
       required this.userName,
       required this.onState,
@@ -364,10 +366,10 @@ class _$_LoginState with DiagnosticableTreeMixin implements _LoginState {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_LoginState &&
+            other is _$LoginStateImpl &&
             (identical(other.phoneNumber, phoneNumber) ||
                 other.phoneNumber == phoneNumber) &&
             (identical(other.userName, userName) ||
@@ -386,8 +388,8 @@ class _$_LoginState with DiagnosticableTreeMixin implements _LoginState {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_LoginStateCopyWith<_$_LoginState> get copyWith =>
-      __$$_LoginStateCopyWithImpl<_$_LoginState>(this, _$identity);
+  _$$LoginStateImplCopyWith<_$LoginStateImpl> get copyWith =>
+      __$$LoginStateImplCopyWithImpl<_$LoginStateImpl>(this, _$identity);
 }
 
 abstract class _LoginState implements LoginState {
@@ -396,7 +398,7 @@ abstract class _LoginState implements LoginState {
       required final String userName,
       required final OnState onState,
       required final String errorMessage,
-      required final OnStateConfig stateConfig}) = _$_LoginState;
+      required final OnStateConfig stateConfig}) = _$LoginStateImpl;
 
   @override
   String get phoneNumber;
@@ -410,6 +412,6 @@ abstract class _LoginState implements LoginState {
   OnStateConfig get stateConfig;
   @override
   @JsonKey(ignore: true)
-  _$$_LoginStateCopyWith<_$_LoginState> get copyWith =>
+  _$$LoginStateImplCopyWith<_$LoginStateImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

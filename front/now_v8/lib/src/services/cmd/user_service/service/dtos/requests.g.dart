@@ -64,7 +64,7 @@ ValidateOTP _$ValidateOTPFromJson(Map<String, dynamic> json) {
   );
   return ValidateOTP(
     json['phoneNumber'] as String,
-    (json['code'] as List<dynamic>).map((e) => e as int).toList(),
+    (json['code'] as List<dynamic>).map((e) => (e as num).toInt()).toList(),
   );
 }
 

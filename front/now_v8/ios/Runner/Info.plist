@@ -6,15 +6,7 @@
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>We need your location to find all the spots closed</string>
 
-	<!-- <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>Just because</string> -->
-
-	<!-- <key>UIBackgroundModes</key>
-	<string>location</string> -->
-
 	<!-- Default permissions -->
-	<key>CADisableMinimumFrameDurationOnPhone</key>
-	<true/>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
@@ -54,8 +46,8 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
-	<key>UIViewControllerBasedStatusBarAppearance</key>
-	<false/>
+	<key>CADisableMinimumFrameDurationOnPhone</key>
+	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 </dict>

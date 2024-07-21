@@ -1,6 +1,0 @@
-version: "Apple Swift version 5.8.1 (swiftlang-5.8.0.124.5 clang-1403.0.22.11.100)"
-options: "3256c1efd00d679362613b0f28a05854281a3fc7d7bdac0c0b81a9fcd18ea0f2"
-build_start_time: [1694734444, 88711000]
-build_end_time: [1694734444, 161128000]
-inputs:
-  "/Users/personal/Pululapp/now-project/front/now_v8/ios/Runner/AppDelegate.swift": !dirty [1693176683, 1415234]

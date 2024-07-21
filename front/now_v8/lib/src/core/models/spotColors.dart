@@ -13,6 +13,6 @@ class SpotsColors {
 
   const SpotsColors.empty({
     this.color = Colors.black,
-    this.hue: BitmapDescriptor.defaultMarker,
+    this.hue = BitmapDescriptor.defaultMarker,
   });
 }

@@ -12,7 +12,7 @@ part of 'filteredSpots.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
 /// @nodoc
 mixin _$MapStatus {
@@ -80,25 +80,25 @@ class _$MapStatusCopyWithImpl<$Res, $Val extends MapStatus>
 }
 
 /// @nodoc
-abstract class _$$MovingOnMapCopyWith<$Res> {
-  factory _$$MovingOnMapCopyWith(
-          _$MovingOnMap value, $Res Function(_$MovingOnMap) then) =
-      __$$MovingOnMapCopyWithImpl<$Res>;
+abstract class _$$MovingOnMapImplCopyWith<$Res> {
+  factory _$$MovingOnMapImplCopyWith(
+          _$MovingOnMapImpl value, $Res Function(_$MovingOnMapImpl) then) =
+      __$$MovingOnMapImplCopyWithImpl<$Res>;
 }
 
 /// @nodoc
-class __$$MovingOnMapCopyWithImpl<$Res>
-    extends _$MapStatusCopyWithImpl<$Res, _$MovingOnMap>
-    implements _$$MovingOnMapCopyWith<$Res> {
-  __$$MovingOnMapCopyWithImpl(
-      _$MovingOnMap _value, $Res Function(_$MovingOnMap) _then)
+class __$$MovingOnMapImplCopyWithImpl<$Res>
+    extends _$MapStatusCopyWithImpl<$Res, _$MovingOnMapImpl>
+    implements _$$MovingOnMapImplCopyWith<$Res> {
+  __$$MovingOnMapImplCopyWithImpl(
+      _$MovingOnMapImpl _value, $Res Function(_$MovingOnMapImpl) _then)
       : super(_value, _then);
 }
 
 /// @nodoc
 
-class _$MovingOnMap with DiagnosticableTreeMixin implements MovingOnMap {
-  _$MovingOnMap();
+class _$MovingOnMapImpl with DiagnosticableTreeMixin implements MovingOnMap {
+  _$MovingOnMapImpl();
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
@@ -112,9 +112,9 @@ class _$MovingOnMap with DiagnosticableTreeMixin implements MovingOnMap {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$MovingOnMap);
+        (other.runtimeType == runtimeType && other is _$MovingOnMapImpl);
   }
 
   @override
@@ -190,29 +190,29 @@ class _$MovingOnMap with DiagnosticableTreeMixin implements MovingOnMap {
 }
 
 abstract class MovingOnMap implements MapStatus {
-  factory MovingOnMap() = _$MovingOnMap;
+  factory MovingOnMap() = _$MovingOnMapImpl;
 }
 
 /// @nodoc
-abstract class _$$MovingIdleCopyWith<$Res> {
-  factory _$$MovingIdleCopyWith(
-          _$MovingIdle value, $Res Function(_$MovingIdle) then) =
-      __$$MovingIdleCopyWithImpl<$Res>;
+abstract class _$$MovingIdleImplCopyWith<$Res> {
+  factory _$$MovingIdleImplCopyWith(
+          _$MovingIdleImpl value, $Res Function(_$MovingIdleImpl) then) =
+      __$$MovingIdleImplCopyWithImpl<$Res>;
 }
 
 /// @nodoc
-class __$$MovingIdleCopyWithImpl<$Res>
-    extends _$MapStatusCopyWithImpl<$Res, _$MovingIdle>
-    implements _$$MovingIdleCopyWith<$Res> {
-  __$$MovingIdleCopyWithImpl(
-      _$MovingIdle _value, $Res Function(_$MovingIdle) _then)
+class __$$MovingIdleImplCopyWithImpl<$Res>
+    extends _$MapStatusCopyWithImpl<$Res, _$MovingIdleImpl>
+    implements _$$MovingIdleImplCopyWith<$Res> {
+  __$$MovingIdleImplCopyWithImpl(
+      _$MovingIdleImpl _value, $Res Function(_$MovingIdleImpl) _then)
       : super(_value, _then);
 }
 
 /// @nodoc
 
-class _$MovingIdle with DiagnosticableTreeMixin implements MovingIdle {
-  _$MovingIdle();
+class _$MovingIdleImpl with DiagnosticableTreeMixin implements MovingIdle {
+  _$MovingIdleImpl();
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
@@ -226,9 +226,9 @@ class _$MovingIdle with DiagnosticableTreeMixin implements MovingIdle {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$MovingIdle);
+        (other.runtimeType == runtimeType && other is _$MovingIdleImpl);
   }
 
   @override
@@ -304,29 +304,31 @@ class _$MovingIdle with DiagnosticableTreeMixin implements MovingIdle {
 }
 
 abstract class MovingIdle implements MapStatus {
-  factory MovingIdle() = _$MovingIdle;
+  factory MovingIdle() = _$MovingIdleImpl;
 }
 
 /// @nodoc
-abstract class _$$MovingStartedCopyWith<$Res> {
-  factory _$$MovingStartedCopyWith(
-          _$MovingStarted value, $Res Function(_$MovingStarted) then) =
-      __$$MovingStartedCopyWithImpl<$Res>;
+abstract class _$$MovingStartedImplCopyWith<$Res> {
+  factory _$$MovingStartedImplCopyWith(
+          _$MovingStartedImpl value, $Res Function(_$MovingStartedImpl) then) =
+      __$$MovingStartedImplCopyWithImpl<$Res>;
 }
 
 /// @nodoc
-class __$$MovingStartedCopyWithImpl<$Res>
-    extends _$MapStatusCopyWithImpl<$Res, _$MovingStarted>
-    implements _$$MovingStartedCopyWith<$Res> {
-  __$$MovingStartedCopyWithImpl(
-      _$MovingStarted _value, $Res Function(_$MovingStarted) _then)
+class __$$MovingStartedImplCopyWithImpl<$Res>
+    extends _$MapStatusCopyWithImpl<$Res, _$MovingStartedImpl>
+    implements _$$MovingStartedImplCopyWith<$Res> {
+  __$$MovingStartedImplCopyWithImpl(
+      _$MovingStartedImpl _value, $Res Function(_$MovingStartedImpl) _then)
       : super(_value, _then);
 }
 
 /// @nodoc
 
-class _$MovingStarted with DiagnosticableTreeMixin implements MovingStarted {
-  _$MovingStarted();
+class _$MovingStartedImpl
+    with DiagnosticableTreeMixin
+    implements MovingStarted {
+  _$MovingStartedImpl();
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
@@ -340,9 +342,9 @@ class _$MovingStarted with DiagnosticableTreeMixin implements MovingStarted {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$MovingStarted);
+        (other.runtimeType == runtimeType && other is _$MovingStartedImpl);
   }
 
   @override
@@ -418,7 +420,7 @@ class _$MovingStarted with DiagnosticableTreeMixin implements MovingStarted {
 }
 
 abstract class MovingStarted implements MapStatus {
-  factory MovingStarted() = _$MovingStarted;
+  factory MovingStarted() = _$MovingStartedImpl;
 }
 
 /// @nodoc
@@ -485,10 +487,11 @@ class _$MapStateCopyWithImpl<$Res, $Val extends MapState>
 }
 
 /// @nodoc
-abstract class _$$_MapStateCopyWith<$Res> implements $MapStateCopyWith<$Res> {
-  factory _$$_MapStateCopyWith(
-          _$_MapState value, $Res Function(_$_MapState) then) =
-      __$$_MapStateCopyWithImpl<$Res>;
+abstract class _$$MapStateImplCopyWith<$Res>
+    implements $MapStateCopyWith<$Res> {
+  factory _$$MapStateImplCopyWith(
+          _$MapStateImpl value, $Res Function(_$MapStateImpl) then) =
+      __$$MapStateImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call({LatLng lastPositionKnowed, double zoom, MapStatus status});
@@ -498,11 +501,11 @@ abstract class _$$_MapStateCopyWith<$Res> implements $MapStateCopyWith<$Res> {
 }
 
 /// @nodoc
-class __$$_MapStateCopyWithImpl<$Res>
-    extends _$MapStateCopyWithImpl<$Res, _$_MapState>
-    implements _$$_MapStateCopyWith<$Res> {
-  __$$_MapStateCopyWithImpl(
-      _$_MapState _value, $Res Function(_$_MapState) _then)
+class __$$MapStateImplCopyWithImpl<$Res>
+    extends _$MapStateCopyWithImpl<$Res, _$MapStateImpl>
+    implements _$$MapStateImplCopyWith<$Res> {
+  __$$MapStateImplCopyWithImpl(
+      _$MapStateImpl _value, $Res Function(_$MapStateImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -512,7 +515,7 @@ class __$$_MapStateCopyWithImpl<$Res>
     Object? zoom = null,
     Object? status = null,
   }) {
-    return _then(_$_MapState(
+    return _then(_$MapStateImpl(
       lastPositionKnowed: null == lastPositionKnowed
           ? _value.lastPositionKnowed
           : lastPositionKnowed // ignore: cast_nullable_to_non_nullable
@@ -531,8 +534,8 @@ class __$$_MapStateCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$_MapState with DiagnosticableTreeMixin implements _MapState {
-  const _$_MapState(
+class _$MapStateImpl with DiagnosticableTreeMixin implements _MapState {
+  const _$MapStateImpl(
       {required this.lastPositionKnowed,
       required this.zoom,
       required this.status});
@@ -560,10 +563,10 @@ class _$_MapState with DiagnosticableTreeMixin implements _MapState {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_MapState &&
+            other is _$MapStateImpl &&
             (identical(other.lastPositionKnowed, lastPositionKnowed) ||
                 other.lastPositionKnowed == lastPositionKnowed) &&
             (identical(other.zoom, zoom) || other.zoom == zoom) &&
@@ -577,15 +580,15 @@ class _$_MapState with DiagnosticableTreeMixin implements _MapState {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_MapStateCopyWith<_$_MapState> get copyWith =>
-      __$$_MapStateCopyWithImpl<_$_MapState>(this, _$identity);
+  _$$MapStateImplCopyWith<_$MapStateImpl> get copyWith =>
+      __$$MapStateImplCopyWithImpl<_$MapStateImpl>(this, _$identity);
 }
 
 abstract class _MapState implements MapState {
   const factory _MapState(
       {required final LatLng lastPositionKnowed,
       required final double zoom,
-      required final MapStatus status}) = _$_MapState;
+      required final MapStatus status}) = _$MapStateImpl;
 
   @override
   LatLng get lastPositionKnowed;
@@ -595,6 +598,6 @@ abstract class _MapState implements MapState {
   MapStatus get status;
   @override
   @JsonKey(ignore: true)
-  _$$_MapStateCopyWith<_$_MapState> get copyWith =>
+  _$$MapStateImplCopyWith<_$MapStateImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
