@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:dio/dio.dart';
 import 'package:dartz/dartz.dart';
 import 'package:now_v8/src/services/core/models/backend_errors.dart';
@@ -56,8 +55,10 @@ class NowServicesCaller {
           const ServiceUnavailable(),
         );
       }
-
+      print("Response:");
       print(response.data);
+      print("");
+      print("~~~~~~~~~~~~~~~~~~~~~~~ END GOOD TRACK ~~~~~~~~~~~~~~~~~~~~~~~");
       return right(response.data);
     } on SocketException catch (e) {
       return left(

@@ -8,10 +8,8 @@ import 'package:now_v8/src/features/granular_view/model/granular_spot.dart';
 import 'package:now_v8/src/features/granular_view/views_model/state_notifiers.dart';
 import 'package:now_v8/src/services/core/providers.dart';
 
-// fakeFilterServiceProvider
-// filterServiceProvider
 final granularModelProvider = Provider<GranularModel>((ref) {
-  final IFilterService filterService = ref.read(fakeFilterServiceProvider);
+  final IFilterService filterService = ref.read(filterServiceProvider);
   final ILocationService locationService = ref.read(locationServiceProvider);
   final IKeyValueStorage keyValueStorage =
       ref.read(keyValueProvider("sessionData"));

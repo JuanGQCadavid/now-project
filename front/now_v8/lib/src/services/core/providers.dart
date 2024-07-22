@@ -1,8 +1,5 @@
 import 'package:dartz/dartz.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:location/location.dart';
 import 'package:now_v8/src/core/contracts/auth_service.dart';
 import 'package:now_v8/src/core/contracts/filterService.dart';
 import 'package:now_v8/src/core/contracts/gcp_services.dart';
@@ -13,12 +10,9 @@ import 'package:now_v8/src/core/contracts/user_service.dart';
 import 'package:now_v8/src/core/models/user.dart';
 import 'package:now_v8/src/services/cmd/auth/local/local_auth_service.dart';
 import 'package:now_v8/src/services/cmd/colors_service/colors_service.dart';
-import 'package:now_v8/src/services/cmd/filter_service/fake/filterFakeService.dart';
 import 'package:now_v8/src/services/cmd/filter_service/service/filterService.dart';
 import 'package:now_v8/src/services/cmd/gcp_service/fake/fake_google_cloud_services.dart';
-import 'package:now_v8/src/services/cmd/gcp_service/services/google_cloud_services.dart';
 import 'package:now_v8/src/services/cmd/location_service/fake/locationFakeService.dart';
-import 'package:now_v8/src/services/cmd/location_service/service/locationService.dart';
 import 'package:now_v8/src/services/cmd/spot_core_service/service/service.dart';
 import 'package:now_v8/src/services/cmd/storage/key_value/local_hive_storage.dart';
 import 'package:now_v8/src/services/cmd/user_service/service/service.dart';
@@ -79,7 +73,7 @@ final gpcServicesProvider = Provider<IGCPServices>((ref) {
 //////////////////////////////////////////////////////////////////////////////
 
 final apiConfigProvider = Provider<ApiConfig>(
-  (ref) => ApiConfig.toProd(),
+  (ref) => ApiConfig.toStaging(),
 );
 
 final userServiceProvider = Provider<IUserService>((ref) {
@@ -91,7 +85,8 @@ final userServiceProvider = Provider<IUserService>((ref) {
 
 final filterServiceProvider = Provider<IFilterService>((ref) {
   final ApiConfig apiConfig = ref.read(apiConfigProvider);
-  return FilterService(apiConfig: apiConfig);
+  return FilterService(apiConfig: apiConfig); 
+  // return FilterFakeService();
 });
 
 final spotsCoreSeriveProvider = Provider<ISpotCoreService>((ref) {
@@ -102,8 +97,4 @@ final spotsCoreSeriveProvider = Provider<ISpotCoreService>((ref) {
       baseUrl: apiConfig.getSpotCoreEndpoint(),
     ),
   );
-});
-
-final fakeFilterServiceProvider = Provider<IFilterService>((ref) {
-  return FilterFakeService();
 });
