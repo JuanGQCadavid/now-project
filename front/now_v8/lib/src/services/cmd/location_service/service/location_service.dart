@@ -44,10 +44,4 @@ class LocationService implements ILocationService {
       return const LatLng(6.251723, -75.592771);
     }
   }
-
-  @override
-  LatLng getUserMapNavigationLocation() {
-    // TODO: implement getUserMapNavigationLocation
-    throw UnimplementedError();
-  }
 }

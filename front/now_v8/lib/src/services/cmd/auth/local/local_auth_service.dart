@@ -23,8 +23,6 @@ class AuthLocalStorage implements IAuthService {
 
     return user.fold((l) {
       var data = Map<String, dynamic>.from(l as Map);
-      // var data = l as Map<String, dynamic>;
-
       var user = UserDetails.fromJson(data);
       return left(user);
     }, (r) {

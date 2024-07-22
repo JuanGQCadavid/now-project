@@ -18,6 +18,7 @@ class FilterService implements IFilterService {
 
   // Constants
   final proximityResource = "/proximity";
+  final searchHeader = "X-Now-Search-Session-Id";
 
   FilterService({required this.apiConfig}) {
     print(apiConfig.getFilterEndpoint());
@@ -125,7 +126,7 @@ class FilterService implements IFilterService {
     } else {
       print("token is not empty send it with the token header");
       createSession = false;
-      headers = {"X-Now-Search-Session-Id": token};
+      headers = {searchHeader: token};
     }
 
     backendResponse =

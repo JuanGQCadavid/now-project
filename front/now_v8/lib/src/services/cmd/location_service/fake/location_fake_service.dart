@@ -7,10 +7,4 @@ class LocationFakeService implements ILocationService {
   Future<LatLng> getUserCurrentLocation() async {
     return const LatLng(6.261487428735279, -75.60657674320917);
   }
-
-  @override
-  LatLng getUserMapNavigationLocation() {
-    // TODO: implement getUserMapNavigationLocation
-    throw UnimplementedError();
-  }
 }
