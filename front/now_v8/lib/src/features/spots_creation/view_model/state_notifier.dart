@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:now_v8/src/core/contracts/locationService.dart';
+import 'package:now_v8/src/core/contracts/location_service.dart';
 import 'package:now_v8/src/core/models/long_spot.dart';
 import 'package:now_v8/src/core/models/simple_state.dart';
 import 'package:now_v8/src/core/models/spot.dart';

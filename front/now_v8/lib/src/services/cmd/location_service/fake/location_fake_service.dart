@@ -1,5 +1,5 @@
 import 'package:google_maps_flutter_platform_interface/src/types/location.dart';
-import 'package:now_v8/src/core/contracts/locationService.dart';
+import 'package:now_v8/src/core/contracts/location_service.dart';
 
 class LocationFakeService implements ILocationService {
   // TODO -> Implement this service!

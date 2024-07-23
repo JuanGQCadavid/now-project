@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:now_v8/src/core/contracts/filterService.dart';
 import 'package:now_v8/src/core/contracts/key_value_storage.dart';
-import 'package:now_v8/src/core/contracts/locationService.dart';
+import 'package:now_v8/src/core/contracts/location_service.dart';
 import 'package:now_v8/src/core/models/long_spot.dart';
 import 'package:now_v8/src/features/granular_view/model/ganular_model.dart';
 import 'package:now_v8/src/features/granular_view/model/granular_spot.dart';

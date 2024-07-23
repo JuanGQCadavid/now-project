@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:now_v8/src/core/contracts/auth_service.dart';
 import 'package:now_v8/src/core/contracts/colorService.dart';
 import 'package:now_v8/src/core/contracts/filterService.dart';
-import 'package:now_v8/src/core/contracts/locationService.dart';
+import 'package:now_v8/src/core/contracts/location_service.dart';
 import 'package:now_v8/src/core/models/spot.dart';
 import 'package:now_v8/src/features/general_view/model/filteredSpots.dart';
 import 'package:now_v8/src/features/general_view/model/general_view_model.dart';

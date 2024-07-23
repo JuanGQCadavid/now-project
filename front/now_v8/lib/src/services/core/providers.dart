@@ -4,7 +4,7 @@ import 'package:now_v8/src/core/contracts/auth_service.dart';
 import 'package:now_v8/src/core/contracts/filterService.dart';
 import 'package:now_v8/src/core/contracts/gcp_services.dart';
 import 'package:now_v8/src/core/contracts/key_value_storage.dart';
-import 'package:now_v8/src/core/contracts/locationService.dart';
+import 'package:now_v8/src/core/contracts/location_service.dart';
 import 'package:now_v8/src/core/contracts/spot_core_service.dart';
 import 'package:now_v8/src/core/contracts/user_service.dart';
 import 'package:now_v8/src/core/models/user.dart';

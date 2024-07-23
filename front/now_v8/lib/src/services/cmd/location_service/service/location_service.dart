@@ -1,6 +1,6 @@
 import 'package:google_maps_flutter_platform_interface/src/types/location.dart';
 import 'package:location/location.dart';
-import 'package:now_v8/src/core/contracts/locationService.dart';
+import 'package:now_v8/src/core/contracts/location_service.dart';
 
 class LocationService implements ILocationService {
   late Location location;

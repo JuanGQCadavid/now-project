@@ -193,7 +193,14 @@ class FilterService implements IFilterService {
     for (var spot in places) {
       var timeFormatted = spot.dateInfo.startTime.split(" ");
 
-      DateTime date = DateTime.parse("${timeFormatted[0]} ${timeFormatted[1]}");
+      DateTime date;
+
+      if (timeFormatted.length == 1) {
+        date = DateTime.parse("${spot.dateInfo.dateTime}T${spot.dateInfo.startTime}");
+      } else{
+        date = DateTime.parse("${timeFormatted[0]} ${timeFormatted[1]}");
+      }
+
       spots.add(
         Spot.withOutSpotColors(
             principalTag: spot.topicInfo.principalTopic.isNotEmpty ||
