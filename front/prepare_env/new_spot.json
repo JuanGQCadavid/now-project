@@ -1,0 +1,18 @@
+{
+    "eventInfo": {
+        "name": "e-{{ .Id }}",
+        "description": "This was autogenerate for e-{{ .Id }}",
+        "maximunCapacty": 10,
+        "emoji": ":v"
+    },
+    "placeInfo": {
+        "name": "PLACE p-{{ .Id }}",
+        "lat": {{ .Lat }},
+        "lon": {{ .Lng }},
+        "mapProviderId": "p-{{ .Id }}"
+    },
+    "topicInfo": {
+        "principalTopic": "Principal-{{ .Id }}",
+        "secondaryTopics" : ["S1-{{ .Id }}", "S2-{{ .Id }}"]
+    }
+}
