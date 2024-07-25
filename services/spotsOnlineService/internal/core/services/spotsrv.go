@@ -234,17 +234,17 @@ func (s *Service) Start(spotId string, requestUserId string, durationApproximate
 		return domain.OnlineSpot{}, ports.ErrSpotIsAlreadyOnline
 	}
 
-	creationTime := time.Now().String()
+	creationTime := time.Now().UTC()
 
 	dateInfo := domain.SpotDate{
 		DateId:                        s.generateUUID(),
 		DurationApproximatedInSeconds: durationApproximated,
-		StartTime:                     creationTime,
+		StartTime:                     creationTime.Format(time.TimeOnly),
 		State: domain.SpotState{
 			Confirmed: true,
 		},
 		MaximunCapacty: maximunCapacity,
-		Date:           creationTime,
+		Date:           creationTime.Format(time.DateOnly),
 		HostInfo: domain.HostInfo{
 			HostId: requestUserId,
 		},
