@@ -104,23 +104,31 @@ func main() {
 	// for index, user := range usersList {
 	// 	spotCreate := createSpotOnService(index, user)
 	// 	goOnline(spotCreate, user)
-	// }
 
-	// startTime := time.Date(2021, 0, 0, 0, 0, 0, 0, time.UTC)
+	// // 3 create schedule
+	// createSchedules(spotCreate, user)
+	// }
+}
+
+func createSchedules(spotCreate *CreateSpotResponse, user AllUserRelate) {
+	client := &http.Client{}
 	startTime, _ := time.Parse(time.DateTime, "2006-01-01 00:00:00")
 	for {
 		log.Println(startTime.Date())
 		println(startTime.Format(time.TimeOnly))
 
-		log.Printf(ScheduleOne+"\n", "JOST", startTime.Format(time.TimeOnly), startTime.Add(time.Hour*2).Format(time.TimeOnly))
+		req, err := http.NewRequest(
+			"POST",
+			fmt.Sprintf("https://staging.pululapp.com/spots/scheduled/%s/append", spotCreate.EventInfo.Id),
+			strings.NewReader(fmt.Sprintf(ScheduleOne, user.UserStuff.UserId, startTime.Format(time.TimeOnly), startTime.Add(time.Hour*2).Format(time.TimeOnly))),
+		)
+
 		startTime = startTime.Add(time.Hour * 2)
 
 		if strings.Contains(startTime.Format(time.TimeOnly), "22") {
 			break
 		}
 	}
-
-	// 3 create two schedule
 }
 
 func goOnline(spotCreate *CreateSpotResponse, user AllUserRelate) {
@@ -145,6 +153,38 @@ func goOnline(spotCreate *CreateSpotResponse, user AllUserRelate) {
 		log.Println("Online response: ", resp.Status)
 	}
 
+}
+
+func perfomBackendCall(user AllUserRelate, url string, jsonBody io.Reader) []byte {
+	client := &http.Client{}
+
+	req, err := http.NewRequest(
+		"POST",
+		url,
+		jsonBody,
+	)
+
+	if err != nil {
+		log.Fatalln("Err on request 1", err.Error())
+	}
+
+	req.Header.Add("X-Auth", user.TokensStuff.ShortLiveToken)
+	req.Header.Add("Content-Type", "application/json")
+
+	if resp, err := client.Do(req); err != nil {
+		log.Fatalln("Err on request 2", err.Error())
+	} else {
+		log.Println("response status: ", resp.Status)
+		respBytes, err := io.ReadAll(resp.Body)
+		if err != nil {
+			log.Fatalln(err)
+			respString := string(respBytes)
+			log.Println(respString)
+
+			return respBytes
+		}
+	}
+	return nil
 }
 
 func createSpotOnService(index int, user AllUserRelate) *CreateSpotResponse {
