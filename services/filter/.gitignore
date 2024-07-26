@@ -1,4 +1,5 @@
 /swagger
 .DS_Store
 main
+*.null-ls*
 .env

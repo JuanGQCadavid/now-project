@@ -12,7 +12,7 @@ import (
 
 func NewConector(dbUser string, dbPassword string, dbName string, dbUrl string) (*gorm.DB, error) {
 	// session, err := gorm.Open(mysql.Open(fmt.Sprintf("%s:%s@tcp(%s:3306)/%s?charset=utf8&parseTime=true", dbUser, dbPassword, dbUrl, dbName)), &gorm.Config{})
-	url := fmt.Sprintf("postgres://%s:%s@%s:3306/%s?TimeZone=UTC", dbUser, dbPassword, dbUrl, dbName)
+	url := fmt.Sprintf("postgres://%s:%s@%s:3306/%s?TimeZone=UTC&sslmode=require", dbUser, dbPassword, dbUrl, dbName)
 	session, err := gorm.Open(postgres.Open(url), &gorm.Config{})
 
 	if err != nil {
