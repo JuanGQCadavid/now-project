@@ -10,6 +10,7 @@ import (
 	"github.com/JuanGQCadavid/now-project/services/pkgs/credentialsFinder/cmd/ssm"
 	"github.com/JuanGQCadavid/now-project/services/scheduledPatternsChecker/cmd/lambda/utils"
 	"github.com/JuanGQCadavid/now-project/services/scheduledPatternsChecker/internal/confirmation/localconfirmation"
+
 	// "github.com/JuanGQCadavid/now-project/services/scheduledPatternsChecker/internal/confirmation/queue"
 	"github.com/JuanGQCadavid/now-project/services/scheduledPatternsChecker/internal/core/domain"
 	"github.com/JuanGQCadavid/now-project/services/scheduledPatternsChecker/internal/core/ports"
@@ -33,6 +34,8 @@ const (
 	DefaultTimeWindow                int64      = 604800
 	TopicArnEnvName                  string     = "snsArn"
 	SqsConfirmationArn               string     = "sqsConfirmationArn"
+	MaxBatchSize                     int        = 10
+	AcknowledgeKeyworkd              string     = "Done"
 )
 
 var (
@@ -40,12 +43,8 @@ var (
 )
 
 func Handler(ctx context.Context, body *events.SQSEvent) (string, error) {
-
-	// DeleteScheduleDatesFromSchedulePattern(schedulePatternIds []string) error
-	// CreateScheduledDatesFromSchedulePattern(spots []domain.Spot, timeWindow int64) ([]domain.Spot, map[error][]domain.Spot)
-
-	toDelete := make([]string, 0, 10)
-	toCreate := make([]domain.Spot, 0, 10)
+	toDelete := make([]string, 0, MaxBatchSize)
+	toCreate := make([]domain.Spot, 0, MaxBatchSize)
 
 	for _, record := range body.Records {
 
@@ -148,9 +147,7 @@ func Handler(ctx context.Context, body *events.SQSEvent) (string, error) {
 			logs.Info.Printf("Scheudle Id %+v \n", spot)
 		}
 
-		_, errs := srv.CreateScheduledDatesFromSchedulePattern(toCreate, DefaultTimeWindow)
-
-		if errs != nil {
+		if _, errs := srv.CreateScheduledDatesFromSchedulePattern(toCreate, DefaultTimeWindow); errs != nil {
 			for err, errSpot := range errs {
 				logs.Error.Println("To create Error ", err.Error(), " on ", errSpot)
 			}
@@ -158,7 +155,7 @@ func Handler(ctx context.Context, body *events.SQSEvent) (string, error) {
 
 	}
 
-	return "Done", nil
+	return AcknowledgeKeyworkd, nil
 }
 func GetOperationNameFromBody(record events.SQSMessage) Operations {
 	var body utils.BatchRequest
