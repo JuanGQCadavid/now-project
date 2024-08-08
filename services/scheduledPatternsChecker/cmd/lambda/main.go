@@ -31,6 +31,7 @@ const (
 	SchedulePatternFreezed           Operations = "schedulePatternFreezed"
 	GenrateDatesFromSchedulePatterns Operations = "generateDatesFromSchedulePatterns"
 	Other                            Operations = "other"
+	DetectPendingDatesToClose        Operations = "detectPendingDatesToClose"
 	DefaultTimeWindow                int64      = 604800
 	TopicArnEnvName                  string     = "snsArn"
 	SqsConfirmationArn               string     = "sqsConfirmationArn"
@@ -93,6 +94,9 @@ func Handler(ctx context.Context, body *events.SQSEvent) (string, error) {
 				logs.Info.Println("Empty result")
 			}
 
+			continue
+		} else if operation == DetectPendingDatesToClose {
+			// TODO: Here, what to do when pending dates to close is invoked
 			continue
 		}
 
