@@ -25,12 +25,20 @@ Parameters:
     Description: Service ECR cloudformation output
     Default: schedule-checker-ecr-uri
 Mappings:
+  CronChecks:
+    Patterns:
+      Cron: cron(0 0 * * ? *)
+      Input: '{"Operation":"generateDatesFromSchedulePatterns","TimeWindow":604800}'
+      CheckState: ENABLED
+      Id: "generateDatesFromSchedulePatterns"
+    PendingToClose:
+      Cron: cron(0 0/1 * * ? *)
+      Input: '{"Operation":"detectPendingDatesToClose"}'
+      CheckState: ENABLED
+      Id: "generateDatesFromSchedulePatterns"
   ServiceConfig:
     staging:
       BatchSize: 10
-      DailyChecksCron: cron(0 0 * * ? *)
-      DailyChecksInput: '{"Operation":"generateDatesFromSchedulePatterns","TimeWindow":604800}'
-      DailyChecksState: ENABLED
       DefaultTimeWindow: 604800 # 7 Days
       DLQRetryes: 2
       EnableProcess: true
@@ -41,9 +49,6 @@ Mappings:
     prod:
       BatchSize: 10
       DefaultTimeWindow: 604800 # 7 Days
-      DailyChecksCron: cron(0 0 * * ? *)
-      DailyChecksInput: '{"Operation":"generateDatesFromSchedulePatterns","TimeWindow":604800}'
-      DailyChecksState: ENABLED
       DLQRetryes: 2
       EnableProcess: true
       MessageRetentionPeriod: 345600 # 4 Days
@@ -91,16 +96,27 @@ Resources:
   #
   ############################################################
   
-  EventBridgeScheduleEvent:
+  PatternScheduleEvent:
     Type: AWS::Events::Rule
     Properties:
-      Name: !Sub ${ServiceName}-dailychecks-${PululappEnv}
-      ScheduleExpression: !FindInMap ['ServiceConfig', !Ref PululappEnv, 'DailyChecksCron']
-      State: !FindInMap ['ServiceConfig', !Ref PululappEnv, 'DailyChecksState']
+      Name: !Sub ${ServiceName}-dailycheck-${PululappEnv}
+      ScheduleExpression: !FindInMap ['CronChecks', 'Patterns' , 'Cron']
+      State: !FindInMap ['CronChecks', 'Patterns' , 'CheckState']
       Targets:
         - Arn: !GetAtt ScheduleCheckerSQS.Arn
-          Id: generateDatesFromSchedulePatterns
-          Input: !FindInMap ['ServiceConfig', !Ref PululappEnv, 'DailyChecksInput']
+          Id: !FindInMap ['CronChecks', 'Patterns' , 'Id']
+          Input: !FindInMap ['CronChecks', 'Patterns' , 'Input']
+  
+  PendingToCloseScheduleEvent:
+    Type: AWS::Events::Rule
+    Properties:
+      Name: !Sub ${ServiceName}-pendingtoclose-${PululappEnv}
+      ScheduleExpression: !FindInMap ['CronChecks', 'PendingToClose' , 'Cron']
+      State: !FindInMap ['CronChecks', 'PendingToClose' , 'CheckState']
+      Targets:
+        - Arn: !GetAtt ScheduleCheckerSQS.Arn
+          Id: !FindInMap ['CronChecks', 'PendingToClose' , 'Id']
+          Input: !FindInMap ['CronChecks', 'PendingToClose' , 'Input']
 
   QueuePolicy:
     Type: AWS::SQS::QueuePolicy
