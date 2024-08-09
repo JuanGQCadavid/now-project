@@ -186,6 +186,7 @@ func GetOperationNameFromAttributes(record events.SQSMessage) Operations {
 }
 
 func stringToOperation(value string) Operations {
+	// TODO: We should simplify this switch stuff with a map maybe
 	switch value {
 	case string(SchedulePatternAppended):
 		return SchedulePatternAppended
@@ -197,6 +198,8 @@ func stringToOperation(value string) Operations {
 		return SchedulePatternFreezed
 	case string(GenrateDatesFromSchedulePatterns):
 		return GenrateDatesFromSchedulePatterns
+	case string(DetectPendingDatesToClose):
+		return DetectPendingDatesToClose
 	default:
 		logs.Warning.Printf("Operation %s is not recognized \n", value)
 		return Other

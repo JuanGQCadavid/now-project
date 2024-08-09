@@ -29,12 +29,10 @@ Mappings:
     Patterns:
       Cron: cron(0 0 * * ? *)
       Input: '{"Operation":"generateDatesFromSchedulePatterns","TimeWindow":604800}'
-      CheckState: ENABLED
       Id: "generateDatesFromSchedulePatterns"
     PendingToClose:
       Cron: cron(0 0/1 * * ? *)
       Input: '{"Operation":"detectPendingDatesToClose"}'
-      CheckState: ENABLED
       Id: "generateDatesFromSchedulePatterns"
   ServiceConfig:
     staging:
@@ -42,6 +40,7 @@ Mappings:
       DefaultTimeWindow: 604800 # 7 Days
       DLQRetryes: 2
       EnableProcess: true
+      EnableCrons: ENABLED
       MessageRetentionPeriod: 345600 # 4 Days
       MaximumConcurrency: 100
       RAM: 5308
@@ -51,6 +50,7 @@ Mappings:
       DefaultTimeWindow: 604800 # 7 Days
       DLQRetryes: 2
       EnableProcess: true
+      EnableCrons: DISABLED
       MessageRetentionPeriod: 345600 # 4 Days
       MaximumConcurrency: 100
       RAM: 128
@@ -101,7 +101,7 @@ Resources:
     Properties:
       Name: !Sub ${ServiceName}-dailycheck-${PululappEnv}
       ScheduleExpression: !FindInMap ['CronChecks', 'Patterns' , 'Cron']
-      State: !FindInMap ['CronChecks', 'Patterns' , 'CheckState']
+      State: !FindInMap ['ServiceConfig', !Ref PululappEnv , 'EnableCrons']
       Targets:
         - Arn: !GetAtt ScheduleCheckerSQS.Arn
           Id: !FindInMap ['CronChecks', 'Patterns' , 'Id']
@@ -112,7 +112,7 @@ Resources:
     Properties:
       Name: !Sub ${ServiceName}-pendingtoclose-${PululappEnv}
       ScheduleExpression: !FindInMap ['CronChecks', 'PendingToClose' , 'Cron']
-      State: !FindInMap ['CronChecks', 'PendingToClose' , 'CheckState']
+      State: !FindInMap ['ServiceConfig', !Ref PululappEnv , 'EnableCrons']
       Targets:
         - Arn: !GetAtt ScheduleCheckerSQS.Arn
           Id: !FindInMap ['CronChecks', 'PendingToClose' , 'Id']
