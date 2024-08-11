@@ -6,8 +6,8 @@ import (
 	"log"
 	"os"
 
-	"github.com/JuanGQCadavid/now-project/services/pkgs/credentialsFinder/internal/core/domain"
-	"github.com/JuanGQCadavid/now-project/services/pkgs/credentialsFinder/internal/core/service"
+	"github.com/JuanGQCadavid/now-project/services/pkgs/credentialsFinder/core/core/domain"
+	"github.com/JuanGQCadavid/now-project/services/pkgs/credentialsFinder/core/core/service"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/ssm"
 	"github.com/neo4j/neo4j-go-driver/v4/neo4j"

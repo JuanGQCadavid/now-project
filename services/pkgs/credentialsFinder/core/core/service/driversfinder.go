@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/JuanGQCadavid/now-project/services/pkgs/credentialsFinder/internal/core/domain"
+	"github.com/JuanGQCadavid/now-project/services/pkgs/credentialsFinder/core/core/domain"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/neo4j/neo4j-go-driver/v4/neo4j"
 )
