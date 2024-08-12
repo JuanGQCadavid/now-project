@@ -8,10 +8,12 @@ import (
 
 	"github.com/JuanGQCadavid/now-project/services/pkgs/common/logs"
 	"github.com/JuanGQCadavid/now-project/services/pkgs/credentialsFinder/cmd/ssm"
+	credFinderCore "github.com/JuanGQCadavid/now-project/services/pkgs/credentialsFinder/core/core/domain"
 	"github.com/JuanGQCadavid/now-project/services/scheduledPatternsChecker/cmd/lambda/utils"
-	"github.com/JuanGQCadavid/now-project/services/scheduledPatternsChecker/internal/confirmation/localconfirmation"
+	"github.com/neo4j/neo4j-go-driver/v4/neo4j"
 
 	// "github.com/JuanGQCadavid/now-project/services/scheduledPatternsChecker/internal/confirmation/queue"
+	"github.com/JuanGQCadavid/now-project/services/scheduledPatternsChecker/internal/confirmation/localconfirmation"
 	"github.com/JuanGQCadavid/now-project/services/scheduledPatternsChecker/internal/core/domain"
 	"github.com/JuanGQCadavid/now-project/services/scheduledPatternsChecker/internal/core/ports"
 	"github.com/JuanGQCadavid/now-project/services/scheduledPatternsChecker/internal/core/service"
@@ -64,6 +66,7 @@ func Handler(ctx context.Context, body *events.SQSEvent) (string, error) {
 
 		log.Println(operation)
 
+		// SPECIALIZED ROUTINES
 		if operation == GenrateDatesFromSchedulePatterns {
 			logs.Info.Println("Operation: ", GenrateDatesFromSchedulePatterns)
 
@@ -107,6 +110,8 @@ func Handler(ctx context.Context, body *events.SQSEvent) (string, error) {
 			logs.Error.Println("Oh shit, aborting this record due to:", err.Error())
 			continue
 		}
+
+		// SCHEDULE PATTERNS SNS
 
 		if operation == SchedulePatternAppended || operation == SchedulePatternResumed {
 
@@ -161,6 +166,7 @@ func Handler(ctx context.Context, body *events.SQSEvent) (string, error) {
 
 	return AcknowledgeKeyworkd, nil
 }
+
 func GetOperationNameFromBody(record events.SQSMessage) Operations {
 	var body utils.BatchRequest
 	err := json.Unmarshal([]byte(record.Body), &body)
@@ -206,17 +212,206 @@ func stringToOperation(value string) Operations {
 	}
 }
 
-func init() {
+//////////////////
+//
+// New proposal
+//
+//////////////////
+
+type Record struct {
+	body      string
+	operation Operations
+}
+
+func emitRecords(done <-chan interface{}, source *events.SQSEvent) <-chan Record {
+	valueStream := make(chan Record)
+
+	go func() {
+		defer close(valueStream)
+
+		for _, record := range source.Records {
+			var (
+				operation Operations
+			)
+
+			// logs.Info.Printf("Sending record %d with data %s \n", index, record.Body)
+			if operation = GetOperationNameFromAttributes(record); operation == Other {
+				logs.Warning.Println("Operation not founded, looking on the body")
+				operation = GetOperationNameFromBody(record)
+			}
+
+			// logs.Info.Printf("Operation: %s\n", string(operation))
+
+			select {
+			case <-done:
+				return
+			case valueStream <- Record{
+				body:      record.Body,
+				operation: operation,
+			}:
+			}
+
+		}
+	}()
+
+	return valueStream
+}
+
+func HandlerV2(ctx context.Context, body *events.SQSEvent) (string, error) {
+
+	// New code
+	var (
+		done chan interface{} = make(chan interface{})
+	)
+
+	emitRecords(done, body)
+
+	// Old code copied
+	toDelete := make([]string, 0, MaxBatchSize)
+	toCreate := make([]domain.Spot, 0, MaxBatchSize)
+
+	for _, record := range body.Records {
+
+		log.Printf("%+v \n", record)
+		log.Println("------------")
+		log.Printf("%+v \n", record.Body)
+
+		log.Println(" ********** ")
+
+		operation := GetOperationNameFromAttributes(record)
+
+		if operation == Other {
+			logs.Warning.Println("Operation not founded, looking on the body")
+			operation = GetOperationNameFromBody(record)
+		}
+
+		log.Println(operation)
+
+		// SPECIALIZED ROUTINES
+		if operation == GenrateDatesFromSchedulePatterns {
+			logs.Info.Println("Operation: ", GenrateDatesFromSchedulePatterns)
+
+			var body utils.BatchRequest
+			err := json.Unmarshal([]byte(record.Body), &body)
+
+			if err != nil {
+				logs.Error.Println("Oh shit, aborting this record due to:", err.Error())
+				continue
+			}
+
+			timeWindow := body.TimeWindow
+
+			if timeWindow == 0 {
+				logs.Warning.Println("Time window is 0, using defautl time window of ", DefaultTimeWindow)
+				timeWindow = DefaultTimeWindow
+			}
+
+			result, err := srv.GenerateDatesFromRepository(timeWindow)
+
+			if err != nil {
+				logs.Error.Println("Service faile on error :", err.Error())
+			}
+
+			if result != nil {
+				logs.Info.Println("Result total length:", len(result))
+			} else {
+				logs.Info.Println("Empty result")
+			}
+
+			continue
+		} else if operation == DetectPendingDatesToClose {
+			// TODO: Here, what to do when pending dates to close is invoked
+			continue
+		}
+
+		var body utils.Body
+		err := json.Unmarshal([]byte(record.Body), &body)
+
+		if err != nil {
+			logs.Error.Println("Oh shit, aborting this record due to:", err.Error())
+			continue
+		}
+
+		// SCHEDULE PATTERNS SNS
+
+		if operation == SchedulePatternAppended || operation == SchedulePatternResumed {
+
+			if (len(body.SpotRequest.SpotInfo.SpotId) + len(body.SpotRequest.SpotPatterns)) == 0 {
+				logs.Error.Println("SpotRequest is empty")
+				continue
+			}
+
+			toCreate = append(toCreate, utils.FromSpotRequestToSpot(body.SpotRequest))
+
+		} else if operation == SchedulePatternConcluded || operation == SchedulePatternFreezed {
+
+			if len(body.ScheduleId) == 0 {
+				logs.Error.Println("ScheduleId is empty")
+				continue
+			}
+
+			toDelete = append(toDelete, body.ScheduleId)
+		} else {
+			logs.Warning.Println("Operation not recognized, aborting message")
+
+		}
+	}
+
+	if len(toDelete) > 0 {
+		logs.Info.Println("Dates to delete from schedules Id:")
+		for _, spot := range toDelete {
+			logs.Info.Printf("Scheudle Id %s \n", spot)
+		}
+
+		err := srv.DeleteScheduleDatesFromSchedulePattern(toDelete)
+
+		if err != nil {
+			logs.Error.Println("We found the next error ", err.Error())
+		}
+
+	}
+
+	if len(toCreate) > 0 {
+		logs.Info.Println("Dates to create from schedules Id:")
+		for _, spot := range toCreate {
+			logs.Info.Printf("Scheudle Id %+v \n", spot)
+		}
+
+		if _, errs := srv.CreateScheduledDatesFromSchedulePattern(toCreate, DefaultTimeWindow); errs != nil {
+			for err, errSpot := range errs {
+				logs.Error.Println("To create Error ", err.Error(), " on ", errSpot)
+			}
+		}
+
+	}
+
+	return AcknowledgeKeyworkd, nil
+}
+
+//////////////////
+//
+// end New propolsal
+//
+//////////////////
+
+func initWithDefaults() {
+	var (
+		credsFinder credFinderCore.CredentialsFinder
+		neo4jDriver neo4j.Driver
+		err         error
+	)
+
 	logs.Info.Println("On init")
 
-	credsFinder := ssm.NewSSMCredentialsFinder()
-
-	neo4jDriver, err := credsFinder.FindNeo4jCredentialsFromDefaultEnv()
+	credsFinder = ssm.NewSSMCredentialsFinder()
+	neo4jDriver, err = credsFinder.FindNeo4jCredentialsFromDefaultEnv()
 
 	if err != nil {
 		logs.Error.Println("There were an error while attempting to create drivers")
 		logs.Error.Fatalln(err.Error())
 	}
+	logs.Info.Println("Well we are now here")
+
 	repo := neo4jrepo.NewNeo4jRepoWithDriver(neo4jDriver)
 	// queueConfirmation, err := queue.NewSQSConfirmationFromEnv(SqsConfirmationArn)
 	queueConfirmation := localconfirmation.NewLocalConfirmation()
@@ -227,6 +422,10 @@ func init() {
 
 	notifier, err := topics.NewNotifierFromEnv(TopicArnEnvName)
 
+	if err != nil {
+		logs.Error.Fatalln("error while creatin notifer", err.Error())
+	}
+
 	log.Println("Number of CPU", runtime.NumCPU())
 
 	srv = service.NewCheckerService(repo, queueConfirmation, notifier, runtime.NumCPU())
@@ -234,5 +433,6 @@ func init() {
 }
 
 func main() {
+	initWithDefaults()
 	lambda.Start(Handler)
 }
