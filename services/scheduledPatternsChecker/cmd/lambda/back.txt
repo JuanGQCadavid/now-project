@@ -1,0 +1,51 @@
+package main
+
+import (
+	"os"
+	"testing"
+
+	credFinderCore "github.com/JuanGQCadavid/now-project/services/pkgs/credentialsFinder/core/core/domain"
+	"github.com/aws/aws-lambda-go/events"
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/neo4j/neo4j-go-driver/v4/neo4j"
+	"github.com/stretchr/testify/mock"
+)
+
+func init() {
+	os.Setenv("neo4jUser", "DUMMY")
+	os.Setenv("neo4jPassword", "DUMMY")
+	os.Setenv("neo4jUri", "DUMMY")
+}
+
+var (
+	scheduleBody string = `
+	{
+		"scheduleId":"Holi"
+	}
+	`
+
+	generateBatchBody string = `
+	{
+		"Operation":"generateDatesFromSchedulePatterns",
+		"TimeWindow": 60
+	}
+	`
+)
+
+// Mock implementation of the SSMCredentialsFinder interface
+type MockSSMCredentialsFinder struct {
+	mock.Mock
+}
+
+func (m *MockSSMCredentialsFinder) FindNeo4jCredentialsFromDefaultEnv() (neo4j.Driver, error) {
+	args := m.Called()
+	return args.Get(0).(neo4j.Driver), args.Error(1)
+}
+func (m *MockSSMCredentialsFinder) GetDBCredentialsFromDefaultEnv() (*credFinderCore.DBCredentials, error) {
+	args := m.Called()
+	return args.Get(0).(*credFinderCore.DBCredentials), args.Error(1)
+}
+
+// mockCredsFinder := new(MockSSMCredentialsFinder)
+// // mockDriver := nil // Replace with your actual driver type
+// mockCredsFinder.On("FindNeo4jCredentialsFromDefaultEnv").Return(nil, nil)
