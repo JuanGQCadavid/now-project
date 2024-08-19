@@ -4,11 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:now_v8/src/core/models/spot.dart';
-import 'package:now_v8/src/features/general_view/model/filteredSpots.dart';
 import 'package:now_v8/src/services/core/providers.dart';
 
 // Statefull with consumer
 const LatLng _empty = LatLng(-100000, -1000000);
+const ClusterManagerId clusterId = ClusterManagerId("general_cluster_manager_id");
 
 class NowMapV2 extends ConsumerStatefulWidget {
   final List<Spot> spots;
@@ -198,7 +198,7 @@ class GoogleMapLocal extends StatelessWidget {
   Widget build(BuildContext context) {
 
     ClusterManager general = ClusterManager(
-      clusterManagerId: const ClusterManagerId("1"),
+      clusterManagerId: clusterId,
       onClusterTap: (argument) {
         print("Cluster tab");
       },
