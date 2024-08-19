@@ -37,6 +37,7 @@ class GeneralViewBody extends StatelessWidget {
     return Column(
       children: [
         Container(
+          margin: const EdgeInsets.all(10),
           child: GeneralViewHeader(
             onRequestToGoToMenu: openMenu,
             onRequestToGoToProfile: () {
@@ -52,7 +53,6 @@ class GeneralViewBody extends StatelessWidget {
                   MaterialPageRoute(builder: (context) => LoginFeature()));
             },
           ),
-          margin: const EdgeInsets.all(10),
         ),
         Expanded(
           child: ClipRRect(

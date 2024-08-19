@@ -28,7 +28,7 @@ class NowMapV2 extends ConsumerStatefulWidget {
   final double mapPaddingOnCentered = 50;
 
   NowMapV2({
-    Key? key,
+    super.key,
     this.spots = const [],
     this.centerMapOnSpots = true,
     this.blockMap = false,
@@ -41,7 +41,7 @@ class NowMapV2 extends ConsumerStatefulWidget {
     this.onCameraMoveStarted,
     this.onMapCreated,
     required this.mapController,
-  }) : super(key: key);
+  });
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _NowMapV2State();
@@ -92,7 +92,12 @@ class _NowMapV2State extends ConsumerState<NowMapV2> {
             icon: spot.spotsColor.hue,
             infoWindow: InfoWindow(
               title: "${spot.date}",
-            )),
+            ),
+            onTap: () {
+              // TODO: Here we could add the transition to something else
+              print("${spot.spotId} were tapped");
+            },
+          ),
       );
     }
     return markers;
@@ -191,8 +196,28 @@ class GoogleMapLocal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    ClusterManager general = ClusterManager(
+      clusterManagerId: const ClusterManagerId("1"),
+      onClusterTap: (argument) {
+        print("Cluster tab");
+      },
+    );
+
+    Map<ClusterManagerId, ClusterManager> clusterManagers =
+      <ClusterManagerId, ClusterManager>{};
+
+    clusterManagers[general.clusterManagerId] = general;
+  
+    Map<MarkerId, Marker> newMarkers = <MarkerId, Marker>{};
+
+    for (var i = 0; i < markers.length; i++){
+      var actualMarker = markers.elementAt(i);
+      newMarkers[actualMarker.markerId] = actualMarker.copyWith(clusterManagerIdParam: general.clusterManagerId);
+    }
+
     return GoogleMap(
-      markers: markers,
+      markers: Set<Marker>.of(newMarkers.values),
       mapType: MapType.normal,
       zoomControlsEnabled: false,
       initialCameraPosition: initialCameraPosition,
@@ -210,6 +235,7 @@ class GoogleMapLocal extends StatelessWidget {
       onCameraMove: onCameraMove,
       onCameraIdle: onCameraIdle,
       onCameraMoveStarted: onCameraMoveStarted,
+      clusterManagers: Set<ClusterManager>.of(clusterManagers.values),
     );
   }
 }
