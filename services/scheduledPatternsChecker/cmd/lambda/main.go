@@ -224,7 +224,8 @@ type Record struct {
 }
 
 type Result struct {
-	err error
+	err   error
+	spots []domain.Spot
 }
 
 // type PipelineEventConfig struct {
@@ -269,12 +270,15 @@ func emitRecords(done <-chan interface{}, source *events.SQSEvent) <-chan Record
 func creationOfDates(done <-chan interface{}, events <-chan domain.Spot) <-chan Result {
 	out := make(chan Result)
 	go func() {
-
-		// toCreate = append(toCreate, utils.FromSpotRequestToSpot(body.SpotRequest))
+		defer close(out)
 
 		toCreate := make([]domain.Spot, 0, len(events))
-		if len(toCreate) > 0 {
 
+		for event := range events {
+			toCreate = append(toCreate, event)
+		}
+
+		if len(toCreate) > 0 {
 			logs.Info.Println("Dates to create from schedules Id:")
 			for _, spot := range toCreate {
 				logs.Info.Printf("Scheudle Id %+v \n", spot)
@@ -283,6 +287,14 @@ func creationOfDates(done <-chan interface{}, events <-chan domain.Spot) <-chan 
 			if _, errs := srv.CreateScheduledDatesFromSchedulePattern(toCreate, DefaultTimeWindow); errs != nil {
 				for err, errSpot := range errs {
 					logs.Error.Println("To create Error ", err.Error(), " on ", errSpot)
+					select {
+					case <-done:
+						return
+					case out <- Result{
+						err:   err,
+						spots: errSpot,
+					}:
+					}
 				}
 			}
 
@@ -392,7 +404,11 @@ func HandlerV2(ctx context.Context, body *events.SQSEvent) (string, error) {
 		done chan interface{} = make(chan interface{})
 	)
 
-	emitRecords(done, body)
+	// emitRecords(done, body)
+
+	toCreate, toDelete := scheduleEventsIdentifer(done, emitRecords(done, body))
+	_ = deletionOfDates(done, toDelete)
+	_ = creationOfDates(done, toCreate)
 
 	// filter(done, chan of results, configmap) - a map of chans, one per config in the configmap
 	for _, record := range body.Records {
