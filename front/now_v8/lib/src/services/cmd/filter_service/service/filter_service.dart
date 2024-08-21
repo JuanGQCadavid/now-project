@@ -109,12 +109,8 @@ class FilterService implements IFilterService {
     print("-------------------------------------------------------");
     for (var dynSpot in cast<List<dynamic>>(backendResponse.response)) {
       response.add(cast<longSpot.LongSpot>(dynSpot));
-      print(cast<longSpot.LongSpot>(dynSpot));
     }
-
     print(response.length);
-
-    
     print("-------------------------------------------------------");
 
     String tokenResponse = cast<String>(backendResponse.token);
