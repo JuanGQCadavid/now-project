@@ -104,8 +104,26 @@ class FilterService implements IFilterService {
       castFunction: fromFilterSpotToLongSpot,
     );
 
-    return cast<StateResponse<List<longSpot.LongSpot>, String>>(
-        backendResponse);
+    List<longSpot.LongSpot> response = [];
+
+    print("-------------------------------------------------------");
+    for (var dynSpot in cast<List<dynamic>>(backendResponse.response)) {
+      response.add(cast<longSpot.LongSpot>(dynSpot));
+      print(cast<longSpot.LongSpot>(dynSpot));
+    }
+
+    print(response.length);
+
+    
+    print("-------------------------------------------------------");
+
+    String tokenResponse = cast<String>(backendResponse.token);
+
+    return StateResponse<List<longSpot.LongSpot>, String>(
+        response: response, 
+        token: tokenResponse,
+    );
+
   }
 
   Future<StateResponse> filterProximityState({

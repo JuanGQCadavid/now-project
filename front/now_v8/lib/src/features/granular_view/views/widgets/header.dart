@@ -38,6 +38,7 @@ class GanularHeader extends ConsumerWidget {
               ],
             ),
           ),
+
           Align(
             alignment: Alignment.bottomLeft,
             child: Container(
@@ -88,6 +89,8 @@ class GanularHeader extends ConsumerWidget {
               ),
             ),
           ),
+
+
           Align(
               alignment: Alignment.topLeft,
               child: Container(
@@ -105,6 +108,7 @@ class GanularHeader extends ConsumerWidget {
                   },
                 ),
               ))
+
         ],
       ),
     );

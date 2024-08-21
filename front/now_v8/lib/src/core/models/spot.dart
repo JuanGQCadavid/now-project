@@ -30,9 +30,18 @@ class Spot {
       required this.date,
       this.spotsColor = const SpotsColors.empty()});
 
-  factory Spot.fromLongSpot(LongSpot longSpot) {    
-      var timeFormatted = longSpot.dateInfo.startTime.split(" ");
-      DateTime date = DateTime.parse("${timeFormatted[0]} ${timeFormatted[1]}");
+  // HERE BABE
+  factory Spot.fromLongSpot(LongSpot longSpot) {   
+
+    var timeFormatted = longSpot.dateInfo.startTime.split(" ");
+
+    DateTime date; 
+
+    if (timeFormatted.length == 1) {
+        date = DateTime.parse("${longSpot.dateInfo.dateTime}T${longSpot.dateInfo.startTime}");
+      } else{
+        date = DateTime.parse("${timeFormatted[0]} ${timeFormatted[1]}");
+      }
 
     return Spot.withOutSpotColors(
       principalTag: longSpot.topicInfo.principalTopic,
