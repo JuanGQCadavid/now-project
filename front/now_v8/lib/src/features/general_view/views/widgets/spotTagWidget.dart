@@ -6,13 +6,13 @@ class SpotTag extends StatelessWidget {
   final String tag;
   final void Function() onPressed;
 
-  SpotTag({
-    Key? key,
-    required this.tag,
-    this.bgColor = Colors.white,
-    required this.color,
-    required this.onPressed
-  }) : super(key: key);
+  SpotTag(
+      {Key? key,
+      required this.tag,
+      this.bgColor = Colors.white,
+      required this.color,
+      required this.onPressed})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {

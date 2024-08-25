@@ -1,19 +1,22 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:now_v8/src/features/general_view/model/general_view_model.dart';
 import 'package:now_v8/src/features/general_view/views/widgets/footbar.dart';
 import 'package:now_v8/src/features/general_view/views/widgets/header.dart';
 import 'package:now_v8/src/features/general_view/views/widgets/nowMap.dart';
+import 'package:now_v8/src/features/general_view/views_model/providers.dart';
 import 'package:now_v8/src/features/login/view/main.dart';
 import 'package:now_v8/src/features/profile/view/main.dart';
 
-class GeneralViewFeature extends StatelessWidget {
+class GeneralViewFeature extends ConsumerWidget {
   GeneralViewFeature({Key? key}) : super(key: key);
   final Completer<GoogleMapController> mapController = Completer();
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       body: SafeArea(
         child: GeneralViewBody(

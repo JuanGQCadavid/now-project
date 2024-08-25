@@ -8,7 +8,8 @@ import 'package:now_v8/src/services/core/providers.dart';
 
 // Statefull with consumer
 const LatLng _empty = LatLng(-100000, -1000000);
-const ClusterManagerId clusterId = ClusterManagerId("general_cluster_manager_id");
+const ClusterManagerId clusterId =
+    ClusterManagerId("general_cluster_manager_id");
 
 class NowMapV2 extends ConsumerStatefulWidget {
   final List<Spot> spots;
@@ -86,18 +87,18 @@ class _NowMapV2State extends ConsumerState<NowMapV2> {
     for (var spot in spots) {
       markers.add(
         Marker(
-            markerId: MarkerId(spot.spotId),
-            position: spot.latLng,
-            visible: true,
-            icon: spot.spotsColor.hue,
-            infoWindow: InfoWindow(
-              title: "${spot.date}",
-            ),
-            onTap: () {
-              // TODO: Here we could add the transition to something else
-              print("${spot.spotId} were tapped");
-            },
+          markerId: MarkerId(spot.spotId),
+          position: spot.latLng,
+          visible: true,
+          icon: spot.spotsColor.hue,
+          infoWindow: InfoWindow(
+            title: "${spot.date}",
           ),
+          onTap: () {
+            // TODO: Here we could add the transition to something else
+            print("${spot.spotId} were tapped");
+          },
+        ),
       );
     }
     return markers;
@@ -196,7 +197,6 @@ class GoogleMapLocal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     ClusterManager general = ClusterManager(
       clusterManagerId: clusterId,
       onClusterTap: (argument) {
@@ -205,15 +205,16 @@ class GoogleMapLocal extends StatelessWidget {
     );
 
     Map<ClusterManagerId, ClusterManager> clusterManagers =
-      <ClusterManagerId, ClusterManager>{};
+        <ClusterManagerId, ClusterManager>{};
 
     clusterManagers[general.clusterManagerId] = general;
-  
+
     Map<MarkerId, Marker> newMarkers = <MarkerId, Marker>{};
 
-    for (var i = 0; i < markers.length; i++){
+    for (var i = 0; i < markers.length; i++) {
       var actualMarker = markers.elementAt(i);
-      newMarkers[actualMarker.markerId] = actualMarker.copyWith(clusterManagerIdParam: general.clusterManagerId);
+      newMarkers[actualMarker.markerId] = actualMarker.copyWith(
+          clusterManagerIdParam: general.clusterManagerId);
     }
 
     return GoogleMap(

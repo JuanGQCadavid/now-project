@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:now_v8/src/core/models/spot.dart';
@@ -35,7 +34,7 @@ class NowMap extends StatefulWidget {
       } else {
         if (userLocation != null) {
           camaraPosition = userLocation;
-        }else {
+        } else {
           camaraPosition = const LatLng(0, 0);
         }
       }
@@ -72,14 +71,14 @@ class NowMap extends StatefulWidget {
 class _NowMapState extends State<NowMap> {
   late GoogleMapController googleMapController;
 
-
   void onMapCreated(GoogleMapController mapController) {
     googleMapController = mapController;
 
     if (widget.centerMapOnSpots && widget.spots.length > 1) {
       LatLngBounds bounds;
       if (widget.userLocation != null) {
-        bounds = getCameraLatLngBounds(widget.spots, userLocation: widget.userLocation!);
+        bounds = getCameraLatLngBounds(widget.spots,
+            userLocation: widget.userLocation!);
       } else {
         bounds = getCameraLatLngBounds(widget.spots);
       }
@@ -89,7 +88,7 @@ class _NowMapState extends State<NowMap> {
           bounds,
           widget.mapPaddingOnCentered,
         ),
-      );   
+      );
     }
   }
 
@@ -122,7 +121,8 @@ class _NowMapState extends State<NowMap> {
     );
   }
 
-  LatLngBounds getCameraLatLngBounds(List<Spot> spots, {LatLng userLocation = const LatLng(0,0) }) {
+  LatLngBounds getCameraLatLngBounds(List<Spot> spots,
+      {LatLng userLocation = const LatLng(0, 0)}) {
     Spot spot = spots.first;
     double down, up, left, rigth;
     down = up = spot.latLng.latitude;

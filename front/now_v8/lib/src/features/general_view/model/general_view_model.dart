@@ -21,6 +21,10 @@ class GeneralViewModel {
   late SpotsColors defaultColor;
 
   final String searchSessionKey = "Generla-View-Session-Id";
+  final double threshold = 11;
+
+  LatLng? lastPositionKnown;
+  double? lastZoomKnown;
 
   GeneralViewModel({
     required this.filterService,
@@ -59,7 +63,19 @@ class GeneralViewModel {
     });
   }
 
-  Future<List<Spot>> getSpots([LatLng? centralPosition]) async {
+  bool doJumpToDetails() {
+    if (lastZoomKnown != null && lastZoomKnown! >= threshold) {
+      lastPositionKnown = null;
+      lastZoomKnown = null;
+      return true;
+    }
+    return false;
+  }
+
+  Future<List<Spot>> getSpots({LatLng? centralPosition, double? zoom}) async {
+    lastPositionKnown = centralPosition;
+    lastZoomKnown = zoom;
+
     LatLng searchPosition =
         centralPosition ?? await locationService.getUserCurrentLocation();
 

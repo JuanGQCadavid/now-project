@@ -93,20 +93,15 @@ class FilterSpot {
 
 @JsonSerializable()
 class HostInfo {
-
   final String id;
   final String name;
 
-  HostInfo({
-    this.name = "",
-    this.id = ""
-  });
+  HostInfo({this.name = "", this.id = ""});
 
   factory HostInfo.fromJson(Map<String, dynamic> json) =>
       _$HostInfoFromJson(json);
 
   Map<String, dynamic> toJson() => _$HostInfoToJson(this);
-
 }
 
 // THis is an example of how to use it with empty values
@@ -137,12 +132,11 @@ class EventInfo {
   final String emoji;
   final String description;
 
-  EventInfo({
-    required this.name,
-    required this.id,
-    required this.emoji,
-    this.description = ""
-  });
+  EventInfo(
+      {required this.name,
+      required this.id,
+      required this.emoji,
+      this.description = ""});
 
   factory EventInfo.fromJson(Map<String, dynamic> json) =>
       _$EventInfoFromJson(json);
@@ -177,12 +171,11 @@ class PlaceInfo {
   final double lon;
   final String name;
 
-  PlaceInfo({
-    required this.mapProviderId,
-    required this.lat,
-    required this.lon,
-    this.name = ""
-  });
+  PlaceInfo(
+      {required this.mapProviderId,
+      required this.lat,
+      required this.lon,
+      this.name = ""});
 
   factory PlaceInfo.fromJson(Map<String, dynamic> json) =>
       _$PlaceInfoFromJson(json);

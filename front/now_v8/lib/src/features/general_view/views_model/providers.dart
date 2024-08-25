@@ -39,11 +39,10 @@ final mapSpotsBrigde = Provider((ref) {
         newState!.status == MapStatus.movingIdle()) {
       print("Refreshing!!!!!!!!!!!!!!!!!!!!!!!");
       var notifier = ref.read(spotsStateProvider.notifier);
-
-      notifier.refreshSpots(latLng: newState.lastPositionKnowed);
+      notifier.refreshSpots(
+          latLng: newState.lastPositionKnowed, zoom: newState.zoom);
     }
   });
-  // ...
 });
 
 final spotsStateProvider = StateNotifierProvider<SpotsNotifer, List<Spot>>(

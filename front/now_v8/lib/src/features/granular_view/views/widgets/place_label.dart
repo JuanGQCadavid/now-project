@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-
 class PlaceLabel extends StatelessWidget {
   final String placeName;
   final Color appColor;
-  const PlaceLabel({Key? key, required this.placeName, required this.appColor}) : super(key: key);
+  const PlaceLabel({Key? key, required this.placeName, required this.appColor})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {

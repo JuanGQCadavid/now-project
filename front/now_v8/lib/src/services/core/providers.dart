@@ -85,7 +85,7 @@ final userServiceProvider = Provider<IUserService>((ref) {
 
 final filterServiceProvider = Provider<IFilterService>((ref) {
   final ApiConfig apiConfig = ref.read(apiConfigProvider);
-  return FilterService(apiConfig: apiConfig); 
+  return FilterService(apiConfig: apiConfig);
   // return FilterFakeService();
 });
 

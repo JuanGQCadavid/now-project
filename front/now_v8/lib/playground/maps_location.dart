@@ -16,7 +16,6 @@ import 'dart:math';
 
 import 'package:now_v8/src/features/spots_creation/main.dart';
 
-
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
   @override

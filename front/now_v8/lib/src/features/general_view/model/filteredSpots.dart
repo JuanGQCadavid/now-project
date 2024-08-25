@@ -19,34 +19,30 @@ class FilteredSpots {
     required this.onFilterColor,
   });
 
-  FilteredSpots.empty(){
+  FilteredSpots.empty() {
     tagsOff = {};
     spots = [];
     tagsSelected = {};
     onFilterColor = const SpotsColors.empty();
   }
-
 }
 
 @freezed
-class MapStatus with _$MapStatus{
+class MapStatus with _$MapStatus {
   factory MapStatus.movingOnMap() = MovingOnMap;
   factory MapStatus.movingIdle() = MovingIdle;
   factory MapStatus.movingStarted() = MovingStarted;
 }
 
 final MapState emptyMapState = MapState(
-  lastPositionKnowed: const LatLng(0, 0), 
-  zoom: 0, 
-  status: MapStatus.movingIdle()
-);
+    lastPositionKnowed: const LatLng(0, 0),
+    zoom: 0,
+    status: MapStatus.movingIdle());
 
 @freezed
-class MapState with _$MapState{
-  const factory MapState({
-    required LatLng lastPositionKnowed,
-    required double zoom,
-    required MapStatus status
-  }) = _MapState;
-
+class MapState with _$MapState {
+  const factory MapState(
+      {required LatLng lastPositionKnowed,
+      required double zoom,
+      required MapStatus status}) = _MapState;
 }

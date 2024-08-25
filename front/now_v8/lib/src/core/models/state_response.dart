@@ -1,11 +1,6 @@
-
-
-class StateResponse<T,K>{
+class StateResponse<T, K> {
   final T response;
   final K token;
 
-  StateResponse({
-    required this.response,
-    required this.token
-  });
+  StateResponse({required this.response, required this.token});
 }

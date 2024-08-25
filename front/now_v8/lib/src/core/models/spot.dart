@@ -31,17 +31,17 @@ class Spot {
       this.spotsColor = const SpotsColors.empty()});
 
   // HERE BABE
-  factory Spot.fromLongSpot(LongSpot longSpot) {   
-
+  factory Spot.fromLongSpot(LongSpot longSpot) {
     var timeFormatted = longSpot.dateInfo.startTime.split(" ");
 
-    DateTime date; 
+    DateTime date;
 
     if (timeFormatted.length == 1) {
-        date = DateTime.parse("${longSpot.dateInfo.dateTime}T${longSpot.dateInfo.startTime}");
-      } else{
-        date = DateTime.parse("${timeFormatted[0]} ${timeFormatted[1]}");
-      }
+      date = DateTime.parse(
+          "${longSpot.dateInfo.dateTime}T${longSpot.dateInfo.startTime}");
+    } else {
+      date = DateTime.parse("${timeFormatted[0]} ${timeFormatted[1]}");
+    }
 
     return Spot.withOutSpotColors(
       principalTag: longSpot.topicInfo.principalTopic,

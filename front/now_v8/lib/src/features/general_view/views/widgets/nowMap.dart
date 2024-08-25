@@ -28,7 +28,7 @@ class MapSample extends ConsumerWidget {
         NowMapV2(
           spots: filteredSpots.spots,
           centerMapOnSpots: true,
-          mapController: mapController, 
+          mapController: mapController,
           camaraPosition: location,
           onCameraIdle: mapInteraction.onCameraIdle,
           onCameraMove: mapInteraction.onCameraMove,

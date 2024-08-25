@@ -15,7 +15,11 @@ class GanularHeader extends ConsumerWidget {
   final Color appColor;
   final GranularSpot onSpot;
   final Completer<GoogleMapController> mapController;
-  GanularHeader({Key? key, required this.appColor, required this.onSpot, required this.mapController})
+  GanularHeader(
+      {Key? key,
+      required this.appColor,
+      required this.onSpot,
+      required this.mapController})
       : super(key: key);
 
   @override
@@ -38,7 +42,6 @@ class GanularHeader extends ConsumerWidget {
               ],
             ),
           ),
-
           Align(
             alignment: Alignment.bottomLeft,
             child: Container(
@@ -89,8 +92,6 @@ class GanularHeader extends ConsumerWidget {
               ),
             ),
           ),
-
-
           Align(
               alignment: Alignment.topLeft,
               child: Container(
@@ -108,7 +109,6 @@ class GanularHeader extends ConsumerWidget {
                   },
                 ),
               ))
-
         ],
       ),
     );

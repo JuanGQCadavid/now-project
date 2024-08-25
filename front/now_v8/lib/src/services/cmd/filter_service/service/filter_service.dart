@@ -116,10 +116,9 @@ class FilterService implements IFilterService {
     String tokenResponse = cast<String>(backendResponse.token);
 
     return StateResponse<List<longSpot.LongSpot>, String>(
-        response: response, 
-        token: tokenResponse,
+      response: response,
+      token: tokenResponse,
     );
-
   }
 
   Future<StateResponse> filterProximityState({
@@ -210,8 +209,9 @@ class FilterService implements IFilterService {
       DateTime date;
 
       if (timeFormatted.length == 1) {
-        date = DateTime.parse("${spot.dateInfo.dateTime}T${spot.dateInfo.startTime}");
-      } else{
+        date = DateTime.parse(
+            "${spot.dateInfo.dateTime}T${spot.dateInfo.startTime}");
+      } else {
         date = DateTime.parse("${timeFormatted[0]} ${timeFormatted[1]}");
       }
 
@@ -236,104 +236,101 @@ class FilterService implements IFilterService {
   }
 }
 
+// @override
+// Future<StateResponse<List<longSpot.LongSpot>, String>> getLongSpotByProximityWithState({
+//   required double cpLat,
+//   required double cpLng,
+//   double radious = 0.5,
+//   String token = "",
+// }) async {
+//   Either<BackendErrors, dynamic> backendResponse;
 
+//   backendResponse = await filterProximityState(
+//     cpLat: cpLat,
+//     cpLng: cpLng,
+//     token: token,
+//     format: "full",
+//     radious: radious,
+//   );
 
-  // @override
-  // Future<StateResponse<List<longSpot.LongSpot>, String>> getLongSpotByProximityWithState({
-  //   required double cpLat,
-  //   required double cpLng,
-  //   double radious = 0.5,
-  //   String token = "",
-  // }) async {
-  //   Either<BackendErrors, dynamic> backendResponse;
+//   return backendResponse.fold<StateResponse<List<longSpot.LongSpot>, String>>((error) {
+//     print(error.toString());
+//     return StateResponse(response: [], token: "");
+//   }, (bodyResponse) {
+//     FilterProxyResponseWithState response =
+//         FilterProxyResponseWithState.fromJson(bodyResponse);
+//     return StateResponse(
+//         response: fromFilterSpotToLongSpot(response.result.places),
+//         token: response.search_session.session_details.session_id);
+//   });
+// }
 
-  //   backendResponse = await filterProximityState(
-  //     cpLat: cpLat, 
-  //     cpLng: cpLng,
-  //     token: token,
-  //     format: "full",
-  //     radious: radious,
-  //   );
+// @override
+// Future<StateResponse<List<Spot>, String>> getSpotsByProximityWithState({
+//   required double cpLat,
+//   required double cpLng,
+//   double radious = 10,
+//   String token = "",
+// }) async {
+//   Either<BackendErrors, dynamic> backendResponse;
 
-  //   return backendResponse.fold<StateResponse<List<longSpot.LongSpot>, String>>((error) {
-  //     print(error.toString());
-  //     return StateResponse(response: [], token: "");
-  //   }, (bodyResponse) {
-  //     FilterProxyResponseWithState response =
-  //         FilterProxyResponseWithState.fromJson(bodyResponse);
-  //     return StateResponse(
-  //         response: fromFilterSpotToLongSpot(response.result.places),
-  //         token: response.search_session.session_details.session_id);
-  //   });
-  // }
+//   backendResponse = await filterProximityState(
+//     cpLat: cpLat,
+//     cpLng: cpLng,
+//     token: token,
+//     format: "small",
+//     radious: radious,
+//   );
 
+//   return backendResponse.fold<StateResponse<List<Spot>, String>>((error) {
+//     print(error.toString());
+//     return StateResponse(response: [], token: "");
+//   }, (bodyResponse) {
+//     FilterProxyResponseWithState response =
+//         FilterProxyResponseWithState.fromJson(bodyResponse);
+//     return StateResponse(
+//         response: fromFilterSpotToSpot(response.result.places),
+//         token: response.search_session.session_details.session_id);
+//   });
+// }
 
-  // @override
-  // Future<StateResponse<List<Spot>, String>> getSpotsByProximityWithState({
-  //   required double cpLat,
-  //   required double cpLng,
-  //   double radious = 10,
-  //   String token = "",
-  // }) async {
-  //   Either<BackendErrors, dynamic> backendResponse;
+// Future<Either<BackendErrors, dynamic>> filterProximityState2({
+//   required double cpLat,
+//   required double cpLng,
+//   required String token,
+//   double radious = 0.5,
+//   String format = "small",
+// }){
+//   if (token.isEmpty) {
+//     print("token is empty then send with the create option");
+//     return nowServicesCaller.request(
+//       Method.GET,
+//       proximityResource,
+//       queryParameters: {
+//         "cpLat": cpLat,
+//         "cpLon": cpLng,
+//         "format": format,
+//         "createSession": "true",
+//         "radious": radious
+//       },
+//     );
 
-  //   backendResponse = await filterProximityState(
-  //     cpLat: cpLat, 
-  //     cpLng: cpLng,
-  //     token: token,
-  //     format: "small",
-  //     radious: radious,
-  //   );
+//   }else {
+//     print("token is not empty send it with the token header");
+//     return nowServicesCaller.request(
+//       Method.GET,
+//       proximityResource,
+//       queryParameters: {
+//         "cpLat": cpLat,
+//         "cpLon": cpLng,
+//         "format": format,
+//         "createSession": "false",
+//         "radious": radious
+//       },
+//       headers: {
+//         "X-Now-Search-Session-Id": token
+//       },
+//     );
+//   }
 
-  //   return backendResponse.fold<StateResponse<List<Spot>, String>>((error) {
-  //     print(error.toString());
-  //     return StateResponse(response: [], token: "");
-  //   }, (bodyResponse) {
-  //     FilterProxyResponseWithState response =
-  //         FilterProxyResponseWithState.fromJson(bodyResponse);
-  //     return StateResponse(
-  //         response: fromFilterSpotToSpot(response.result.places),
-  //         token: response.search_session.session_details.session_id);
-  //   });
-  // }
-
-  // Future<Either<BackendErrors, dynamic>> filterProximityState2({
-  //   required double cpLat,
-  //   required double cpLng,
-  //   required String token,
-  //   double radious = 0.5,
-  //   String format = "small",
-  // }){
-  //   if (token.isEmpty) { 
-  //     print("token is empty then send with the create option");
-  //     return nowServicesCaller.request(
-  //       Method.GET,
-  //       proximityResource,
-  //       queryParameters: {
-  //         "cpLat": cpLat,
-  //         "cpLon": cpLng,
-  //         "format": format,
-  //         "createSession": "true",
-  //         "radious": radious
-  //       },
-  //     );
-
-  //   }else {
-  //     print("token is not empty send it with the token header");
-  //     return nowServicesCaller.request(
-  //       Method.GET,
-  //       proximityResource,
-  //       queryParameters: {
-  //         "cpLat": cpLat,
-  //         "cpLon": cpLng,
-  //         "format": format,
-  //         "createSession": "false",
-  //         "radious": radious
-  //       },
-  //       headers: {
-  //         "X-Now-Search-Session-Id": token
-  //       },
-  //     );
-  //   }
-    
-  // }
+// }

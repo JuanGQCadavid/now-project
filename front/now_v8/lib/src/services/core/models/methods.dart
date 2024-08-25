@@ -1,5 +1,1 @@
-
-enum Method {
-  POST,
-  GET
-} 
+enum Method { POST, GET }
