@@ -1,8 +1,4 @@
-// import 'dart:developer';
-
-import 'package:dartz/dartz.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:now_v8/src/core/models/spot.dart';
 import 'package:now_v8/src/features/general_view/model/filteredSpots.dart';
@@ -17,26 +13,27 @@ import 'package:now_v8/src/features/general_view/model/general_view_model.dart';
  * and assiigned it to the state.
  */
 
-class SpotsNotifer extends StateNotifier<List<Spot>> {
+class SpotsNotifer extends StateNotifier<Map<String, Spot>> {
   final GeneralViewModel generalViewModel;
   final double threshold = 11;
   LatLng? lastPositionKnown;
   double? lastZoomKnown;
 
-  SpotsNotifer({required this.generalViewModel}) : super([]) {
+  SpotsNotifer({required this.generalViewModel}) : super({}) {
     refreshSpots();
   }
 
   void refreshSpots({LatLng? latLng, double? zoom}) async {
-    List<Spot> spots =
-        await generalViewModel.getSpots(centralPosition: latLng, zoom: zoom);
+    List<Spot> spots = await generalViewModel.getSpots(
+      centralPosition: latLng,
+      zoom: zoom,
+    );
+    Map<String, Spot> newState = Map<String, Spot>.from(state);
 
-    // TODO: This should be a set
-    print(
-        "Before addAll state len -> ${state.length}  Spots len -> ${spots.length} total -> ${state.length + spots.length} ");
-    spots.addAll(state);
-    state = spots;
-    print("After addAll state len -> ${state.length}");
+    for (var newSpot in spots) {
+      newState[newSpot.spotId] = newSpot;
+    }
+    state = newState;
   }
 }
 

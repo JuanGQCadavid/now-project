@@ -45,7 +45,8 @@ final mapSpotsBrigde = Provider((ref) {
   });
 });
 
-final spotsStateProvider = StateNotifierProvider<SpotsNotifer, List<Spot>>(
+final spotsStateProvider =
+    StateNotifierProvider<SpotsNotifer, Map<String, Spot>>(
   ((ref) {
     final generalViewModel = ref.read(generalViewModelProvider);
 
@@ -66,5 +67,8 @@ final filteredSpotsProvider = StateProvider<FilteredSpots>((ref) {
   final spots = ref.watch(spotsStateProvider);
   ref.watch(mapSpotsBrigde);
 
-  return generalViewModel.filterSpotsBaseOnTags(tagsSelected, spots);
+  return generalViewModel.filterSpotsBaseOnTags(
+    tagsSelected,
+    spots.entries.map((entry) => entry.value).toList(),
+  );
 });

@@ -38,16 +38,6 @@ class GeneralViewModel {
   }
 
   Future<Either<UserDetails, None>> getUserInfo() async {
-    // await authSessionDatabase.storeUserDetails(
-    //   UserDetails(
-    //     userId: "1",
-    //     userName: "Sofia Gomez",
-    //     refreshToken: "refreshToken",
-    //     shortLiveToken: "shortLiveToken",
-    //     shortLiveTokenTTL: "shortLiveTokenTTL",
-    //   ),
-    // );
-
     var details = await authSessionDatabase.getUserDetails();
     return details;
   }
@@ -122,13 +112,16 @@ class GeneralViewModel {
   ///  3. if the mark if flagged if so then add the spot.
 
   FilteredSpots filterSpotsBaseOnTags(
-      Set<String> tagsSelected, List<Spot> spots) {
+    Set<String> tagsSelected,
+    List<Spot> spots,
+  ) {
     if (tagsSelected.isEmpty) {
       return FilteredSpots(
-          spots: spots,
-          tagsOff: {},
-          tagsSelected: tagsSelected,
-          onFilterColor: const SpotsColors.empty());
+        spots: spots,
+        tagsOff: {},
+        tagsSelected: tagsSelected,
+        onFilterColor: const SpotsColors.empty(),
+      );
     }
 
     FilteredSpots result = FilteredSpots.empty();
