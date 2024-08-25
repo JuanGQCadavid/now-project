@@ -7,7 +7,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:now_v8/src/core/models/spot.dart';
 import 'package:now_v8/src/core/models/spotColors.dart';
 import 'package:now_v8/src/core/widgets/buttons.dart';
-import 'package:now_v8/src/features/general_view/views/generalView.dart';
+import 'package:now_v8/src/features/general_view/views/main.dart';
 
 // HERE
 import 'package:now_v8/src/core/widgets/nowMap.dart';

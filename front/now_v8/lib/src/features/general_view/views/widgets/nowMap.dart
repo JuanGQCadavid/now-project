@@ -7,21 +7,15 @@ import 'dart:async';
 
 import 'package:now_v8/src/features/general_view/views/widgets/spotTagWidget.dart';
 import 'package:now_v8/src/features/general_view/views_model/providers.dart';
-import 'package:now_v8/src/services/core/providers.dart';
 
-class MapSample extends ConsumerWidget {
+class GeneralViewMap extends ConsumerWidget {
   final Completer<GoogleMapController> mapController;
-  const MapSample({Key? key, required this.mapController}) : super(key: key);
+  const GeneralViewMap({super.key, required this.mapController});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final filteredSpots = ref.watch(filteredSpotsProvider);
     final mapInteraction = ref.read(mapInteractionProvider.notifier);
-    const location = LatLng(6.251723, -75.592771);
-
-    // if (widget.includeUserLocation != null || widget.centerMapOnSpots != true) {
-    //   locationData = await location.getLocation();
-    // }
 
     return Stack(
       children: [
@@ -29,7 +23,6 @@ class MapSample extends ConsumerWidget {
           spots: filteredSpots.spots,
           centerMapOnSpots: true,
           mapController: mapController,
-          camaraPosition: location,
           onCameraIdle: mapInteraction.onCameraIdle,
           onCameraMove: mapInteraction.onCameraMove,
           onCameraMoveStarted: mapInteraction.onCameraMoveStarted,
@@ -50,8 +43,8 @@ class MapTags extends ConsumerWidget {
 
   const MapTags({
     required this.filteredSpots,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   void onTagClick(WidgetRef ref, String tag) {
     final tagsNotifier = ref.read(tagsSelectedProvider.notifier);

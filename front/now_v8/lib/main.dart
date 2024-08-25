@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:now_v8/playground/maps_cluster.dart';
-import 'package:now_v8/src/features/general_view/views/generalView.dart';
+import 'package:now_v8/src/features/general_view/views/main.dart';
 
 void main() async {
   await Hive.initFlutter();

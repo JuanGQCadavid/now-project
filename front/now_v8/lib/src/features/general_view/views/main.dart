@@ -23,7 +23,7 @@ class GeneralViewFeature extends ConsumerWidget {
           mapController: mapController,
         ),
       ),
-      bottomNavigationBar: BottomBar(),
+      bottomNavigationBar: const BottomBar(),
     );
   }
 }
@@ -52,8 +52,12 @@ class GeneralViewBody extends StatelessWidget {
               );
             },
             onRequestToLogin: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => LoginFeature()));
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => LoginFeature(),
+                ),
+              );
             },
           ),
         ),
@@ -66,12 +70,7 @@ class GeneralViewBody extends StatelessWidget {
             ),
             child: Stack(
               children: [
-                MapSample(mapController: mapController),
-                // const Positioned(
-                //   top: 0.0,
-                //   left: 0.0,
-                //   child: MapDescriptor(),
-                // ),
+                GeneralViewMap(mapController: mapController),
               ],
             ),
           ),
