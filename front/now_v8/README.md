@@ -38,3 +38,16 @@ flutter build ios --no-codesign
 
 Taken from https://medium.com/p-society/cocoapods-on-apple-silicon-m1-computers-86e05aa10d3e
 
+
+## To ignore files
+
+https://stackoverflow.com/questions/1274057/how-do-i-make-git-forget-about-a-file-that-was-tracked-but-is-now-in-gitignore
+
+Update, a better option
+Since this answer was posted, a new option has been created and that should be preferred. You should use --skip-worktree which is for modified tracked files that the user don't want to commit anymore and keep --assume-unchanged for performance to prevent git to check status of big tracked files. See https://stackoverflow.com/a/13631525/717372 for more details...
+
+git update-index --skip-worktree <file>
+To cancel
+
+git update-index --no-skip-worktree <file>
+
