@@ -18,8 +18,9 @@ class GeneralViewFeature extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var lastSearchArea = ref.watch(lastPositionKnownStateProvider);
-    if (lastSearchArea.jump) {
+    if (ref.watch(
+      lastPositionKnownStateProvider.select((state) => state.jump),
+    )) {
       SchedulerBinding.instance.addPostFrameCallback((_) {
         Navigator.push(
           context,

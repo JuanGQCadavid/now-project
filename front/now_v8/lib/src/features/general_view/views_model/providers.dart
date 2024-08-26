@@ -37,13 +37,11 @@ final mapSpotsBrigde = Provider(
         if (previousState!.status == MapStatus.movingOnMap() &&
             newState!.status == MapStatus.movingIdle()) {
           print("Refreshing!!!!!!!!!!!!!!!!!!!!!!!");
-
           var notifier = ref.read(spotsStateProvider.notifier);
           notifier.refreshSpots(
             latLng: newState.lastPositionKnowed,
             zoom: newState.zoom,
           );
-
           var lastSearchArea =
               ref.read(lastPositionKnownStateProvider.notifier);
           lastSearchArea.newLocation(newState);

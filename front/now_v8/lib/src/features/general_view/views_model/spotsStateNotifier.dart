@@ -72,13 +72,11 @@ class LastPositionKnownState extends StateNotifier<LastSearchArea> {
 
   void newLocation(MapState newArea) {
     print("${newArea.zoom}");
-    if (newArea.zoom >= zoomThreshold) {
-      print("${newArea.zoom} <= $zoomThreshold");
-      state = state.copyWith(
-        jump: true,
-        mapState: newArea,
-      );
-    }
+    bool onJumpArea = (newArea.zoom >= zoomThreshold);
+    state = state.copyWith(
+      jump: onJumpArea,
+      mapState: newArea,
+    );
   }
 }
 
