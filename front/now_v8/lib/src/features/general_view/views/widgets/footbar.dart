@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:now_v8/src/core/widgets/buttons.dart';
 import 'package:now_v8/src/features/general_view/views/widgets/spotTagWidget.dart';
-import 'package:now_v8/src/features/granular_view/views/greanular_view.dart';
+import 'package:now_v8/src/features/granular_view/views/main.dart';
 import 'package:now_v8/src/features/granular_view/views_model/providers.dart';
 import 'package:now_v8/src/features/spots_creation/main.dart';
 

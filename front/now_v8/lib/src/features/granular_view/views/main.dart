@@ -18,42 +18,42 @@ class GranularView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        body: _Body(
+    return Scaffold(
+      body: SafeArea(
+        child: _Body(
           appColor: appColor,
           mapController: mapController,
         ),
-        floatingActionButton: Wrap(
-          direction: Axis.vertical,
-          children: [
-            Container(
-              margin: const EdgeInsets.only(top: 15),
-              child: FloatingActionButton(
-                heroTag: "message",
-                backgroundColor: appColor,
-                onPressed: () {},
+      ),
+      floatingActionButton: Wrap(
+        direction: Axis.vertical,
+        children: [
+          Container(
+            margin: const EdgeInsets.only(top: 15),
+            child: FloatingActionButton(
+              heroTag: "message",
+              backgroundColor: appColor,
+              onPressed: () {},
+              child: const Icon(
+                Icons.message,
+              ),
+            ),
+          ),
+          Container(
+            margin: const EdgeInsets.only(top: 15),
+            child: FloatingActionButton(
+              heroTag: "go_back",
+              backgroundColor: appColor,
+              onPressed: () {},
+              child: Transform.rotate(
+                angle: -pi,
                 child: const Icon(
-                  Icons.message,
+                  Icons.arrow_back,
                 ),
               ),
             ),
-            Container(
-              margin: const EdgeInsets.only(top: 15),
-              child: FloatingActionButton(
-                heroTag: "go_back",
-                backgroundColor: appColor,
-                onPressed: () {},
-                child: Transform.rotate(
-                  angle: -pi,
-                  child: const Icon(
-                    Icons.arrow_back,
-                  ),
-                ),
-              ),
-            )
-          ],
-        ),
+          )
+        ],
       ),
     );
   }
