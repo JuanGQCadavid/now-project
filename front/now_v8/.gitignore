@@ -49,4 +49,5 @@ app.*.map.json
 # Build
 build/**
 
-AppDelegate.swift
+*AppDelegate.swift
+ios/Runner/AppDelegate.swift

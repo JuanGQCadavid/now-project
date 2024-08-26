@@ -1,0 +1,8 @@
+version: "Apple Swift version 5.10 (swiftlang-5.10.0.13 clang-1500.3.9.4)"
+options: "c6d9c6d6b49d1f899075c5be99a52d7317052d605c8063a48ff4baca47c4fe67"
+build_start_time: [1724068476, 52001000]
+build_end_time: [1724068479, 126325000]
+inputs:
+  "/Users/jquirozcadavid/repositories/now-project/front/now_v8/ios/Runner/AppDelegate.swift": [1721592039, 299621575]
+  ? "/Users/jquirozcadavid/repositories/now-project/front/now_v8/ios/build/Runner.build/Release-iphoneos/Runner.build/DerivedSources/GeneratedAssetSymbols.swift"
+  : [1724068476, 25345496]

@@ -29,13 +29,14 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  google_maps_flutter: 2.1.8
+  google_maps_flutter: 2.9.0
   json_annotation: any
   flutter_riverpod: any
   dio: ^4.0.6
   freezed_annotation: any
   dartz: ^0.10.1
   location: ^4.2.0
+  skeletonizer: ^1.4.2
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.

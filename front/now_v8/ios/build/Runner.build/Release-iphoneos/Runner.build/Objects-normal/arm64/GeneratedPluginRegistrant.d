@@ -1,0 +1,20 @@
+dependencies: \
+  /Users/jquirozcadavid/repositories/now-project/front/now_v8/ios/Runner/GeneratedPluginRegistrant.m \
+  /Users/jquirozcadavid/repositories/now-project/front/now_v8/ios/Runner/GeneratedPluginRegistrant.h \
+  /Users/jquirozcadavid/repositories/now-project/front/now_v8/ios/build/Release-iphoneos/Flutter.framework/Modules/module.modulemap \
+  /Users/jquirozcadavid/repositories/now-project/front/now_v8/ios/build/Release-iphoneos/Flutter.framework/Headers/Flutter.h \
+  /Users/jquirozcadavid/repositories/now-project/front/now_v8/ios/build/Release-iphoneos/Flutter.framework/Headers/FlutterAppDelegate.h \
+  /Users/jquirozcadavid/repositories/now-project/front/now_v8/ios/build/Release-iphoneos/Flutter.framework/Headers/FlutterMacros.h \
+  /Users/jquirozcadavid/repositories/now-project/front/now_v8/ios/build/Release-iphoneos/Flutter.framework/Headers/FlutterPlugin.h \
+  /Users/jquirozcadavid/repositories/now-project/front/now_v8/ios/build/Release-iphoneos/Flutter.framework/Headers/FlutterBinaryMessenger.h \
+  /Users/jquirozcadavid/repositories/now-project/front/now_v8/ios/build/Release-iphoneos/Flutter.framework/Headers/FlutterChannels.h \
+  /Users/jquirozcadavid/repositories/now-project/front/now_v8/ios/build/Release-iphoneos/Flutter.framework/Headers/FlutterCodecs.h \
+  /Users/jquirozcadavid/repositories/now-project/front/now_v8/ios/build/Release-iphoneos/Flutter.framework/Headers/FlutterPlatformViews.h \
+  /Users/jquirozcadavid/repositories/now-project/front/now_v8/ios/build/Release-iphoneos/Flutter.framework/Headers/FlutterTexture.h \
+  /Users/jquirozcadavid/repositories/now-project/front/now_v8/ios/build/Release-iphoneos/Flutter.framework/Headers/FlutterCallbackCache.h \
+  /Users/jquirozcadavid/repositories/now-project/front/now_v8/ios/build/Release-iphoneos/Flutter.framework/Headers/FlutterDartProject.h \
+  /Users/jquirozcadavid/repositories/now-project/front/now_v8/ios/build/Release-iphoneos/Flutter.framework/Headers/FlutterEngine.h \
+  /Users/jquirozcadavid/repositories/now-project/front/now_v8/ios/build/Release-iphoneos/Flutter.framework/Headers/FlutterEngineGroup.h \
+  /Users/jquirozcadavid/repositories/now-project/front/now_v8/ios/build/Release-iphoneos/Flutter.framework/Headers/FlutterHeadlessDartRunner.h \
+  /Users/jquirozcadavid/repositories/now-project/front/now_v8/ios/build/Release-iphoneos/Flutter.framework/Headers/FlutterPluginAppLifeCycleDelegate.h \
+  /Users/jquirozcadavid/repositories/now-project/front/now_v8/ios/build/Release-iphoneos/Flutter.framework/Headers/FlutterViewController.h
