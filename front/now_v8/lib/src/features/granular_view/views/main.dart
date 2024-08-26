@@ -4,6 +4,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:now_v8/src/core/widgets/buttons.dart';
 import 'package:now_v8/src/features/granular_view/views/widgets/header.dart';
 import 'package:now_v8/src/features/granular_view/views/widgets/host_updates.dart';
+import 'package:now_v8/src/features/granular_view/views/widgets/loaders.dart';
 import 'package:now_v8/src/features/granular_view/views/widgets/place_label.dart';
 import 'package:now_v8/src/features/granular_view/views/widgets/tags_list.dart';
 import 'package:now_v8/src/features/granular_view/views/widgets/text_formats.dart';
@@ -70,111 +71,88 @@ class _Body extends ConsumerWidget {
     final onSpot = ref.watch(onSpotProvider);
 
     if (onSpot.window.isEmpty()) {
-      return Container(
-        child: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                child: const CircularProgressIndicator(),
-                height: 90,
-                width: 90,
-              ),
-              SizedBox(
-                height: 30,
-              ),
-              Container(
-                child: Text(
-                  "We are finding something amazing for you",
-                  style: Theme.of(context).textTheme.titleLarge,
-                  textAlign: TextAlign.center,
-                ),
-                width: 300,
-              ),
-            ],
+      // Here we could add the call to fetch spots
+      return const FindingSpotsLoadingScreen();
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        GanularHeader(
+          onSpot: onSpot,
+          appColor: appColor,
+          mapController: mapController,
+        ),
+        Center(
+          child: PlaceLabel(
+            placeName: onSpot.spot.placeInfo.name,
+            appColor: appColor,
           ),
         ),
-      );
-    } else {
-      return Container(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        const SizedBox(
+          height: 15,
+        ),
+        CreatorLabel(
+          onTap: () {},
+          highlightedText: onSpot.spot.hostInfo.name,
+          appColor: appColor,
+        ),
+        const SizedBox(
+          height: 15,
+        ),
+        ReadMoreBox(
+          textBody: onSpot.spot.eventInfo.description,
+        ),
+        const SizedBox(
+          height: 15,
+        ),
+        Wrap(
+          direction: Axis.horizontal,
           children: [
-            GanularHeader(
-              onSpot: onSpot,
-              appColor: appColor,
-              mapController: mapController,
-            ),
-            Center(
-              child: PlaceLabel(
-                placeName: onSpot.spot.placeInfo.name,
-                appColor: appColor,
-              ),
-            ),
-            const SizedBox(
-              height: 15,
-            ),
-            CreatorLabel(
+            IconTextButtom(
+              message: "Instagram",
+              mainColor: Colors.grey.shade700,
+              icon: Icons.link,
+              iconColor: Colors.white,
               onTap: () {},
-              highlightedText: onSpot.spot.hostInfo.name,
-              appColor: appColor,
             ),
-            const SizedBox(
-              height: 15,
+            IconTextButtom(
+              message: "WhatsApp",
+              mainColor: Colors.green.shade500,
+              icon: Icons.phone,
+              iconColor: Colors.white,
+              onTap: () {},
             ),
-            ReadMoreBox(
-              textBody: onSpot.spot.eventInfo.description,
+            IconTextButtom(
+              message: "Call me",
+              mainColor: Colors.blue.shade500,
+              icon: Icons.phone,
+              iconColor: Colors.white,
+              onTap: () {},
             ),
-            const SizedBox(
-              height: 15,
-            ),
-            Wrap(
-              direction: Axis.horizontal,
-              children: [
-                IconTextButtom(
-                  message: "Instagram",
-                  mainColor: Colors.grey.shade700,
-                  icon: Icons.link,
-                  iconColor: Colors.white,
-                  onTap: () {},
-                ),
-                IconTextButtom(
-                  message: "WhatsApp",
-                  mainColor: Colors.green.shade500,
-                  icon: Icons.phone,
-                  iconColor: Colors.white,
-                  onTap: () {},
-                ),
-                IconTextButtom(
-                  message: "Call me",
-                  mainColor: Colors.blue.shade500,
-                  icon: Icons.phone,
-                  iconColor: Colors.white,
-                  onTap: () {},
-                ),
-              ],
-            ),
-            const SizedBox(
-              height: 15,
-            ),
-            TagsList(
-                primaryTag: onSpot.spot.topicInfo.principalTopic,
-                secondaryTags: onSpot.spot.topicInfo.secondaryTopics,
-                appColor: appColor),
-            const SizedBox(
-              height: 15,
-            ),
-            Container(
-              margin: EdgeInsets.symmetric(horizontal: 15),
-              child: const Divider(),
-            ),
-            const SizedBox(
-              height: 15,
-            ),
-            const HostUpdates()
           ],
         ),
-      );
-    }
+        const SizedBox(
+          height: 15,
+        ),
+        TagsList(
+            primaryTag: onSpot.spot.topicInfo.principalTopic,
+            secondaryTags: onSpot.spot.topicInfo.secondaryTopics,
+            appColor: appColor),
+        const SizedBox(
+          height: 15,
+        ),
+        Container(
+          margin: const EdgeInsets.symmetric(
+            horizontal: 15,
+          ),
+          child: const Divider(),
+        ),
+        const SizedBox(
+          height: 15,
+        ),
+        const HostUpdates()
+      ],
+    );
   }
 }
