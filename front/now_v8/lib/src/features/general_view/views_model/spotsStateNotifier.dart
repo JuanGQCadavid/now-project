@@ -3,6 +3,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:now_v8/src/core/models/spot.dart';
 import 'package:now_v8/src/features/general_view/model/filteredSpots.dart';
 import 'package:now_v8/src/features/general_view/model/general_view_model.dart';
+import 'package:now_v8/src/features/general_view/model/last_search_area.dart';
 
 /**
  * We are going to have singles state notifiers
@@ -53,6 +54,31 @@ class TagsNotifier extends StateNotifier<Set<String>> {
 
   void cleanTags() {
     state = {};
+  }
+}
+
+class LastPositionKnownState extends StateNotifier<LastSearchArea> {
+  final double zoomThreshold = 17;
+
+  LastPositionKnownState()
+      : super(LastSearchArea(
+          mapState: MapState(
+            lastPositionKnowed: const LatLng(0, 0),
+            zoom: 0,
+            status: MapStatus.movingIdle(),
+          ),
+          jump: false,
+        ));
+
+  void newLocation(MapState newArea) {
+    print("${newArea.zoom}");
+    if (newArea.zoom >= zoomThreshold) {
+      print("${newArea.zoom} <= $zoomThreshold");
+      state = state.copyWith(
+        jump: true,
+        mapState: newArea,
+      );
+    }
   }
 }
 

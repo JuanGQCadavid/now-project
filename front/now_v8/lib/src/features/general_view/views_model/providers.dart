@@ -5,6 +5,7 @@ import 'package:now_v8/src/core/contracts/location_service.dart';
 import 'package:now_v8/src/core/models/spot.dart';
 import 'package:now_v8/src/features/general_view/model/filteredSpots.dart';
 import 'package:now_v8/src/features/general_view/model/general_view_model.dart';
+import 'package:now_v8/src/features/general_view/model/last_search_area.dart';
 import 'package:now_v8/src/features/general_view/views_model/spotsStateNotifier.dart';
 import 'package:now_v8/src/services/core/providers.dart';
 import 'package:now_v8/src/core/contracts/key_value_storage.dart';
@@ -36,12 +37,26 @@ final mapSpotsBrigde = Provider(
         if (previousState!.status == MapStatus.movingOnMap() &&
             newState!.status == MapStatus.movingIdle()) {
           print("Refreshing!!!!!!!!!!!!!!!!!!!!!!!");
+
           var notifier = ref.read(spotsStateProvider.notifier);
           notifier.refreshSpots(
-              latLng: newState.lastPositionKnowed, zoom: newState.zoom);
+            latLng: newState.lastPositionKnowed,
+            zoom: newState.zoom,
+          );
+
+          var lastSearchArea =
+              ref.read(lastPositionKnownStateProvider.notifier);
+          lastSearchArea.newLocation(newState);
         }
       },
     );
+  },
+);
+
+final lastPositionKnownStateProvider =
+    StateNotifierProvider<LastPositionKnownState, LastSearchArea>(
+  (ref) {
+    return LastPositionKnownState();
   },
 );
 
