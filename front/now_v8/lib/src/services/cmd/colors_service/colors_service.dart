@@ -42,26 +42,28 @@ class ColorsService implements IColorService {
       color: Colors.pink.shade700,
       hue: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRose),
     ),
+    SpotsColors(
+      color: Colors.grey.shade400,
+      hue: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange),
+    )
   ];
-  final SpotsColors grey = SpotsColors(
-    color: Colors.grey.shade400,
-    hue: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange),
-  );
 
   ColorsService();
 
   @override
   SpotsColors getColor() {
-    // if (index >= _availableColors.length) {
-    //   index = 0;
-    // }
-
-    // SpotsColors colorToReturn = _availableColors[index];
-    // index = index + 1;
-
-    // return colorToReturn;
-
     return _availableColors[2];
+  }
+
+  SpotsColors getRandomColor() {
+    if (index >= _availableColors.length) {
+      index = 0;
+    }
+
+    SpotsColors colorToReturn = _availableColors[index];
+    index = index + 1;
+
+    return colorToReturn;
   }
 
   @override

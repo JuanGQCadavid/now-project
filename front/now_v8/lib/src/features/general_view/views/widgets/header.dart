@@ -37,39 +37,6 @@ class GeneralViewHeader extends ConsumerWidget {
       ),
     );
   }
-
-  Widget build2(BuildContext context, WidgetRef ref) {
-    var userDetails = ref.read(generalViewModelProvider).getUserInfo();
-
-    return FutureBuilder<Either<UserDetails, None>>(
-      future: userDetails,
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          return snapshot.data!.fold(
-            (l) => DefaultHeader(
-                userHeader: UserLogged(
-              userDetails: l,
-              onMenuTap: onRequestToGoToMenu,
-              onUserTap: onRequestToGoToProfile,
-            )),
-            (r) => DefaultHeader(
-              userHeader: NotLoggedHeader(
-                onMenuTap: onRequestToGoToMenu,
-                onUserTap: onRequestToLogin,
-              ),
-            ),
-          );
-        } else {
-          return DefaultHeader(
-            userHeader: NotLoggedHeader(
-              onMenuTap: onRequestToGoToMenu,
-              onUserTap: onRequestToLogin,
-            ),
-          );
-        }
-      },
-    );
-  }
 }
 
 class DefaultHeader extends StatelessWidget {

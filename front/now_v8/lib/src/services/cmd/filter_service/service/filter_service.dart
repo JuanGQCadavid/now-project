@@ -21,12 +21,9 @@ class FilterService implements IFilterService {
   final searchHeader = "X-Now-Search-Session-Id";
 
   FilterService({required this.apiConfig}) {
-    print(apiConfig.getFilterEndpoint());
-
     nowServicesCaller = NowServicesCaller(
       baseUrl: apiConfig.getFilterEndpoint(),
     );
-
     mappers = FilterServiceDTOsMappers();
   }
 
@@ -49,7 +46,6 @@ class FilterService implements IFilterService {
       print(l);
       return List.empty();
     }, (requestResponse) {
-      print("We get a response");
       Locations locations =
           FilterProxymityResponse.fromJson(requestResponse).result;
       return mappers.fromPlacesToSpotList(locations);
@@ -105,16 +101,10 @@ class FilterService implements IFilterService {
     );
 
     List<longSpot.LongSpot> response = [];
-
-    print("-------------------------------------------------------");
     for (var dynSpot in cast<List<dynamic>>(backendResponse.response)) {
       response.add(cast<longSpot.LongSpot>(dynSpot));
     }
-    print(response.length);
-    print("-------------------------------------------------------");
-
     String tokenResponse = cast<String>(backendResponse.token);
-
     return StateResponse<List<longSpot.LongSpot>, String>(
       response: response,
       token: tokenResponse,
@@ -134,10 +124,8 @@ class FilterService implements IFilterService {
     Map<String, dynamic>? headers;
 
     if (token.isEmpty) {
-      print("token is empty then send with the create option");
       createSession = true;
     } else {
-      print("token is not empty send it with the token header");
       createSession = false;
       headers = {searchHeader: token};
     }
@@ -187,7 +175,6 @@ class FilterService implements IFilterService {
           topicInfo: longSpot.TopicsInfo(
               principalTopic: spot.topicInfo.principalTopic,
               secondaryTopics: spot.topicInfo.secondaryTopics),
-          // MISSING
           dateInfo: longSpot.DateInfo(
             dateTime: spot.dateInfo.dateTime,
             id: spot.dateInfo.id,
@@ -217,120 +204,20 @@ class FilterService implements IFilterService {
 
       spots.add(
         Spot.withOutSpotColors(
-            principalTag: spot.topicInfo.principalTopic.isNotEmpty ||
-                    spot.topicInfo.secondaryTopics.isNotEmpty
-                ? spot.topicInfo.principalTopic
-                : spot.eventInfo.name
-                    .toLowerCase()
-                    .replaceAll(RegExp(r' '), ""),
-            secondaryTags: spot.topicInfo.secondaryTopics,
-            latLng: LatLng(
-              spot.placeInfo.lat,
-              spot.placeInfo.lon,
-            ),
-            spotId: spot.dateInfo.id,
-            date: date),
+          principalTag: spot.topicInfo.principalTopic.isNotEmpty ||
+                  spot.topicInfo.secondaryTopics.isNotEmpty
+              ? spot.topicInfo.principalTopic
+              : spot.eventInfo.name.toLowerCase().replaceAll(RegExp(r' '), ""),
+          secondaryTags: spot.topicInfo.secondaryTopics,
+          latLng: LatLng(
+            spot.placeInfo.lat,
+            spot.placeInfo.lon,
+          ),
+          spotId: spot.dateInfo.id,
+          date: date,
+        ),
       );
     }
     return spots;
   }
 }
-
-// @override
-// Future<StateResponse<List<longSpot.LongSpot>, String>> getLongSpotByProximityWithState({
-//   required double cpLat,
-//   required double cpLng,
-//   double radious = 0.5,
-//   String token = "",
-// }) async {
-//   Either<BackendErrors, dynamic> backendResponse;
-
-//   backendResponse = await filterProximityState(
-//     cpLat: cpLat,
-//     cpLng: cpLng,
-//     token: token,
-//     format: "full",
-//     radious: radious,
-//   );
-
-//   return backendResponse.fold<StateResponse<List<longSpot.LongSpot>, String>>((error) {
-//     print(error.toString());
-//     return StateResponse(response: [], token: "");
-//   }, (bodyResponse) {
-//     FilterProxyResponseWithState response =
-//         FilterProxyResponseWithState.fromJson(bodyResponse);
-//     return StateResponse(
-//         response: fromFilterSpotToLongSpot(response.result.places),
-//         token: response.search_session.session_details.session_id);
-//   });
-// }
-
-// @override
-// Future<StateResponse<List<Spot>, String>> getSpotsByProximityWithState({
-//   required double cpLat,
-//   required double cpLng,
-//   double radious = 10,
-//   String token = "",
-// }) async {
-//   Either<BackendErrors, dynamic> backendResponse;
-
-//   backendResponse = await filterProximityState(
-//     cpLat: cpLat,
-//     cpLng: cpLng,
-//     token: token,
-//     format: "small",
-//     radious: radious,
-//   );
-
-//   return backendResponse.fold<StateResponse<List<Spot>, String>>((error) {
-//     print(error.toString());
-//     return StateResponse(response: [], token: "");
-//   }, (bodyResponse) {
-//     FilterProxyResponseWithState response =
-//         FilterProxyResponseWithState.fromJson(bodyResponse);
-//     return StateResponse(
-//         response: fromFilterSpotToSpot(response.result.places),
-//         token: response.search_session.session_details.session_id);
-//   });
-// }
-
-// Future<Either<BackendErrors, dynamic>> filterProximityState2({
-//   required double cpLat,
-//   required double cpLng,
-//   required String token,
-//   double radious = 0.5,
-//   String format = "small",
-// }){
-//   if (token.isEmpty) {
-//     print("token is empty then send with the create option");
-//     return nowServicesCaller.request(
-//       Method.GET,
-//       proximityResource,
-//       queryParameters: {
-//         "cpLat": cpLat,
-//         "cpLon": cpLng,
-//         "format": format,
-//         "createSession": "true",
-//         "radious": radious
-//       },
-//     );
-
-//   }else {
-//     print("token is not empty send it with the token header");
-//     return nowServicesCaller.request(
-//       Method.GET,
-//       proximityResource,
-//       queryParameters: {
-//         "cpLat": cpLat,
-//         "cpLon": cpLng,
-//         "format": format,
-//         "createSession": "false",
-//         "radious": radious
-//       },
-//       headers: {
-//         "X-Now-Search-Session-Id": token
-//       },
-//     );
-//   }
-
-// }

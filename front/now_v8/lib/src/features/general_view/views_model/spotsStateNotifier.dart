@@ -60,14 +60,10 @@ class MapInteractions extends StateNotifier<MapState> {
   MapInteractions() : super(emptyMapState);
 
   void onCameraMove(CameraPosition position) {
-    print(
-        "User camera ${position.target.latitude} ${position.target.longitude}");
-
     var newState = state.copyWith(
         lastPositionKnowed: position.target,
         zoom: position.zoom,
         status: MapStatus.movingOnMap());
-
     state = newState;
   }
 
@@ -78,7 +74,6 @@ class MapInteractions extends StateNotifier<MapState> {
   }
 
   void onCameraMoveStarted() {
-    print("HERE WE GOOO!");
     state = state.copyWith(status: MapStatus.movingStarted());
   }
 }

@@ -41,8 +41,9 @@ final MapState emptyMapState = MapState(
 
 @freezed
 class MapState with _$MapState {
-  const factory MapState(
-      {required LatLng lastPositionKnowed,
-      required double zoom,
-      required MapStatus status}) = _MapState;
+  const factory MapState({
+    required LatLng lastPositionKnowed,
+    required double zoom,
+    required MapStatus status,
+  }) = _MapState;
 }

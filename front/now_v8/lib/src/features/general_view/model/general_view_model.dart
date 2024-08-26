@@ -1,4 +1,3 @@
-import 'package:dartz/dartz.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:now_v8/src/core/contracts/auth_service.dart';
 import 'package:now_v8/src/core/contracts/colorService.dart';
@@ -6,7 +5,6 @@ import 'package:now_v8/src/core/contracts/filterService.dart';
 import 'package:now_v8/src/core/contracts/location_service.dart';
 import 'package:now_v8/src/core/models/spot.dart';
 import 'package:now_v8/src/core/models/spotColors.dart';
-import 'package:now_v8/src/core/models/user.dart';
 import 'package:now_v8/src/features/general_view/model/filteredSpots.dart';
 import 'package:now_v8/src/core/contracts/key_value_storage.dart';
 import 'package:now_v8/src/core/models/state_response.dart';
@@ -16,12 +14,11 @@ class GeneralViewModel {
   final IColorService colorService;
   final ILocationService locationService;
   final IKeyValueStorage sessionDatabase;
-  final IAuthService authSessionDatabase;
-
   late SpotsColors defaultColor;
 
   final String searchSessionKey = "Generla-View-Session-Id";
   final double threshold = 11;
+  final double radious = 0.03;
 
   LatLng? lastPositionKnown;
   double? lastZoomKnown;
@@ -31,26 +28,23 @@ class GeneralViewModel {
     required this.colorService,
     required this.locationService,
     required this.sessionDatabase,
-    required this.authSessionDatabase,
   }) {
     defaultColor = colorService.getColor();
     sessionDatabase.doInit();
-  }
-
-  Future<Either<UserDetails, None>> getUserInfo() async {
-    var details = await authSessionDatabase.getUserDetails();
-    return details;
   }
 
   Future<String> getSessionToken() async {
     await sessionDatabase.doInit();
     var token = sessionDatabase.getValue(searchSessionKey);
 
-    return token.fold((l) {
-      return l as String;
-    }, (r) {
-      return "";
-    });
+    return token.fold(
+      (l) {
+        return l as String;
+      },
+      (r) {
+        return "";
+      },
+    );
   }
 
   bool doJumpToDetails() {
@@ -73,25 +67,14 @@ class GeneralViewModel {
 
     StateResponse<List<Spot>, String> filterResponse =
         await filterService.getSpotsByProximityWithState(
-            cpLat: searchPosition.latitude,
-            cpLng: searchPosition.longitude,
-            token: token,
-            radious: 0.03);
+      cpLat: searchPosition.latitude,
+      cpLng: searchPosition.longitude,
+      token: token,
+      radious: radious,
+    );
 
     if (filterResponse.token.isEmpty || filterResponse.token != token) {
-      print("Differente tokens");
-      print("Before calling Search Session key");
-      print("filterResponse.token -> " + filterResponse.token);
-      print("Token -> " + token);
       sessionDatabase.save(filterResponse.token, searchSessionKey);
-
-      print("Before calling Search Session key again");
-      String token2 = await getSessionToken();
-      print("token2 -> " + token2);
-    } else {
-      print("Same token as the one we use to call the service");
-      print("filterResponse.token -> " + filterResponse.token);
-      print("Token -> " + token);
     }
 
     for (var spot in filterResponse.response) {

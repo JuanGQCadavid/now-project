@@ -1,4 +1,4 @@
-import 'package:google_maps_flutter_platform_interface/src/types/location.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:now_v8/src/core/contracts/location_service.dart';
 

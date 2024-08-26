@@ -5,7 +5,6 @@ import 'package:now_v8/src/core/contracts/key_value_storage.dart';
 class HiveKeyValue<V> implements IKeyValueStorage<String, V> {
   final String boxName;
   HiveKeyValue({required this.boxName}) {
-    print("Initializing myself");
     doInit();
   }
 
@@ -13,7 +12,6 @@ class HiveKeyValue<V> implements IKeyValueStorage<String, V> {
   doInit() async {
     if (!Hive.isBoxOpen(boxName)) {
       await Hive.openBox<V>(boxName);
-      print("I'am initialized");
     }
   }
 

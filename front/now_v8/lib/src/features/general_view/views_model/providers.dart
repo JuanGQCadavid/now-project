@@ -1,7 +1,4 @@
-// import 'dart:developer';
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:now_v8/src/core/contracts/auth_service.dart';
 import 'package:now_v8/src/core/contracts/colorService.dart';
 import 'package:now_v8/src/core/contracts/filterService.dart';
 import 'package:now_v8/src/core/contracts/location_service.dart';
@@ -18,32 +15,35 @@ final generalViewModelProvider = Provider<GeneralViewModel>((ref) {
   final ILocationService locationService = ref.read(locationServiceProvider);
   final IKeyValueStorage keyValueStorage =
       ref.read(keyValueProvider("sessionDataGV"));
-  final IAuthService authService = ref.read(authProvider);
 
   return GeneralViewModel(
     colorService: colorsService,
     filterService: filterService,
     locationService: locationService,
     sessionDatabase: keyValueStorage,
-    authSessionDatabase: authService,
   );
 });
 
 final mapInteractionProvider = StateNotifierProvider<MapInteractions, MapState>(
-    (ref) => MapInteractions());
+  (ref) => MapInteractions(),
+);
 
-final mapSpotsBrigde = Provider((ref) {
-  ref.listen<MapState>(mapInteractionProvider,
+final mapSpotsBrigde = Provider(
+  (ref) {
+    ref.listen<MapState>(
+      mapInteractionProvider,
       (MapState? previousState, MapState newState) {
-    if (previousState!.status == MapStatus.movingOnMap() &&
-        newState!.status == MapStatus.movingIdle()) {
-      print("Refreshing!!!!!!!!!!!!!!!!!!!!!!!");
-      var notifier = ref.read(spotsStateProvider.notifier);
-      notifier.refreshSpots(
-          latLng: newState.lastPositionKnowed, zoom: newState.zoom);
-    }
-  });
-});
+        if (previousState!.status == MapStatus.movingOnMap() &&
+            newState!.status == MapStatus.movingIdle()) {
+          print("Refreshing!!!!!!!!!!!!!!!!!!!!!!!");
+          var notifier = ref.read(spotsStateProvider.notifier);
+          notifier.refreshSpots(
+              latLng: newState.lastPositionKnowed, zoom: newState.zoom);
+        }
+      },
+    );
+  },
+);
 
 final spotsStateProvider =
     StateNotifierProvider<SpotsNotifer, Map<String, Spot>>(
