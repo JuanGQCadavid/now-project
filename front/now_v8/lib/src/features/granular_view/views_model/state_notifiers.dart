@@ -9,7 +9,6 @@ import 'package:now_v8/src/core/widgets/nowMap.dart';
 import 'package:now_v8/src/features/granular_view/model/ganular_model.dart';
 import 'package:now_v8/src/features/granular_view/model/granular_spot.dart';
 import 'package:now_v8/src/features/granular_view/views_model/providers.dart';
-import 'package:now_v8/src/services/core/providers.dart';
 
 class DetailedSpotsState extends StateNotifier<List<LongSpot>> {
   final GranularModel granularModel;
@@ -19,7 +18,6 @@ class DetailedSpotsState extends StateNotifier<List<LongSpot>> {
   }) : super([]);
 
   Future<List<LongSpot>> refreshSpots() async {
-    print("-------------------refreshSpots---------------------------------");
     List<LongSpot> spots = await granularModel.getSpots();
 
     for (LongSpot spotState in state) {
@@ -58,45 +56,46 @@ class OnSpotState extends StateNotifier<GranularSpot> {
   }
 
   void previousOne(Completer<GoogleMapController> mapController) {
-    int spotIndex =
-        granularModel.findSpotIndex(state.spot.eventInfo.id, actualList);
-    int newIndex = 0;
-
-    if ((spotIndex - 1) >= 0) {
-      newIndex = spotIndex - 1;
-    } else {
-      newIndex = actualList.length - 1;
-    }
-    GranularSpot newState =
-        granularModel.generateNewModel(newIndex, actualList);
-    animateMapOnSpotChange(newState.spot, mapController, locationService);
-    state = newState;
+    moveWindow(mapController, backward: true);
   }
 
   void nextOne(Completer<GoogleMapController> mapController) async {
+    moveWindow(mapController, forward: true);
+  }
+
+  void moveWindow(
+    Completer<GoogleMapController> mapController, {
+    bool forward = false,
+    bool backward = false,
+  }) {
     int spotIndex =
         granularModel.findSpotIndex(state.spot.eventInfo.id, actualList);
+
     int newIndex = 0;
 
-    if ((spotIndex + 1) > (actualList.length - 1)) {
-      newIndex = spotIndex;
-    } else {
-      newIndex = spotIndex + 1;
+    if (forward) {
+      if ((spotIndex + 1) > (actualList.length - 1)) {
+        newIndex = spotIndex;
+      } else {
+        newIndex = spotIndex + 1;
+      }
+    } else if (backward) {
+      if ((spotIndex - 1) >= 0) {
+        newIndex = spotIndex - 1;
+      } else {
+        newIndex = actualList.length - 1;
+      }
     }
 
     GranularSpot newState =
         granularModel.generateNewModel(newIndex, actualList);
 
     animateMapOnSpotChange(newState.spot, mapController, locationService);
-
     state = newState;
   }
 
   void refresh(Completer<GoogleMapController> mapController) async {
     int newIndex = 0;
-
-    // GranularSpot newState =
-    //     granularModel.generateNewModel(newIndex, actualList);
 
     List<LongSpot> newSpots =
         await ref.read(detailedSpotProvider.notifier).refreshSpots();
@@ -109,12 +108,12 @@ class OnSpotState extends StateNotifier<GranularSpot> {
     Completer<GoogleMapController> mapController,
     ILocationService locationService,
   ) async {
-    GoogleMapController _mapController = await mapController.future;
+    GoogleMapController mapControllerFuture = await mapController.future;
     LatLng location = await locationService.getUserCurrentLocation();
     LatLngBounds bounds = MapUtilities.getCameraLatLngBounds([
       Spot.fromLongSpot(spot),
     ], userLocation: location);
-    _mapController.animateCamera(
+    mapControllerFuture.animateCamera(
       CameraUpdate.newLatLngBounds(
         bounds,
         50,

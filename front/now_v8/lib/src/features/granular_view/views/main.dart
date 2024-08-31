@@ -75,9 +75,9 @@ class _Body extends ConsumerWidget {
     final onSpot = ref.watch(onSpotProvider);
 
     if (onSpot.window.isEmpty()) {
+      // TODO - Should we leave this here ?
       final detailedSpot = ref.read(detailedSpotProvider.notifier);
       detailedSpot.refreshSpots();
-      // Here we could add the call to fetch spots
       return const FindingSpotsLoadingScreen();
     }
 
