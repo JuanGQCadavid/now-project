@@ -63,6 +63,10 @@ class GranularView extends StatelessWidget {
 class _Body extends ConsumerWidget {
   final Color appColor;
   final Completer<GoogleMapController> mapController;
+  final spacer = const SizedBox(
+    height: 15,
+  );
+
   const _Body({Key? key, required this.appColor, required this.mapController})
       : super(key: key);
 
@@ -71,6 +75,8 @@ class _Body extends ConsumerWidget {
     final onSpot = ref.watch(onSpotProvider);
 
     if (onSpot.window.isEmpty()) {
+      final detailedSpot = ref.read(detailedSpotProvider.notifier);
+      detailedSpot.refreshSpots();
       // Here we could add the call to fetch spots
       return const FindingSpotsLoadingScreen();
     }
@@ -89,23 +95,17 @@ class _Body extends ConsumerWidget {
             appColor: appColor,
           ),
         ),
-        const SizedBox(
-          height: 15,
-        ),
+        spacer,
         CreatorLabel(
           onTap: () {},
           highlightedText: onSpot.spot.hostInfo.name,
           appColor: appColor,
         ),
-        const SizedBox(
-          height: 15,
-        ),
+        spacer,
         ReadMoreBox(
           textBody: onSpot.spot.eventInfo.description,
         ),
-        const SizedBox(
-          height: 15,
-        ),
+        spacer,
         Wrap(
           direction: Axis.horizontal,
           children: [
@@ -132,25 +132,19 @@ class _Body extends ConsumerWidget {
             ),
           ],
         ),
-        const SizedBox(
-          height: 15,
-        ),
+        spacer,
         TagsList(
             primaryTag: onSpot.spot.topicInfo.principalTopic,
             secondaryTags: onSpot.spot.topicInfo.secondaryTopics,
             appColor: appColor),
-        const SizedBox(
-          height: 15,
-        ),
+        spacer,
         Container(
           margin: const EdgeInsets.symmetric(
             horizontal: 15,
           ),
           child: const Divider(),
         ),
-        const SizedBox(
-          height: 15,
-        ),
+        spacer,
         const HostUpdates()
       ],
     );

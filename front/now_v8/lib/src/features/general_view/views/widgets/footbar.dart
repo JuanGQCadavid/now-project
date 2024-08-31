@@ -36,9 +36,6 @@ class BottomBar extends ConsumerWidget {
           NowTextCTA(
             ctaText: "Zoom in!",
             onPressed: () {
-              final detailedSpot = ref.read(detailedSpotProvider.notifier);
-              detailedSpot.refreshSpots();
-
               Navigator.of(context).push(
                   MaterialPageRoute(builder: (context) => GranularView()));
             },
