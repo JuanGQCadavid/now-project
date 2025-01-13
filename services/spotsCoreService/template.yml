@@ -66,6 +66,7 @@ Resources:
                 Resource:
                   - Fn::ImportValue:
                       !Sub ${PululappEnv}-spot-activity-arn
+                      
         - PolicyName: !Sub ${ServiceName}-ssm-${PululappEnv}
           PolicyDocument:
             Version: '2012-10-17'

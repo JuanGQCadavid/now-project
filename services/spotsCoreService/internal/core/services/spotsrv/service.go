@@ -82,14 +82,7 @@ func (s *service) CreateSpot(spot domain.Spot, userDetails authDomain.UserDetail
 		PhoneNumber: userDetails.PhoneNumber,
 	}
 
-	spotUuid := s.uuidGen.New()
-
-	if len(spot.HostInfo.Id) == 0 {
-		hostUuid := s.uuidGen.New()
-		spot.HostInfo.Id = hostUuid
-	}
-
-	spot.EventInfo.UUID = spotUuid
+	spot.EventInfo.UUID = s.uuidGen.New()
 
 	if returnedError := s.spotRepository.CreateSpot(spot); returnedError != nil {
 		return domain.Spot{}, returnedError
@@ -254,6 +247,7 @@ func (s *service) UpdateSpotEvent(spotId string, ownerId string, spotEvent *doma
 	}
 
 	//  3. Verify that the data is diffent
+	logs.Info.Printf("UUID Original Id: %s, spotId: %+v \n", spotEvent.UUID, spotId)
 	spotEvent.UUID = spotId
 	if originalSpot.EventInfo.IsEquals(spotEvent) {
 		return ports.ErrSpotToUpdateIsTheSameAsTheDb

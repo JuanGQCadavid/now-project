@@ -2,6 +2,7 @@ package httphdl
 
 import (
 	"fmt"
+	"net/http"
 	"strings"
 
 	authDomain "github.com/JuanGQCadavid/now-project/services/authService/core/core/domain"
@@ -36,9 +37,8 @@ func (hdl *HTTPHandler) SetRouter(router *gin.Engine) {
 func (hdl *HTTPHandler) GetSpot(context *gin.Context) {
 
 	id := context.Param("id")
-
 	if len(id) == 0 {
-		context.AbortWithStatusJSON(400, ErrorMessage{
+		context.AbortWithStatusJSON(http.StatusBadRequest, ErrorMessage{
 			Message: "Missing Id param",
 		})
 		return
@@ -54,21 +54,21 @@ func (hdl *HTTPHandler) GetSpot(context *gin.Context) {
 		logs.Error.Println(err)
 
 		if err == ports.ErrSpotNotFounded {
-			context.AbortWithStatusJSON(404, ErrorMessage{
+			context.AbortWithStatusJSON(http.StatusNotFound, ErrorMessage{
 				Message:       "The spot does not exist",
 				InternalError: err.Error(),
 			})
 			return
 		}
 
-		context.AbortWithStatusJSON(400, ErrorMessage{
-			Message:       "We face an error while fethcing the data",
+		context.AbortWithStatusJSON(http.StatusInternalServerError, ErrorMessage{
+			Message:       "We face an error while fetching the data",
 			InternalError: err.Error(),
 		})
 		return
 	}
 
-	context.JSON(200, event)
+	context.JSON(http.StatusOK, event)
 }
 
 // /spots/core/bulk/fetch
@@ -86,14 +86,14 @@ func (hdl *HTTPHandler) GetMultipleSpots(context *gin.Context) {
 
 	if err != nil {
 		logs.Error.Println(err)
-		context.AbortWithStatusJSON(400, ErrorMessage{
+		context.AbortWithStatusJSON(http.StatusBadRequest, ErrorMessage{
 			Message:       "We face an error while fethcing the data",
 			InternalError: err.Error(),
 		})
 		return
 	}
 
-	context.JSON(200, multipleSpots)
+	context.JSON(http.StatusOK, multipleSpots)
 }
 
 // /spots/core/
@@ -107,7 +107,7 @@ func (hdl *HTTPHandler) CreateSpot(context *gin.Context) {
 	logs.Info.Printf("\nHandler: CreateSpot \n\tSpot: %+v", spot)
 
 	if !hdl.isSpotCorrect(spot) {
-		context.AbortWithStatusJSON(400, ErrorMessage{
+		context.AbortWithStatusJSON(http.StatusBadRequest, ErrorMessage{
 			Message: "The spot is missing some data.",
 		})
 		return
@@ -117,46 +117,49 @@ func (hdl *HTTPHandler) CreateSpot(context *gin.Context) {
 
 	if err != nil {
 		logs.Error.Println(err.Error())
-		context.AbortWithStatusJSON(400, ErrorMessage{
+		context.AbortWithStatusJSON(http.StatusBadRequest, ErrorMessage{
 			Message:       "We face an error while creating spot",
 			InternalError: err.Error(),
 		})
 		return
 	}
 
-	context.JSON(200, spot)
+	context.JSON(http.StatusOK, spot)
 }
 
 // /spots/core/:id/event
 func (hdl *HTTPHandler) UpdateSpotEvent(context *gin.Context) {
-	id := context.Param("id")
-	userId := context.Request.Header.Get("Authorization")
-	spotEvent := domain.Spot{}
+	var (
+		id                                 = context.Param("id")
+		spotEvent                          = domain.Spot{}
+		userDetails authDomain.UserDetails = *authUtils.GetHeaders(context.Request.Header)
+	)
+
 	context.BindJSON(&spotEvent)
 
-	logs.Info.Printf("Handler - UpdateSpotEvent: UserId %s,  Id %s, spotEvent %+v\n", userId, id, fmt.Sprintf("%+v", spotEvent.EventInfo))
+	logs.Info.Printf("Handler - UpdateSpotEvent: UserId %s,  Id %s, spotEvent %+v\n", userDetails.UserID, id, fmt.Sprintf("%+v", spotEvent.EventInfo))
 
-	if err := hdl.spotService.UpdateSpotEvent(id, userId, &spotEvent.EventInfo); err != nil {
+	if err := hdl.spotService.UpdateSpotEvent(id, userDetails.UserID, &spotEvent.EventInfo); err != nil {
 		logs.Info.Println("Hanlder - UpdateSpotEvent - Error", err.Error())
 
 		if err == ports.ErrSpotToUpdateIsTheSameAsTheDb {
-			context.Status(204)
+			context.Status(http.StatusNoContent)
 			return
 		}
-		context.AbortWithStatusJSON(500, ErrorMessage{
+		context.AbortWithStatusJSON(http.StatusInternalServerError, ErrorMessage{
 			Message:       "We face an error while updating the spot event info",
 			InternalError: err.Error(),
 		})
 		return
 	}
 
-	context.Status(204)
+	context.Status(http.StatusNoContent)
 }
 
 // /spots/core/:id/place
 func (hdl *HTTPHandler) UpdateSpotPlace(context *gin.Context) {
 	id := context.Param("id")
-	context.JSON(200, map[string]string{
+	context.JSON(http.StatusNotImplemented, map[string]string{
 		"method": "UpdateSpotPlace",
 		"id":     id,
 	})
@@ -165,7 +168,7 @@ func (hdl *HTTPHandler) UpdateSpotPlace(context *gin.Context) {
 // /spots/core/:id/topic
 func (hdl *HTTPHandler) UpdateSpotTopic(context *gin.Context) {
 	id := context.Param("id")
-	context.JSON(200, map[string]string{
+	context.JSON(http.StatusNotImplemented, map[string]string{
 		"method": "UpdateSpotTopic",
 		"id":     id,
 	})
@@ -188,7 +191,7 @@ func (hdl *HTTPHandler) DeleteSpot(context *gin.Context) {
 			return
 		}
 
-		context.AbortWithStatusJSON(500, ErrorMessage{
+		context.AbortWithStatusJSON(http.StatusInternalServerError, ErrorMessage{
 			Message:       "We face an error while deleting the spot",
 			InternalError: err.Error(),
 		})

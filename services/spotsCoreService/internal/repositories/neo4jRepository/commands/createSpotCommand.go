@@ -1,6 +1,8 @@
 package commands
 
 import (
+	_ "embed"
+
 	"github.com/JuanGQCadavid/now-project/services/spotsCoreService/internal/core/domain"
 	"github.com/neo4j/neo4j-go-driver/v4/neo4j"
 )
@@ -15,26 +17,12 @@ func NewCreateSpotCommand(spot *domain.Spot) *CreateSpotCommand {
 	}
 }
 
-func (cmd *CreateSpotCommand) Run(tr neo4j.Transaction) (interface{}, error) {
-	var cypher string = `
-		MERGE (event:Event {UUID: $event_uuid })
-		ON CREATE
-			SET event.description = $event_desc
-			SET event.maximunCapacty = $event_max_capacity
-			SET event.name = $event_name
-			SET event.emoji = $event_emoji
-		MERGE (place:Place {mapProviderId: $place_provider_id})
-		ON CREATE
-			SET place.lat = toFloat($place_lat)
-			SET place.lon = toFloat($place_lon)
-			SET place.name = $place_name
-		MERGE (host:Person {phoneNumber:$host_phone_number})
-		ON CREATE 
-			SET host.name = $host_name
-			SET host.id = $host_id
-		MERGE (host)-[:OWNS]->(event)-[:ON]->(place)
-	`
+var (
+	//go:embed queries/createSport.cypher
+	createSpotCypher string
+)
 
+func (cmd *CreateSpotCommand) Run(tr neo4j.Transaction) (interface{}, error) {
 	cypherParams := map[string]interface{}{
 		"event_uuid":         cmd.Spot.EventInfo.UUID,
 		"event_desc":         cmd.Spot.EventInfo.Description,
@@ -50,5 +38,5 @@ func (cmd *CreateSpotCommand) Run(tr neo4j.Transaction) (interface{}, error) {
 		"host_id":            cmd.Spot.HostInfo.Id,
 	}
 
-	return tr.Run(cypher, cypherParams)
+	return tr.Run(createSpotCypher, cypherParams)
 }
