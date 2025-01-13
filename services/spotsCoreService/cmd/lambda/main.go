@@ -24,9 +24,6 @@ const (
 )
 
 func init() {
-	// stdout and stderr are sent to AWS CloudWatch  Logs
-	logs.Info.Printf("Gin cold start")
-
 	credsFinder := ssm.NewSSMCredentialsFinder()
 
 	neo4jDriver, err := credsFinder.FindNeo4jCredentialsFromDefaultEnv()
@@ -36,31 +33,25 @@ func init() {
 		logs.Error.Fatalln(err.Error())
 	}
 
-	repoSpot := neo4jRepository.NewNeo4jSpotRepoWithDriver(neo4jDriver) //menRepository.New()
+	repoSpot := neo4jRepository.NewNeo4jSpotRepoWithDriver(neo4jDriver)
 	notifier, err := topics.NewNotifierFromEnv(TopicArnEnvName)
 
 	if err != nil {
 		logs.Error.Fatalln("We have a problem seting up the server, notifer error", err.Error())
 	}
 
-	uuid := uuidgen.New()
+	var (
+		uuid        = uuidgen.New()
+		service     = spotsrv.New(repoSpot, notifier, uuid)
+		httpHandler = httphdl.NewHTTPHandler(service)
+		router      = gin.Default()
+	)
 
-	service := spotsrv.New(repoSpot, notifier, uuid)
-	httpHandler := httphdl.NewHTTPHandler(service)
-	router := gin.Default()
-	router.POST("/spots/core/", httpHandler.CreateSpot)                 // OK
-	router.POST("/spots/core/bulk/fetch", httpHandler.GetMultipleSpots) // OK
-	router.GET("/spots/core/:id", httpHandler.GetSpot)                  // OK
-	router.PUT("/spots/core/:id/event", httpHandler.UpdateSpotEvent)    // OK
-	router.PUT("/spots/core/:id/topic", httpHandler.UpdateSpotTopic)    // OK
-	router.PUT("/spots/core/:id/place", httpHandler.UpdateSpotPlace)    // OK
-	router.DELETE("/spots/core/:id", httpHandler.DeleteSpot)            // OK
-
+	httpHandler.SetRouter(router)
 	ginLambda = ginadapter.New(router)
 }
 
 func Handler(ctx context.Context, req events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
-	// If no name is provided in the HTTP request body, throw an error
 	return ginLambda.ProxyWithContext(ctx, req)
 }
 

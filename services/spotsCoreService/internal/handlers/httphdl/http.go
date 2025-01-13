@@ -22,6 +22,16 @@ func NewHTTPHandler(spotService ports.SpotService) *HTTPHandler {
 	}
 }
 
+func (hdl *HTTPHandler) SetRouter(router *gin.Engine) {
+	router.POST("/spots/core/", hdl.CreateSpot)                 // OK
+	router.POST("/spots/core/bulk/fetch", hdl.GetMultipleSpots) // OK
+	router.GET("/spots/core/:id", hdl.GetSpot)                  // OK
+	router.PUT("/spots/core/:id/event", hdl.UpdateSpotEvent)    // OK
+	router.PUT("/spots/core/:id/topic", hdl.UpdateSpotTopic)    // OK
+	router.PUT("/spots/core/:id/place", hdl.UpdateSpotPlace)    // OK
+	router.DELETE("/spots/core/:id", hdl.DeleteSpot)            // OK
+}
+
 // /spots/core/:id
 func (hdl *HTTPHandler) GetSpot(context *gin.Context) {
 
