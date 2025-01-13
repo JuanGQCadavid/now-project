@@ -1,5 +1,4 @@
 #!/bin/bash
-
 export GOOS="linux"
 export CGO_ENABLED="0"
 export GOARCH="amd64"
