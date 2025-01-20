@@ -29,7 +29,6 @@ func (hdl *HTTPHandler) InjectDefaultPaths(router *gin.Engine) {
 }
 
 func (hdl *HTTPHandler) Get(context *gin.Context) {
-	// Path Variables
 	spot_uudi, is_spot_uudi_present := context.Params.Get("spot_uuid")
 
 	if !is_spot_uudi_present {
@@ -135,8 +134,8 @@ func (hdl *HTTPHandler) Stop(context *gin.Context) {
 	// Path Variables
 	spot_uudi, is_spot_uudi_present := context.Params.Get("spot_uuid")
 	userDetails := authUtils.GetHeaders(context.Request.Header)
-	
-  if userDetails.UserID == authDomain.AnonymousUser.UserID {
+
+	if userDetails.UserID == authDomain.AnonymousUser.UserID {
 		log.Println("User id is missinbg in Authorization header")
 		context.AbortWithStatusJSON(401, ErrorMessage{
 			Message: "We could not found the user",
@@ -187,8 +186,8 @@ func (hdl *HTTPHandler) Finalize(context *gin.Context) {
 	// Path Variables
 	spot_uudi, is_spot_uudi_present := context.Params.Get("spot_uuid")
 	userDetails := authUtils.GetHeaders(context.Request.Header)
-	
-  if userDetails.UserID == authDomain.AnonymousUser.UserID {
+
+	if userDetails.UserID == authDomain.AnonymousUser.UserID {
 		log.Println("User id is missinbg in Authorization header")
 		context.AbortWithStatusJSON(401, ErrorMessage{
 			Message: "We could not found the user",
@@ -271,4 +270,3 @@ func (hdl *HTTPHandler) Resume(context *gin.Context) {
 
 	context.Status(204)
 }
-

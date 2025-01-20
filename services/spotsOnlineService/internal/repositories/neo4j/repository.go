@@ -10,8 +10,7 @@ import (
 )
 
 type Neo4jRepo struct {
-	neo4jRepoDriver *Neo4jRepoDriver
-	driver          neo4j.Driver
+	driver neo4j.Driver
 }
 
 func NewNeo4jRepo() *Neo4jRepo {
@@ -57,10 +56,6 @@ func (repo *Neo4jRepo) AssociateDateWithSpot(spot domain.OnlineSpot) error {
 	return nil
 }
 
-func (repo *Neo4jRepo) StopDateOnSpot(spotId string, dateId string) error {
-	log.Printf("StopDateOnSpot, spotId: %s dateId: %s \n", spotId, dateId)
-	return repo.changeDateStatus(spotId, dateId, domain.PAUSED_SPOT)
-}
 func (repo *Neo4jRepo) FetchSpotWithStatus(spotId string, status domain.SpotStatus) (domain.OnlineSpot, error) {
 	log.Printf("FetchSpotWithStatus: status: %s, spotId:%s \n", status, spotId)
 	var cmd commands.Command = commands.NewFetchSpotCommandWithStatus(spotId, status)
@@ -91,10 +86,16 @@ func (repo *Neo4jRepo) FetchSpots(spotId string) (domain.OnlineSpot, error) {
 	return spots, nil
 }
 
+func (repo *Neo4jRepo) StopDateOnSpot(spotId string, dateId string) error {
+	log.Printf("StopDateOnSpot, spotId: %s dateId: %s \n", spotId, dateId)
+	return repo.changeDateStatus(spotId, dateId, domain.PAUSED_SPOT)
+}
+
 func (repo *Neo4jRepo) ResumeDateOnSpo(spotId string, dateId string) error {
 	log.Printf("ResumeDateOnSpo, spotId: %s dateId: %s \n", spotId, dateId)
 	return repo.changeDateStatus(spotId, dateId, domain.ONLINE_SPOT)
 }
+
 func (repo *Neo4jRepo) FinalizeDateOnSpot(spotId string, dateId string) error {
 	log.Printf("FinalizeDateOnSpot, spotId: %s dateId: %s \n", spotId, dateId)
 	return repo.changeDateStatus(spotId, dateId, domain.FINALIZED_SPOT)
@@ -111,6 +112,7 @@ func (repo *Neo4jRepo) changeDateStatus(spotId string, dateId string, status dom
 
 	return nil
 }
+
 func (repo *Neo4jRepo) executeWriteCommand(cmd commands.Command) error {
 	session := repo.driver.NewSession(neo4j.SessionConfig{})
 	defer session.Close()
