@@ -9,19 +9,6 @@ type RDSRepository struct {
 	connector *MysqlConnector
 }
 
-func NewRDSRepoFromEnv() (*RDSRepository, error) {
-
-	connector, err := NewConectorFromEnv()
-
-	if err != nil {
-		return nil, err
-	}
-
-	return &RDSRepository{
-		connector: connector,
-	}, nil
-}
-
 func NewRDSRepo(connector *MysqlConnector) (*RDSRepository, error) {
 
 	return &RDSRepository{
