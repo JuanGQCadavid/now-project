@@ -9,24 +9,20 @@ type RDSRepository struct {
 	connector *MysqlConnector
 }
 
-func NewRDSRepo(connector *MysqlConnector) (*RDSRepository, error) {
+func NewRDSRepo(connector *MysqlConnector) *RDSRepository {
 
 	return &RDSRepository{
 		connector: connector,
-	}, nil
+	}
 }
 
 func (repo *RDSRepository) CrateLocation(date domain.DatesLocation) error {
 	logs.Info.Printf("CrateLocation: Date: %v\n", date)
 
-	result := repo.connector.session.Create(&date)
-
-	if result.Error != nil {
+	if result := repo.connector.session.Create(&date); result.Error != nil {
 		logs.Error.Println("An error ocoured!: ", result.Error)
 		return result.Error
 	}
-
-	logs.Info.Printf("%+v", result)
 	return nil
 
 }
@@ -34,14 +30,11 @@ func (repo *RDSRepository) CrateLocation(date domain.DatesLocation) error {
 func (repo *RDSRepository) RemoveLocation(dateID string) error {
 	logs.Info.Printf("RemoveLocation: dateID: %v\n", dateID)
 
-	result := repo.connector.session.Unscoped().Delete(&domain.DatesLocation{}, &dateID)
-
-	if result.Error != nil {
+	if result := repo.connector.session.Unscoped().Delete(&domain.DatesLocation{}, &dateID); result.Error != nil {
 		logs.Error.Println("Error while deleting date: ", result.Error)
 		return result.Error
 	}
 
-	logs.Info.Printf("%+v", result)
 	return nil
 }
 
@@ -50,9 +43,7 @@ func (repo *RDSRepository) UpdateLocationStatus(dateID string, state domain.Date
 
 	date := domain.DatesLocation{}
 
-	result := repo.connector.session.First(&date, &dateID)
-
-	if result.Error != nil {
+	if result := repo.connector.session.First(&date, &dateID); result.Error != nil {
 		logs.Error.Println("Error while Fetching date: ", result.Error)
 		return result.Error
 	}
@@ -61,14 +52,10 @@ func (repo *RDSRepository) UpdateLocationStatus(dateID string, state domain.Date
 		StateID: state,
 	}
 
-	result = repo.connector.session.Save(&date)
-
-	if result.Error != nil {
+	if result := repo.connector.session.Save(&date); result.Error != nil {
 		logs.Error.Println("Error while Saving new state date: ", result.Error)
 		return result.Error
 	}
-
-	logs.Info.Printf("%+v", result)
 	return nil
 }
 
@@ -77,9 +64,7 @@ func (repo *RDSRepository) UpdateLocationType(dateID string, dateType domain.Dat
 
 	date := domain.DatesLocation{}
 
-	result := repo.connector.session.First(&date, &dateID)
-
-	if result.Error != nil {
+	if result := repo.connector.session.First(&date, &dateID); result.Error != nil {
 		logs.Error.Println("Error while Fetching date: ", result.Error)
 		return result.Error
 	}
@@ -88,13 +73,10 @@ func (repo *RDSRepository) UpdateLocationType(dateID string, dateType domain.Dat
 		TypeID: dateType,
 	}
 
-	result = repo.connector.session.Save(&date)
-
-	if result.Error != nil {
+	if result := repo.connector.session.Save(&date); result.Error != nil {
 		logs.Error.Println("Error while Saving new state date: ", result.Error)
 		return result.Error
 	}
 
-	logs.Info.Printf("%+v", result)
 	return nil
 }

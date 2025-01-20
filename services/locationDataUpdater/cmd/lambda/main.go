@@ -29,9 +29,7 @@ const (
 )
 
 func HandleRequest(ctx context.Context, body *events.SQSEvent) (*string, error) {
-	logs.Info.Println("Gin cold start")
 	records := body.Records
-
 	credsFinder := ssm.NewSSMCredentialsFinder()
 	credentials, err := credsFinder.GetDBCredentialsFromDefaultEnv()
 
@@ -41,25 +39,18 @@ func HandleRequest(ctx context.Context, body *events.SQSEvent) (*string, error) 
 	}
 
 	connector, err := rds.NewConector(credentials.User, credentials.Password, credentials.Name, credentials.Url)
-
 	if err != nil {
 		logs.Error.Println("we fail to create the connector")
 		return nil, err
 	}
 
 	connector.Migrate()
-	logs.Error.Println("Migarte operation")
 
-	location, err := rds.NewRDSRepo(connector)
-
-	if err != nil {
-		logs.Error.Println("we fail to create the repository")
-		return nil, err
-	}
-
-	var service ports.Service = service.NewLocationService(location)
-
-	var onError bool = false
+	var (
+		location               = rds.NewRDSRepo(connector)
+		service  ports.Service = service.NewLocationService(location)
+		onError  bool          = false
+	)
 
 	for _, record := range records {
 		logs.Info.Printf("The  SQS: %+v\n", record)
@@ -85,7 +76,7 @@ func HandleRequest(ctx context.Context, body *events.SQSEvent) (*string, error) 
 	}
 
 	if onError {
-		return nil, errors.New("A error happen during handling the records")
+		return nil, errors.New("err a error happen during handling the records")
 	}
 
 	return nil, nil

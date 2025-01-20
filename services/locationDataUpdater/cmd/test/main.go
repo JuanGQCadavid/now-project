@@ -22,11 +22,7 @@ func main() {
 		panic(err)
 	}
 
-	repo, err := rds.NewRDSRepo(connector)
-
-	if err != nil {
-		panic(err)
-	}
+	repo := rds.NewRDSRepo(connector)
 
 	date := domain.DatesLocation{
 		DateID: "OTHER_TEST_123",

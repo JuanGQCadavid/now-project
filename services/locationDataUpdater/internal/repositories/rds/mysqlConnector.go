@@ -31,5 +31,6 @@ func NewConector(dbUser string, dbPassword string, dbName string, dbUrl string) 
 }
 
 func (conn *MysqlConnector) Migrate() {
+	logs.Info.Println("Migrate command")
 	conn.session.AutoMigrate(&domain.DatesLocation{}, &domain.States{}, &domain.Types{})
 }
