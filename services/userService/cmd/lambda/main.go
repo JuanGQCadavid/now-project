@@ -21,14 +21,19 @@ import (
 
 var ginLambda *ginadapter.GinLambda
 
+const (
+	USER_TABLE_ENV_NAME   string = "usersTableName"
+	TOKENS_TABLE_ENV_NAME string = "tokensTableName"
+)
+
 func init() {
 
 	session := session.Must(session.NewSessionWithOptions(session.Options{
 		SharedConfigState: session.SharedConfigEnable,
 	}))
 
-	userTableName := getenv("usersTableName", "Users")
-	tokensTableName := getenv("tokensTableName", "Tokens")
+	userTableName := getenv(USER_TABLE_ENV_NAME, "Users")
+	tokensTableName := getenv(TOKENS_TABLE_ENV_NAME, "Tokens")
 
 	var userRepository ports.UserRepository = users.NewDynamoDBUserRepository(userTableName, session)
 	var tokensRepository ports.TokensRepository = tokens.NewDynamoDBTokensRepository(tokensTableName, session)
