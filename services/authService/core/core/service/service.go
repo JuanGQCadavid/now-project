@@ -35,7 +35,7 @@ func (svc *AuthService) GetUserDetailsFromToken(tokenEncoded string) (*domain.Us
 
 	if len(tokenEncoded) == 0 {
 		logs.Info.Println("Anonymous user")
-		return &domain.UserDetails{}, nil
+		return nil, nil
 	}
 
 	token, err := svc.encryptRepo.DecodeToken(tokenEncoded)

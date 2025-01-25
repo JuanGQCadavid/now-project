@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 
 	"github.com/JuanGQCadavid/now-project/services/authService/core/core/domain"
 	"github.com/JuanGQCadavid/now-project/services/authService/core/core/service"
@@ -21,18 +20,22 @@ var (
 	appService *service.AuthService
 )
 
+const (
+	POLICY_ALLOW              = "Allow"
+	TOKENS_TABLE_ENV_NAME     = "TokensTable"
+	USER_TABLE_ENV_NAME       = "UsersTable"
+	USER_TABLE_INDEX_ENV_NAME = "UsersIndexTable"
+)
+
 func Handler(ctx context.Context, event events.APIGatewayV2CustomAuthorizerV2Request) (events.APIGatewayCustomAuthorizerResponse, error) {
 	var (
 		userDetails *domain.UserDetails = nil
-
-		err error = nil
+		err         error               = nil
 	)
 
 	token := event.Headers[domain.APP_TOKEN]
-	fmt.Println("token:", token)
-
 	if token == domain.ANONYMOUS_KEY {
-		return generatePolicy(domain.AnonymousUser.Name, "Allow", event.RouteArn, domain.AnonymousUser), nil
+		return generatePolicy(domain.AnonymousUser.Name, POLICY_ALLOW, event.RouteArn, domain.AnonymousUser), nil
 	}
 
 	userDetails, err = appService.GetUserDetailsFromToken(token)
@@ -45,7 +48,7 @@ func Handler(ctx context.Context, event events.APIGatewayV2CustomAuthorizerV2Req
 		userDetails = domain.AnonymousUser
 	}
 
-	return generatePolicy(userDetails.Name, "Allow", event.RouteArn, userDetails), nil
+	return generatePolicy(userDetails.Name, POLICY_ALLOW, event.RouteArn, userDetails), nil
 }
 
 func generatePolicy(principalId, effect, resource string, userDetails *domain.UserDetails) events.APIGatewayCustomAuthorizerResponse {
@@ -65,11 +68,9 @@ func generatePolicy(principalId, effect, resource string, userDetails *domain.Us
 	}
 
 	if userDetails != nil {
-		// Struct to map
 		var inInterface map[string]interface{}
 		inrec, _ := json.Marshal(userDetails)
 		json.Unmarshal(inrec, &inInterface)
-
 		authResponse.Context = inInterface
 	}
 
@@ -78,27 +79,20 @@ func generatePolicy(principalId, effect, resource string, userDetails *domain.Us
 
 func init() {
 	var (
-		sess            *session.Session
-		tokensTableName string
-		userTableName   string
-		usersIndex      string
-		token           *tokens.DynamoDBTokensRepository
-		repo            *user.DynamoDBUserRepository
-		encryptor       *encrypters.SimpleEncrypt
+		sess = session.Must(session.NewSessionWithOptions(session.Options{
+			SharedConfigState: session.SharedConfigEnable,
+		}))
+		tokensTableName = utils.Getenv(TOKENS_TABLE_ENV_NAME, "Tokens-staging")
+		userTableName   = utils.Getenv(USER_TABLE_ENV_NAME, "Users-staging")
+		usersIndex      = utils.Getenv(USER_TABLE_INDEX_ENV_NAME, "UserID-index")
+		encryptor       = encrypters.NewSimpleEncrypt()
+
+		token *tokens.DynamoDBTokensRepository
+		repo  *user.DynamoDBUserRepository
 	)
 
-	sess = session.Must(session.NewSessionWithOptions(session.Options{
-		SharedConfigState: session.SharedConfigEnable,
-	}))
-	encryptor = encrypters.NewSimpleEncrypt()
-
-	tokensTableName = utils.Getenv("TokensTable", "Tokens-staging")
 	token = tokens.NewDynamoDBTokensRepository(tokensTableName, sess, encryptor)
-
-	userTableName = utils.Getenv("UsersTable", "Users-staging")
-	usersIndex = utils.Getenv("UsersIndexTable", "UserID-index")
 	repo = user.NewDynamoDBUserRepository(userTableName, usersIndex, sess)
-
 	appService = service.NewAuthService(token, encryptor, repo)
 }
 
