@@ -2,6 +2,7 @@ package httphdl
 
 import (
 	"errors"
+
 	authDomain "github.com/JuanGQCadavid/now-project/services/authService/core/core/domain"
 	authUtils "github.com/JuanGQCadavid/now-project/services/authService/core/utils"
 	"github.com/JuanGQCadavid/now-project/services/pkgs/common/logs"
@@ -34,7 +35,6 @@ func (hdl *HttpHandler) SetRouter(router *gin.Engine) {
 	router.PUT("/spots/scheduled/:spot_uuid/scheduled/:scheduled_uuid/resume", hdl.Resume)
 	router.PUT("/spots/scheduled/:spot_uuid/scheduled/:scheduled_uuid/freeze", hdl.Freeze)
 	router.PUT("/spots/scheduled/:spot_uuid/scheduled/:scheduled_uuid/conclude", hdl.Conclude)
-
 }
 
 /*

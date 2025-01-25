@@ -22,8 +22,6 @@ const (
 var ginLambda *ginadapter.GinLambda
 
 func init() {
-	logs.Info.Println("Gin cold start")
-
 	credsFinder := ssm.NewSSMCredentialsFinder()
 
 	neo4jDriver, err := credsFinder.FindNeo4jCredentialsFromDefaultEnv()
