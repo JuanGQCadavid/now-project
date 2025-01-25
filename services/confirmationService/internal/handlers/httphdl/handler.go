@@ -15,8 +15,8 @@ type HttpHandler struct {
 }
 
 var (
-	ErrMissingDateIdOnParam                   = errors.New("Date id is required but it is missing on path params")
-	ErrUserIsNotAllowedToPerformThisOperation = errors.New("The user is not allowed to perfom such uperation")
+	ErrMissingDateIdOnParam                   = errors.New("err Date id is required but it is missing on path params")
+	ErrUserIsNotAllowedToPerformThisOperation = errors.New("err The user is not allowed to perfom such uperation")
 )
 
 func NewHttpHandler(service ports.Service) *HttpHandler {
@@ -35,12 +35,7 @@ PUT /confirmation/date/:date_uuid/confirm
 */
 func (hdl *HttpHandler) ConfirmDate(context *gin.Context) {
 	dateId := context.Param("date_uuid")
-
 	userDetails := authUtils.GetHeaders(context.Request.Header)
-
-	logs.Info.Printf("%+v\n", userDetails)
-	// requesterId := context.Request.Header.Get("Authorization")
-
 	if len(dateId) == 0 {
 		logs.Error.Println(ErrMissingDateIdOnParam.Error())
 		context.AbortWithStatusJSON(400, ErrorMessage{
@@ -48,7 +43,6 @@ func (hdl *HttpHandler) ConfirmDate(context *gin.Context) {
 		})
 		return
 	}
-
 	if userDetails != nil && userDetails.UserID == authDomain.AnonymousUser.UserID {
 		logs.Error.Println(ErrUserIsNotAllowedToPerformThisOperation.Error())
 		context.AbortWithStatusJSON(400, ErrorMessage{
@@ -89,9 +83,6 @@ PUT /confirmation/date/:date_uuid/unconfirm
 func (hdl *HttpHandler) UnconfirmDate(context *gin.Context) {
 	dateId := context.Param("date_uuid")
 	userDetails := authUtils.GetHeaders(context.Request.Header)
-
-	logs.Info.Printf("%+v\n", userDetails)
-
 	if len(dateId) == 0 {
 		logs.Error.Println(ErrMissingDateIdOnParam.Error())
 		context.AbortWithStatusJSON(400, ErrorMessage{
@@ -130,7 +121,5 @@ func (hdl *HttpHandler) UnconfirmDate(context *gin.Context) {
 			return
 		}
 	}
-
 	context.Status(204)
-
 }
