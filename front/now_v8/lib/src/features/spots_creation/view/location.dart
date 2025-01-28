@@ -51,7 +51,7 @@ class LocationSeletorViewV2 extends ConsumerWidget {
             Stack(
               children: [
                 SizedBox(
-                  height: 600,
+                  height: 500,
                   width: double.infinity,
                   child: NowMapV2(
                     centerMapOnSpots: true,
@@ -80,11 +80,11 @@ class LocationSeletorViewV2 extends ConsumerWidget {
                   ),
                 ),
                 SizedBox(
+                  width: double.infinity,
                   child: SeachLocationSF(
                     onSearch: notifier.onSearch,
                     onChosen: notifier.onChosen,
                   ),
-                  width: double.infinity,
                 ),
               ],
             ),

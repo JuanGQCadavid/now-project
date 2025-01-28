@@ -3,6 +3,35 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 part 'long_spot.freezed.dart';
 part 'long_spot.g.dart';
 
+const emptyLongSpot = LongSpot(
+  dateInfo: DateInfo(
+    dateTime: "",
+    id: "",
+    startTime: "",
+    durationApproximatedInSeconds: 0,
+  ),
+  eventInfo: EventInfo(
+    name: "",
+    id: "",
+    description: "",
+    maximunCapacty: 0,
+    emoji: ":p",
+  ),
+  hostInfo: HostInfo(
+    name: "",
+  ),
+  placeInfo: PlaceInfo(
+    name: "",
+    lat: 0.0,
+    lon: 0.0,
+    mapProviderId: "",
+  ),
+  topicInfo: TopicsInfo(
+    principalTopic: "",
+    secondaryTopics: [],
+  ),
+);
+
 @freezed
 class LongSpot with _$LongSpot {
   const factory LongSpot({

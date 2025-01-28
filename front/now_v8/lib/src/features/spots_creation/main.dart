@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:now_v8/src/core/models/long_spot.dart';
-import 'package:now_v8/src/core/widgets/text_input.dart';
 import 'package:now_v8/src/features/spots_creation/model/spot_creator_state.dart';
 import 'package:now_v8/src/features/spots_creation/view/description.dart';
 import 'package:now_v8/src/features/spots_creation/view/done_or_cancel.dart';
@@ -26,36 +25,11 @@ class SpotsCreationFeature extends StatelessWidget {
 }
 
 class Body extends ConsumerWidget {
-  late LongSpot spot = const LongSpot(
-    dateInfo: DateInfo(
-      dateTime: "",
-      id: "",
-      startTime: "",
-      durationApproximatedInSeconds: 0,
-    ),
-    eventInfo: EventInfo(
-      name: "",
-      id: "",
-      description: "",
-      maximunCapacty: 0,
-      emoji: ":p",
-    ),
-    hostInfo: HostInfo(
-      name: "",
-    ),
-    placeInfo: PlaceInfo(
-      name: "",
-      lat: 0.0,
-      lon: 0.0,
-      mapProviderId: "",
-    ),
-    topicInfo: TopicsInfo(
-      principalTopic: "",
-      secondaryTopics: [],
-    ),
-  );
+  late LongSpot spot;
 
-  Body({super.key});
+  Body({super.key}) {
+    spot = emptyLongSpot;
+  }
 
   void onTitleChange(String txt) {
     spot = spot.copyWith(eventInfo: spot.eventInfo.copyWith(name: txt));

@@ -25,17 +25,11 @@ class _PhoneNumberV2State extends State<PhoneNumberV2> {
   String countryCodeName = "";
   bool showCountriesSearch = false;
 
+  // TODO = How can we make this more dynamic ?
   List<CountryCodes> countryCodes = [
-    CountryCodes(code: "+57", countryID: "COL", countryName: "colombia"),
-    CountryCodes(code: "+1", countryID: "TRK", countryName: "turkia"),
-    CountryCodes(code: "+2", countryID: "CNL", countryName: "venezuela"),
-    CountryCodes(code: "+3", countryID: "GER", countryName: "alemania"),
-    CountryCodes(code: "+4", countryID: "CHI", countryName: "china"),
-    CountryCodes(code: "+5", countryID: "PEU", countryName: "peru"),
-    CountryCodes(code: "+6", countryID: "BOL", countryName: "bolivia"),
-    CountryCodes(code: "+7", countryID: "CHL", countryName: "chile"),
-    CountryCodes(code: "+8", countryID: "ARG", countryName: "argentina"),
-    CountryCodes(code: "+9", countryID: "ESP", countryName: "espana"),
+    CountryCodes(code: "+57", countryID: "COL", countryName: "Colombia"),
+    CountryCodes(code: "+372", countryID: "EST", countryName: "Estonia"),
+    CountryCodes(code: "+49", countryID: "GER", countryName: "Germany"),
   ];
 
   late CountryCodes countrySelected = CountryCodes(

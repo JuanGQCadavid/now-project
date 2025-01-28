@@ -93,22 +93,22 @@ class LocationState extends StateNotifier<SimpleState<PlaceInfo>> {
   }
 
   Future onChosen(PlaceInfo placeInfo) async {
-    var currentLocation = await locationService.getUserCurrentLocation();
-    var bounds = MapUtilities.getCameraLatLngBounds(
-      [
-        Spot.withOutSpotColors(
-          principalTag: "",
-          secondaryTags: [],
-          latLng: LatLng(
-            placeInfo.lat,
-            placeInfo.lon,
-          ),
-          spotId: "",
-          date: DateTime.now(),
-        ),
-      ],
-      userLocation: currentLocation,
-    );
+    // var currentLocation = await locationService.getUserCurrentLocation();
+    // var bounds = MapUtilities.getCameraLatLngBounds(
+    //   [
+    //     Spot.withOutSpotColors(
+    //       principalTag: "",
+    //       secondaryTags: [],
+    //       latLng: LatLng(
+    //         placeInfo.lat,
+    //         placeInfo.lon,
+    //       ),
+    //       spotId: "",
+    //       date: DateTime.now(),
+    //     ),
+    //   ],
+    //   userLocation: currentLocation,
+    // );
 
     controller.animateCamera(
       CameraUpdate.newLatLngZoom(
@@ -146,7 +146,9 @@ class LocationState extends StateNotifier<SimpleState<PlaceInfo>> {
       cameraPosition.target.longitude,
     );
 
-    response.fold((l) => onChosen(l[0]), (r) => null);
+    response.fold((l) {
+      onChosen(l[0]);
+    }, (r) => null);
   }
 
   Future onCameraMove(CameraPosition cameraPosition) async {
@@ -165,34 +167,7 @@ class SpotCreator extends StateNotifier<SpotCreatorState> {
             totalSteps: 4,
             onState: OnState.onDescription,
             onError: "",
-            spot: LongSpot(
-              dateInfo: DateInfo(
-                dateTime: "",
-                id: "",
-                startTime: "",
-                durationApproximatedInSeconds: 0,
-              ),
-              eventInfo: EventInfo(
-                name: "",
-                id: "",
-                description: "",
-                maximunCapacty: 0,
-                emoji: ":p",
-              ),
-              hostInfo: HostInfo(
-                name: "",
-              ),
-              placeInfo: PlaceInfo(
-                name: "",
-                lat: 0.0,
-                lon: 0.0,
-                mapProviderId: "",
-              ),
-              topicInfo: TopicsInfo(
-                principalTopic: "",
-                secondaryTopics: [],
-              ),
-            ),
+            spot: emptyLongSpot,
           ),
         ) {
     mapStates = {

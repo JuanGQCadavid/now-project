@@ -197,6 +197,8 @@ class GoogleMapLocal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Map<MarkerId, Marker> newMarkers = <MarkerId, Marker>{};
+
     ClusterManager general = ClusterManager(
       clusterManagerId: clusterId,
       onClusterTap: (argument) {
@@ -209,12 +211,15 @@ class GoogleMapLocal extends StatelessWidget {
 
     clusterManagers[general.clusterManagerId] = general;
 
-    Map<MarkerId, Marker> newMarkers = <MarkerId, Marker>{};
-
     for (var i = 0; i < markers.length; i++) {
       var actualMarker = markers.elementAt(i);
-      newMarkers[actualMarker.markerId] = actualMarker.copyWith(
-          clusterManagerIdParam: general.clusterManagerId);
+
+      if (markers.length > 1) {
+        newMarkers[actualMarker.markerId] = actualMarker.copyWith(
+            clusterManagerIdParam: general.clusterManagerId);
+      } else {
+        newMarkers[actualMarker.markerId] = actualMarker;
+      }
     }
 
     return GoogleMap(
