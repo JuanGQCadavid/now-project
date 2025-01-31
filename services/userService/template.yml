@@ -24,6 +24,10 @@ Parameters:
     Type: String
     Description: Service description
     Default: ANY /user
+  ProfileRoute:
+    Type: String
+    Description: Service description
+    Default: ANY /profile
   ECROutput:
     Type: String
     Description: Service ECR cloudformation output
@@ -165,6 +169,12 @@ Resources:
       Action: lambda:InvokeFunction
       FunctionName: !Ref ServiceLambda
       Principal: apigateway.amazonaws.com
+  
+  ################################
+  #
+  # User Service
+  #
+  ###############################
 
   ServiceAPIGatewayIntegration:
     Type: AWS::ApiGatewayV2::Integration
@@ -211,4 +221,68 @@ Resources:
         - /
         - - integrations
           - !Ref ServiceAPIGatewayIntegration
+  
+  ################################
+  #
+  # Profile
+  #
+  ###############################
+
+  ProfileServiceAPIGatewayIntegration:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId:
+        Fn::ImportValue: 
+            !Sub ${PululappEnv}-central-gateway-id
+      Description: !Sub Profile ${ServiceDescription} 
+      IntegrationMethod: POST
+      IntegrationType: AWS_PROXY
+      IntegrationUri: !Join
+        - ''
+        - - 'arn:'
+          - !Ref 'AWS::Partition'
+          - ':apigateway:'
+          - !Ref 'AWS::Region'
+          - ':lambda:path/2015-03-31/functions/'
+          - !GetAtt ServiceLambda.Arn
+          - /invocations
+      PayloadFormatVersion: '1.0'
+      RequestParameters:
+        "overwrite:header.x-internal-user-name": "$context.authorizer.Name"
+        "overwrite:header.x-internal-user-id": "$context.authorizer.UserID"
+        "overwrite:header.x-internal-user-phone-number": "$context.authorizer.PhoneNumber"
+
+  APIGatewayIntegrationProfile:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: 
+        Fn::ImportValue: 
+            !Sub ${PululappEnv}-central-gateway-id
+      AuthorizationType: CUSTOM
+      AuthorizerId:
+        Fn::ImportValue: 
+          !Sub ${PululappEnv}-auth-default-id
+      OperationName: !Sub ${ServiceName}-profile-${PululappEnv}
+      RouteKey: !Ref ProfileRoute
+      Target: !Join
+        - /
+        - - integrations
+          - !Ref ProfileServiceAPIGatewayIntegration
+
+  APIGatewayIntegrationProfileProxy:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: 
+        Fn::ImportValue: 
+            !Sub ${PululappEnv}-central-gateway-id
+      AuthorizationType: CUSTOM
+      AuthorizerId:
+        Fn::ImportValue: 
+          !Sub ${PululappEnv}-auth-default-id
+      OperationName: !Sub ${ServiceName}-profile-${PululappEnv}-proxy
+      RouteKey: !Sub ${ProfileRoute}/{proxy+}
+      Target: !Join
+        - /
+        - - integrations
+          - !Ref ProfileServiceAPIGatewayIntegration
 

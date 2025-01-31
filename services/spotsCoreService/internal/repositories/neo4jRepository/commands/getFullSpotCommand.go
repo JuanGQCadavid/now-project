@@ -1,6 +1,8 @@
 package commands
 
 import (
+	_ "embed"
+
 	"github.com/JuanGQCadavid/now-project/services/pkgs/common/logs"
 	"github.com/JuanGQCadavid/now-project/services/spotsCoreService/internal/core/domain"
 	"github.com/neo4j/neo4j-go-driver/v4/neo4j"
@@ -11,35 +13,17 @@ type GetFullSpotCommand struct {
 	spotId string
 }
 
-func (command *GetFullSpotCommand) Run(tr neo4j.Transaction) (interface{}, error) {
+var (
+	//go:embed queries/getFullSpotCommand.cypher
+	getFullSpotCommand string
+)
 
-	var cypherQ string = `
-	MATCH
-		(host:Person)-[:OWNS]->(event:Event {UUID : $spotId})-[:ON]->(place:Place)
-	WHERE NOT 
-		(event)-[:IS_DELETED]->(event)
-	OPTIONAL MATCH 
-		(tags:Topic)-[tagged:TAGGED]->(event)
-	RETURN
-		event.description as event_desc,
-		event.name as event_name,
-		event.maximunCapacty as event_max_capacity,
-		event.UUID as event_UUID,
-		event.emoji as event_emoji,
-		place.name as place_name,
-		place.lon as place_lon,
-		place.mapProviderId as place_provider_id,
-		place.lat as place_lat,
-		host.id as host_id,
-		host.name as host_name,
-		collect(tags.tag) as tag_tags,
-		collect(tagged.isPrincipal) as tag_principals
-	`
+func (command *GetFullSpotCommand) Run(tr neo4j.Transaction) (interface{}, error) {
 
 	cyperParams := map[string]interface{}{"spotId": command.spotId}
 
-	logs.Info.Println(cypherQ)
-	result, err := tr.Run(cypherQ, cyperParams)
+	logs.Info.Println(getFullSpotCommand)
+	result, err := tr.Run(getFullSpotCommand, cyperParams)
 
 	if err != nil {
 		logs.Error.Println("Error at running!", err)
@@ -89,9 +73,6 @@ func (command *GetFullSpotCommand) getSpotDataFromResult(record *db.Record) doma
 		}
 
 	}
-
-	logs.Info.Printf("%+v", record)
-
 	return domain.Spot{
 		EventInfo: domain.Event{
 			Name:           event_name.(string),

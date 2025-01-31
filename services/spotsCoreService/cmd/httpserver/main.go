@@ -46,5 +46,6 @@ func main() {
 	)
 
 	httpHandler.SetRouter(router)
-	router.Run("localhost:8000")
+	// router.Run("localhost:8000")
+	router.Run(":8000")
 }

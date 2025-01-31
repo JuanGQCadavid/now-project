@@ -23,7 +23,7 @@ func NewUserServiceHandler(userService ports.UserService) *UserServiceHandler {
 }
 
 func (hdl *UserServiceHandler) ConfigureRouter(router *gin.Engine) {
-	router.GET("/user/:userId", hdl.GetUserProfile)
+	router.GET("/profile/:userId", hdl.GetUserProfile)
 
 	router.POST("/user/init/login", hdl.InitLoging)
 	router.POST("/user/init/singup", hdl.InitSingUp)
