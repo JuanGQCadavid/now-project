@@ -97,6 +97,11 @@ Resources:
                       !Sub ${PululappEnv}-tokens-table-arn
                   - Fn::ImportValue:
                       !Sub ${PululappEnv}-users-table-arn
+                  - Fn::Sub:
+                    - "${TABLE_ARN}/index/*"
+                    - TABLE_ARN: 
+                        Fn::ImportValue:
+                          !Sub ${PululappEnv}-users-table-arn
         - PolicyName: !Sub ${ServiceName}-sns-notificator-${PululappEnv}
           PolicyDocument:
             Version: '2012-10-17'
@@ -136,6 +141,9 @@ Resources:
           tokensTableName:
             Fn::ImportValue:
               !Sub ${PululappEnv}-tokens-table-id
+          userIndexName: 
+            Fn::ImportValue:
+              !Sub ${PululappEnv}-users-id
       FunctionName: !Sub ${ServiceName}-${PululappEnv}
       MemorySize: !FindInMap ['ServiceConfig', !Ref PululappEnv, 'RAM']
       PackageType: Image
