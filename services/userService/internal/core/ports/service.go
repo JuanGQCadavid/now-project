@@ -3,6 +3,7 @@ package ports
 import (
 	"errors"
 
+	authDomain "github.com/JuanGQCadavid/now-project/services/authService/core/core/domain"
 	"github.com/JuanGQCadavid/now-project/services/userService/internal/core/domain"
 )
 
@@ -15,6 +16,11 @@ var (
 )
 
 type UserService interface {
+	// Fetch user info
+	// If the user token is the same user then
+	// Return all data, if not only public data
+	GetUserInfo(user *authDomain.UserDetails, userId string) (*domain.UserProfile, error)
+
 	// user/init/login
 
 	// Look up in user registry, if user phone nomber is already stored then it a OTP

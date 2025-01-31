@@ -22,15 +22,42 @@ type DynamoDBUserRepository struct {
 	svc        *dynamodb.DynamoDB
 	tableName  string
 	maxRetries int
+	indexName  string
 }
 
-func NewDynamoDBUserRepository(tableName string, session *session.Session) *DynamoDBUserRepository {
+const (
+	OPT_ATTRIBUTE_NAME       string = "OTP"
+	DEFAULT_USER_ID_KEY_NAME string = "UserId"
+)
+
+func NewDynamoDBUserRepository(tableName string, indexName string, session *session.Session) *DynamoDBUserRepository {
 	svc := dynamodb.New(session)
 	return &DynamoDBUserRepository{
 		tableName:  tableName,
 		svc:        svc,
 		maxRetries: 3,
+		indexName:  indexName,
 	}
+}
+
+// Fetch User profile from repository
+// Returns:
+//   - ErrUserDoesNotExist
+//   - UserProfile
+func (repo *DynamoDBUserRepository) GetUserProfile(userId string) (*domain.UserProfile, error) {
+	var (
+		userProfile *domain.UserProfile = &domain.UserProfile{}
+	)
+	if err := DynamoQueryOneAndMapTo(DEFAULT_USER_ID_KEY_NAME, userId, repo.tableName, repo.indexName, userProfile, repo.svc); err != nil {
+		logs.Error.Println("We fail to fetch user profile, dynamodb: ", err.Error())
+		return nil, ports.ErrOnDynamoDB
+	}
+
+	if len(userProfile.UserName) == 0 {
+		return nil, ports.ErrUserNotFound
+	}
+
+	return userProfile, nil
 }
 
 // Fetch user data from repository
@@ -103,7 +130,7 @@ func (repo *DynamoDBUserRepository) CreateUser(phoneNumber, userName string) (*d
 func (repo *DynamoDBUserRepository) AddOTP(phoneNumber string, otp []int, ttl time.Duration) error {
 	now := time.Now()
 
-	return repo.updateSingleAttribute(phoneNumber, "OTP", &UserOTP{
+	return repo.updateSingleAttribute(phoneNumber, OPT_ATTRIBUTE_NAME, &UserOTP{
 		OTP:      otp,
 		TTL:      now.Add(ttl),
 		Attempts: 0,
@@ -143,18 +170,18 @@ func (repo *DynamoDBUserRepository) ValidateOTP(phoneNumber string, otp []int) e
 	}
 
 	logs.Info.Println("Code validation goes well")
-	return repo.cleanOTP(phoneNumber, otpFromRepo)
+	return repo.cleanOTP(phoneNumber)
 }
 
-func (repo *DynamoDBUserRepository) cleanOTP(phoneNumber string, userOTP *UserOTP) error {
-	return repo.updateSingleAttribute(phoneNumber, "OTP", nil)
+func (repo *DynamoDBUserRepository) cleanOTP(phoneNumber string) error {
+	return repo.updateSingleAttribute(phoneNumber, OPT_ATTRIBUTE_NAME, nil)
 }
 
 func (repo *DynamoDBUserRepository) punishOTP(phoneNumber string, userOTP *UserOTP) error {
 	userOTP.Attempts++
 
 	if userOTP.Attempts >= repo.maxRetries {
-		if err := repo.cleanOTP(phoneNumber, userOTP); err != nil {
+		if err := repo.cleanOTP(phoneNumber); err != nil {
 			logs.Error.Println("We fail to clean the code")
 			return err
 		}
@@ -163,7 +190,7 @@ func (repo *DynamoDBUserRepository) punishOTP(phoneNumber string, userOTP *UserO
 		return ports.ErrMaxRetriesOnTOP
 	}
 
-	if err := repo.updateSingleAttribute(phoneNumber, "OTP", userOTP); err != nil {
+	if err := repo.updateSingleAttribute(phoneNumber, OPT_ATTRIBUTE_NAME, userOTP); err != nil {
 		return err
 	}
 
@@ -231,7 +258,7 @@ func (repo *DynamoDBUserRepository) getAndMapTo(phoneNumber string, mapTo any) e
 	}
 
 	out, err := repo.svc.GetItem(&dynamodb.GetItemInput{
-		// ProjectionExpression: aws.String("OTP"),
+		// ProjectionExpression: aws.String(OPT_ATTRIBUTE_NAME),
 		// ConsistentRead:       aws.Bool(true),
 		TableName: aws.String(repo.tableName),
 		Key:       key,

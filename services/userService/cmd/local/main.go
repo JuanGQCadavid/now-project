@@ -25,8 +25,9 @@ func init() {
 
 	userTableName := getenv("usersTableName", "Users")
 	tokensTableName := getenv("tokensTableName", "Tokens")
+	userIndexName := getenv("userIndexName", "UserId-index")
 
-	var userRepository ports.UserRepository = users.NewDynamoDBUserRepository(userTableName, session)
+	var userRepository ports.UserRepository = users.NewDynamoDBUserRepository(userTableName, userIndexName, session)
 	var tokensRepository ports.TokensRepository = tokens.NewDynamoDBTokensRepository(tokensTableName, session)
 	var defaultNotificator ports.Notificator = localnotificator.LocalNotificator{}
 	var snsNotificator ports.Notificator = awssns.NewSNSNotificator(session)

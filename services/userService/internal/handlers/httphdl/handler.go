@@ -7,6 +7,9 @@ import (
 	"github.com/JuanGQCadavid/now-project/services/userService/internal/core/domain"
 	"github.com/JuanGQCadavid/now-project/services/userService/internal/core/ports"
 	"github.com/gin-gonic/gin"
+
+	authDomain "github.com/JuanGQCadavid/now-project/services/authService/core/core/domain"
+	authUtils "github.com/JuanGQCadavid/now-project/services/authService/core/utils"
 )
 
 type UserServiceHandler struct {
@@ -20,11 +23,42 @@ func NewUserServiceHandler(userService ports.UserService) *UserServiceHandler {
 }
 
 func (hdl *UserServiceHandler) ConfigureRouter(router *gin.Engine) {
+	router.GET("/user/:userId", hdl.GetUserProfile)
+
 	router.POST("/user/init/login", hdl.InitLoging)
 	router.POST("/user/init/singup", hdl.InitSingUp)
 
 	router.POST("/user/validate/otp", hdl.ValidateProcess)
 	router.POST("/user/validate/otp/resent", hdl.GenerateNewOTP)
+}
+
+// /user/:userId
+func (hdl *UserServiceHandler) GetUserProfile(context *gin.Context) {
+	id := context.Param("userId")
+	if len(id) == 0 {
+		context.AbortWithStatusJSON(http.StatusBadRequest, ErrorMessage{
+			Message: "Missing userId path param",
+		})
+		return
+	}
+
+	var userDetails authDomain.UserDetails = *authUtils.GetHeaders(context.Request.Header)
+
+	profile, err := hdl.userService.GetUserInfo(&userDetails, id)
+
+	if err != nil {
+		if err == ports.ErrUserNotFound {
+			context.AbortWithStatus(http.StatusNotFound)
+			return
+		}
+		context.AbortWithStatusJSON(http.StatusInternalServerError, ErrorMessage{
+			Message:       "We face an error while fetching the profile",
+			InternalError: err.Error(),
+		})
+		return
+	}
+
+	context.JSON(http.StatusOK, profile)
 }
 
 // user/init/login

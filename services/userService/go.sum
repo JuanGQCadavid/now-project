@@ -1,9 +1,17 @@
+github.com/JuanGQCadavid/now-project/services/authService v0.0.0-20250128083356-e02634309c47 h1:o0UBSu7L1UnpzigRpTB2i67LcleQwFEG8XkVPImnYZQ=
+github.com/JuanGQCadavid/now-project/services/authService v0.0.0-20250128083356-e02634309c47/go.mod h1:oPPCEU2iQ4CuyM8XfapPzAU0tt22Ptd/s0eDL9OAwYw=
 github.com/JuanGQCadavid/now-project/services/pkgs/common v0.0.0-20240720092858-56ae328b366c h1:jrhOpLITqUmSLmc6Bgf6xrBHjjddqA7BjvYgTMl/TFo=
 github.com/JuanGQCadavid/now-project/services/pkgs/common v0.0.0-20240720092858-56ae328b366c/go.mod h1:Z+TBa4qMSueBnxIpbnx633Di6Fx6pvqvEh2qQKtZdBY=
 github.com/aws/aws-lambda-go v1.41.0 h1:l/5fyVb6Ud9uYd411xdHZzSf2n86TakxzpvIoz7l+3Y=
 github.com/aws/aws-lambda-go v1.41.0/go.mod h1:jwFe2KmMsHmffA1X2R09hH6lFzJQxzI8qK17ewzbQMM=
+github.com/aws/aws-lambda-go v1.46.0/go.mod h1:dpMpZgvWx5vuQJfBt0zqBha60q7Dd7RfgJv23DymV8A=
+github.com/aws/aws-lambda-go v1.47.0 h1:0H8s0vumYx/YKs4sE7YM0ktwL2eWse+kfopsRI1sXVI=
+github.com/aws/aws-lambda-go v1.47.0/go.mod h1:dpMpZgvWx5vuQJfBt0zqBha60q7Dd7RfgJv23DymV8A=
 github.com/aws/aws-sdk-go v1.48.0 h1:1SeJ8agckRDQvnSCt1dGZYAwUaoD2Ixj6IaXB4LCv8Q=
 github.com/aws/aws-sdk-go v1.48.0/go.mod h1:LF8svs817+Nz+DmiMQKTO3ubZ/6IaTpq3TjupRn3Eqk=
+github.com/aws/aws-sdk-go v1.51.21/go.mod h1:LF8svs817+Nz+DmiMQKTO3ubZ/6IaTpq3TjupRn3Eqk=
+github.com/aws/aws-sdk-go v1.55.6 h1:cSg4pvZ3m8dgYcgqB97MrcdjUmZ1BeMYKUxMMB89IPk=
+github.com/aws/aws-sdk-go v1.55.6/go.mod h1:eRwEWoyTWFMVYVQzKMNHWP5/RV4xIUGMQfXQHfHkpNU=
 github.com/awslabs/aws-lambda-go-api-proxy v0.16.0 h1:7bVD5nk2sA6RQnBUlrZBz88T9GxYl+ycRez/zAWBApo=
 github.com/awslabs/aws-lambda-go-api-proxy v0.16.0/go.mod h1:DPHlODrQDzpZ5IGRueOmrXthxReqhHHIAnHpI2nsaTw=
 github.com/bytedance/sonic v1.5.0/go.mod h1:ED5hyg4y6t3/9Ku1R6dU/4KyJ48DZ4jPhfY1O2AihPM=

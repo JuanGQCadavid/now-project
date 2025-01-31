@@ -23,6 +23,7 @@ var ginLambda *ginadapter.GinLambda
 
 const (
 	USER_TABLE_ENV_NAME   string = "usersTableName"
+	USER_INDEX_ENV_NAME   string = "userIndexName"
 	TOKENS_TABLE_ENV_NAME string = "tokensTableName"
 )
 
@@ -34,8 +35,9 @@ func init() {
 
 	userTableName := getenv(USER_TABLE_ENV_NAME, "Users")
 	tokensTableName := getenv(TOKENS_TABLE_ENV_NAME, "Tokens")
+	userIndexName := getenv(USER_INDEX_ENV_NAME, "UserId-index")
 
-	var userRepository ports.UserRepository = users.NewDynamoDBUserRepository(userTableName, session)
+	var userRepository ports.UserRepository = users.NewDynamoDBUserRepository(userTableName, userIndexName, session)
 	var tokensRepository ports.TokensRepository = tokens.NewDynamoDBTokensRepository(tokensTableName, session)
 
 	var defaultNotificator ports.Notificator = localnotificator.LocalNotificator{}

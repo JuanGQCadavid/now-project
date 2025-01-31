@@ -9,6 +9,30 @@ type User struct {
 	UserId         string `json:"userId" dynamodbav:"UserId"`
 	PhoneSignature string `json:"phoneSignature" dynamodbav:"PhoneSignature,omitempty"`
 }
+
+type UserProfile struct {
+	UserName string `json:"user_name,omitempty" dynamodbav:"Name"`
+
+	// Per user atribute there should be a flag for specifying wheter it is public
+	FirstName             string `json:"first_name,omitempty" dynamodbav:"FirstName"`
+	LastName              string `json:"last_name,omitempty" dynamodbav:"LastName"`
+	IsFirstLastNamePublic bool   `json:"is_first_last_name_public,omitempty" dynamodbav:"IsFirstLastNamePublic"`
+
+	// Phone number
+	PhoneNumber         string `json:"phone_number,omitempty" dynamodbav:"PhoneNumber"`
+	IsPhoneNumberPublic bool   `json:"is_phone_number_public,omitempty" dynamodbav:"IsPhoneNumberPublic"`
+}
+
+func (up *UserProfile) CleanSensitiveData() {
+	if !up.IsFirstLastNamePublic {
+		up.FirstName = ""
+		up.LastName = ""
+	}
+	if !up.IsPhoneNumberPublic {
+		up.PhoneNumber = ""
+	}
+}
+
 type Tokens struct {
 	TokenId           string    `json:"tokenId" dynamodbav:"TokenId"`
 	UserID            string    `json:"userId" dynamodbav:"UserID"`

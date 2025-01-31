@@ -15,6 +15,7 @@ var (
 	ErrMaxRetriesOnTOP     = errors.New("err max retries in OTP reached")
 	ErrOTPTTLStillLive     = errors.New("err the OTP is still alive")
 	ErrOTPNotAlive         = errors.New("err the OTP is not alive")
+	ErrOnDynamoDB          = errors.New("err while fetching/marshaling the response fom dynamodb")
 )
 
 // phoneNumber string Key | name string | validated bool | UserId tring | phoneSiganuture string | otp string/[]int | otp_ttl string
@@ -22,6 +23,12 @@ var (
 type UserRepository interface {
 	// Fetch user data from repository
 	GetUser(phoneNumber string) (*domain.User, error)
+
+	// Fetch User profile from repository
+	// Returns:
+	//	- ErrUserDoesNotExist
+	// 	- UserProfile
+	GetUserProfile(userId string) (*domain.UserProfile, error)
 
 	// Returns latest OTP generation timestap
 	GetLastOTPGenerationTimestap(phoneNumber string) (*time.Time, error)

@@ -8,6 +8,8 @@ import (
 	"github.com/JuanGQCadavid/now-project/services/pkgs/common/logs"
 	"github.com/JuanGQCadavid/now-project/services/userService/internal/core/domain"
 	"github.com/JuanGQCadavid/now-project/services/userService/internal/core/ports"
+
+	authDomain "github.com/JuanGQCadavid/now-project/services/authService/core/core/domain"
 )
 
 const (
@@ -37,6 +39,27 @@ func NewService(userRepository ports.UserRepository, notificators map[domain.Not
 		notificators:     notificators,
 		tokensRepository: tokensRepository,
 	}
+}
+
+func (svc *Service) GetUserInfo(user *authDomain.UserDetails, userId string) (*domain.UserProfile, error) {
+	userProfile, err := svc.userRepository.GetUserProfile(userId)
+
+	if err != nil {
+		if err != ports.ErrUserDoesNotExist {
+			return nil, ports.ErrInternalError
+		}
+		logs.Error.Println("We found an error while fetching the user profile for id [", userId, "] err:", err.Error())
+		return nil, err
+	}
+
+	logs.Info.Println(userProfile)
+
+	if user.UserID == authDomain.AnonymousUser.UserID || userId != user.UserID {
+		userProfile.CleanSensitiveData()
+		return userProfile, nil
+	}
+
+	return userProfile, nil
 }
 
 /*
