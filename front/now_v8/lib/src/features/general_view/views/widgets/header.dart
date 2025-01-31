@@ -1,9 +1,7 @@
-import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:now_v8/src/core/models/user.dart';
 import 'package:now_v8/src/core/widgets/buttons.dart';
-import 'package:now_v8/src/features/general_view/views_model/providers.dart';
 import 'package:now_v8/src/services/core/providers.dart';
 
 class GeneralViewHeader extends ConsumerWidget {
@@ -12,11 +10,11 @@ class GeneralViewHeader extends ConsumerWidget {
   final void Function() onRequestToGoToMenu;
 
   const GeneralViewHeader({
-    Key? key,
+    super.key,
     required this.onRequestToGoToMenu,
     required this.onRequestToGoToProfile,
     required this.onRequestToLogin,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -24,11 +22,12 @@ class GeneralViewHeader extends ConsumerWidget {
 
     return userDetails.fold(
       (l) => DefaultHeader(
-          userHeader: UserLogged(
-        userDetails: l,
-        onMenuTap: onRequestToGoToMenu,
-        onUserTap: onRequestToGoToProfile,
-      )),
+        userHeader: UserLogged(
+          userDetails: l,
+          onMenuTap: onRequestToGoToMenu,
+          onUserTap: onRequestToGoToProfile,
+        ),
+      ),
       (r) => DefaultHeader(
         userHeader: NotLoggedHeader(
           onMenuTap: onRequestToGoToMenu,
@@ -75,13 +74,15 @@ class UserLogged extends StatelessWidget {
   Widget build(BuildContext context) {
     String greetingMessage = "Welcome back, \n ${userDetails.userName}!";
 
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        IconButton(onPressed: onMenuTap, icon: const Icon(Icons.menu)),
-        Text(greetingMessage),
-        UserLoggedButton(onTap: onUserTap, displayName: userDetails.userName)
-      ],
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(greetingMessage),
+          UserLoggedButton(onTap: onUserTap, displayName: userDetails.userName)
+        ],
+      ),
     );
   }
 }

@@ -77,6 +77,9 @@ class _$MapStatusCopyWithImpl<$Res, $Val extends MapStatus>
   final $Val _value;
   // ignore: unused_field
   final $Res Function($Val) _then;
+
+  /// Create a copy of MapStatus
+  /// with the given fields replaced by the non-null parameter values.
 }
 
 /// @nodoc
@@ -93,6 +96,9 @@ class __$$MovingOnMapImplCopyWithImpl<$Res>
   __$$MovingOnMapImplCopyWithImpl(
       _$MovingOnMapImpl _value, $Res Function(_$MovingOnMapImpl) _then)
       : super(_value, _then);
+
+  /// Create a copy of MapStatus
+  /// with the given fields replaced by the non-null parameter values.
 }
 
 /// @nodoc
@@ -108,7 +114,7 @@ class _$MovingOnMapImpl with DiagnosticableTreeMixin implements MovingOnMap {
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty('type', 'MapStatus.movingOnMap'));
+    properties..add(DiagnosticsProperty('type', 'MapStatus.movingOnMap'));
   }
 
   @override
@@ -207,6 +213,9 @@ class __$$MovingIdleImplCopyWithImpl<$Res>
   __$$MovingIdleImplCopyWithImpl(
       _$MovingIdleImpl _value, $Res Function(_$MovingIdleImpl) _then)
       : super(_value, _then);
+
+  /// Create a copy of MapStatus
+  /// with the given fields replaced by the non-null parameter values.
 }
 
 /// @nodoc
@@ -222,7 +231,7 @@ class _$MovingIdleImpl with DiagnosticableTreeMixin implements MovingIdle {
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty('type', 'MapStatus.movingIdle'));
+    properties..add(DiagnosticsProperty('type', 'MapStatus.movingIdle'));
   }
 
   @override
@@ -321,6 +330,9 @@ class __$$MovingStartedImplCopyWithImpl<$Res>
   __$$MovingStartedImplCopyWithImpl(
       _$MovingStartedImpl _value, $Res Function(_$MovingStartedImpl) _then)
       : super(_value, _then);
+
+  /// Create a copy of MapStatus
+  /// with the given fields replaced by the non-null parameter values.
 }
 
 /// @nodoc
@@ -338,7 +350,7 @@ class _$MovingStartedImpl
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty('type', 'MapStatus.movingStarted'));
+    properties..add(DiagnosticsProperty('type', 'MapStatus.movingStarted'));
   }
 
   @override
@@ -429,7 +441,9 @@ mixin _$MapState {
   double get zoom => throw _privateConstructorUsedError;
   MapStatus get status => throw _privateConstructorUsedError;
 
-  @JsonKey(ignore: true)
+  /// Create a copy of MapState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $MapStateCopyWith<MapState> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -454,6 +468,8 @@ class _$MapStateCopyWithImpl<$Res, $Val extends MapState>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of MapState
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -477,6 +493,8 @@ class _$MapStateCopyWithImpl<$Res, $Val extends MapState>
     ) as $Val);
   }
 
+  /// Create a copy of MapState
+  /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $MapStatusCopyWith<$Res> get status {
@@ -508,6 +526,8 @@ class __$$MapStateImplCopyWithImpl<$Res>
       _$MapStateImpl _value, $Res Function(_$MapStateImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of MapState
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -577,7 +597,9 @@ class _$MapStateImpl with DiagnosticableTreeMixin implements _MapState {
   int get hashCode =>
       Object.hash(runtimeType, lastPositionKnowed, zoom, status);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of MapState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$MapStateImplCopyWith<_$MapStateImpl> get copyWith =>
@@ -596,8 +618,11 @@ abstract class _MapState implements MapState {
   double get zoom;
   @override
   MapStatus get status;
+
+  /// Create a copy of MapState
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$MapStateImplCopyWith<_$MapStateImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

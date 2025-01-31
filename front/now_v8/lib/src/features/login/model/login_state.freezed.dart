@@ -20,7 +20,9 @@ mixin _$OnStateConfig {
   bool get showCodeInput => throw _privateConstructorUsedError;
   bool get showUserName => throw _privateConstructorUsedError;
 
-  @JsonKey(ignore: true)
+  /// Create a copy of OnStateConfig
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $OnStateConfigCopyWith<OnStateConfig> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -44,6 +46,8 @@ class _$OnStateConfigCopyWithImpl<$Res, $Val extends OnStateConfig>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of OnStateConfig
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -87,6 +91,8 @@ class __$$OnStateConfigImplCopyWithImpl<$Res>
       _$OnStateConfigImpl _value, $Res Function(_$OnStateConfigImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of OnStateConfig
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -160,7 +166,9 @@ class _$OnStateConfigImpl
   int get hashCode =>
       Object.hash(runtimeType, showPhoneNumber, showCodeInput, showUserName);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of OnStateConfig
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$OnStateConfigImplCopyWith<_$OnStateConfigImpl> get copyWith =>
@@ -179,8 +187,11 @@ abstract class _OnStateConfig implements OnStateConfig {
   bool get showCodeInput;
   @override
   bool get showUserName;
+
+  /// Create a copy of OnStateConfig
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$OnStateConfigImplCopyWith<_$OnStateConfigImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -193,7 +204,9 @@ mixin _$LoginState {
   String get errorMessage => throw _privateConstructorUsedError;
   OnStateConfig get stateConfig => throw _privateConstructorUsedError;
 
-  @JsonKey(ignore: true)
+  /// Create a copy of LoginState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $LoginStateCopyWith<LoginState> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -224,6 +237,8 @@ class _$LoginStateCopyWithImpl<$Res, $Val extends LoginState>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of LoginState
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -257,6 +272,8 @@ class _$LoginStateCopyWithImpl<$Res, $Val extends LoginState>
     ) as $Val);
   }
 
+  /// Create a copy of LoginState
+  /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $OnStateConfigCopyWith<$Res> get stateConfig {
@@ -293,6 +310,8 @@ class __$$LoginStateImplCopyWithImpl<$Res>
       _$LoginStateImpl _value, $Res Function(_$LoginStateImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of LoginState
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -385,7 +404,9 @@ class _$LoginStateImpl with DiagnosticableTreeMixin implements _LoginState {
   int get hashCode => Object.hash(
       runtimeType, phoneNumber, userName, onState, errorMessage, stateConfig);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of LoginState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$LoginStateImplCopyWith<_$LoginStateImpl> get copyWith =>
@@ -410,8 +431,11 @@ abstract class _LoginState implements LoginState {
   String get errorMessage;
   @override
   OnStateConfig get stateConfig;
+
+  /// Create a copy of LoginState
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$LoginStateImplCopyWith<_$LoginStateImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

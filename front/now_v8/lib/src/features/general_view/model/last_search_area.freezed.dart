@@ -19,7 +19,9 @@ mixin _$LastSearchArea {
   MapState get mapState => throw _privateConstructorUsedError;
   bool get jump => throw _privateConstructorUsedError;
 
-  @JsonKey(ignore: true)
+  /// Create a copy of LastSearchArea
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $LastSearchAreaCopyWith<LastSearchArea> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -45,6 +47,8 @@ class _$LastSearchAreaCopyWithImpl<$Res, $Val extends LastSearchArea>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of LastSearchArea
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -63,6 +67,8 @@ class _$LastSearchAreaCopyWithImpl<$Res, $Val extends LastSearchArea>
     ) as $Val);
   }
 
+  /// Create a copy of LastSearchArea
+  /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $MapStateCopyWith<$Res> get mapState {
@@ -94,6 +100,8 @@ class __$$MapStateImplCopyWithImpl<$Res>
       _$MapStateImpl _value, $Res Function(_$MapStateImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of LastSearchArea
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -141,7 +149,9 @@ class _$MapStateImpl implements _MapState {
   @override
   int get hashCode => Object.hash(runtimeType, mapState, jump);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of LastSearchArea
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$MapStateImplCopyWith<_$MapStateImpl> get copyWith =>
@@ -157,8 +167,11 @@ abstract class _MapState implements LastSearchArea {
   MapState get mapState;
   @override
   bool get jump;
+
+  /// Create a copy of LastSearchArea
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$MapStateImplCopyWith<_$MapStateImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

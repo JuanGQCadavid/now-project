@@ -102,6 +102,9 @@ class _$BackendErrorsCopyWithImpl<$Res, $Val extends BackendErrors>
   final $Val _value;
   // ignore: unused_field
   final $Res Function($Val) _then;
+
+  /// Create a copy of BackendErrors
+  /// with the given fields replaced by the non-null parameter values.
 }
 
 /// @nodoc
@@ -118,6 +121,9 @@ class __$$InternalErrorImplCopyWithImpl<$Res>
   __$$InternalErrorImplCopyWithImpl(
       _$InternalErrorImpl _value, $Res Function(_$InternalErrorImpl) _then)
       : super(_value, _then);
+
+  /// Create a copy of BackendErrors
+  /// with the given fields replaced by the non-null parameter values.
 }
 
 /// @nodoc
@@ -135,7 +141,7 @@ class _$InternalErrorImpl
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty('type', 'BackendErrors.internalError'));
+    properties..add(DiagnosticsProperty('type', 'BackendErrors.internalError'));
   }
 
   @override
@@ -258,6 +264,9 @@ class __$$ResourceNotFoundImplCopyWithImpl<$Res>
   __$$ResourceNotFoundImplCopyWithImpl(_$ResourceNotFoundImpl _value,
       $Res Function(_$ResourceNotFoundImpl) _then)
       : super(_value, _then);
+
+  /// Create a copy of BackendErrors
+  /// with the given fields replaced by the non-null parameter values.
 }
 
 /// @nodoc
@@ -276,7 +285,7 @@ class _$ResourceNotFoundImpl
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
     properties
-        .add(DiagnosticsProperty('type', 'BackendErrors.resourceNotFound'));
+      ..add(DiagnosticsProperty('type', 'BackendErrors.resourceNotFound'));
   }
 
   @override
@@ -399,6 +408,9 @@ class __$$ServiceUnavailableImplCopyWithImpl<$Res>
   __$$ServiceUnavailableImplCopyWithImpl(_$ServiceUnavailableImpl _value,
       $Res Function(_$ServiceUnavailableImpl) _then)
       : super(_value, _then);
+
+  /// Create a copy of BackendErrors
+  /// with the given fields replaced by the non-null parameter values.
 }
 
 /// @nodoc
@@ -417,7 +429,7 @@ class _$ServiceUnavailableImpl
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
     properties
-        .add(DiagnosticsProperty('type', 'BackendErrors.serviceUnavailable'));
+      ..add(DiagnosticsProperty('type', 'BackendErrors.serviceUnavailable'));
   }
 
   @override
@@ -540,6 +552,9 @@ class __$$NoInternetConnectionImplCopyWithImpl<$Res>
   __$$NoInternetConnectionImplCopyWithImpl(_$NoInternetConnectionImpl _value,
       $Res Function(_$NoInternetConnectionImpl) _then)
       : super(_value, _then);
+
+  /// Create a copy of BackendErrors
+  /// with the given fields replaced by the non-null parameter values.
 }
 
 /// @nodoc
@@ -558,7 +573,7 @@ class _$NoInternetConnectionImpl
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
     properties
-        .add(DiagnosticsProperty('type', 'BackendErrors.noInternetConnection'));
+      ..add(DiagnosticsProperty('type', 'BackendErrors.noInternetConnection'));
   }
 
   @override
@@ -682,6 +697,9 @@ class __$$BadResponseFormatImplCopyWithImpl<$Res>
   __$$BadResponseFormatImplCopyWithImpl(_$BadResponseFormatImpl _value,
       $Res Function(_$BadResponseFormatImpl) _then)
       : super(_value, _then);
+
+  /// Create a copy of BackendErrors
+  /// with the given fields replaced by the non-null parameter values.
 }
 
 /// @nodoc
@@ -700,7 +718,7 @@ class _$BadResponseFormatImpl
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
     properties
-        .add(DiagnosticsProperty('type', 'BackendErrors.badResponseFormat'));
+      ..add(DiagnosticsProperty('type', 'BackendErrors.badResponseFormat'));
   }
 
   @override
@@ -823,6 +841,9 @@ class __$$UnknownErrorImplCopyWithImpl<$Res>
   __$$UnknownErrorImplCopyWithImpl(
       _$UnknownErrorImpl _value, $Res Function(_$UnknownErrorImpl) _then)
       : super(_value, _then);
+
+  /// Create a copy of BackendErrors
+  /// with the given fields replaced by the non-null parameter values.
 }
 
 /// @nodoc
@@ -838,7 +859,7 @@ class _$UnknownErrorImpl with DiagnosticableTreeMixin implements UnknownError {
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty('type', 'BackendErrors.unknownError'));
+    properties..add(DiagnosticsProperty('type', 'BackendErrors.unknownError'));
   }
 
   @override
@@ -964,6 +985,8 @@ class __$$ClientErrorImplCopyWithImpl<$Res>
       _$ClientErrorImpl _value, $Res Function(_$ClientErrorImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of BackendErrors
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -1011,7 +1034,9 @@ class _$ClientErrorImpl with DiagnosticableTreeMixin implements ClientError {
   @override
   int get hashCode => Object.hash(runtimeType, errorMessage);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of BackendErrors
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$ClientErrorImplCopyWith<_$ClientErrorImpl> get copyWith =>
@@ -1115,7 +1140,10 @@ abstract class ClientError implements BackendErrors {
       _$ClientErrorImpl;
 
   ErrorMessage get errorMessage;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of BackendErrors
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$ClientErrorImplCopyWith<_$ClientErrorImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

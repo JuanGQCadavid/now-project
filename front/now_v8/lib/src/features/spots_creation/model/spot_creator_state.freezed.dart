@@ -22,7 +22,9 @@ mixin _$SpotCreatorState {
   LongSpot get spot => throw _privateConstructorUsedError;
   String get onError => throw _privateConstructorUsedError;
 
-  @JsonKey(ignore: true)
+  /// Create a copy of SpotCreatorState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $SpotCreatorStateCopyWith<SpotCreatorState> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -53,6 +55,8 @@ class _$SpotCreatorStateCopyWithImpl<$Res, $Val extends SpotCreatorState>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of SpotCreatorState
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -86,6 +90,8 @@ class _$SpotCreatorStateCopyWithImpl<$Res, $Val extends SpotCreatorState>
     ) as $Val);
   }
 
+  /// Create a copy of SpotCreatorState
+  /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $LongSpotCopyWith<$Res> get spot {
@@ -122,6 +128,8 @@ class __$$SpotCreatorStateImplCopyWithImpl<$Res>
       $Res Function(_$SpotCreatorStateImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of SpotCreatorState
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -214,7 +222,9 @@ class _$SpotCreatorStateImpl
   int get hashCode =>
       Object.hash(runtimeType, onState, totalSteps, actualStep, spot, onError);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of SpotCreatorState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$SpotCreatorStateImplCopyWith<_$SpotCreatorStateImpl> get copyWith =>
@@ -240,8 +250,11 @@ abstract class _SpotCreatorState implements SpotCreatorState {
   LongSpot get spot;
   @override
   String get onError;
+
+  /// Create a copy of SpotCreatorState
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$SpotCreatorStateImplCopyWith<_$SpotCreatorStateImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

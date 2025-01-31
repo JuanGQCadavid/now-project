@@ -19,7 +19,9 @@ mixin _$SimpleState<T> {
   T get value => throw _privateConstructorUsedError;
   SimpleOnState get onState => throw _privateConstructorUsedError;
 
-  @JsonKey(ignore: true)
+  /// Create a copy of SimpleState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $SimpleStateCopyWith<T, SimpleState<T>> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -43,6 +45,8 @@ class _$SimpleStateCopyWithImpl<T, $Res, $Val extends SimpleState<T>>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of SimpleState
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -81,6 +85,8 @@ class __$$SimpleStateImplCopyWithImpl<T, $Res>
       _$SimpleStateImpl<T> _value, $Res Function(_$SimpleStateImpl<T>) _then)
       : super(_value, _then);
 
+  /// Create a copy of SimpleState
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -139,7 +145,9 @@ class _$SimpleStateImpl<T>
   int get hashCode => Object.hash(
       runtimeType, const DeepCollectionEquality().hash(value), onState);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of SimpleState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$SimpleStateImplCopyWith<T, _$SimpleStateImpl<T>> get copyWith =>
@@ -156,8 +164,11 @@ abstract class _SimpleState<T> implements SimpleState<T> {
   T get value;
   @override
   SimpleOnState get onState;
+
+  /// Create a copy of SimpleState
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$SimpleStateImplCopyWith<T, _$SimpleStateImpl<T>> get copyWith =>
       throw _privateConstructorUsedError;
 }

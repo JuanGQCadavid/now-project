@@ -108,6 +108,9 @@ class _$UserErrorCopyWithImpl<$Res, $Val extends UserError>
   final $Val _value;
   // ignore: unused_field
   final $Res Function($Val) _then;
+
+  /// Create a copy of UserError
+  /// with the given fields replaced by the non-null parameter values.
 }
 
 /// @nodoc
@@ -124,6 +127,9 @@ class __$$UserDoesNotExistImplCopyWithImpl<$Res>
   __$$UserDoesNotExistImplCopyWithImpl(_$UserDoesNotExistImpl _value,
       $Res Function(_$UserDoesNotExistImpl) _then)
       : super(_value, _then);
+
+  /// Create a copy of UserError
+  /// with the given fields replaced by the non-null parameter values.
 }
 
 /// @nodoc
@@ -265,6 +271,9 @@ class __$$phoneNumberAlreadyTakenImplCopyWithImpl<$Res>
       _$phoneNumberAlreadyTakenImpl _value,
       $Res Function(_$phoneNumberAlreadyTakenImpl) _then)
       : super(_value, _then);
+
+  /// Create a copy of UserError
+  /// with the given fields replaced by the non-null parameter values.
 }
 
 /// @nodoc
@@ -405,6 +414,9 @@ class __$$otpAliveImplCopyWithImpl<$Res>
   __$$otpAliveImplCopyWithImpl(
       _$otpAliveImpl _value, $Res Function(_$otpAliveImpl) _then)
       : super(_value, _then);
+
+  /// Create a copy of UserError
+  /// with the given fields replaced by the non-null parameter values.
 }
 
 /// @nodoc
@@ -544,6 +556,9 @@ class __$$otpDiedImplCopyWithImpl<$Res>
   __$$otpDiedImplCopyWithImpl(
       _$otpDiedImpl _value, $Res Function(_$otpDiedImpl) _then)
       : super(_value, _then);
+
+  /// Create a copy of UserError
+  /// with the given fields replaced by the non-null parameter values.
 }
 
 /// @nodoc
@@ -683,6 +698,9 @@ class __$$wrongOTPImplCopyWithImpl<$Res>
   __$$wrongOTPImplCopyWithImpl(
       _$wrongOTPImpl _value, $Res Function(_$wrongOTPImpl) _then)
       : super(_value, _then);
+
+  /// Create a copy of UserError
+  /// with the given fields replaced by the non-null parameter values.
 }
 
 /// @nodoc
@@ -822,6 +840,9 @@ class __$$noPendingOTPImplCopyWithImpl<$Res>
   __$$noPendingOTPImplCopyWithImpl(
       _$noPendingOTPImpl _value, $Res Function(_$noPendingOTPImpl) _then)
       : super(_value, _then);
+
+  /// Create a copy of UserError
+  /// with the given fields replaced by the non-null parameter values.
 }
 
 /// @nodoc
@@ -961,6 +982,9 @@ class __$$otpMaxTriesReachedImplCopyWithImpl<$Res>
   __$$otpMaxTriesReachedImplCopyWithImpl(_$otpMaxTriesReachedImpl _value,
       $Res Function(_$otpMaxTriesReachedImpl) _then)
       : super(_value, _then);
+
+  /// Create a copy of UserError
+  /// with the given fields replaced by the non-null parameter values.
 }
 
 /// @nodoc
@@ -1103,6 +1127,8 @@ class __$$InternalErrorImplCopyWithImpl<$Res>
       _$InternalErrorImpl _value, $Res Function(_$InternalErrorImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of UserError
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -1141,7 +1167,9 @@ class _$InternalErrorImpl implements InternalError {
   @override
   int get hashCode => Object.hash(runtimeType, error);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of UserError
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$InternalErrorImplCopyWith<_$InternalErrorImpl> get copyWith =>
@@ -1251,7 +1279,10 @@ abstract class InternalError implements UserError {
   factory InternalError(final String error) = _$InternalErrorImpl;
 
   String get error;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of UserError
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$InternalErrorImplCopyWith<_$InternalErrorImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
