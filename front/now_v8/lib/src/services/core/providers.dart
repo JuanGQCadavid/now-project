@@ -1,18 +1,22 @@
 import 'package:dartz/dartz.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:now_v8/src/core/contracts/auth_service.dart';
 import 'package:now_v8/src/core/contracts/filterService.dart';
 import 'package:now_v8/src/core/contracts/gcp_services.dart';
 import 'package:now_v8/src/core/contracts/key_value_storage.dart';
 import 'package:now_v8/src/core/contracts/location_service.dart';
+import 'package:now_v8/src/core/contracts/profile_service.dart';
 import 'package:now_v8/src/core/contracts/spot_core_service.dart';
 import 'package:now_v8/src/core/contracts/user_service.dart';
+import 'package:now_v8/src/core/models/profile.dart';
 import 'package:now_v8/src/core/models/user.dart';
 import 'package:now_v8/src/services/cmd/auth/local/local_auth_service.dart';
 import 'package:now_v8/src/services/cmd/colors_service/colors_service.dart';
 import 'package:now_v8/src/services/cmd/filter_service/service/filter_service.dart';
 import 'package:now_v8/src/services/cmd/gcp_service/fake/fake_google_cloud_services.dart';
 import 'package:now_v8/src/services/cmd/location_service/fake/location_fake_service.dart';
+import 'package:now_v8/src/services/cmd/profile_service/service/service.dart';
 import 'package:now_v8/src/services/cmd/spot_core_service/service/service.dart';
 import 'package:now_v8/src/services/cmd/storage/key_value/local_hive_storage.dart';
 import 'package:now_v8/src/services/cmd/user_service/service/service.dart';
@@ -37,6 +41,15 @@ final colorsServiceProvider = Provider<ColorsService>(
 final keyValueProvider = Provider.family<IKeyValueStorage, String>(
   (ref, databaseName) {
     return HiveKeyValue<String>(boxName: databaseName);
+  },
+);
+
+final userProfileStateProvider =
+    StateNotifierProvider<UserProfileState, Either<UserProfile, None>>(
+  (ref) {
+    final authstateNotifier = ref.watch(authStateProvider.notifier);
+    // TODO - Implement it
+    throw MissingPluginException;
   },
 );
 
@@ -86,7 +99,6 @@ final userServiceProvider = Provider<IUserService>((ref) {
 final filterServiceProvider = Provider<IFilterService>((ref) {
   final ApiConfig apiConfig = ref.read(apiConfigProvider);
   return FilterService(apiConfig: apiConfig);
-  // return FilterFakeService();
 });
 
 final spotsCoreSeriveProvider = Provider<ISpotCoreService>((ref) {
@@ -95,6 +107,16 @@ final spotsCoreSeriveProvider = Provider<ISpotCoreService>((ref) {
     apiConfig: apiConfig,
     caller: NowServicesCaller(
       baseUrl: apiConfig.getSpotCoreEndpoint(),
+    ),
+  );
+});
+
+final userProfileServiceProvider = Provider<IUserProfileService>((ref) {
+  final ApiConfig apiConfig = ref.read(apiConfigProvider);
+  return UserProfileService(
+    apiConfig: apiConfig,
+    caller: NowServicesCaller(
+      baseUrl: apiConfig.getUserProfileEndpoint(),
     ),
   );
 });

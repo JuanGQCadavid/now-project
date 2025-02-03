@@ -26,7 +26,6 @@ class SpotCoreService implements ISpotCoreService {
     LongSpot spot,
     Token token,
   ) async {
-    print("************************************");
     var response = await caller.request(
       Method.POST,
       createSpotResource,
@@ -34,7 +33,6 @@ class SpotCoreService implements ISpotCoreService {
       headers: token.toJson(),
     );
 
-    print("Token ${token.header} - ${token.value}");
     return response.fold((l) {
       print("Error ${l}");
       return right(l);

@@ -1,46 +1,63 @@
 class ApiConfig {
+  // Service resources
   final String filterServiceResource;
   final String spotServiceResource;
   final String userServiceResource;
-  final String apiGatewayEndpoint;
-  final String stage;
+  final String profileServiceResource;
 
-  ApiConfig(
-      {required this.filterServiceResource,
-      required this.spotServiceResource,
-      required this.userServiceResource,
-      required this.apiGatewayEndpoint,
-      required this.stage});
+  // Endpoint
+  final String apiGatewayEndpoint;
+
+  ApiConfig({
+    // Service resources
+    required this.filterServiceResource,
+    required this.spotServiceResource,
+    required this.userServiceResource,
+    required this.profileServiceResource,
+
+    // Endpoint
+    required this.apiGatewayEndpoint,
+  });
 
   ApiConfig.toProd({
+    // Service resources
     this.filterServiceResource = "/filter",
-    this.apiGatewayEndpoint = "https://prod.pululapp.com",
     this.userServiceResource = "/user",
     this.spotServiceResource = "/spots/core",
-    this.stage = "prod",
+    this.profileServiceResource = "/profile",
+
+    // Endpoint
+    this.apiGatewayEndpoint = "https://prod.pululapp.com",
   });
 
   ApiConfig.toStaging({
+    // Service resources
     this.filterServiceResource = "/filter",
-    this.apiGatewayEndpoint = "https://staging.pululapp.com",
     this.userServiceResource = "/user",
     this.spotServiceResource = "/spots/core",
-    this.stage = "prod",
+    this.profileServiceResource = "/profile",
+
+    // Endpoint
+    this.apiGatewayEndpoint = "https://staging.pululapp.com",
   });
 
   ApiConfig.toLocal({
+    // Service resources
     this.filterServiceResource = ":8000/filter",
-    this.apiGatewayEndpoint = "http://10.97.121.66",
     this.userServiceResource = ":8001/user",
     this.spotServiceResource = ":8000/spot",
-    this.stage = "prod",
+    this.profileServiceResource = ":8000/profile",
+
+    // Endpoint
+    this.apiGatewayEndpoint = "http://10.97.121.66",
   });
 
+  // Service resources
   String getFilterEndpoint() => "${apiGatewayEndpoint}${filterServiceResource}";
-
   String getSpotCoreEndpoint() => "${apiGatewayEndpoint}${spotServiceResource}";
-
   String getUserEndpoint() => "${apiGatewayEndpoint}${userServiceResource}";
+  String getUserProfileEndpoint() =>
+      "$apiGatewayEndpoint$profileServiceResource";
 
-  String getBaseURL() => "${apiGatewayEndpoint}/${stage}";
+  String getBaseURL() => "${apiGatewayEndpoint}";
 }
