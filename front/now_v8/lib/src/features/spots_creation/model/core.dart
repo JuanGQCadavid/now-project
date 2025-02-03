@@ -2,9 +2,6 @@ import 'package:dartz/dartz.dart';
 import 'package:now_v8/src/core/contracts/gcp_services.dart';
 import 'package:now_v8/src/core/contracts/spot_core_service.dart';
 import 'package:now_v8/src/core/models/long_spot.dart';
-import 'package:now_v8/src/core/models/token.dart';
-import 'package:now_v8/src/core/models/user.dart';
-import 'package:now_v8/src/services/cmd/spot_core_service/service/service.dart';
 import 'package:now_v8/src/services/core/models/backend_errors.dart';
 import 'package:now_v8/src/services/core/notifiers.dart';
 
@@ -32,7 +29,15 @@ class SpotsCreatorCore {
     var response = await authState.getToken();
     return response.fold(
       (token) => coreService.createSpot(spot, token),
-      (r) => right(r),
+      (r) => right(
+        BackendErrors.clientError(
+          ErrorMessage(
+            "LOCAL",
+            "No user saved",
+            "local",
+          ),
+        ),
+      ),
     );
   }
 }

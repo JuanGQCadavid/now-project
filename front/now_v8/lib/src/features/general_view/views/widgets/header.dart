@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:now_v8/src/core/models/profile.dart';
 import 'package:now_v8/src/core/models/user.dart';
 import 'package:now_v8/src/core/widgets/buttons.dart';
 import 'package:now_v8/src/services/core/providers.dart';
@@ -18,12 +19,12 @@ class GeneralViewHeader extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var userDetails = ref.watch(authStateProvider);
+    var userProfile = ref.watch(userProfileStateProvider);
 
-    return userDetails.fold(
+    return userProfile.fold(
       (l) => DefaultHeader(
         userHeader: UserLogged(
-          userDetails: l,
+          userProfile: l,
           onMenuTap: onRequestToGoToMenu,
           onUserTap: onRequestToGoToProfile,
         ),
@@ -61,18 +62,18 @@ class DefaultHeader extends StatelessWidget {
 class UserLogged extends StatelessWidget {
   final void Function() onUserTap;
   final void Function() onMenuTap;
-  final UserDetails userDetails;
+  final UserProfile userProfile;
 
   const UserLogged({
     super.key,
-    required this.userDetails,
+    required this.userProfile,
     required this.onMenuTap,
     required this.onUserTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    String greetingMessage = "Welcome back, \n ${userDetails.userName}!";
+    String greetingMessage = "Welcome back, \n ${userProfile.userName}!";
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10.0),
@@ -80,7 +81,7 @@ class UserLogged extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(greetingMessage),
-          UserLoggedButton(onTap: onUserTap, displayName: userDetails.userName)
+          UserLoggedButton(onTap: onUserTap, displayName: userProfile.userName)
         ],
       ),
     );

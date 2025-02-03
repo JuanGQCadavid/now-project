@@ -5,7 +5,7 @@ part 'profile.g.dart';
 @JsonSerializable(explicitToJson: true)
 class UserProfile {
   // User name
-  @JsonKey(name: "userName", required: true)
+  @JsonKey(name: "user_name", required: true)
   final String userName;
 
   // First + last name

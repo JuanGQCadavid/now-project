@@ -9,10 +9,10 @@ part of 'profile.dart';
 UserProfile _$UserProfileFromJson(Map<String, dynamic> json) {
   $checkKeys(
     json,
-    requiredKeys: const ['userName'],
+    requiredKeys: const ['user_name'],
   );
   return UserProfile(
-    userName: json['userName'] as String,
+    userName: json['user_name'] as String,
     firstName: json['first_name'] as String? ?? '',
     lastName: json['last_name'] as String? ?? '',
     isFirstLastNamePublic: json['is_first_last_name_public'] as bool? ?? false,
@@ -23,7 +23,7 @@ UserProfile _$UserProfileFromJson(Map<String, dynamic> json) {
 
 Map<String, dynamic> _$UserProfileToJson(UserProfile instance) =>
     <String, dynamic>{
-      'userName': instance.userName,
+      'user_name': instance.userName,
       'first_name': instance.firstName,
       'last_name': instance.lastName,
       'is_first_last_name_public': instance.isFirstLastNamePublic,

@@ -1,23 +1,41 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:now_v8/src/core/contracts/auth_service.dart';
+import 'package:now_v8/src/core/contracts/profile_service.dart';
 import 'package:now_v8/src/core/contracts/user_service.dart';
 import 'package:now_v8/src/core/models/profile.dart';
 import 'package:now_v8/src/core/models/token.dart';
 import 'package:now_v8/src/core/models/user.dart';
-import 'package:now_v8/src/services/core/models/backend_errors.dart';
 
 class UserProfileState extends StateNotifier<Either<UserProfile, None>> {
   final AuthState authState;
-  UserProfileState({required this.authState}) : super(right(const None())) {
+  final Either<UserDetails, None> userDetails;
+  final IUserProfileService userProfileService;
+
+  UserProfileState({
+    required this.authState,
+    required this.userProfileService,
+    required this.userDetails,
+  }) : super(right(const None())) {
     initState();
   }
 
   initState() {
     authState.getToken().then((value) {
-      value.fold(
-        (token) {},
-        (backendError) {},
+      userDetails.fold(
+        (l) async {
+          state = await value.fold((token) async {
+            var userProfile = await userProfileService.getUserProfile(
+              l.userId,
+              token,
+            );
+            return userProfile.fold(
+              (profile) => left(profile),
+              (nothing) => right(const None()),
+            );
+          }, (nothing) => right(nothing));
+        },
+        (r) {},
       );
     });
   }
@@ -46,7 +64,7 @@ class AuthState extends StateNotifier<Either<UserDetails, None>> {
     });
   }
 
-  Future<Either<Token, BackendErrors>> getToken() async {
+  Future<Either<Token, None>> getToken() async {
     var resp = await authService.getUserDetails();
     return resp.fold(
       (l) => left(
@@ -55,15 +73,7 @@ class AuthState extends StateNotifier<Either<UserDetails, None>> {
           value: l.shortLiveToken,
         ),
       ),
-      (r) => right(
-        BackendErrors.clientError(
-          ErrorMessage(
-            "LOCAL",
-            "No user saved",
-            "local",
-          ),
-        ),
-      ),
+      (r) => right(r),
     );
   }
 

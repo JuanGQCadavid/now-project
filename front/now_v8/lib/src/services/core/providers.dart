@@ -48,8 +48,14 @@ final userProfileStateProvider =
     StateNotifierProvider<UserProfileState, Either<UserProfile, None>>(
   (ref) {
     final authstateNotifier = ref.watch(authStateProvider.notifier);
-    // TODO - Implement it
-    throw MissingPluginException;
+    final userDetails = ref.watch(authStateProvider);
+    final userProfileService = ref.read(userProfileServiceProvider);
+
+    return UserProfileState(
+      authState: authstateNotifier,
+      userDetails: userDetails,
+      userProfileService: userProfileService,
+    );
   },
 );
 

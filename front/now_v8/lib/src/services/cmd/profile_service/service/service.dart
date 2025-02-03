@@ -40,7 +40,7 @@ class UserProfileService implements IUserProfileService {
           return left(UserProfile.fromJson(r));
         } catch (error) {
           log("We face an error while casting the backend response, request path - $callPath, \n error: ${error.toString()}");
-          return right(r);
+          return right(BackendErrors.internalError());
         }
       },
     );
