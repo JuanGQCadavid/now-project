@@ -107,7 +107,7 @@ class UserLoggedButton extends StatelessWidget {
     }
 
     if (name.isEmpty) {
-      return "Hi";
+      return "";
     }
 
     return name.toUpperCase();
@@ -117,28 +117,42 @@ class UserLoggedButton extends StatelessWidget {
   Widget build(BuildContext context) {
     var twoLettersName = genTwoLettersName(displayName);
 
+    // twoLettersName = "MA";
+
+    Widget icon = SizedBox(
+      width: 25,
+      height: 25,
+      child: Center(
+        child: Text(
+          twoLettersName,
+          style: Theme.of(context).textTheme.labelLarge,
+        ),
+      ),
+    );
+
+    if (twoLettersName.isEmpty) {
+      icon = const Icon(Icons.person);
+    }
+
     return InkWell(
       onTap: onTap,
       child: ClipOval(
         child: Container(
           padding: const EdgeInsets.all(2),
-          decoration: const BoxDecoration(
+          decoration:  BoxDecoration(
             gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  Colors.blue,
-                  Colors.purpleAccent,
+                  Colors.cyan.shade700,
+                  Colors.pink.shade600,
                 ]),
           ),
           child: ClipOval(
             child: Container(
               padding: const EdgeInsets.all(6),
               color: Colors.white,
-              child: Text(
-                twoLettersName,
-                // style: TextStyle(color: Colors.blueGrey),
-              ),
+              child: icon,
             ),
           ),
         ),

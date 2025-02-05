@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:now_v8/src/core/models/profile.dart';
-import 'package:now_v8/src/core/models/user.dart';
 import 'package:now_v8/src/core/widgets/buttons.dart';
 import 'package:now_v8/src/services/core/providers.dart';
 
@@ -73,14 +72,21 @@ class UserLogged extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String greetingMessage = "Welcome back, \n ${userProfile.userName}!";
+    String greetingMessage = "Welcome back,";
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(greetingMessage),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(greetingMessage, style: Theme.of(context).textTheme.titleLarge,),
+              Text(userProfile.userName, style: Theme.of(context).textTheme.bodySmall,)
+            ],
+          ),
+          
           UserLoggedButton(onTap: onUserTap, displayName: userProfile.userName)
         ],
       ),
@@ -91,6 +97,7 @@ class UserLogged extends StatelessWidget {
 class NotLoggedHeader extends StatelessWidget {
   final void Function() onUserTap;
   final void Function() onMenuTap;
+  final String header = "Welcome to Pululapp";
   const NotLoggedHeader({
     super.key,
     required this.onMenuTap,
@@ -102,8 +109,7 @@ class NotLoggedHeader extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        IconButton(onPressed: onMenuTap, icon: const Icon(Icons.menu)),
-        const Text("Welcome to Pululapp"),
+        Text(header, style: Theme.of(context).textTheme.titleLarge,),
         IconButton(onPressed: onUserTap, icon: const Icon(Icons.person))
       ],
     );
