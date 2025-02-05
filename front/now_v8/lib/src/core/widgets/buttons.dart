@@ -88,11 +88,14 @@ class IconTextButtom extends StatelessWidget {
 class UserLoggedButton extends StatelessWidget {
   final void Function() onTap;
   final String displayName;
+  final List<Color> colors;
 
   const UserLoggedButton({
     super.key,
     required this.onTap,
     required this.displayName,
+    required this.colors,
+
   });
 
   String genTwoLettersName(String name) {
@@ -116,9 +119,6 @@ class UserLoggedButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var twoLettersName = genTwoLettersName(displayName);
-
-    // twoLettersName = "MA";
-
     Widget icon = SizedBox(
       width: 25,
       height: 25,
@@ -143,10 +143,8 @@ class UserLoggedButton extends StatelessWidget {
             gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: [
-                  Colors.cyan.shade700,
-                  Colors.pink.shade600,
-                ]),
+                colors: colors,
+            ),
           ),
           child: ClipOval(
             child: Container(

@@ -8,8 +8,27 @@ class GeneralViewHeader extends ConsumerWidget {
   final void Function() onRequestToLogin;
   final void Function() onRequestToGoToProfile;
   final void Function() onRequestToGoToMenu;
+  
+  final Color nowColor = Colors.cyan.shade700;
+  final Color commingColor = Colors.pink.shade600;
 
-  const GeneralViewHeader({
+  final String nowTitle = "Events now";
+  final String commingTitle = "Events comming";
+
+  final String welcomeMessage =  "Welcome back,";
+  final String headerMessage =  "Welcome to Pululapp";
+
+  late List<Color> loggingColors = [
+          nowColor,
+          commingColor,
+  ];
+
+  List<Color> noLoggingColors = [
+          Colors.grey.shade400,
+          Colors.black,
+  ];
+
+  GeneralViewHeader({
     super.key,
     required this.onRequestToGoToMenu,
     required this.onRequestToGoToProfile,
@@ -22,16 +41,28 @@ class GeneralViewHeader extends ConsumerWidget {
 
     return userProfile.fold(
       (l) => DefaultHeader(
+        nowColor: nowColor,
+        nowTitle: nowTitle,
+        commingColor: commingColor,
+        commingTitle: commingTitle,
         userHeader: UserLogged(
+          greetingMessage: welcomeMessage,
           userProfile: l,
           onMenuTap: onRequestToGoToMenu,
           onUserTap: onRequestToGoToProfile,
+          colors: loggingColors,
         ),
       ),
       (r) => DefaultHeader(
+        nowColor: nowColor,
+        nowTitle: nowTitle,
+        commingColor: commingColor,
+        commingTitle: commingTitle,
         userHeader: NotLoggedHeader(
+          headerMessage: headerMessage,
           onMenuTap: onRequestToGoToMenu,
           onUserTap: onRequestToLogin,
+          colors: noLoggingColors,
         ),
       ),
     );
@@ -40,7 +71,12 @@ class GeneralViewHeader extends ConsumerWidget {
 
 class DefaultHeader extends StatelessWidget {
   final Widget userHeader;
-  const DefaultHeader({super.key, required this.userHeader});
+  final Color nowColor;
+  final String nowTitle;
+
+  final Color commingColor;
+  final String commingTitle;
+  const DefaultHeader({super.key, required this.userHeader, required this.nowColor, required this.nowTitle, required this.commingColor, required this.commingTitle});
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +88,12 @@ class DefaultHeader extends StatelessWidget {
         const SizedBox(
           height: 10,
         ),
-        const MapDescriptor(),
+        MapDescriptor(
+          commingColor: commingColor,
+          commingTitle: commingTitle,
+          nowColor: nowColor,
+          nowTitle: nowTitle,
+        ),
       ],
     );
   }
@@ -61,19 +102,22 @@ class DefaultHeader extends StatelessWidget {
 class UserLogged extends StatelessWidget {
   final void Function() onUserTap;
   final void Function() onMenuTap;
+  final List<Color> colors;
   final UserProfile userProfile;
+  final String greetingMessage;
+  
 
   const UserLogged({
     super.key,
     required this.userProfile,
     required this.onMenuTap,
     required this.onUserTap,
+    required this.colors, 
+    required this.greetingMessage,
   });
 
   @override
   Widget build(BuildContext context) {
-    String greetingMessage = "Welcome back,";
-
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10.0),
       child: Row(
@@ -87,7 +131,7 @@ class UserLogged extends StatelessWidget {
             ],
           ),
           
-          UserLoggedButton(onTap: onUserTap, displayName: userProfile.userName)
+          UserLoggedButton(onTap: onUserTap, displayName: userProfile.userName, colors: colors,)
         ],
       ),
     );
@@ -97,27 +141,37 @@ class UserLogged extends StatelessWidget {
 class NotLoggedHeader extends StatelessWidget {
   final void Function() onUserTap;
   final void Function() onMenuTap;
-  final String header = "Welcome to Pululapp";
+  final String headerMessage;
+  final List<Color> colors;
   const NotLoggedHeader({
     super.key,
     required this.onMenuTap,
     required this.onUserTap,
+    required this.colors, required this.headerMessage,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(header, style: Theme.of(context).textTheme.titleLarge,),
-        IconButton(onPressed: onUserTap, icon: const Icon(Icons.person))
-      ],
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(headerMessage, style: Theme.of(context).textTheme.titleLarge,),
+          UserLoggedButton(onTap: onUserTap, displayName: "", colors: colors,),
+        ],
+      ),
     );
   }
 }
 
 class MapDescriptor extends StatelessWidget {
-  const MapDescriptor({super.key});
+  final Color nowColor;
+  final String nowTitle;
+
+  final Color commingColor;
+  final String commingTitle;
+  const MapDescriptor({super.key, required this.nowColor, required this.nowTitle, required this.commingColor, required this.commingTitle}) ;
 
   @override
   Widget build(BuildContext context) {
@@ -126,8 +180,8 @@ class MapDescriptor extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          DescriptorLocationType(Colors.cyan.shade700, "Events now"),
-          DescriptorLocationType(Colors.pink.shade600, "Events comming")
+          DescriptorLocationType(nowColor, nowTitle),
+          DescriptorLocationType(commingColor, commingTitle)
         ],
       ),
     );

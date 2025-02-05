@@ -55,7 +55,10 @@ class UserAccountButton extends StatelessWidget {
       children: [
         UserLoggedButton(
           onTap: () {},
-          displayName: "JG",
+          displayName: "JG", colors: [
+            Colors.cyan.shade700,
+            Colors.pink.shade600,
+          ],
         ),
         const SizedBox(
           width: 10,
