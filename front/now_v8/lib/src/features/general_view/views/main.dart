@@ -51,7 +51,7 @@ class GeneralViewBody extends StatelessWidget {
     return Column(
       children: [
         Container(
-          margin: const EdgeInsets.all(10),
+          margin: const EdgeInsets.symmetric(horizontal: 10),
           child: GeneralViewHeader(
             onRequestToGoToMenu: openMenu,
             onRequestToGoToProfile: () {

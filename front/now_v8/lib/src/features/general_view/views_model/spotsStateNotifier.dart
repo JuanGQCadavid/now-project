@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:now_v8/src/core/models/spot.dart';
@@ -71,7 +73,7 @@ class LastPositionKnownState extends StateNotifier<LastSearchArea> {
         ));
 
   void newLocation(MapState newArea) {
-    print("${newArea.zoom}");
+    log("${newArea.zoom}");
     bool onJumpArea = (newArea.zoom >= zoomThreshold);
     state = state.copyWith(
       jump: onJumpArea,
@@ -92,8 +94,7 @@ class MapInteractions extends StateNotifier<MapState> {
   }
 
   void onCameraIdle() {
-    print(
-        "LAST POSITION  ${state.lastPositionKnowed.latitude} ${state.lastPositionKnowed.longitude} ZOOM - ${state.zoom}");
+    log("LAST POSITION  ${state.lastPositionKnowed.latitude} ${state.lastPositionKnowed.longitude} ZOOM - ${state.zoom}");
     state = state.copyWith(status: MapStatus.movingIdle());
   }
 
