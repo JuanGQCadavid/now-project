@@ -8,24 +8,24 @@ class GeneralViewHeader extends ConsumerWidget {
   final void Function() onRequestToLogin;
   final void Function() onRequestToGoToProfile;
   final void Function() onRequestToGoToMenu;
-  
+
   final Color nowColor = Colors.cyan.shade700;
   final Color commingColor = Colors.pink.shade600;
 
   final String nowTitle = "Events now";
   final String commingTitle = "Events comming";
 
-  final String welcomeMessage =  "Welcome back,";
-  final String headerMessage =  "Welcome to Pululapp";
+  final String welcomeMessage = "Welcome back,";
+  final String headerMessage = "Welcome to Pululapp";
 
   late List<Color> loggingColors = [
-          nowColor,
-          commingColor,
+    nowColor,
+    commingColor,
   ];
 
-  List<Color> noLoggingColors = [
-          Colors.grey.shade400,
-          Colors.black,
+  final List<Color> noLoggingColors = [
+    Colors.grey.shade400,
+    Colors.black,
   ];
 
   GeneralViewHeader({
@@ -76,7 +76,13 @@ class DefaultHeader extends StatelessWidget {
 
   final Color commingColor;
   final String commingTitle;
-  const DefaultHeader({super.key, required this.userHeader, required this.nowColor, required this.nowTitle, required this.commingColor, required this.commingTitle});
+  const DefaultHeader(
+      {super.key,
+      required this.userHeader,
+      required this.nowColor,
+      required this.nowTitle,
+      required this.commingColor,
+      required this.commingTitle});
 
   @override
   Widget build(BuildContext context) {
@@ -105,14 +111,13 @@ class UserLogged extends StatelessWidget {
   final List<Color> colors;
   final UserProfile userProfile;
   final String greetingMessage;
-  
 
   const UserLogged({
     super.key,
     required this.userProfile,
     required this.onMenuTap,
     required this.onUserTap,
-    required this.colors, 
+    required this.colors,
     required this.greetingMessage,
   });
 
@@ -126,12 +131,21 @@ class UserLogged extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(greetingMessage, style: Theme.of(context).textTheme.titleLarge,),
-              Text(userProfile.userName, style: Theme.of(context).textTheme.bodySmall,)
+              Text(
+                greetingMessage,
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
+              Text(
+                userProfile.userName,
+                style: Theme.of(context).textTheme.bodySmall,
+              )
             ],
           ),
-          
-          UserLoggedButton(onTap: onUserTap, displayName: userProfile.userName, colors: colors,)
+          UserLoggedButton(
+            onTap: onUserTap,
+            displayName: userProfile.userName,
+            colors: colors,
+          )
         ],
       ),
     );
@@ -147,7 +161,8 @@ class NotLoggedHeader extends StatelessWidget {
     super.key,
     required this.onMenuTap,
     required this.onUserTap,
-    required this.colors, required this.headerMessage,
+    required this.colors,
+    required this.headerMessage,
   });
 
   @override
@@ -157,8 +172,15 @@ class NotLoggedHeader extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(headerMessage, style: Theme.of(context).textTheme.titleLarge,),
-          UserLoggedButton(onTap: onUserTap, displayName: "", colors: colors,),
+          Text(
+            headerMessage,
+            style: Theme.of(context).textTheme.titleLarge,
+          ),
+          UserLoggedButton(
+            onTap: onUserTap,
+            displayName: "",
+            colors: colors,
+          ),
         ],
       ),
     );
@@ -171,7 +193,12 @@ class MapDescriptor extends StatelessWidget {
 
   final Color commingColor;
   final String commingTitle;
-  const MapDescriptor({super.key, required this.nowColor, required this.nowTitle, required this.commingColor, required this.commingTitle}) ;
+  const MapDescriptor(
+      {super.key,
+      required this.nowColor,
+      required this.nowTitle,
+      required this.commingColor,
+      required this.commingTitle});
 
   @override
   Widget build(BuildContext context) {

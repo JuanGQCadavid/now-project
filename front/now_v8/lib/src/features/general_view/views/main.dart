@@ -13,7 +13,7 @@ import 'package:now_v8/src/features/login/view/main.dart';
 import 'package:now_v8/src/features/profile/view/main.dart';
 
 class GeneralViewFeature extends ConsumerWidget {
-  GeneralViewFeature({Key? key}) : super(key: key);
+  GeneralViewFeature({super.key});
   final Completer<GoogleMapController> mapController = Completer();
 
   @override
@@ -30,7 +30,6 @@ class GeneralViewFeature extends ConsumerWidget {
         );
       });
     }
-
     return Scaffold(
       body: SafeArea(
         child: GeneralViewBody(
@@ -44,8 +43,7 @@ class GeneralViewFeature extends ConsumerWidget {
 
 class GeneralViewBody extends StatelessWidget {
   final Completer<GoogleMapController> mapController;
-  const GeneralViewBody({Key? key, required this.mapController})
-      : super(key: key);
+  const GeneralViewBody({super.key, required this.mapController});
 
   void openMenu() {}
 
@@ -82,11 +80,7 @@ class GeneralViewBody extends StatelessWidget {
               topRight: Radius.circular(25),
               bottomLeft: Radius.circular(25),
             ),
-            child: Stack(
-              children: [
-                GeneralViewMap(mapController: mapController),
-              ],
-            ),
+            child: GeneralViewMap(mapController: mapController),
           ),
         )
       ],

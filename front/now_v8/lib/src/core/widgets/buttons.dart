@@ -95,7 +95,6 @@ class UserLoggedButton extends StatelessWidget {
     required this.onTap,
     required this.displayName,
     required this.colors,
-
   });
 
   String genTwoLettersName(String name) {
@@ -139,11 +138,11 @@ class UserLoggedButton extends StatelessWidget {
       child: ClipOval(
         child: Container(
           padding: const EdgeInsets.all(2),
-          decoration:  BoxDecoration(
+          decoration: BoxDecoration(
             gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: colors,
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: colors,
             ),
           ),
           child: ClipOval(
