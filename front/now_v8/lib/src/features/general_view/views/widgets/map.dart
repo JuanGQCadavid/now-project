@@ -1,15 +1,23 @@
+import 'dart:developer';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:now_v8/playground/footer.dart';
 import 'package:now_v8/src/core/widgets/nowMap.dart';
 import 'package:now_v8/src/features/general_view/model/filteredSpots.dart';
+import 'package:now_v8/src/features/general_view/views/widgets/footbar.dart';
 import 'dart:async';
 
 import 'package:now_v8/src/features/general_view/views/widgets/spotTagWidget.dart';
 import 'package:now_v8/src/features/general_view/views_model/providers.dart';
+import 'package:now_v8/src/features/granular_view/views/main.dart';
+import 'package:now_v8/src/features/spots_creation/main.dart';
 
 class GeneralViewMap extends ConsumerWidget {
+  final String filterMessage = "Filter events";
+  final String createMessage = "Create event";
+  final String lookCloserMessage = "Look closer";
+
   final Completer<GoogleMapController> mapController;
   const GeneralViewMap({super.key, required this.mapController});
 
@@ -38,7 +46,29 @@ class GeneralViewMap extends ConsumerWidget {
               MapTags(
                 filteredSpots: filteredSpots,
               ),
-              const FooterGeneralView(),
+              FooterGeneralView(
+                filterMessage: filterMessage,
+                createMessage: createMessage,
+                lookCloserMessage: lookCloserMessage,
+                onFilterPressed: () {
+                  log(filterMessage);
+                },
+                onCreatePressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const SpotsCreationFeature(),
+                    ),
+                  );
+                },
+                onLookCloserPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => GranularView(),
+                    ),
+                  );
+                },
+              ),
             ],
           ),
         )
@@ -90,19 +120,16 @@ class MapTags extends ConsumerWidget {
     } else {
       Map<String, Color> tags = {};
 
-      filteredSpots.spots.forEach((spot) {
-        Color tagColor = Colors.black;
-
+      for (var spot in filteredSpots.spots) {
         if (!tags.containsKey(spot.principalTag)) {
           tags[spot.principalTag] = spot.spotsColor.color;
         }
-
-        spot.secondaryTags.forEach((secondaryTag) {
+        for (var secondaryTag in spot.secondaryTags) {
           if (!tags.containsKey(secondaryTag)) {
             tags[secondaryTag] = spot.spotsColor.color;
           }
-        });
-      });
+        }
+      }
 
       tags.forEach((tag, color) {
         rowTags.add(generateTag(color, tag, ref));
@@ -110,7 +137,7 @@ class MapTags extends ConsumerWidget {
     }
 
     return Container(
-      margin: EdgeInsets.only(left: 15, bottom: 15),
+      margin: const EdgeInsets.only(left: 15, bottom: 15),
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: Row(
@@ -122,7 +149,7 @@ class MapTags extends ConsumerWidget {
 
   Widget generateTag(Color color, String tag, WidgetRef ref) {
     return Container(
-      margin: EdgeInsets.only(right: 15),
+      margin: const EdgeInsets.only(right: 15),
       child: SpotTag(
         color: color,
         tag: tag,

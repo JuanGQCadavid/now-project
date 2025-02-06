@@ -1,54 +1,39 @@
 import 'dart:ui';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:now_v8/src/core/widgets/buttons.dart';
-import 'package:now_v8/src/features/general_view/views/widgets/spotTagWidget.dart';
-import 'package:now_v8/src/features/granular_view/views/main.dart';
-import 'package:now_v8/src/features/granular_view/views_model/providers.dart';
-import 'package:now_v8/src/features/spots_creation/main.dart';
-
-class BottomBar extends ConsumerWidget {
-  const BottomBar({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return Container(
-      margin: const EdgeInsets.all(15),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          NowTextCTA(
-            ctaText: "Filter",
-            onPressed: () {},
-          ),
-          NowTextCTA(
-            ctaText: "Create",
-            onPressed: () {
-              // HEREEEE
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const SpotsCreationFeature(),
-                ),
-              );
-            },
-          ),
-          NowTextCTA(
-            ctaText: "Zoom in!",
-            onPressed: () {
-              Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context) => GranularView()));
-            },
-          )
-        ],
-      ),
-    );
-  }
-}
 
 class FooterGeneralView extends StatelessWidget {
-  const FooterGeneralView({super.key});
+  final String filterMessage;
+  final Function() onFilterPressed;
+
+  final String createMessage;
+  final Function() onCreatePressed;
+
+  final String lookCloserMessage;
+  final Function() onLookCloserPressed;
+
+  const FooterGeneralView({
+    super.key,
+    required this.filterMessage,
+    required this.onFilterPressed,
+    required this.createMessage,
+    required this.onCreatePressed,
+    required this.lookCloserMessage,
+    required this.onLookCloserPressed,
+  });
+
+  void _onItemTapped(int index) {
+    switch (index) {
+      case 0:
+        onFilterPressed();
+        return;
+      case 1:
+        onCreatePressed();
+        return;
+      case 2:
+        onLookCloserPressed();
+        return;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -61,21 +46,23 @@ class FooterGeneralView extends StatelessWidget {
           child: BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
             child: BottomNavigationBar(
+              onTap: _onItemTapped,
               backgroundColor: Colors.white.withAlpha(175),
               elevation: 0,
               unselectedItemColor: Colors.black,
               currentIndex: 1,
-              items: const [
+              items: [
                 BottomNavigationBarItem(
-                  icon: Icon(Icons.tune_outlined),
-                  label: "Filter events",
+                  icon: const Icon(Icons.tune_outlined),
+                  label: filterMessage,
                 ),
                 BottomNavigationBarItem(
-                    icon: Icon(Icons.add_circle_outline),
-                    label: "Create event"),
+                  icon: const Icon(Icons.add_circle_outline),
+                  label: createMessage,
+                ),
                 BottomNavigationBarItem(
-                  icon: Icon(Icons.zoom_in),
-                  label: "Look closer",
+                  icon: const Icon(Icons.zoom_in),
+                  label: lookCloserMessage,
                 ),
               ],
             ),

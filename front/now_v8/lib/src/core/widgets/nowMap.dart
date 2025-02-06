@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -98,7 +99,7 @@ class _NowMapV2State extends ConsumerState<NowMapV2> {
           ),
           onTap: () {
             // TODO: Here we could add the transition to something else
-            print("${spot.spotId} were tapped");
+            log("${spot.spotId} were tapped");
           },
         ),
       );
@@ -209,7 +210,7 @@ class GoogleMapLocal extends StatelessWidget {
     ClusterManager general = ClusterManager(
       clusterManagerId: clusterId,
       onClusterTap: (argument) {
-        print("Cluster tab");
+        log("Cluster tab");
       },
     );
 

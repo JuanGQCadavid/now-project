@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:now_v8/src/features/general_view/views/widgets/footbar.dart';
 import 'package:now_v8/src/features/general_view/views/widgets/header.dart';
 import 'package:now_v8/src/features/general_view/views/widgets/map.dart';
 import 'package:now_v8/src/features/general_view/views_model/providers.dart';
