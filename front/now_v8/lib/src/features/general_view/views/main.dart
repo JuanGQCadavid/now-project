@@ -32,11 +32,11 @@ class GeneralViewFeature extends ConsumerWidget {
     }
     return Scaffold(
       body: SafeArea(
+        bottom: false,
         child: GeneralViewBody(
           mapController: mapController,
         ),
       ),
-      bottomNavigationBar: const BottomBar(),
     );
   }
 }

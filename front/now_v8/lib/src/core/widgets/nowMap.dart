@@ -18,6 +18,7 @@ class NowMapV2 extends ConsumerStatefulWidget {
   final double mapZoom;
   final bool myLocationButtonEnabled;
   final bool includeUserLocation;
+  final EdgeInsets padding;
   late LatLng? camaraPosition;
   final Completer<GoogleMapController> mapController;
   final Function(CameraPosition)? onCameraMove;
@@ -42,6 +43,7 @@ class NowMapV2 extends ConsumerStatefulWidget {
     this.onCameraMoveStarted,
     this.onMapCreated,
     required this.mapController,
+    this.padding = EdgeInsets.zero,
   });
 
   @override
@@ -139,6 +141,7 @@ class _NowMapV2State extends ConsumerState<NowMapV2> {
               onCameraMove: widget.onCameraMove,
               onCameraIdle: widget.onCameraIdle,
               onCameraMoveStarted: widget.onCameraMoveStarted,
+              padding: widget.padding,
             );
           } else if (snapshot.hasError) {
             return const Text("Ops we are having problems to didplay the map");
@@ -162,6 +165,7 @@ class _NowMapV2State extends ConsumerState<NowMapV2> {
         onCameraMove: widget.onCameraMove,
         onCameraIdle: widget.onCameraIdle,
         onCameraMoveStarted: widget.onCameraMoveStarted,
+        padding: widget.padding,
       );
     }
   }
@@ -179,21 +183,24 @@ class GoogleMapLocal extends StatelessWidget {
   final Function(CameraPosition)? onCameraMove;
   final Function()? onCameraIdle;
   final Function()? onCameraMoveStarted;
+  final EdgeInsets padding;
 
   final MinMaxZoomPreference defaulMinMaxZoom =
       const MinMaxZoomPreference(11.5, 100);
 
-  GoogleMapLocal(
-      {super.key,
-      required this.markers,
-      required this.initialCameraPosition,
-      required this.myLocationButtonEnabled,
-      required this.onMapCreated,
-      required this.blockMap,
-      this.onCameraMove,
-      this.onCameraIdle,
-      this.onCameraMoveStarted,
-      this.userLocation = _empty});
+  GoogleMapLocal({
+    super.key,
+    required this.markers,
+    required this.initialCameraPosition,
+    required this.myLocationButtonEnabled,
+    required this.onMapCreated,
+    required this.blockMap,
+    this.onCameraMove,
+    this.onCameraIdle,
+    this.onCameraMoveStarted,
+    this.userLocation = _empty,
+    this.padding = EdgeInsets.zero,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -224,6 +231,7 @@ class GoogleMapLocal extends StatelessWidget {
 
     return GoogleMap(
       markers: Set<Marker>.of(newMarkers.values),
+      padding: padding,
       mapType: MapType.normal,
       zoomControlsEnabled: false,
       initialCameraPosition: initialCameraPosition,

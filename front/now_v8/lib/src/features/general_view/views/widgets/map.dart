@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:now_v8/playground/footer.dart';
 import 'package:now_v8/src/core/widgets/nowMap.dart';
 import 'package:now_v8/src/features/general_view/model/filteredSpots.dart';
 import 'dart:async';
@@ -26,11 +27,19 @@ class GeneralViewMap extends ConsumerWidget {
           onCameraIdle: mapInteraction.onCameraIdle,
           onCameraMove: mapInteraction.onCameraMove,
           onCameraMoveStarted: mapInteraction.onCameraMoveStarted,
+          padding: const EdgeInsets.only(bottom: 100),
         ),
         Align(
           alignment: Alignment.bottomLeft,
-          child: MapTags(
-            filteredSpots: filteredSpots,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              MapTags(
+                filteredSpots: filteredSpots,
+              ),
+              const FooterGeneralView(),
+            ],
           ),
         )
       ],
