@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:now_v8/src/features/general_view/views/main.dart';
+import 'package:now_v8/src/features/online_spot/main.dart';
 
 void main() async {
   await Hive.initFlutter();
@@ -28,7 +29,7 @@ class MyApp extends StatelessWidget {
           useMaterial3: true,
         ),
         home:
-            GeneralViewFeature() //GeneralViewFeature MapsClusterDemoTwo SpotsCreationFeature HomeTest
+            OnlineSpotFeature() //GeneralViewFeature MapsClusterDemoTwo SpotsCreationFeature HomeTest
         );
   }
 }
