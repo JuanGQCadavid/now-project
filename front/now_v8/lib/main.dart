@@ -29,7 +29,7 @@ class MyApp extends StatelessWidget {
           useMaterial3: true,
         ),
         home:
-            OnlineSpotFeature() //GeneralViewFeature MapsClusterDemoTwo SpotsCreationFeature HomeTest
+            OnlineSpotFeature() //GeneralViewFeature MapsClusterDemoTwo SpotsCreationFeature HomeTest OnlineSpotFeature
         );
   }
 }
