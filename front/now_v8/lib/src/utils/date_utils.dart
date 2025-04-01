@@ -13,7 +13,23 @@ final Map<int, String> months = {
   12: "Dec",
 };
 
+final Map<int, String> longMonths = {
+  1: "January",
+  2: "February",
+  3: "March",
+  4: "April",
+  5: "May",
+  6: "June",
+  7: "July",
+  8: "August",
+  9: "September",
+  10: "October",
+  11: "November",
+  12: "December",
+};
+
 final Map<int, String> days = {
+  0: "Today",
   1: "Monday",
   2: "Tuesday",
   3: "Wednesday",
@@ -29,8 +45,31 @@ final Map<Today, String> today = {
   Today.Morning: "morning",
   Today.Afternoon: "afternoon",
   Today.Evening: "evening",
-  Today.Night: "night"
+  Today.Night: "night",
 };
+
+String GetDateDiffString(DateTime dateTime) {
+  var now = DateTime.now();
+
+  if (dateTime.year != now.year) {
+    return '${dateTime.year}';
+  }
+  int delta = now.day - dateTime.day;
+
+  if (dateTime.month != now.month) {
+    return '${longMonths[dateTime.month]}';
+  }
+
+  if (delta == 0) {
+    return '${days[0]}';
+  }
+
+  if (delta <= 7) {
+    return '${days[dateTime.weekday]}';
+  }
+
+  return '${days[dateTime.weekday]}, ${dateTime.day}';
+}
 
 String GetDateString(DateTime dateTime) {
   var now = DateTime.now();
@@ -73,5 +112,4 @@ String GetDateString(DateTime dateTime) {
   }
 
   return '${days[dateTime.weekday]}, ${dateTime.day} at $atTime';
-  ;
 }
