@@ -214,20 +214,20 @@ class NotificationWidget extends StatelessWidget {
           return _NotificationCard(
             emoji: "👋",
             msg: "The event has ended",
-            emojiBackground: Colors.blueAccent.shade100,
+            // emojiBackground: Colors.blueAccent.shade100,
             dateTime: notification.dateTime,
           );
         case SystemNotifications.eventStopped:
           return _NotificationCard(
-            emoji: "🟦",
-            emojiBackground: const Color.fromARGB(255, 202, 220, 229),
+            emoji: "✋",
+            // emojiBackground: const Color.fromARGB(255, 202, 220, 229),
             msg: "The event has being stopped",
             dateTime: notification.dateTime,
           );
         case SystemNotifications.eventResumed:
           return _NotificationCard(
-            emoji: "🟩",
-            emojiBackground: const Color.fromARGB(255, 220, 238, 200),
+            emoji: "🙌",
+            // emojiBackground: const Color.fromARGB(255, 220, 238, 200),
             msg: "The event has being resumed",
             dateTime: notification.dateTime,
           );
@@ -235,7 +235,7 @@ class NotificationWidget extends StatelessWidget {
           return _NotificationCard(
             emoji: "🥳",
             msg: "The event has started",
-            emojiBackground: const Color.fromARGB(255, 167, 201, 255),
+            // emojiBackground: const Color.fromARGB(255, 167, 201, 255),
             dateTime: notification.dateTime,
           );
         case SystemNotifications.empty:
