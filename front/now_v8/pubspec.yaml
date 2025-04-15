@@ -43,6 +43,7 @@ dependencies:
   cupertino_icons: ^1.0.6
   hive: ^2.2.3
   hive_flutter:
+  web_socket_channel: ^3.0.2
 
 analyzer:
   errors:

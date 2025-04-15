@@ -29,7 +29,39 @@ class MyApp extends StatelessWidget {
           useMaterial3: true,
         ),
         home:
-            OnlineSpotFeature() //GeneralViewFeature MapsClusterDemoTwo SpotsCreationFeature HomeTest OnlineSpotFeature
+            GeneralViewFeature() //GeneralViewFeature MapsClusterDemoTwo SpotsCreationFeature HomeTest OnlineSpotFeature
         );
+  }
+}
+
+class MyWidget extends StatelessWidget {
+  const MyWidget({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Container(
+        color: Colors.grey.shade100,
+        child: const Column(
+          children: [
+            Placeholder(),
+            NotifcationsResume(),
+            Placeholder(),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class NotifcationsResume extends StatelessWidget {
+  const NotifcationsResume({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 100,
+      color: Colors.blue,
+    );
   }
 }

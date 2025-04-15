@@ -30,6 +30,7 @@ class _PhoneNumberV2State extends State<PhoneNumberV2> {
     CountryCodes(code: "+57", countryID: "COL", countryName: "Colombia"),
     CountryCodes(code: "+372", countryID: "EST", countryName: "Estonia"),
     CountryCodes(code: "+49", countryID: "GER", countryName: "Germany"),
+    CountryCodes(code: "+34", countryID: "SPN", countryName: "Spain"),
   ];
 
   late CountryCodes countrySelected = CountryCodes(
