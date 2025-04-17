@@ -48,32 +48,39 @@ class MyWidget extends StatelessWidget {
         child: Column(
           children: [
             const Placeholder(),
-            NotifcationsResume(notifications: <Notifications>[
-              Notifications(
-                dateTime: DateTime.now().subtract(
-                  const Duration(
-                    days: 1,
-                    minutes: 15,
-                  ),
-                ),
-                type: NotificationType.systemNotification,
-                systemNotifications: SystemNotifications.eventConclude,
-              ),
-              Notifications(
-                message:
-                    "The chair does not have good ligth, we move to table C.",
-                dateTime: DateTime.now().subtract(
-                  const Duration(
-                    days: 1,
-                    minutes: 10,
-                  ),
-                ),
-                emoji: "💡",
-                type: NotificationType.userNotification,
-              ),
-            ] //List.from(globalExmapleNotifications),
-                ),
-            // Placeholder(),
+            // NotifcationsResume(
+            //   notifications: <Notifications>[
+            //     Notifications(
+            //       dateTime: DateTime.now().subtract(
+            //         const Duration(
+            //           days: 1,
+            //           minutes: 15,
+            //         ),
+            //       ),
+            //       type: NotificationType.systemNotification,
+            //       systemNotifications: SystemNotifications.eventConclude,
+            //     ),
+            //     // Notifications(
+            //     //   message:
+            //     //       "The chair does not have good ligth, we move to table C.",
+            //     //   dateTime: DateTime.now().subtract(
+            //     //     const Duration(
+            //     //       days: 1,
+            //     //       minutes: 10s,
+            //     //     ),
+            //     //   ),
+            //     //   emoji: "💡",
+            //     //   type: NotificationType.userNotification,
+            //     // ),
+            //   ],
+            // ),
+            NotifcationsResume(
+              notifications: List.from(globalExmapleNotifications),
+            ),
+            // NotifcationsResume(
+            //   notifications: [],
+            // )
+            //,
           ],
         ),
       ),

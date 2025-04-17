@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:now_v8/src/features/notifications/constants.dart';
 import 'package:now_v8/src/features/notifications/model/notifications.dart';
 import 'package:now_v8/src/features/notifications/widgets/cards.dart';
+import 'package:now_v8/src/features/notifications/widgets/full_notificatios.dart';
 import 'package:now_v8/src/utils/sorting.dart';
 
 class NotifcationsResume extends StatelessWidget {
@@ -29,6 +30,7 @@ class NotifcationsResume extends StatelessWidget {
       notificationsResume = NotificationPlusCTA(
         notification: notifications[0],
         numberOfMessages: notifications.length,
+        onPressed: () => _showFullScreenModal(context),
       );
     }
 
@@ -47,13 +49,34 @@ class NotifcationsResume extends StatelessWidget {
       ),
     );
   }
+
+  void _showFullScreenModal(BuildContext context) {
+    showGeneralDialog(
+      context: context,
+      barrierDismissible: true,
+      barrierLabel: "FullScreen",
+      pageBuilder: (context, animation, secondaryAnimation) {
+        return NotificationsFeature();
+      },
+      transitionDuration: Duration(milliseconds: 300),
+      transitionBuilder: (context, animation, secondaryAnimation, child) {
+        return FadeTransition(opacity: animation, child: child);
+      },
+    );
+  }
 }
 
 class NotificationPlusCTA extends StatelessWidget {
   final Notifications notification;
   final int numberOfMessages;
-  const NotificationPlusCTA(
-      {super.key, required this.notification, required this.numberOfMessages});
+  final void Function() onPressed;
+
+  const NotificationPlusCTA({
+    super.key,
+    required this.notification,
+    required this.numberOfMessages,
+    required this.onPressed,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -75,6 +98,7 @@ class NotificationPlusCTA extends StatelessWidget {
             flex: 1,
             child: SeeMoreCTA(
               numberOfMessages: numberOfMessages,
+              onPressed: onPressed,
             ),
           )
       ],
@@ -85,9 +109,11 @@ class NotificationPlusCTA extends StatelessWidget {
 class SeeMoreCTA extends StatelessWidget {
   final int numberOfMessages;
   final String seeMoreTXT = "See all";
+  final void Function() onPressed;
   const SeeMoreCTA({
     super.key,
     required this.numberOfMessages,
+    required this.onPressed,
   });
 
   @override
@@ -99,7 +125,7 @@ class SeeMoreCTA extends StatelessWidget {
     }
 
     return FilledButton.tonal(
-      onPressed: () {},
+      onPressed: onPressed,
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 5),
         child: Column(
