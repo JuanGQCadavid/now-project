@@ -4,6 +4,7 @@ import 'package:now_v8/src/features/notifications/model/notifications.dart';
 import 'package:now_v8/src/features/notifications/constants.dart';
 import 'package:now_v8/src/features/notifications/widgets/cards.dart';
 import 'package:now_v8/src/utils/date_utils.dart';
+import 'package:now_v8/src/utils/sorting.dart';
 
 class FullNotificationsView extends StatelessWidget {
   const FullNotificationsView({super.key});
@@ -27,7 +28,7 @@ class NotificationsFeature extends StatelessWidget {
     // ,
   }) {
     notifications = globalExmapleNotifications;
-    notifications.sort((a, b) => b.dateTime.compareTo(a.dateTime));
+    sortNotifications(notifications);
   }
 
   @override

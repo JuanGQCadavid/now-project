@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:now_v8/src/features/notifications/views/full_notificatios.dart';
+import 'package:now_v8/src/features/notifications/widgets/full_notificatios.dart';
 
 class OnlineSpotFeature extends StatelessWidget {
   const OnlineSpotFeature({super.key});

@@ -77,14 +77,14 @@ class _NotificationCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
-      mainAxisSize: MainAxisSize.max,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
           decoration: BoxDecoration(
             color: emojiBackground ?? defaultColor,
             shape: BoxShape.circle,
           ),
-          padding: const EdgeInsets.all(15),
+          padding: const EdgeInsets.all(14),
           child: Text(
             emoji,
             style: const TextStyle(fontSize: 25),
@@ -94,19 +94,22 @@ class _NotificationCard extends StatelessWidget {
           width: 10,
         ),
         Flexible(
-          child: Column(
-            mainAxisSize: MainAxisSize.max,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                msg,
-                style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                overflow: TextOverflow.visible,
-              ),
-              Text(GetDateString(dateTime))
-            ],
+          child: Padding(
+            padding: const EdgeInsets.only(top: 7),
+            child: Column(
+              mainAxisSize: MainAxisSize.max,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  msg,
+                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                  overflow: TextOverflow.visible,
+                ),
+                Text(GetDateString(dateTime))
+              ],
+            ),
           ),
         )
       ],
