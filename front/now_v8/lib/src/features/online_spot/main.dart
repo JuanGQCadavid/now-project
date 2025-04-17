@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:now_v8/src/features/notifications/constants.dart';
 import 'package:now_v8/src/features/notifications/widgets/full_notificatios.dart';
 
 class OnlineSpotFeature extends StatelessWidget {
@@ -12,7 +13,9 @@ class OnlineSpotFeature extends StatelessWidget {
         child: Stack(
           children: [
             const Placeholder(),
-            NotificationsFeature(),
+            NotificationsFeature(
+              notifications: List.from(globalExmapleNotifications),
+            ),
           ],
         ),
       ),

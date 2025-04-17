@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:now_v8/src/features/notifications/constants.dart';
 import 'package:now_v8/src/features/notifications/model/notifications.dart';
 import 'package:now_v8/src/features/notifications/widgets/cards.dart';
 import 'package:now_v8/src/features/notifications/widgets/full_notificatios.dart';
@@ -56,9 +55,11 @@ class NotifcationsResume extends StatelessWidget {
       barrierDismissible: true,
       barrierLabel: "FullScreen",
       pageBuilder: (context, animation, secondaryAnimation) {
-        return NotificationsFeature();
+        return FullNotificationsView(
+          notifications: notifications,
+        );
       },
-      transitionDuration: Duration(milliseconds: 300),
+      transitionDuration: const Duration(milliseconds: 300),
       transitionBuilder: (context, animation, secondaryAnimation, child) {
         return FadeTransition(opacity: animation, child: child);
       },
