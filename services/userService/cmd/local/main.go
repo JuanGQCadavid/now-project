@@ -26,9 +26,10 @@ func init() {
 	userTableName := getenv("usersTableName", "Users")
 	tokensTableName := getenv("tokensTableName", "Tokens")
 	userIndexName := getenv("userIndexName", "UserId-index")
+	jwtKey := getenv("jwtKey", "DEFAULT")
 
 	var userRepository ports.UserRepository = users.NewDynamoDBUserRepository(userTableName, userIndexName, session)
-	var tokensRepository ports.TokensRepository = tokens.NewDynamoDBTokensRepository(tokensTableName, session)
+	var tokensRepository ports.TokensRepository = tokens.NewDynamoDBTokensRepository([]byte(jwtKey), tokensTableName, session)
 	var defaultNotificator ports.Notificator = localnotificator.LocalNotificator{}
 	var snsNotificator ports.Notificator = awssns.NewSNSNotificator(session)
 
@@ -174,7 +175,7 @@ func repoTest() {
 	// logs.Info.Println(user)
 
 	// Tokens
-	tokenRepo := tokens.NewDynamoDBTokensRepository("Tokens", session)
+	tokenRepo := tokens.NewDynamoDBTokensRepository([]byte("DEFAULT"), "Tokens", session)
 	token, _ := tokenRepo.GeneratePairOfTokens("JuanGo")
 	logs.Info.Printf("%+v\n", token)
 }

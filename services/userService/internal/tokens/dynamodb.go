@@ -12,6 +12,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
 )
 
@@ -21,16 +22,30 @@ type DynamoDBTokensRepository struct {
 	tableName string
 	separator string
 	shortTTL  time.Duration
+	key       []byte
 }
 
-func NewDynamoDBTokensRepository(tableName string, session *session.Session) *DynamoDBTokensRepository {
+func NewDynamoDBTokensRepository(key []byte, tableName string, session *session.Session) *DynamoDBTokensRepository {
 	svc := dynamodb.New(session)
 	return &DynamoDBTokensRepository{
 		tableName: tableName,
 		svc:       svc,
 		separator: "+",
 		shortTTL:  time.Duration(3 * time.Hour),
+		key:       key,
 	}
+}
+
+func (repo *DynamoDBTokensRepository) GenerateJWTToken(user domain.User) (string, error) {
+	token := jwt.NewWithClaims(
+		jwt.SigningMethodHS256,
+		jwt.MapClaims{
+			"userId":    user.UserId,
+			"userPhone": user.PhoneNumber,
+			"userName":  user.Name,
+		},
+	)
+	return token.SignedString(repo.key)
 }
 
 // tokenId string | userId  string | longLiveRefreshToken string | shortLiveToken string | shortLiveTokenTTL number

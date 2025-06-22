@@ -39,6 +39,7 @@ type Tokens struct {
 	RefreshToken      string    `json:"refreshToken" dynamodbav:"RefreshToken"`
 	ShortLiveToken    string    `json:"shortLiveToken" dynamodbav:"ShortLiveToken"`
 	ShortLiveTokenTTL time.Time `json:"shortLiveTokenTTL" dynamodbav:"ShortLiveTokenTTL"`
+	JWT               string    `json:"jwt"`
 }
 
 type Login struct {

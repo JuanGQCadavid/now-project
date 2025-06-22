@@ -172,6 +172,12 @@ func (svc *Service) ValidateProcess(validateProcess domain.ValidateProcess) (*do
 		return nil, err
 	}
 
+	if jwt, err := svc.tokensRepository.GenerateJWTToken(*userFetched); err == nil {
+		tokens.JWT = jwt
+	} else {
+		logs.Error.Println("An error occur while generating the JWT", err.Error())
+	}
+
 	return tokens, nil
 }
 

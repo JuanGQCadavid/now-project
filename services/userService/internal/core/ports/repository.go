@@ -46,4 +46,5 @@ type UserRepository interface {
 // tokenId string | userId  string | longLiveRefreshToken string | shortLiveToken string | shortLiveTokenTTL number
 type TokensRepository interface {
 	GeneratePairOfTokens(userID string) (*domain.Tokens, error)
+	GenerateJWTToken(user domain.User) (string, error)
 }
