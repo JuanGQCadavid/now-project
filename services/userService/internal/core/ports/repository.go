@@ -40,11 +40,12 @@ type UserRepository interface {
 	AddOTP(phoneNumber string, otp []int, ttl time.Duration) error
 
 	// Validate OTP, this should punish on wrong attemp
-	ValidateOTP(phoneNumber string, otp []int) error
+	ValidateOTP(user *domain.User, otp []int) (*domain.User, error)
 }
 
 // tokenId string | userId  string | longLiveRefreshToken string | shortLiveToken string | shortLiveTokenTTL number
 type TokensRepository interface {
+	// Deprecated: This function will be deprecated soon, JWT will be placed.
 	GeneratePairOfTokens(userID string) (*domain.Tokens, error)
-	GenerateJWTToken(user domain.User) (string, error)
+	GenerateJWTToken(user *domain.User) (string, error)
 }

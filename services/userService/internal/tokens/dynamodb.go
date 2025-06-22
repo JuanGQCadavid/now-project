@@ -36,13 +36,14 @@ func NewDynamoDBTokensRepository(key []byte, tableName string, session *session.
 	}
 }
 
-func (repo *DynamoDBTokensRepository) GenerateJWTToken(user domain.User) (string, error) {
+func (repo *DynamoDBTokensRepository) GenerateJWTToken(user *domain.User) (string, error) {
 	token := jwt.NewWithClaims(
 		jwt.SigningMethodHS256,
 		jwt.MapClaims{
 			"userId":    user.UserId,
 			"userPhone": user.PhoneNumber,
 			"userName":  user.Name,
+			"session":   user.ValidatedHash,
 		},
 	)
 	return token.SignedString(repo.key)

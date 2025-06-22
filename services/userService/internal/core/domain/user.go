@@ -6,6 +6,7 @@ type User struct {
 	Name           string `json:"name" dynamodbav:"Name"`
 	PhoneNumber    string `json:"phoneNumber" dynamodbav:"PhoneNumber"`
 	Validated      bool   `json:"isValid" dynamodbav:"Validated"`
+	ValidatedHash  string `json:"-" dynamodbav:"ValidatedHash"`
 	UserId         string `json:"userId" dynamodbav:"UserId"`
 	PhoneSignature string `json:"phoneSignature" dynamodbav:"PhoneSignature,omitempty"`
 }

@@ -139,38 +139,61 @@ func (repo *DynamoDBUserRepository) AddOTP(phoneNumber string, otp []int, ttl ti
 
 // Validate OTP, this should punish on wrong attemp
 
-func (repo *DynamoDBUserRepository) ValidateOTP(phoneNumber string, otp []int) error {
-
-	otpFromRepo, err := repo.getOTP(phoneNumber)
+func (repo *DynamoDBUserRepository) ValidateOTP(user *domain.User, otp []int) (*domain.User, error) {
+	otpFromRepo, err := repo.getOTP(user.PhoneNumber)
 	logs.Info.Printf("OTP: %+v \n", otpFromRepo)
 
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	if otpFromRepo == nil {
-		return ports.ErrThereIsNotOTP
+		return nil, ports.ErrThereIsNotOTP
 	}
 
 	if len(otp) != len(otpFromRepo.OTP) {
 		logs.Error.Println("lengths are not the same for the OTPs")
-		return repo.punishOTP(phoneNumber, otpFromRepo)
+		return nil, repo.punishOTP(user.PhoneNumber, otpFromRepo)
 	}
 
 	for i, code := range otp {
 		if otpFromRepo.OTP[i] != code {
 			logs.Error.Println("OTP does not match")
-			return repo.punishOTP(phoneNumber, otpFromRepo)
+			return nil, repo.punishOTP(user.PhoneNumber, otpFromRepo)
 		}
 	}
 
-	if err := repo.updateSingleAttribute(phoneNumber, "Validated", true); err != nil {
-		logs.Error.Println("We fail to update the user, err", err.Error())
-		return err
+	if err := repo.cleanOTP(user.PhoneNumber); err != nil {
+		logs.Error.Println("We fail to clean the opt, err", err.Error())
+		return nil, err
 	}
 
-	logs.Info.Println("Code validation goes well")
-	return repo.cleanOTP(phoneNumber)
+	return repo.saveValidation(user)
+}
+
+func (repo *DynamoDBUserRepository) saveValidation(user *domain.User) (*domain.User, error) {
+	user.ValidatedHash = repo.generateId()
+	user.Validated = true
+
+	marshaled, err := dynamodbattribute.MarshalMap(user)
+
+	if err != nil {
+		logs.Error.Println("err we fail marshaling the data, err: ", err.Error())
+		return nil, errors.New("err we fail marshaling the data")
+	}
+
+	userInput := &dynamodb.PutItemInput{
+		Item:                   marshaled,
+		TableName:              &repo.tableName,
+		ReturnConsumedCapacity: aws.String(dynamodb.ReturnConsumedCapacityTotal),
+	}
+
+	if _, err = repo.svc.PutItem(userInput); err != nil {
+		logs.Error.Println("err we fail putting the data, err", err.Error())
+		return nil, errors.New("err we fail putting the data")
+	}
+
+	return user, nil
 }
 
 func (repo *DynamoDBUserRepository) cleanOTP(phoneNumber string) error {

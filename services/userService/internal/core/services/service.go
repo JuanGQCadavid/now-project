@@ -160,25 +160,22 @@ func (svc *Service) ValidateProcess(validateProcess domain.ValidateProcess) (*do
 		return nil, ports.ErrOTPNotAlive
 	}
 
-	err = svc.userRepository.ValidateOTP(validateProcess.PhoneNumber, validateProcess.Code)
+	userFetched, err = svc.userRepository.ValidateOTP(userFetched, validateProcess.Code)
 
 	if err != nil {
 		return nil, err
 	}
 
-	tokens, err := svc.tokensRepository.GeneratePairOfTokens(userFetched.UserId)
+	jwt, err := svc.tokensRepository.GenerateJWTToken(userFetched)
 
 	if err != nil {
-		return nil, err
-	}
-
-	if jwt, err := svc.tokensRepository.GenerateJWTToken(*userFetched); err == nil {
-		tokens.JWT = jwt
-	} else {
 		logs.Error.Println("An error occur while generating the JWT", err.Error())
+		return nil, err
 	}
 
-	return tokens, nil
+	return &domain.Tokens{
+		JWT: jwt,
+	}, nil
 }
 
 func (svc *Service) GenerateNewOTP(userInfo domain.Login) error {
