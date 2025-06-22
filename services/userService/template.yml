@@ -142,12 +142,15 @@ Resources:
           usersTableName:
             Fn::ImportValue:  
               !Sub ${PululappEnv}-users-table-id
-          tokensTableName:
-            Fn::ImportValue:
-              !Sub ${PululappEnv}-tokens-table-id
           userIndexName: 
             Fn::ImportValue:
               !Sub ${PululappEnv}-users-id
+          jwtKey: 
+            Fn::Sub:
+            - "{{resolve:ssm:${SSM_OUTPUT_NAME}}}"
+            - SSM_OUTPUT_NAME: 
+                Fn::ImportValue:
+                  !Sub ${PululappEnv}-jwt-key
       FunctionName: !Sub ${ServiceName}-${PululappEnv}
       MemorySize: !FindInMap ['ServiceConfig', !Ref PululappEnv, 'RAM']
       PackageType: Image

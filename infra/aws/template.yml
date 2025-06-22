@@ -227,6 +227,19 @@ Resources:
       Tier: Standard
       Type: String
       Value: PLACE_HOLDER
+  
+  JWTKey:
+    Type: AWS::SSM::Parameter
+    Properties:
+      DataType: text
+      Description: JWT key for encrypting
+      Name: !Sub "jwt-key-${PululappEnv}"
+      Tags: 
+        App: Pululapp
+        Env: !Ref PululappEnv
+      Tier: Standard
+      Type: String
+      Value: PLACE_HOLDER
 
   ############################################################
   #
@@ -811,4 +824,10 @@ Outputs:
     Value: !Ref DBName
     Export:
       Name: !Sub ${PululappEnv}-db-name
+  JWTKeyName:
+    Value: !Ref JWTKey
+    Export:
+      Name: !Sub ${PululappEnv}-jwt-key
+
+      
 
