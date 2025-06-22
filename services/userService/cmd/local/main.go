@@ -24,12 +24,11 @@ func init() {
 	}))
 
 	userTableName := getenv("usersTableName", "Users")
-	tokensTableName := getenv("tokensTableName", "Tokens")
 	userIndexName := getenv("userIndexName", "UserId-index")
 	jwtKey := getenv("jwtKey", "DEFAULT")
 
 	var userRepository ports.UserRepository = users.NewDynamoDBUserRepository(userTableName, userIndexName, session)
-	var tokensRepository ports.TokensRepository = tokens.NewDynamoDBTokensRepository([]byte(jwtKey), tokensTableName, session)
+	var tokensRepository ports.TokensRepository = tokens.NewJWTTokenGenerator([]byte(jwtKey))
 	var defaultNotificator ports.Notificator = localnotificator.LocalNotificator{}
 	var snsNotificator ports.Notificator = awssns.NewSNSNotificator(session)
 
