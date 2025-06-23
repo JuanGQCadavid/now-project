@@ -35,11 +35,11 @@ func (up *UserProfile) CleanSensitiveData() {
 }
 
 type Tokens struct {
-	TokenId           string    `json:"tokenId" dynamodbav:"TokenId"`
-	UserID            string    `json:"userId" dynamodbav:"UserID"`
-	RefreshToken      string    `json:"refreshToken" dynamodbav:"RefreshToken"`
-	ShortLiveToken    string    `json:"shortLiveToken" dynamodbav:"ShortLiveToken"`
-	ShortLiveTokenTTL time.Time `json:"shortLiveTokenTTL" dynamodbav:"ShortLiveTokenTTL"`
+	TokenId           string    `json:"-" dynamodbav:"TokenId"`
+	UserID            string    `json:"-" dynamodbav:"UserID"`
+	RefreshToken      string    `json:"-" dynamodbav:"RefreshToken"`
+	ShortLiveToken    string    `json:"-" dynamodbav:"ShortLiveToken"`
+	ShortLiveTokenTTL time.Time `json:"-" dynamodbav:"ShortLiveTokenTTL"`
 	JWT               string    `json:"jwt"`
 }
 
