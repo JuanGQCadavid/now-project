@@ -3,7 +3,6 @@ package main
 import (
 	"github.com/JuanGQCadavid/now-project/services/authService/core/core/service"
 	"github.com/JuanGQCadavid/now-project/services/authService/core/encrypters"
-	"github.com/JuanGQCadavid/now-project/services/authService/core/tokens"
 	"github.com/JuanGQCadavid/now-project/services/authService/core/user"
 	"github.com/JuanGQCadavid/now-project/services/authService/core/utils"
 	"github.com/JuanGQCadavid/now-project/services/pkgs/common/logs"
@@ -54,13 +53,11 @@ func reposTest() {
 
 func serviceTest() {
 	var (
-		sess            *session.Session
-		tokensTableName string
-		userTableName   string
-		usersIndex      string
-		token           *tokens.DynamoDBTokensRepository
-		repo            *user.DynamoDBUserRepository
-		encryptor       *encrypters.SimpleEncrypt
+		sess          *session.Session
+		userTableName string
+		usersIndex    string
+		repo          *user.DynamoDBUserRepository
+		encryptor     *encrypters.SimpleEncrypt
 	)
 
 	sess = session.Must(session.NewSessionWithOptions(session.Options{
@@ -69,16 +66,13 @@ func serviceTest() {
 
 	encryptor = encrypters.NewSimpleEncrypt([]byte("DEFAULT"))
 
-	tokensTableName = utils.Getenv("TokensTable", "Tokens-staging")
-	token = tokens.NewDynamoDBTokensRepository(tokensTableName, sess, encryptor)
-
 	userTableName = utils.Getenv("UsersTable", "Users-staging")
 	usersIndex = utils.Getenv("UsersIndexTable", "UserId-index")
 	repo = user.NewDynamoDBUserRepository(userTableName, usersIndex, sess)
 
-	appService := service.NewAuthService(token, encryptor, repo)
+	appService := service.NewAuthService(encryptor, repo)
 
-	if resp, err := appService.GetUserDetailsFromToken("YjgxYjUyMjQtZGUyNS00NjIzLWExNDAtNTlkMjkyNjI3ZjZhKzhjZGQzN2M2LWNmNWUtNDc5Yi1iMzczLTY2MjJkOTQ3YjlkMg=="); err != nil {
+	if resp, err := appService.GetUserDetailsFromToken("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzZXNzaW9uIjoiZTg5MjU0MTEtNzFlZS00OTgxLThlOTYtYTBmM2ViZWU5MzFkIiwidXNlcklkIjoiYjM0MzlmOTItNWQzZS00NThlLThlMDItZDIyMjAyNDVjNTI0IiwidXNlck5hbWUiOiJKdWFuR1FDYWRhdmlkIiwidXNlclBob25lIjoiKzM3MjUzOTU2NTgxIn0.OBNj2ihfLDasbY5534eqF_ccCMhiKTybymsvbBElSTw"); err != nil {
 		logs.Error.Fatalln(err.Error())
 	} else {
 		logs.Info.Printf("%+v", resp)

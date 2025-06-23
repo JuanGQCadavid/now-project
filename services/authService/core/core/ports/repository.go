@@ -17,5 +17,5 @@ type TokensRepository interface {
 }
 
 type UserRepository interface {
-	GetUserData(token *domain.Tokens) (*domain.User, error)
+	GetUserData(string) (*domain.User, error)
 }

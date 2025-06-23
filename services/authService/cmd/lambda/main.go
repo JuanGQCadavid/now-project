@@ -7,7 +7,6 @@ import (
 	"github.com/JuanGQCadavid/now-project/services/authService/core/core/domain"
 	"github.com/JuanGQCadavid/now-project/services/authService/core/core/service"
 	"github.com/JuanGQCadavid/now-project/services/authService/core/encrypters"
-	"github.com/JuanGQCadavid/now-project/services/authService/core/tokens"
 	"github.com/JuanGQCadavid/now-project/services/authService/core/user"
 	"github.com/JuanGQCadavid/now-project/services/authService/core/utils"
 	"github.com/JuanGQCadavid/now-project/services/pkgs/common/logs"
@@ -22,7 +21,6 @@ var (
 
 const (
 	POLICY_ALLOW              = "Allow"
-	TOKENS_TABLE_ENV_NAME     = "TokensTable"
 	USER_TABLE_ENV_NAME       = "UsersTable"
 	USER_TABLE_INDEX_ENV_NAME = "UsersIndexTable"
 	JWT_KEY_ENV_NAME          = "jwtKey"
@@ -83,21 +81,18 @@ func init() {
 		sess = session.Must(session.NewSessionWithOptions(session.Options{
 			SharedConfigState: session.SharedConfigEnable,
 		}))
-		tokensTableName = utils.Getenv(TOKENS_TABLE_ENV_NAME, "Tokens-staging")
-		userTableName   = utils.Getenv(USER_TABLE_ENV_NAME, "Users-staging")
-		usersIndex      = utils.Getenv(USER_TABLE_INDEX_ENV_NAME, "UserID-index")
-		jwtKey          = utils.Getenv(JWT_KEY_ENV_NAME, "DEFAULT")
+		userTableName = utils.Getenv(USER_TABLE_ENV_NAME, "Users-staging")
+		usersIndex    = utils.Getenv(USER_TABLE_INDEX_ENV_NAME, "UserID-index")
+		jwtKey        = utils.Getenv(JWT_KEY_ENV_NAME, "DEFAULT")
 
-		token     *tokens.DynamoDBTokensRepository
 		repo      *user.DynamoDBUserRepository
 		encryptor *encrypters.SimpleEncrypt
 	)
 
 	encryptor = encrypters.NewSimpleEncrypt([]byte(jwtKey))
 
-	token = tokens.NewDynamoDBTokensRepository(tokensTableName, sess, encryptor)
 	repo = user.NewDynamoDBUserRepository(userTableName, usersIndex, sess)
-	appService = service.NewAuthService(token, encryptor, repo)
+	appService = service.NewAuthService(encryptor, repo)
 }
 
 func main() {

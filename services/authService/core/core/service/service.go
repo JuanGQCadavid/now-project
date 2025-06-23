@@ -11,17 +11,16 @@ import (
 var (
 	ErrWhileDecryptingToken = errors.New("err while decoding the token, maybe bad format")
 	ErrWhileFetchingUser    = errors.New("err unknown user")
+	ErrTokenHashNotValid    = errors.New("err token hash is not valid")
 )
 
 type AuthService struct {
-	tokensRepo  ports.TokensRepository
 	userRepo    ports.UserRepository
 	encryptRepo ports.Encrypt
 }
 
-func NewAuthService(tokensRepo ports.TokensRepository, encryptRepo ports.Encrypt, userRepo ports.UserRepository) *AuthService {
+func NewAuthService(encryptRepo ports.Encrypt, userRepo ports.UserRepository) *AuthService {
 	return &AuthService{
-		tokensRepo:  tokensRepo,
 		encryptRepo: encryptRepo,
 		userRepo:    userRepo,
 	}
@@ -29,8 +28,8 @@ func NewAuthService(tokensRepo ports.TokensRepository, encryptRepo ports.Encrypt
 
 func (svc *AuthService) GetUserDetailsFromToken(tokenEncoded string) (*domain.UserDetails, error) {
 	var (
-		token domain.Token
-		user  *domain.User
+		useDetail *domain.UserDetails
+		user      *domain.User
 	)
 
 	if len(tokenEncoded) == 0 {
@@ -38,22 +37,20 @@ func (svc *AuthService) GetUserDetailsFromToken(tokenEncoded string) (*domain.Us
 		return nil, nil
 	}
 
-	token, err := svc.encryptRepo.DecodeToken(tokenEncoded)
+	useDetail, err := svc.encryptRepo.DecodeJWTToken(tokenEncoded)
 
 	if err != nil {
 		return nil, ErrWhileDecryptingToken
 	}
 
-	tokenData, err := svc.tokensRepo.GetTokenData(token)
+	user, err = svc.userRepo.GetUserData(useDetail.UserID)
 
 	if err != nil {
 		return nil, err
 	}
 
-	user, err = svc.userRepo.GetUserData(tokenData)
-
-	if err != nil {
-		return nil, err
+	if useDetail.SessionHash != user.ValidatedHash {
+		return nil, ErrTokenHashNotValid
 	}
 
 	return &domain.UserDetails{
