@@ -25,6 +25,7 @@ const (
 	TOKENS_TABLE_ENV_NAME     = "TokensTable"
 	USER_TABLE_ENV_NAME       = "UsersTable"
 	USER_TABLE_INDEX_ENV_NAME = "UsersIndexTable"
+	JWT_KEY_ENV_NAME          = "jwtKey"
 )
 
 func Handler(ctx context.Context, event events.APIGatewayV2CustomAuthorizerV2Request) (events.APIGatewayCustomAuthorizerResponse, error) {
@@ -85,11 +86,14 @@ func init() {
 		tokensTableName = utils.Getenv(TOKENS_TABLE_ENV_NAME, "Tokens-staging")
 		userTableName   = utils.Getenv(USER_TABLE_ENV_NAME, "Users-staging")
 		usersIndex      = utils.Getenv(USER_TABLE_INDEX_ENV_NAME, "UserID-index")
-		encryptor       = encrypters.NewSimpleEncrypt()
+		jwtKey          = utils.Getenv(JWT_KEY_ENV_NAME, "DEFAULT")
 
-		token *tokens.DynamoDBTokensRepository
-		repo  *user.DynamoDBUserRepository
+		token     *tokens.DynamoDBTokensRepository
+		repo      *user.DynamoDBUserRepository
+		encryptor *encrypters.SimpleEncrypt
 	)
+
+	encryptor = encrypters.NewSimpleEncrypt([]byte(jwtKey))
 
 	token = tokens.NewDynamoDBTokensRepository(tokensTableName, sess, encryptor)
 	repo = user.NewDynamoDBUserRepository(userTableName, usersIndex, sess)

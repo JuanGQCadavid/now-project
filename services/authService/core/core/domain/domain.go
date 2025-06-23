@@ -19,12 +19,14 @@ var (
 )
 
 type User struct {
+	UserId         string `json:"userId" dynamodbav:"UserId"`
 	Name           string `json:"name" dynamodbav:"Name"`
 	PhoneNumber    string `json:"phoneNumber" dynamodbav:"PhoneNumber"`
 	Validated      bool   `json:"isValid" dynamodbav:"Validated"`
-	UserId         string `json:"userId" dynamodbav:"UserId"`
 	PhoneSignature string `json:"phoneSignature" dynamodbav:"PhoneSignature,omitempty"`
+	ValidatedHash  string `json:"-" dynamodbav:"ValidatedHash"`
 }
+
 type Tokens struct {
 	TokenId           string    `json:"tokenId" dynamodbav:"TokenId"`
 	UserID            string    `json:"userId" dynamodbav:"UserID"`
@@ -37,6 +39,7 @@ type UserDetails struct {
 	UserID      string `json:"UserID"`
 	Name        string `json:"Name"`
 	PhoneNumber string `json:"PhoneNumber"`
+	SessionHash string `json:"-"`
 }
 
 type Token struct {

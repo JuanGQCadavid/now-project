@@ -103,6 +103,12 @@ Resources:
           UsersIndexTable: 
             Fn::ImportValue:
               !Sub ${PululappEnv}-users-id
+          jwtKey:
+            Fn::Sub:
+            - "{{resolve:ssm:${SSM_OUTPUT_NAME}}}"
+            - SSM_OUTPUT_NAME: 
+                Fn::ImportValue:
+                  !Sub ${PululappEnv}-jwt-key
       FunctionName: !Sub ${ServiceName}-${PululappEnv}
       # ImageConfig: 
       #   ImageConfig

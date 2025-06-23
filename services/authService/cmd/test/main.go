@@ -67,7 +67,7 @@ func serviceTest() {
 		SharedConfigState: session.SharedConfigEnable,
 	}))
 
-	encryptor = encrypters.NewSimpleEncrypt()
+	encryptor = encrypters.NewSimpleEncrypt([]byte("DEFAULT"))
 
 	tokensTableName = utils.Getenv("TokensTable", "Tokens-staging")
 	token = tokens.NewDynamoDBTokensRepository(tokensTableName, sess, encryptor)
