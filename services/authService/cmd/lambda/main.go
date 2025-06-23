@@ -13,6 +13,7 @@ import (
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
 	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/google/uuid"
 )
 
 var (
@@ -70,6 +71,9 @@ func generatePolicy(principalId, effect, resource string, userDetails *domain.Us
 		var inInterface map[string]interface{}
 		inrec, _ := json.Marshal(userDetails)
 		json.Unmarshal(inrec, &inInterface)
+
+		// Adding Trace Id
+		inInterface["X-Trace-Id"] = uuid.NewString()
 		authResponse.Context = inInterface
 	}
 

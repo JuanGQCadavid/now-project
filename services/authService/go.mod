@@ -16,6 +16,7 @@ require (
 
 require (
 	github.com/golang-jwt/jwt/v5 v5.2.2 // indirect
+	github.com/google/uuid v1.6.0
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	github.com/stretchr/testify v1.10.0
 )
