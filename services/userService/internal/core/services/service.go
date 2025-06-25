@@ -3,7 +3,9 @@ package services
 import (
 	"fmt"
 	"math/rand"
+	"strings"
 	"time"
+	"unicode"
 
 	"github.com/JuanGQCadavid/now-project/services/pkgs/common/logs"
 	"github.com/JuanGQCadavid/now-project/services/userService/internal/core/domain"
@@ -39,6 +41,48 @@ func NewService(userRepository ports.UserRepository, notificators map[domain.Not
 		notificators:     notificators,
 		tokensRepository: tokensRepository,
 	}
+}
+
+func (svc *Service) UpdateProfile(user *authDomain.UserDetails, profile *domain.UserProfile) error {
+	// Only the owner could change its own profile
+	if user.UserID == authDomain.AnonymousUser.UserID || len(user.UserID) == 0 {
+		return ports.ErrUserNotLogged
+	}
+
+	userProfile, err := svc.userRepository.GetUserProfile(user.UserID)
+
+	if err != nil {
+		return err
+	}
+
+	if userProfile == nil || userProfile.UserId != profile.UserId {
+		return ports.ErrUserDoesNotExist
+	}
+
+	//Checking that there are differences
+	if userProfile.Equals(profile) {
+		return ports.ErrSameProfile
+	}
+
+	//1. Ensure username is not empty and well formarted.
+	if !svc.isSimpleString(profile.FirstName) {
+		return ports.ErrUserNameShouldContainOnlyLetters
+	}
+	//2. Set profileId as the user requester
+	profile.UserId = user.UserID
+
+	//3. call repository
+	return svc.userRepository.UpdateProfile(profile)
+}
+
+func (svc *Service) isSimpleString(value string) bool {
+	trimmed := strings.TrimSpace(value)
+	for _, letter := range value {
+		if !unicode.IsLetter(letter) && letter != ' ' {
+			return false
+		}
+	}
+	return trimmed == value && len(value) != 0
 }
 
 func (svc *Service) GetUserInfo(user *authDomain.UserDetails, userId string) (*domain.UserProfile, error) {

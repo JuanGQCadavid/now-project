@@ -60,6 +60,10 @@ func (repo *DynamoDBUserRepository) GetUserProfile(userId string) (*domain.UserP
 	return userProfile, nil
 }
 
+func (svc *DynamoDBUserRepository) UpdateProfile(*domain.UserProfile) error {
+	return nil
+}
+
 // Fetch user data from repository
 
 func (repo *DynamoDBUserRepository) GetUser(phoneNumber string) (*domain.User, error) {

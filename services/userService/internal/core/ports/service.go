@@ -8,11 +8,14 @@ import (
 )
 
 var (
-	ErrUserNotFound         = errors.New("err user not found in registry")
-	ErrInternalError        = errors.New("err internal")
-	ErrOnSavingOTP          = errors.New("err on saving OTP")
-	ErrOnSendingOTP         = errors.New("err on sending OTP")
-	ErrUserIsAlreadyCreated = errors.New("err the user already exist")
+	ErrUserNotFound                     = errors.New("err user not found in registry")
+	ErrInternalError                    = errors.New("err internal")
+	ErrOnSavingOTP                      = errors.New("err on saving OTP")
+	ErrOnSendingOTP                     = errors.New("err on sending OTP")
+	ErrUserIsAlreadyCreated             = errors.New("err the user already exist")
+	ErrUserNameShouldContainOnlyLetters = errors.New("err user name should only contain letters")
+	ErrUserNotLogged                    = errors.New("err user needs to be logged in to perform the opperation")
+	ErrSameProfile                      = errors.New("err user is the same")
 )
 
 type UserService interface {
@@ -20,6 +23,7 @@ type UserService interface {
 	// If the user token is the same user then
 	// Return all data, if not only public data
 	GetUserInfo(user *authDomain.UserDetails, userId string) (*domain.UserProfile, error)
+	UpdateProfile(user *authDomain.UserDetails, profile *domain.UserProfile) error
 
 	// user/init/login
 

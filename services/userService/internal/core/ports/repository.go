@@ -23,6 +23,7 @@ var (
 type UserRepository interface {
 	// Fetch user data from repository
 	GetUser(phoneNumber string) (*domain.User, error)
+	UpdateProfile(*domain.UserProfile) error
 
 	// Fetch User profile from repository
 	// Returns:
