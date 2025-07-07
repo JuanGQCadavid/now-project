@@ -98,7 +98,7 @@ Resources:
                   - dynamodb:GetRecords
                 Resource:
                   - Fn::ImportValue:
-                      !Sub ${PululappEnv}-tokens-table-arn
+                      !Sub ${PululappEnv}-uprofile-table-arn
                   - Fn::ImportValue:
                       !Sub ${PululappEnv}-users-table-arn
                   - Fn::Sub:
@@ -139,6 +139,9 @@ Resources:
       Description: !Ref ServiceDescription
       Environment:
         Variables:
+          userProfileTableName:
+            Fn::ImportValue:  
+              !Sub ${PululappEnv}-uprofile-table-id
           usersTableName:
             Fn::ImportValue:  
               !Sub ${PululappEnv}-users-table-id
