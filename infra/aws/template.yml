@@ -247,31 +247,6 @@ Resources:
   #
   ############################################################
 
-  TokensTable:
-    Type: AWS::DynamoDB::Table
-    Properties:
-      AttributeDefinitions: 
-        - AttributeName: TokenId
-          AttributeType: S
-      BillingMode: PAY_PER_REQUEST
-      # ContributorInsightsSpecification: 
-      #   Enabled: True
-      DeletionProtectionEnabled: True
-      KeySchema: 
-        - AttributeName: TokenId
-          KeyType: HASH 
-      # BillingMode: PROVISIONED 
-      # ProvisionedThroughput: 
-      #   ReadCapacityUnits: 5
-      #   WriteCapacityUnits: 5
-      TableClass: STANDARD 
-      TableName: !Sub Tokens-${PululappEnv}
-      Tags: 
-        - Key: App
-          Value: Pululapp
-        - Key: Env
-          Value: !Ref PululappEnv
-
   UsersTable:
     Type: AWS::DynamoDB::Table
     Properties:
@@ -296,6 +271,27 @@ Resources:
           KeyType: HASH 
       TableClass: STANDARD 
       TableName: !Sub Users-${PululappEnv}
+      Tags: 
+        - Key: App
+          Value: Pululapp
+        - Key: Env
+          Value: !Ref PululappEnv
+  
+  UserProfileTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions: 
+        - AttributeName: UserId
+          AttributeType: S
+      BillingMode: PAY_PER_REQUEST
+      # ContributorInsightsSpecification: 
+      #   Enabled: True
+      DeletionProtectionEnabled: True
+      KeySchema: 
+        - AttributeName: UserId
+          KeyType: HASH 
+      TableClass: STANDARD 
+      TableName: !Sub UserProfile-${PululappEnv}
       Tags: 
         - Key: App
           Value: Pululapp
@@ -703,14 +699,14 @@ Outputs:
     Value: !Ref CentralGateway
     Export:
       Name: !Sub ${PululappEnv}-central-gateway-id
-  TokensTableId:
-    Value: !Ref TokensTable
+  UserProfileTableId:
+    Value: !Ref UserProfileTable
     Export:
-      Name: !Sub ${PululappEnv}-tokens-table-id
-  TokensTableArn:
-    Value: !GetAtt TokensTable.Arn
+      Name: !Sub ${PululappEnv}-uprofile-table-id
+  UserProfileTableArn:
+    Value: !GetAtt UserProfileTable.Arn
     Export:
-      Name: !Sub ${PululappEnv}-tokens-table-arn
+      Name: !Sub ${PululappEnv}-uprofile-table-arn
   UsersTableId:
     Value: !Ref UsersTable
     Export:
