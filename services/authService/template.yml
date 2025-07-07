@@ -70,8 +70,6 @@ Resources:
                   - dynamodb:ListStreams
                   - dynamodb:GetRecords
                 Resource:
-                  - Fn::ImportValue:
-                      !Sub ${PululappEnv}-tokens-table-arn
                   - Fn::Sub:
                     - "${TABLE_ARN}/index/*"
                     - TABLE_ARN: 
@@ -94,9 +92,6 @@ Resources:
       Description: !Ref ServiceDescription
       Environment:
         Variables:
-          TokensTable: 
-            Fn::ImportValue:
-              !Sub ${PululappEnv}-tokens-table-id
           UsersTable: 
             Fn::ImportValue:
               !Sub ${PululappEnv}-users-table-id
