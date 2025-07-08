@@ -9,6 +9,7 @@ import (
 	"github.com/JuanGQCadavid/now-project/services/userService/internal/core/services"
 	"github.com/JuanGQCadavid/now-project/services/userService/internal/notificators/awssns"
 	"github.com/JuanGQCadavid/now-project/services/userService/internal/notificators/localnotificator"
+	"github.com/JuanGQCadavid/now-project/services/userService/internal/profile"
 	"github.com/JuanGQCadavid/now-project/services/userService/internal/tokens"
 	"github.com/JuanGQCadavid/now-project/services/userService/internal/users"
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -25,20 +26,21 @@ func init() {
 
 	userTableName := getenv("usersTableName", "Users")
 	userIndexName := getenv("userIndexName", "UserId-index")
+	userProfileTableName := getenv("userProfileTableName", "UserProfile-staging")
 	jwtKey := getenv("jwtKey", "DEFAULT")
 
 	var userRepository ports.UserRepository = users.NewDynamoDBUserRepository(userTableName, userIndexName, session)
 	var tokensRepository ports.TokensRepository = tokens.NewJWTTokenGenerator([]byte(jwtKey))
 	var defaultNotificator ports.Notificator = localnotificator.LocalNotificator{}
 	var snsNotificator ports.Notificator = awssns.NewSNSNotificator(session)
-
+	var profileRepository ports.ProfileRepository = profile.NewProfileRepositoryDynamoDB(userProfileTableName, session)
 	var notificators map[domain.NotificatorType]ports.Notificator = map[domain.NotificatorType]ports.Notificator{
 		domain.WHATSAPP: defaultNotificator,
 		domain.DEFAULT:  snsNotificator,
 		domain.SMS:      snsNotificator,
 	}
 
-	service = services.NewService(userRepository, notificators, tokensRepository)
+	service = services.NewService(userRepository, notificators, tokensRepository, profileRepository)
 }
 
 func main() {

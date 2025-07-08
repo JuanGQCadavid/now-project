@@ -10,6 +10,7 @@ import (
 	"github.com/JuanGQCadavid/now-project/services/userService/internal/handlers/httphdl"
 	"github.com/JuanGQCadavid/now-project/services/userService/internal/notificators/awssns"
 	"github.com/JuanGQCadavid/now-project/services/userService/internal/notificators/localnotificator"
+	"github.com/JuanGQCadavid/now-project/services/userService/internal/profile"
 	"github.com/JuanGQCadavid/now-project/services/userService/internal/tokens"
 	"github.com/JuanGQCadavid/now-project/services/userService/internal/users"
 	"github.com/aws/aws-lambda-go/events"
@@ -22,9 +23,10 @@ import (
 var ginLambda *ginadapter.GinLambda
 
 const (
-	USER_TABLE_ENV_NAME string = "usersTableName"
-	USER_INDEX_ENV_NAME string = "userIndexName"
-	KEY_JWT_ENV_NAME    string = "jwtKey"
+	USER_TABLE_ENV_NAME    string = "usersTableName"
+	USER_INDEX_ENV_NAME    string = "userIndexName"
+	PROFILE_TABLE_ENV_NAME string = "userProfileTableName"
+	KEY_JWT_ENV_NAME       string = "jwtKey"
 )
 
 func init() {
@@ -35,10 +37,12 @@ func init() {
 
 	userTableName := getenv(USER_TABLE_ENV_NAME, "Users")
 	userIndexName := getenv(USER_INDEX_ENV_NAME, "UserId-index")
+	userProfileTableName := getenv(PROFILE_TABLE_ENV_NAME, "UserProfile-staging")
 	jwtKey := getenv(KEY_JWT_ENV_NAME, "DEFAULT")
 
 	var userRepository ports.UserRepository = users.NewDynamoDBUserRepository(userTableName, userIndexName, session)
 	var tokensRepository ports.TokensRepository = tokens.NewJWTTokenGenerator([]byte(jwtKey))
+	var profileRepository ports.ProfileRepository = profile.NewProfileRepositoryDynamoDB(userProfileTableName, session)
 
 	var defaultNotificator ports.Notificator = localnotificator.LocalNotificator{}
 	var snsNotificator ports.Notificator = awssns.NewSNSNotificator(session)
@@ -49,7 +53,7 @@ func init() {
 		domain.SMS:      snsNotificator,
 	}
 
-	var service ports.UserService = services.NewService(userRepository, notificators, tokensRepository)
+	var service ports.UserService = services.NewService(userRepository, notificators, tokensRepository, profileRepository)
 
 	userService := httphdl.NewUserServiceHandler(service)
 

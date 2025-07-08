@@ -40,30 +40,6 @@ func NewDynamoDBUserRepository(tableName string, indexName string, session *sess
 	}
 }
 
-// Fetch User profile from repository
-// Returns:
-//   - ErrUserDoesNotExist
-//   - UserProfile
-func (repo *DynamoDBUserRepository) GetUserProfile(userId string) (*domain.UserProfile, error) {
-	var (
-		userProfile *domain.UserProfile = &domain.UserProfile{}
-	)
-	if err := DynamoQueryOneAndMapTo(DEFAULT_USER_ID_KEY_NAME, userId, repo.tableName, repo.indexName, userProfile, repo.svc); err != nil {
-		logs.Error.Println("We fail to fetch user profile, dynamodb: ", err.Error())
-		return nil, ports.ErrOnDynamoDB
-	}
-
-	if len(userProfile.UserName) == 0 {
-		return nil, ports.ErrUserNotFound
-	}
-
-	return userProfile, nil
-}
-
-func (svc *DynamoDBUserRepository) UpdateProfile(*domain.UserProfile) error {
-	return nil
-}
-
 // Fetch user data from repository
 
 func (repo *DynamoDBUserRepository) GetUser(phoneNumber string) (*domain.User, error) {

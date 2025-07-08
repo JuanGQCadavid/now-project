@@ -23,13 +23,6 @@ var (
 type UserRepository interface {
 	// Fetch user data from repository
 	GetUser(phoneNumber string) (*domain.User, error)
-	UpdateProfile(*domain.UserProfile) error
-
-	// Fetch User profile from repository
-	// Returns:
-	//	- ErrUserDoesNotExist
-	// 	- UserProfile
-	GetUserProfile(userId string) (*domain.UserProfile, error)
 
 	// Returns latest OTP generation timestap
 	GetLastOTPGenerationTimestap(phoneNumber string) (*time.Time, error)

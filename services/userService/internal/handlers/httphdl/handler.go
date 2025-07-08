@@ -24,6 +24,7 @@ func NewUserServiceHandler(userService ports.UserService) *UserServiceHandler {
 
 func (hdl *UserServiceHandler) ConfigureRouter(router *gin.Engine) {
 	router.GET("/profile/:userId", hdl.GetUserProfile)
+	router.PUT("/profile/:userId", hdl.UpdateProfile)
 
 	router.POST("/user/init/login", hdl.InitLoging)
 	router.POST("/user/init/singup", hdl.InitSingUp)
@@ -32,7 +33,60 @@ func (hdl *UserServiceHandler) ConfigureRouter(router *gin.Engine) {
 	router.POST("/user/validate/otp/resent", hdl.GenerateNewOTP)
 }
 
-// /user/:userId
+func (hdl *UserServiceHandler) UpdateProfile(context *gin.Context) {
+	var (
+		profile = &domain.UserProfile{}
+		id      = context.Param("userId")
+	)
+
+	if err := context.BindJSON(profile); err != nil {
+		context.AbortWithStatusJSON(http.StatusBadRequest, ErrorMessage{
+			Message: "Dude, I dont understand your payload",
+		})
+		return
+	}
+
+	if len(id) == 0 {
+		context.AbortWithStatusJSON(http.StatusBadRequest, ErrorMessage{
+			Message: "Missing userId path param",
+		})
+		return
+	}
+
+	var userDetails *authDomain.UserDetails = authUtils.GetHeaders(context.Request.Header)
+	profile.UserId = id
+
+	if err := hdl.userService.UpdateProfile(userDetails, profile); err != nil {
+
+		switch err {
+		case ports.ErrSameProfile:
+			context.Status(http.StatusAlreadyReported)
+			return
+		case ports.ErrUserNotLogged:
+			context.AbortWithStatus(http.StatusUnauthorized)
+			return
+		case ports.ErrUserDoesNotExist:
+			context.AbortWithStatus(http.StatusNotFound)
+			return
+		case ports.ErrUserNameShouldContainOnlyLetters:
+			context.AbortWithStatusJSON(http.StatusBadRequest, ErrorMessage{
+				Message: err.Error(),
+			})
+			return
+
+		}
+
+		context.AbortWithStatusJSON(http.StatusInternalServerError, ErrorMessage{
+			Message: err.Error(),
+		})
+		return
+
+		// TODO - lets chek the errors
+	}
+
+	context.Status(http.StatusNoContent)
+}
+
 func (hdl *UserServiceHandler) GetUserProfile(context *gin.Context) {
 	id := context.Param("userId")
 	if len(id) == 0 {

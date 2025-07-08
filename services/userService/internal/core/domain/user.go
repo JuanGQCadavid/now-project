@@ -13,18 +13,17 @@ type User struct {
 
 type UserProfile struct {
 	UserId             string `json:"userId" dynamodbav:"UserId"`
-	UserName           string `json:"user_name,omitempty" dynamodbav:"Name"`
-	Bio                string `json:"user_bio,omitempty" dynamodbav:"Bio"`
-	ProfilePicturePath string `json:"user_profile_picture_path,omitempty" dynamodbav:"ProfilePicturePath"`
+	UserName           string `json:"user_name" dynamodbav:"Name"`
+	Bio                string `json:"user_bio" dynamodbav:"Bio"`
+	ProfilePicturePath string `json:"user_profile_picture_path" dynamodbav:"ProfilePicturePath"`
+	// // Per user atribute there should be a flag for specifying wheter it is public
+	// FirstName             string `json:"first_name,omitempty" dynamodbav:"FirstName"`
+	// LastName              string `json:"last_name,omitempty" dynamodbav:"LastName"`
+	// IsFirstLastNamePublic bool   `json:"is_first_last_name_public,omitempty" dynamodbav:"IsFirstLastNamePublic"`
 
-	// Per user atribute there should be a flag for specifying wheter it is public
-	FirstName             string `json:"first_name,omitempty" dynamodbav:"FirstName"`
-	LastName              string `json:"last_name,omitempty" dynamodbav:"LastName"`
-	IsFirstLastNamePublic bool   `json:"is_first_last_name_public,omitempty" dynamodbav:"IsFirstLastNamePublic"`
-
-	// Phone number
-	PhoneNumber         string `json:"phone_number,omitempty" dynamodbav:"PhoneNumber"`
-	IsPhoneNumberPublic bool   `json:"is_phone_number_public,omitempty" dynamodbav:"IsPhoneNumberPublic"`
+	// // Phone number
+	// PhoneNumber         string `json:"phone_number,omitempty" dynamodbav:"PhoneNumber"`
+	// IsPhoneNumberPublic bool   `json:"is_phone_number_public,omitempty" dynamodbav:"IsPhoneNumberPublic"`
 }
 
 // TODO Pending security changes check, they are ignored as those ones are not yet implemented.
@@ -36,13 +35,13 @@ func (profil *UserProfile) Equals(other *UserProfile) bool {
 }
 
 func (up *UserProfile) CleanSensitiveData() {
-	if !up.IsFirstLastNamePublic {
-		up.FirstName = ""
-		up.LastName = ""
-	}
-	if !up.IsPhoneNumberPublic {
-		up.PhoneNumber = ""
-	}
+	// if !up.IsFirstLastNamePublic {
+	// 	up.FirstName = ""
+	// 	up.LastName = ""
+	// }
+	// if !up.IsPhoneNumberPublic {
+	// 	up.PhoneNumber = ""
+	// }
 }
 
 type Tokens struct {

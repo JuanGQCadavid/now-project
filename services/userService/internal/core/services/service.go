@@ -10,6 +10,7 @@ import (
 	"github.com/JuanGQCadavid/now-project/services/pkgs/common/logs"
 	"github.com/JuanGQCadavid/now-project/services/userService/internal/core/domain"
 	"github.com/JuanGQCadavid/now-project/services/userService/internal/core/ports"
+	"github.com/JuanGQCadavid/now-project/services/userService/internal/utils"
 
 	authDomain "github.com/JuanGQCadavid/now-project/services/authService/core/core/domain"
 )
@@ -25,21 +26,25 @@ type OTPConfig struct {
 }
 
 type Service struct {
-	userRepository   ports.UserRepository
-	tokensRepository ports.TokensRepository
-	otpConifg        *OTPConfig
-	notificators     map[domain.NotificatorType]ports.Notificator
+	// Repositories
+	userRepository        ports.UserRepository
+	tokensRepository      ports.TokensRepository
+	userProfileRepository ports.ProfileRepository
+	// Config
+	otpConifg    *OTPConfig
+	notificators map[domain.NotificatorType]ports.Notificator
 }
 
-func NewService(userRepository ports.UserRepository, notificators map[domain.NotificatorType]ports.Notificator, tokensRepository ports.TokensRepository) *Service {
+func NewService(userRepository ports.UserRepository, notificators map[domain.NotificatorType]ports.Notificator, tokensRepository ports.TokensRepository, userProfileRepository ports.ProfileRepository) *Service {
 	return &Service{
 		userRepository: userRepository,
 		otpConifg: &OTPConfig{
 			DefaultLength: 4,
 			TTL:           time.Minute * 5, // 5 minutes
 		},
-		notificators:     notificators,
-		tokensRepository: tokensRepository,
+		notificators:          notificators,
+		tokensRepository:      tokensRepository,
+		userProfileRepository: userProfileRepository,
 	}
 }
 
@@ -49,7 +54,7 @@ func (svc *Service) UpdateProfile(user *authDomain.UserDetails, profile *domain.
 		return ports.ErrUserNotLogged
 	}
 
-	userProfile, err := svc.userRepository.GetUserProfile(user.UserID)
+	userProfile, err := svc.userProfileRepository.GetUserProfile(user.UserID)
 
 	if err != nil {
 		return err
@@ -65,14 +70,14 @@ func (svc *Service) UpdateProfile(user *authDomain.UserDetails, profile *domain.
 	}
 
 	//1. Ensure username is not empty and well formarted.
-	if !svc.isSimpleString(profile.FirstName) {
+	if !svc.isSimpleString(profile.UserName) {
 		return ports.ErrUserNameShouldContainOnlyLetters
 	}
 	//2. Set profileId as the user requester
 	profile.UserId = user.UserID
 
 	//3. call repository
-	return svc.userRepository.UpdateProfile(profile)
+	return svc.userProfileRepository.UpdateProfile(profile)
 }
 
 func (svc *Service) isSimpleString(value string) bool {
@@ -86,7 +91,7 @@ func (svc *Service) isSimpleString(value string) bool {
 }
 
 func (svc *Service) GetUserInfo(user *authDomain.UserDetails, userId string) (*domain.UserProfile, error) {
-	userProfile, err := svc.userRepository.GetUserProfile(userId)
+	userProfile, err := svc.userProfileRepository.GetUserProfile(userId)
 
 	if err != nil {
 		if err != ports.ErrUserDoesNotExist {
@@ -175,6 +180,30 @@ func (svc *Service) InitSingUp(userInfo domain.SingUp) error {
 	if err != nil {
 		return err
 	}
+
+	// TODO : Should we use better topics ? So far my solution would be to retry
+	// if err = svc.userProfileRepository.CreateProfile(&domain.UserProfile{
+	// 	UserName: userInfo.UserName,
+	// 	UserId:   userCreated.UserId,
+	// }); err != nil {
+	// 	logs.Error.Println("We fail to create the user ", userCreated.UserId, " profile: ", err.Error())
+	// }
+	utils.ExponentialBackOffWithOpts(
+		utils.WithFunction(
+			func() error {
+				return svc.userProfileRepository.CreateProfile(&domain.UserProfile{
+					UserName: userInfo.UserName,
+					UserId:   userCreated.UserId,
+				})
+			},
+		),
+		utils.WithOnFailure(
+			func() error {
+				logs.Error.Println("We fail to create the user ", userCreated.UserId, " profile: ", err.Error())
+				return nil
+			},
+		),
+	)
 
 	return svc.initProcessValidation(userCreated, userInfo.MethodVerificator)
 }

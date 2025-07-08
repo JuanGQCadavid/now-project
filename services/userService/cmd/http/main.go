@@ -9,6 +9,7 @@ import (
 	"github.com/JuanGQCadavid/now-project/services/userService/internal/handlers/httphdl"
 	"github.com/JuanGQCadavid/now-project/services/userService/internal/notificators/awssns"
 	"github.com/JuanGQCadavid/now-project/services/userService/internal/notificators/localnotificator"
+	"github.com/JuanGQCadavid/now-project/services/userService/internal/profile"
 	"github.com/JuanGQCadavid/now-project/services/userService/internal/tokens"
 	"github.com/JuanGQCadavid/now-project/services/userService/internal/users"
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -16,41 +17,45 @@ import (
 )
 
 const (
-	USER_TABLE_ENV_NAME string = "usersTableName"
-	USER_INDEX_ENV_NAME string = "userIndexName"
-	KEY_JWT_ENV_NAME    string = "jwtKey"
+	USER_TABLE_ENV_NAME    string = "usersTableName"
+	PROFILE_TABLE_ENV_NAME string = "userProfileTableName"
+	USER_INDEX_ENV_NAME    string = "userIndexName"
+	KEY_JWT_ENV_NAME       string = "jwtKey"
 )
 
 func main() {
 
-	session := session.Must(session.NewSessionWithOptions(session.Options{
-		SharedConfigState: session.SharedConfigEnable,
-	}))
+	var (
+		session = session.Must(session.NewSessionWithOptions(session.Options{
+			SharedConfigState: session.SharedConfigEnable,
+		}))
+		userTableName        = getenv(USER_TABLE_ENV_NAME, "Users")
+		userProfileTableName = getenv(PROFILE_TABLE_ENV_NAME, "UserProfile-staging")
+		userIndexName        = getenv(USER_INDEX_ENV_NAME, "UserID-index")
+		jwtKey               = getenv(KEY_JWT_ENV_NAME, "DEFAULT")
 
-	userTableName := getenv(USER_TABLE_ENV_NAME, "Users")
-	userIndexName := getenv(USER_INDEX_ENV_NAME, "UserID-index")
-	jwtKey := getenv(KEY_JWT_ENV_NAME, "DEFAULT")
+		// Repositories
+		userRepository     ports.UserRepository                         = users.NewDynamoDBUserRepository(userTableName, userIndexName, session)
+		profileRepository  ports.ProfileRepository                      = profile.NewProfileRepositoryDynamoDB(userProfileTableName, session)
+		tokensRepository   ports.TokensRepository                       = tokens.NewJWTTokenGenerator([]byte(jwtKey))
+		defaultNotificator ports.Notificator                            = localnotificator.LocalNotificator{}
+		snsNotificator     ports.Notificator                            = awssns.NewSNSNotificator(session)
+		notificators       map[domain.NotificatorType]ports.Notificator = map[domain.NotificatorType]ports.Notificator{
+			domain.WHATSAPP: defaultNotificator,
+			domain.DEFAULT:  snsNotificator,
+			domain.SMS:      snsNotificator,
+		}
 
-	var userRepository ports.UserRepository = users.NewDynamoDBUserRepository(userTableName, userIndexName, session)
-	var tokensRepository ports.TokensRepository = tokens.NewJWTTokenGenerator([]byte(jwtKey))
-
-	var defaultNotificator ports.Notificator = localnotificator.LocalNotificator{}
-	var snsNotificator ports.Notificator = awssns.NewSNSNotificator(session)
-
-	var notificators map[domain.NotificatorType]ports.Notificator = map[domain.NotificatorType]ports.Notificator{
-		domain.WHATSAPP: defaultNotificator,
-		domain.DEFAULT:  snsNotificator,
-		domain.SMS:      snsNotificator,
-	}
-
-	var service ports.UserService = services.NewService(userRepository, notificators, tokensRepository)
+		// Service
+		service ports.UserService = services.NewService(userRepository, notificators, tokensRepository, profileRepository)
+	)
 
 	userService := httphdl.NewUserServiceHandler(service)
 
 	router := gin.Default()
 	userService.ConfigureRouter(router)
 
-	router.Run("0.0.0.0:8000")
+	router.Run("0.0.0.0:8002")
 }
 
 func getenv(key, fallback string) string {
