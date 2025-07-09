@@ -1,6 +1,6 @@
 module github.com/JuanGQCadavid/now-project/services/fileService
 
-go 1.24.4
+go 1.24.3
 
 require (
 	github.com/BurntSushi/toml v1.3.2 // indirect

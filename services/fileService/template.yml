@@ -1,0 +1,215 @@
+---
+AWSTemplateFormatVersion: 2010-09-09
+Description: Pululapp File Service.
+Parameters:
+  PululappEnv:
+    Type: String
+    Default: staging
+    AllowedValues:
+      - staging
+      - prod
+    Description: Pululapp enviroment
+  ServiceImageVersion:
+    Type: String
+    Description: Service image
+  ServiceName:
+    Type: String
+    Description: Service name
+    Default: file-svc
+  ServiceDescription:
+    Type: String
+    Description: Service description
+    Default: File service for file managment
+  ServiceRoute:
+    Type: String
+    Description: Service description
+    Default: ANY /files
+  ECROutput:
+    Type: String
+    Description: Service ECR cloudformation output
+    Default: file-service-ecr-uri
+
+Mappings:
+  ServiceConfig:
+    staging:
+      RAM: 128
+      TimeOut: 120
+    prod:
+      RAM: 128
+      TimeOut: 120
+
+Resources:
+
+
+  ##############################################################
+  ###
+  ### Cloudfront -> S3 <- Lambda
+  ###
+  ##############################################################
+
+  FilesBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      # AccelerateConfiguration: 
+      #   AccelerateConfiguration
+      # AccessControl: "PublicRead"
+      BucketEncryption: 
+        ServerSideEncryptionConfiguration:
+          - BucketKeyEnabled: true
+            ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      BucketName: !Sub pululaap-files-${PululappEnv}
+
+      # TODO -> To configure the 2 months private files transaction into a cheaper one
+      # https://docs.aws.amazon.com/AWSCloudFormation/latest/TemplateReference/aws-properties-s3-bucket-lifecycleconfiguration.html
+      # LifecycleConfiguration: 
+      #   LifecycleConfiguration
+
+      MetricsConfigurations: 
+        - Id: EntireBucket
+
+      # TODO -> To confifgure s3 events
+      # https://docs.aws.amazon.com/AWSCloudFormation/latest/TemplateReference/aws-properties-s3-bucket-notificationconfiguration.html
+      # NotificationConfiguration: 
+      #   NotificationConfiguration
+
+      PublicAccessBlockConfiguration: 
+        BlockPublicAcls: false
+        BlockPublicPolicy: false
+        IgnorePublicAcls: false
+        RestrictPublicBuckets: false
+      VersioningConfiguration: 
+        Status: Enabled
+      Tags: 
+        - Key: App
+          Value: Pululapp
+        - Key: Env
+          Value: !Ref PululappEnv
+        - Key: Service
+          Value: !Ref ServiceName
+
+  ServiceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      MaxSessionDuration: 3600
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaRole
+        - arn:aws:iam::aws:policy/AWSXrayFullAccess
+      Policies:
+        - PolicyName: !Sub ${ServiceName}-s3-${PululappEnv}
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - s3:*
+                Resource:
+                  - !GetAtt FilesBucket.Arn
+
+  ServiceLambda:
+    Type: AWS::Lambda::Function
+    Properties:
+      Architectures: 
+        - arm64
+      Code: 
+        ImageUri: 
+          Fn::Sub:
+            - "${ECR_URI}:${VERSION}"
+            - VERSION: !Ref ServiceImageVersion
+              ECR_URI: 
+                Fn::ImportValue:
+                  !Ref ECROutput
+      Description: !Ref ServiceDescription
+      Environment:
+        Variables:
+          object_storage_id: !Ref FilesBucket
+          object_storage_arn: !GetAtt FilesBucket.Arn
+      FunctionName: !Sub ${ServiceName}-${PululappEnv}
+      MemorySize: !FindInMap ['ServiceConfig', !Ref PululappEnv, 'RAM']
+      PackageType: Image
+      Role: !GetAtt ServiceRole.Arn
+      Tags: 
+        - Key: App
+          Value: Pululapp
+        - Key: Env
+          Value: !Ref PululappEnv
+        - Key: Service
+          Value: !Ref ServiceName
+      Timeout: !FindInMap ['ServiceConfig', !Ref PululappEnv, 'TimeOut']
+      TracingConfig:
+        Mode: Active
+
+  LambdaApiGatewayPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref ServiceLambda
+      Principal: apigateway.amazonaws.com
+  
+  ServiceAPIGatewayIntegration:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId:
+        Fn::ImportValue: 
+            !Sub ${PululappEnv}-central-gateway-id
+      Description: !Ref ServiceDescription
+      IntegrationMethod: POST
+      IntegrationType: AWS_PROXY
+      IntegrationUri: !Join
+        - ''
+        - - 'arn:'
+          - !Ref 'AWS::Partition'
+          - ':apigateway:'
+          - !Ref 'AWS::Region'
+          - ':lambda:path/2015-03-31/functions/'
+          - !GetAtt ServiceLambda.Arn
+          - /invocations
+      PayloadFormatVersion: '1.0'
+      RequestParameters:
+        "overwrite:header.x-internal-user-name": "$context.authorizer.Name"
+        "overwrite:header.x-internal-user-id": "$context.authorizer.UserID"
+        "overwrite:header.x-internal-user-phone-number": "$context.authorizer.PhoneNumber"
+  
+  APIGatewayIntegration:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: 
+        Fn::ImportValue: 
+            !Sub ${PululappEnv}-central-gateway-id
+      AuthorizationType: CUSTOM
+      AuthorizerId:
+        Fn::ImportValue: 
+          !Sub ${PululappEnv}-auth-default-id
+      OperationName: !Sub ${ServiceName}-${PululappEnv}
+      RouteKey: !Ref ServiceRoute
+      Target: !Join
+        - /
+        - - integrations
+          - !Ref ServiceAPIGatewayIntegration
+  
+  APIGatewayIntegrationProxy:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: 
+        Fn::ImportValue: 
+            !Sub ${PululappEnv}-central-gateway-id
+      AuthorizationType: CUSTOM
+      AuthorizerId:
+        Fn::ImportValue: 
+          !Sub ${PululappEnv}-auth-default-id
+      OperationName: !Sub ${ServiceName}-${PululappEnv}-proxy
+      RouteKey: !Sub ${ServiceRoute}/{proxy+}
+      Target: !Join
+        - /
+        - - integrations
+          - !Ref ServiceAPIGatewayIntegration
