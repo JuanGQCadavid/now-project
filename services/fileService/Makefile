@@ -26,7 +26,7 @@ docker-buildx-driver:
 publish: ecr-deploy deploy
 
 run:
-	source .env  && go run cmd/http/main.go
+	source .env  && go run cmd/http/main.go -debug
 
 local:
 	docker compose --env-file ./.env up --detach --build \
