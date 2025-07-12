@@ -1,5 +1,7 @@
 package domain
 
+import "fmt"
+
 type FileKind string
 
 const (
@@ -38,5 +40,11 @@ type FileMetadata struct {
 }
 
 type PresignedURL struct {
-	URL string `json:"url,omitempty"`
+	URL     string `json:"url,omitempty"`
+	Headers map[string]string
+	Method  string
+}
+
+func (pre *PresignedURL) ToString() string {
+	return fmt.Sprintf("Presigned: \n\t URL:%s \n\t Method:%s \n\t Headers: %v\n", pre.URL, pre.Method, pre.Headers)
 }

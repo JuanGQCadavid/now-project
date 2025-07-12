@@ -73,6 +73,9 @@ Resources:
       # NotificationConfiguration: 
       #   NotificationConfiguration
 
+      OwnershipControls:
+        Rules:
+          - ObjectOwnership: BucketOwnerPreferred
       PublicAccessBlockConfiguration: 
         BlockPublicAcls: false
         BlockPublicPolicy: false
