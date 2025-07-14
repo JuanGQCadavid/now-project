@@ -10,6 +10,6 @@ Pendings:
 To work:
 - [x] Generate presogned URL with public / private - and metadata associated
 - [ ] Validate the user rigts to update an event, a date (chat) or they own profile against Neo4j
-- [ ] fdfsf
-- [ ] fdfsf
+- [ ] Define a S3 path for each element
+- [ ] Helm!
 - [ ] fdfsf

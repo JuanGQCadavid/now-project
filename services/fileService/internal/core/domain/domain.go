@@ -4,17 +4,22 @@ import "fmt"
 
 type FileKind string
 
-const (
-	ProfileType FileKind = "profile"
-	EventType   FileKind = "event"
-)
+// const (
+// 	ProfileType FileKind = "profile"
+// 	EventType   FileKind = "event"
+// 	ChatType    FileKind = "chat" // TODO - Pending implementation, I need first to create chat on friends
+// )
+
+// users_files/:userId/profile/profile_picture.jpg
+// users_files/:userId/events/:eventId/uuid.[type]
 
 type FileScope string
 
 const (
-	EventScope FileScope = "event"
-	ChatScope  FileScope = "chat"
-	DateScope  FileScope = "date"
+	ProfileScope FileScope = "profile"
+	EventScope   FileScope = "event"
+	ChatScope    FileScope = "chat"
+	DateScope    FileScope = "date"
 )
 
 type FileType string
@@ -29,10 +34,11 @@ const (
 type ControlAccess struct {
 	EventId string `json:"eventId,omitempty"`
 	DateId  string `json:"dateId,omitempty"`
+	ChatId  string `json:"chatId,omitempty"`
 }
 
 type FileMetadata struct {
-	Kind          FileKind      `json:"kind,omitempty"`
+	// Kind          FileKind      `json:"kind,omitempty"`
 	Scope         FileScope     `json:"scope,omitempty"`
 	ControlAccess ControlAccess `json:"controlAccess"`
 	ForcePublic   bool          `json:"forcePublic,omitempty"`
