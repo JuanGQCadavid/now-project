@@ -66,13 +66,13 @@ func (fs *FileSerice) UploadFile(ctx context.Context, userDetails authDomain.Use
 			loggerr.Warn().Any("ControlAccess", fileMetadata.ControlAccess).Msg("Control access missing ChatId for ChatScope")
 			return nil, ErrMissingControlAccessDataForTheScope
 		}
-		access, err := fs.spotsCoreRepository.GetUserEventAccess(userDetails.UserID, fileMetadata.ControlAccess.EventId)
+		access, err := fs.spotsCoreRepository.GetUserDateAccess(userDetails.UserID, fileMetadata.ControlAccess.EventId)
 
 		if err != nil {
 			loggerr.Err(err).
 				Str("UserID", userDetails.UserID).
 				Str("ChatId", fileMetadata.ControlAccess.ChatId).
-				Msg("Err while calling GetUserEventAccess")
+				Msg("Err while calling GetUserDateAccess")
 
 			return nil, ErrInternalError
 		}

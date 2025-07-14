@@ -13,3 +13,7 @@ To work:
 - [ ] Define a S3 path for each element
 - [ ] Helm!
 - [ ] fdfsf
+
+So far:
+- ChatId is DateId until friends and chat module are implemented
+    - - A user has access to send on the chat only if it is attending an event
