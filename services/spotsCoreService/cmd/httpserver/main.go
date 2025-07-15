@@ -1,6 +1,9 @@
 package main
 
 import (
+	"flag"
+	"os"
+
 	"github.com/JuanGQCadavid/now-project/services/pkgs/common/logs"
 	"github.com/JuanGQCadavid/now-project/services/pkgs/credentialsFinder/cmd/ssm"
 	"github.com/JuanGQCadavid/now-project/services/spotsCoreService/internal/core/services/spotsrv"
@@ -9,6 +12,8 @@ import (
 	"github.com/JuanGQCadavid/now-project/services/spotsCoreService/internal/repositories/neo4jRepository"
 	"github.com/JuanGQCadavid/now-project/services/spotsCoreService/pkg/uuidgen"
 	"github.com/gin-gonic/gin"
+	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
 )
 
 var (
@@ -43,7 +48,16 @@ func main() {
 		service     = spotsrv.New(repoSpot, notifier, uuid)
 		httpHandler = httphdl.NewHTTPHandler(service)
 		router      = gin.Default()
+		debug       = flag.Bool("debug", false, "sets log level to debug")
 	)
+
+	flag.Parse()
+	zerolog.SetGlobalLevel(zerolog.InfoLevel)
+
+	if *debug {
+		zerolog.SetGlobalLevel(zerolog.DebugLevel)
+		log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
+	}
 
 	httpHandler.SetRouter(router)
 	// router.Run("localhost:8000")

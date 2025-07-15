@@ -5,12 +5,15 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/rs/zerolog/log"
+
 	authDomain "github.com/JuanGQCadavid/now-project/services/authService/core/core/domain"
 	authUtils "github.com/JuanGQCadavid/now-project/services/authService/core/utils"
 	"github.com/JuanGQCadavid/now-project/services/pkgs/common/logs"
 	"github.com/JuanGQCadavid/now-project/services/spotsCoreService/internal/core/domain"
 	"github.com/JuanGQCadavid/now-project/services/spotsCoreService/internal/core/ports"
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 )
 
 type HTTPHandler struct {
@@ -31,6 +34,47 @@ func (hdl *HTTPHandler) SetRouter(router *gin.Engine) {
 	router.PUT("/spots/core/:id/topic", hdl.UpdateSpotTopic)    // OK
 	router.PUT("/spots/core/:id/place", hdl.UpdateSpotPlace)    // OK
 	router.DELETE("/spots/core/:id", hdl.DeleteSpot)            // OK
+
+	router.GET("/spots/core/:eventId/access/:userId", hdl.GetUserAccess)
+
+}
+
+const (
+	TRACE_ID_HEADER = "X-Trace-Id"
+)
+
+func (hdl *HTTPHandler) getOrGenerateTraceID(context *gin.Context) string {
+	var (
+		headerTraceId = context.Request.Header.Get(TRACE_ID_HEADER)
+	)
+
+	if len(headerTraceId) > 0 {
+		return headerTraceId
+	}
+
+	return uuid.NewString()
+}
+
+// /spots/core/:eventId/access/:userId?dateId=:dateId
+func (hdl *HTTPHandler) GetUserAccess(context *gin.Context) {
+	var (
+		eventId = context.Param("eventId")
+		userId  = context.Param("userId")
+		dateId  = context.DefaultQuery("dateId", "")
+		traceId = hdl.getOrGenerateTraceID(context)
+		logger  = log.With().Str(TRACE_ID_HEADER, traceId).Logger()
+	)
+
+	if len(eventId) == 0 || len(userId) == 0 {
+		logger.Err(fmt.Errorf("err Missing params")).Str("eventId", eventId).Str("dateId", dateId).Msg("Missing path params")
+		context.AbortWithStatusJSON(http.StatusBadRequest, ErrorMessage{
+			Message: "Missing eventId or userId param",
+		})
+		return
+	}
+
+	logger.Info().Str("eventId", eventId).Str("dateId", dateId).Msg("Init GetUserAccess")
+
 }
 
 // /spots/core/:id

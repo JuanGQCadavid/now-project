@@ -1,6 +1,7 @@
 package neo4jRepository
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/JuanGQCadavid/now-project/services/pkgs/common/logs"
@@ -27,6 +28,14 @@ func NewNeo4jSpotRepoWithDriver(driver neo4j.Driver) *Neo4jSpotRepo {
 	return &Neo4jSpotRepo{
 		driver: driver,
 	}
+}
+
+func (r Neo4jSpotRepo) GetUserEventRole(ctx context.Context, userId, eventId string) (*domain.Access, error) {
+	return nil, nil
+}
+
+func (r Neo4jSpotRepo) GetDateAttendantsWithRole(ctx context.Context, eventId, dateId string) ([]*domain.Access, error) {
+	return nil, nil
 }
 
 func (r Neo4jSpotRepo) Get(id string, format ports.OutputFormat) (domain.Spot, error) {

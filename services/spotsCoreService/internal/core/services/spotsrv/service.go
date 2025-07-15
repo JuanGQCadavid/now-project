@@ -1,6 +1,8 @@
 package spotsrv
 
 import (
+	"context"
+	"errors"
 	"fmt"
 	"strings"
 
@@ -9,6 +11,7 @@ import (
 	"github.com/JuanGQCadavid/now-project/services/spotsCoreService/internal/core/domain"
 	"github.com/JuanGQCadavid/now-project/services/spotsCoreService/internal/core/ports"
 	"github.com/JuanGQCadavid/now-project/services/spotsCoreService/pkg/uuidgen"
+	"github.com/rs/zerolog/log"
 )
 
 /*
@@ -27,6 +30,47 @@ func New(spotRepository ports.SpotRepository, notifier ports.Notify, uuidGen uui
 		notifier:       notifier,
 		uuidGen:        uuidGen,
 	}
+}
+
+var (
+	ErrDateDoesNotExist error = errors.New("err date does not exsit")
+)
+
+func (s *service) GetAccess(ctx context.Context, userId, eventId, dateId string) (*domain.Access, error) {
+
+	if len(dateId) == 0 {
+		return s.spotRepository.GetUserEventRole(ctx, userId, eventId)
+	}
+
+	var (
+		attendents, err = s.spotRepository.GetDateAttendantsWithRole(ctx, eventId, dateId)
+		logger          = log.Ctx(ctx)
+	)
+
+	if err != nil {
+		logger.Err(err).
+			Str("Method", "spotRepository.GetDateAttendantsWithRole").
+			Str("eventId", eventId).
+			Str("dateId", dateId).
+			Msg("Error calling the repository")
+
+		return nil, err
+	}
+
+	if len(attendents) == 0 {
+		return nil, ErrDateDoesNotExist
+	}
+
+	for _, attendent := range attendents {
+		if attendent.UserId == userId {
+			return attendent, nil
+		}
+	}
+
+	return &domain.Access{
+		UserId: userId,
+		Role:   domain.NoAccessRole,
+	}, nil
 }
 
 func (s *service) Get(spotId string, format ports.OutputFormat) (domain.Spot, error) {

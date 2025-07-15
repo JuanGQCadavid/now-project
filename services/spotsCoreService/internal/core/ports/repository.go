@@ -1,6 +1,7 @@
 package ports
 
 import (
+	"context"
 	"errors"
 
 	"github.com/JuanGQCadavid/now-project/services/spotsCoreService/internal/core/domain"
@@ -23,4 +24,7 @@ type SpotRepository interface {
 	UpdateSpotTopic(spotEvent domain.Topic, spotId string) error
 
 	DeleteSpot(spotId string) error
+
+	GetUserEventRole(ctx context.Context, userId, eventId string) (*domain.Access, error)
+	GetDateAttendantsWithRole(ctx context.Context, eventId, dateId string) ([]*domain.Access, error)
 }
