@@ -11,7 +11,7 @@ import (
 )
 
 var (
-	// go:embed queries/getDateAttendantsWithRole.cypher
+	//go:embed queries/getDateAttendantsWithRole.cypher
 	getDateAttendantsWithRoleQuery string
 )
 

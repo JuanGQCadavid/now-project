@@ -11,7 +11,7 @@ import (
 )
 
 var (
-	// go:embed queries/getUserEventRole.cypher
+	//go:embed queries/getUserEventRole.cypher
 	getUserEventRoleQuery string
 )
 
@@ -32,12 +32,15 @@ func NewGetUserEventRoleCommand(ctx context.Context, userId, eventId string) *Ge
 func (cmd *GetUserEventRoleCommand) Run(tr neo4j.Transaction) (interface{}, error) {
 
 	var (
-		logger      = log.Ctx(cmd.ctx)
-		result, err = tr.Run(getUserEventRoleQuery, map[string]interface{}{
+		logger = log.Ctx(cmd.ctx)
+		params = map[string]interface{}{
 			"user_id":  cmd.userId,
 			"event_id": cmd.eventId,
-		})
+		}
+		result, err = tr.Run(getUserEventRoleQuery, params)
 	)
+
+	logger.Debug().Str("Query", getUserEventRoleQuery).Any("Params", params).Msg("Data for call")
 
 	if err != nil {
 		logger.Err(err).

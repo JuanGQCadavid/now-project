@@ -30,4 +30,4 @@ docker-buildx-driver:
 publish: ecr-deploy deploy
 
 run: 
-	source .env && go run cmd/httpserver/main.go
+	source .env && go run cmd/httpserver/main.go --debug
