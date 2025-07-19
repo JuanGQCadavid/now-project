@@ -8,7 +8,8 @@ import (
 )
 
 var (
-	ErrSpotUpdatedFail = errors.New("The spot was update but it is not the same as the one that we send to update")
+	ErrSpotUpdatedFail   = errors.New("err the spot was update but it is not the same as the one that we send to update")
+	ErrCallingRepository = errors.New("err repository crash")
 )
 
 type SpotRepository interface {

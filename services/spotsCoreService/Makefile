@@ -28,3 +28,6 @@ docker-buildx-driver:
 	docker buildx create --use
 
 publish: ecr-deploy deploy
+
+run: 
+	source .env && go run cmd/httpserver/main.go

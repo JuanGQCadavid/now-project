@@ -1,6 +1,7 @@
 package httphdl
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"strings"
@@ -27,6 +28,10 @@ func NewHTTPHandler(spotService ports.SpotService) *HTTPHandler {
 }
 
 func (hdl *HTTPHandler) SetRouter(router *gin.Engine) {
+	// Access
+	router.GET("/spots/core/access/:eventId/:userId", hdl.GetUserAccess)
+
+	// Core
 	router.POST("/spots/core/", hdl.CreateSpot)                 // OK
 	router.POST("/spots/core/bulk/fetch", hdl.GetMultipleSpots) // OK
 	router.GET("/spots/core/:id", hdl.GetSpot)                  // OK
@@ -34,9 +39,6 @@ func (hdl *HTTPHandler) SetRouter(router *gin.Engine) {
 	router.PUT("/spots/core/:id/topic", hdl.UpdateSpotTopic)    // OK
 	router.PUT("/spots/core/:id/place", hdl.UpdateSpotPlace)    // OK
 	router.DELETE("/spots/core/:id", hdl.DeleteSpot)            // OK
-
-	router.GET("/spots/core/:eventId/access/:userId", hdl.GetUserAccess)
-
 }
 
 const (
@@ -56,24 +58,49 @@ func (hdl *HTTPHandler) getOrGenerateTraceID(context *gin.Context) string {
 }
 
 // /spots/core/:eventId/access/:userId?dateId=:dateId
-func (hdl *HTTPHandler) GetUserAccess(context *gin.Context) {
+func (hdl *HTTPHandler) GetUserAccess(ctx *gin.Context) {
 	var (
-		eventId = context.Param("eventId")
-		userId  = context.Param("userId")
-		dateId  = context.DefaultQuery("dateId", "")
-		traceId = hdl.getOrGenerateTraceID(context)
+		eventId = ctx.Param("eventId")
+		userId  = ctx.Param("userId")
+		dateId  = ctx.DefaultQuery("dateId", "")
+		traceId = hdl.getOrGenerateTraceID(ctx)
 		logger  = log.With().Str(TRACE_ID_HEADER, traceId).Logger()
 	)
 
 	if len(eventId) == 0 || len(userId) == 0 {
 		logger.Err(fmt.Errorf("err Missing params")).Str("eventId", eventId).Str("dateId", dateId).Msg("Missing path params")
-		context.AbortWithStatusJSON(http.StatusBadRequest, ErrorMessage{
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, ErrorMessage{
 			Message: "Missing eventId or userId param",
 		})
 		return
 	}
 
 	logger.Info().Str("eventId", eventId).Str("dateId", dateId).Msg("Init GetUserAccess")
+
+	access, err := hdl.spotService.GetAccess(
+		logger.WithContext(context.Background()),
+		userId,
+		eventId,
+		dateId,
+	)
+
+	if err != nil {
+		switch err {
+		case ports.ErrDateDoesNotExist:
+			ctx.AbortWithStatusJSON(http.StatusNotFound, ErrorMessage{
+				Message: "The event does not exist",
+			})
+			return
+		default:
+			logger.Err(err).Msg("Request ended up in internal error")
+			ctx.AbortWithStatusJSON(http.StatusInternalServerError, ErrorMessage{
+				Message: err.Error(),
+			})
+			return
+		}
+	}
+
+	ctx.JSON(http.StatusOK, access)
 
 }
 

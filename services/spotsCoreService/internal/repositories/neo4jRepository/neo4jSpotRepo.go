@@ -9,6 +9,7 @@ import (
 	"github.com/JuanGQCadavid/now-project/services/spotsCoreService/internal/core/ports"
 	"github.com/JuanGQCadavid/now-project/services/spotsCoreService/internal/repositories/neo4jRepository/commands"
 	"github.com/neo4j/neo4j-go-driver/v4/neo4j"
+	"github.com/rs/zerolog/log"
 )
 
 type Neo4jSpotRepo struct {
@@ -31,11 +32,45 @@ func NewNeo4jSpotRepoWithDriver(driver neo4j.Driver) *Neo4jSpotRepo {
 }
 
 func (r Neo4jSpotRepo) GetUserEventRole(ctx context.Context, userId, eventId string) (*domain.Access, error) {
-	return nil, nil
+	var (
+		logger                   = log.Ctx(ctx)
+		cmd     commands.Command = commands.NewGetUserEventRoleCommand(ctx, userId, eventId)
+		session                  = r.driver.NewSession(neo4j.SessionConfig{})
+	)
+
+	defer session.Close()
+
+	record, err := session.ReadTransaction(func(tr neo4j.Transaction) (interface{}, error) {
+		return cmd.Run(tr)
+	})
+
+	if err != nil {
+		logger.Err(err).Msg("Repository crash!")
+		return nil, err
+	}
+
+	return record.(*domain.Access), nil
 }
 
 func (r Neo4jSpotRepo) GetDateAttendantsWithRole(ctx context.Context, eventId, dateId string) ([]*domain.Access, error) {
-	return nil, nil
+	var (
+		logger                   = log.Ctx(ctx)
+		cmd     commands.Command = commands.NewGetDateAttendantsWithRoleCommand(ctx, dateId, eventId)
+		session                  = r.driver.NewSession(neo4j.SessionConfig{})
+	)
+
+	defer session.Close()
+
+	record, err := session.ReadTransaction(func(tr neo4j.Transaction) (interface{}, error) {
+		return cmd.Run(tr)
+	})
+
+	if err != nil {
+		logger.Err(err).Msg("Repository crash!")
+		return nil, err
+	}
+
+	return record.([]*domain.Access), nil
 }
 
 func (r Neo4jSpotRepo) Get(id string, format ports.OutputFormat) (domain.Spot, error) {

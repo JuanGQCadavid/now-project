@@ -2,7 +2,6 @@ package spotsrv
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"strings"
 
@@ -32,10 +31,6 @@ func New(spotRepository ports.SpotRepository, notifier ports.Notify, uuidGen uui
 	}
 }
 
-var (
-	ErrDateDoesNotExist error = errors.New("err date does not exsit")
-)
-
 func (s *service) GetAccess(ctx context.Context, userId, eventId, dateId string) (*domain.Access, error) {
 
 	if len(dateId) == 0 {
@@ -58,7 +53,7 @@ func (s *service) GetAccess(ctx context.Context, userId, eventId, dateId string)
 	}
 
 	if len(attendents) == 0 {
-		return nil, ErrDateDoesNotExist
+		return nil, ports.ErrDateDoesNotExist
 	}
 
 	for _, attendent := range attendents {

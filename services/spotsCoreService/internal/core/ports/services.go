@@ -1,6 +1,7 @@
 package ports
 
 import (
+	"context"
 	"errors"
 
 	authDomain "github.com/JuanGQCadavid/now-project/services/authService/core/core/domain"
@@ -15,10 +16,11 @@ const (
 )
 
 var (
-	ErrSpotUserNotOwnerWhenUpdatingSpot = errors.New("err the user is not the owner of the spot")
-	ErrSpotToUpdateIsTheSameAsTheDb     = errors.New("err the spot to save is the same as the one in the db")
-	ErrSpotNotFounded                   = errors.New("err the spot is not founded in the repository")
-	ErrUserIDMissing                    = errors.New("err user ID is empty")
+	ErrSpotUserNotOwnerWhenUpdatingSpot       = errors.New("err the user is not the owner of the spot")
+	ErrSpotToUpdateIsTheSameAsTheDb           = errors.New("err the spot to save is the same as the one in the db")
+	ErrSpotNotFounded                         = errors.New("err the spot is not founded in the repository")
+	ErrUserIDMissing                          = errors.New("err user ID is empty")
+	ErrDateDoesNotExist                 error = errors.New("err date does not exsit")
 )
 
 type SpotService interface {
@@ -33,4 +35,7 @@ type SpotService interface {
 
 	// Missing Specification
 	DeleteSpot(spotId string, requestUserId string) error
+
+	// Access
+	GetAccess(ctx context.Context, userId, eventId, dateId string) (*domain.Access, error)
 }
