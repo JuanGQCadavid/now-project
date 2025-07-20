@@ -77,6 +77,11 @@ func DynamoQueryOneAndMapTo(keyName, keyValue, tableName, index string, mapTo an
 
 	log.Println("We spent -> ", out.ConsumedCapacity)
 
+	if len(out.Items) == 0 {
+		logs.Info.Println("Not data found")
+		return nil
+	}
+
 	err = dynamodbattribute.UnmarshalMap(out.Items[0], mapTo)
 
 	if err != nil {
