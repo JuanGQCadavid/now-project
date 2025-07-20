@@ -49,6 +49,13 @@ func (r Neo4jSpotRepo) GetUserEventRole(ctx context.Context, userId, eventId str
 		return nil, err
 	}
 
+	if record == nil {
+		return &domain.Access{
+			UserId: userId,
+			Role:   domain.NoAccessRole,
+		}, nil
+	}
+
 	return record.(*domain.Access), nil
 }
 
@@ -68,6 +75,10 @@ func (r Neo4jSpotRepo) GetDateAttendantsWithRole(ctx context.Context, eventId, d
 	if err != nil {
 		logger.Err(err).Msg("Repository crash!")
 		return nil, err
+	}
+
+	if record == nil {
+		return []*domain.Access{}, nil
 	}
 
 	return record.([]*domain.Access), nil
