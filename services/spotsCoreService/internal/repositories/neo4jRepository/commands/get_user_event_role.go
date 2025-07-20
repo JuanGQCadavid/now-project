@@ -7,6 +7,7 @@ import (
 	"github.com/JuanGQCadavid/now-project/services/spotsCoreService/internal/core/domain"
 	"github.com/JuanGQCadavid/now-project/services/spotsCoreService/internal/core/ports"
 	"github.com/neo4j/neo4j-go-driver/v4/neo4j"
+	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 )
 
@@ -53,18 +54,20 @@ func (cmd *GetUserEventRoleCommand) Run(tr neo4j.Transaction) (interface{}, erro
 	}
 
 	for result.Next() {
-		return cmd.recordToAccess(result.Record()), nil
+		return cmd.recordToAccess(logger, result.Record()), nil
 	}
 
 	return nil, nil
 }
 
-func (cmd *GetUserEventRoleCommand) recordToAccess(record *neo4j.Record) *domain.Access {
+func (cmd *GetUserEventRoleCommand) recordToAccess(logger *zerolog.Logger, record *neo4j.Record) *domain.Access {
 	var (
 		userId, _     = record.Get("user_id")
 		accessType, _ = record.Get("relation_type")
 		userName, _   = record.Get("user_name")
 	)
+
+	logger.Debug().Any("Record keys", record.Keys).Any("Record values", record.Values).Send()
 
 	return &domain.Access{
 		UserId:   getStringFromInterface(userId),

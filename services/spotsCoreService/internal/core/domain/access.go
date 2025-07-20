@@ -4,7 +4,7 @@ type AccessRole string
 
 func AccessRoleFromString(role string) AccessRole {
 	switch role {
-	case "HOST":
+	case "OWNS", "HOST":
 		return HostAccessRole
 	case "Attendant":
 		return AttendantAccessRole
