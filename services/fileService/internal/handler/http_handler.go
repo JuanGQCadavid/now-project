@@ -7,8 +7,11 @@ import (
 	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
 
-	"github.com/JuanGQCadavid/now-project/services/fileService/internal/core"
+	authDomain "github.com/JuanGQCadavid/now-project/services/authService/core/core/domain"
+	authUtils "github.com/JuanGQCadavid/now-project/services/authService/core/utils"
+
 	"github.com/JuanGQCadavid/now-project/services/fileService/internal/core/domain"
+	"github.com/JuanGQCadavid/now-project/services/fileService/internal/core/service"
 	"github.com/gin-gonic/gin"
 )
 
@@ -17,10 +20,10 @@ const (
 )
 
 type HttpHandler struct {
-	srv *core.FileService
+	srv *service.FileService
 }
 
-func NewHttpHandler(srv *core.FileService) *HttpHandler {
+func NewHttpHandler(srv *service.FileService) *HttpHandler {
 	return &HttpHandler{
 		srv: srv,
 	}
@@ -45,9 +48,10 @@ func (hdl *HttpHandler) getOrGenerateTraceID(context *gin.Context) string {
 func (hdl *HttpHandler) GetPresignedURL(ctx *gin.Context) {
 
 	var (
-		TraceID                       = hdl.getOrGenerateTraceID(ctx)
-		logger                        = log.With().Str(TRACE_ID_HEADER, TraceID).Logger()
-		metadata *domain.FileMetadata = &domain.FileMetadata{}
+		TraceID                             = hdl.getOrGenerateTraceID(ctx)
+		logger                              = log.With().Str(TRACE_ID_HEADER, TraceID).Logger()
+		metadata    *domain.FileMetadata    = &domain.FileMetadata{}
+		userDetails *authDomain.UserDetails = authUtils.GetHeaders(ctx.Request.Header)
 	)
 
 	if err := ctx.BindJSON(metadata); err != nil {
@@ -59,7 +63,7 @@ func (hdl *HttpHandler) GetPresignedURL(ctx *gin.Context) {
 		return
 	}
 
-	presigned, err := hdl.srv.GeneratePresignedURL(logger.WithContext(context.Background()), metadata)
+	presigned, err := hdl.srv.UploadFile(logger.WithContext(context.Background()), userDetails, metadata)
 
 	if err != nil {
 		logger.Err(err).Msg("Error while generating the Presigned URL")

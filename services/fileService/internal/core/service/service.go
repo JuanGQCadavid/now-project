@@ -13,16 +13,16 @@ import (
 	"github.com/JuanGQCadavid/now-project/services/fileService/internal/core/ports"
 )
 
-type FileSerice struct {
+type FileService struct {
 	objectRepository    ports.ObjectRepository
 	spotsCoreRepository ports.SpotsCoreRepository
 }
 
-func NewFileSerice(
+func NewFileService(
 	objectRepository ports.ObjectRepository,
 	spotsCoreRepository ports.SpotsCoreRepository,
-) *FileSerice {
-	return &FileSerice{
+) *FileService {
+	return &FileService{
 		objectRepository:    objectRepository,
 		spotsCoreRepository: spotsCoreRepository,
 	}
@@ -41,7 +41,7 @@ var (
 	ErrMissingControlAccessDataForTheScope error = errors.New("err scope is defined but it is not reflected in the controlAccess")
 )
 
-func (fs *FileSerice) UploadFile(ctx context.Context, userDetails authDomain.UserDetails, fileMetadata *domain.FileMetadata) (*domain.PresignedURL, error) {
+func (fs *FileService) UploadFile(ctx context.Context, userDetails *authDomain.UserDetails, fileMetadata *domain.FileMetadata) (*domain.PresignedURL, error) {
 	var (
 		filePath      string
 		loggerr                             = log.Ctx(ctx)
@@ -66,7 +66,7 @@ func (fs *FileSerice) UploadFile(ctx context.Context, userDetails authDomain.Use
 			loggerr.Warn().Any("ControlAccess", fileMetadata.ControlAccess).Msg("Control access missing ChatId for ChatScope")
 			return nil, ErrMissingControlAccessDataForTheScope
 		}
-		access, err := fs.spotsCoreRepository.GetUserDateAccess(userDetails.UserID, fileMetadata.ControlAccess.EventId)
+		access, err := fs.spotsCoreRepository.GetUserDateAccess(ctx, fileMetadata.ControlAccess.EventId, userDetails.UserID, fileMetadata.ControlAccess.ChatId)
 
 		if err != nil {
 			loggerr.Err(err).
@@ -97,7 +97,7 @@ func (fs *FileSerice) UploadFile(ctx context.Context, userDetails authDomain.Use
 		}
 
 		// TODO - check that the user admins the date or the event
-		access, err := fs.spotsCoreRepository.GetUserEventAccess(userDetails.UserID, fileMetadata.ControlAccess.EventId)
+		access, err := fs.spotsCoreRepository.GetUserEventAccess(ctx, userDetails.UserID, fileMetadata.ControlAccess.EventId)
 
 		if err != nil {
 			loggerr.Err(err).

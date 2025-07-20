@@ -6,13 +6,12 @@ Pendings:
 * S3 life cycle
 
 
-
 To work:
 - [x] Generate presogned URL with public / private - and metadata associated
-- [ ] Validate the user rigts to update an event, a date (chat) or they own profile against Neo4j
-- [ ] Define a S3 path for each element
+- [~] Validate the user rigts to update an event, a date (chat) or they own profile against Neo4j
+- [~] Define a S3 path for each element
 - [ ] Helm!
-- [ ] fdfsf
+
 
 So far:
 - ChatId is DateId until friends and chat module are implemented
