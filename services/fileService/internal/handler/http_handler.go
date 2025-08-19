@@ -12,6 +12,7 @@ import (
 
 	"github.com/JuanGQCadavid/now-project/services/fileService/internal/core/domain"
 	"github.com/JuanGQCadavid/now-project/services/fileService/internal/core/service"
+	"github.com/JuanGQCadavid/now-project/services/fileService/internal/utils"
 	"github.com/gin-gonic/gin"
 )
 
@@ -52,7 +53,13 @@ func (hdl *HttpHandler) GetPresignedURL(ctx *gin.Context) {
 		logger                              = log.With().Str(TRACE_ID_HEADER, TraceID).Logger()
 		metadata    *domain.FileMetadata    = &domain.FileMetadata{}
 		userDetails *authDomain.UserDetails = authUtils.GetHeaders(ctx.Request.Header)
+		userToken   string                  = authDomain.AnonymousUser.Name
+		authKey                             = http.CanonicalHeaderKey("x-auth")
 	)
+
+	if len(ctx.Request.Header[authKey]) > 0 {
+		userToken = ctx.Request.Header[authKey][0]
+	}
 
 	if err := ctx.BindJSON(metadata); err != nil {
 		logger.Err(err).Msg("Error while casting payload")
@@ -63,7 +70,10 @@ func (hdl *HttpHandler) GetPresignedURL(ctx *gin.Context) {
 		return
 	}
 
-	presigned, err := hdl.srv.UploadFile(logger.WithContext(context.Background()), userDetails, metadata)
+	presigned, err := hdl.srv.UploadFile(utils.WithUserToken(
+		logger.WithContext(context.Background()),
+		userToken,
+	), userDetails, metadata)
 
 	if err != nil {
 		logger.Err(err).Msg("Error while generating the Presigned URL")

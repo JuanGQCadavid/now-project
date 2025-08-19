@@ -23,6 +23,7 @@ jobs:
       location-updater-prc: ${{ steps.filter.outputs.locationUpdaterPrc }}
       filter-service: ${{ steps.filter.outputs.filterService }}
       user-service: ${{ steps.filter.outputs.userService }}
+      file-service: ${{ steps.filter.outputs.fileService }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -50,6 +51,8 @@ jobs:
               - 'services/filter/**'
             userService :
               - 'services/userService/**'
+            fileService :
+              - 'services/fileService/**'
 
   infra-stack:
     needs: [changes]
@@ -111,6 +114,11 @@ jobs:
               "stack-name": "user-service",
               "docker-image-name": "user-service",
               "service-dir": "./services/userService"
+            },
+            "file-service": {
+              "stack-name": "file-service",
+              "docker-image-name": "file-service",
+              "service-dir": "./services/fileService"
             },
           }
         ]
