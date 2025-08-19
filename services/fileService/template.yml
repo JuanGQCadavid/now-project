@@ -67,7 +67,6 @@ Resources:
 
       MetricsConfigurations: 
         - Id: EntireBucket
-
       # TODO -> To confifgure s3 events
       # https://docs.aws.amazon.com/AWSCloudFormation/latest/TemplateReference/aws-properties-s3-bucket-notificationconfiguration.html
       # NotificationConfiguration: 
