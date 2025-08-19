@@ -135,8 +135,12 @@ Resources:
       Description: !Ref ServiceDescription
       Environment:
         Variables:
-          object_storage_id: !Ref FilesBucket
-          object_storage_arn: !GetAtt FilesBucket.Arn
+          bucket_name: !Ref FilesBucket
+          spots_core_dns:
+            Fn::Sub:
+              - "hptts://{DNS}"
+              - DNS:
+                Fn::ImportValue: !Sub ${PululappEnv}-central-gateway-url
       FunctionName: !Sub ${ServiceName}-${PululappEnv}
       MemorySize: !FindInMap ['ServiceConfig', !Ref PululappEnv, 'RAM']
       PackageType: Image
