@@ -14,11 +14,11 @@ Mappings:
     staging:
       ReverseProxyDNS: "staging.pululapp.com"
       DomainName: "pululapp.com" 
-      DomainHostedZoneId: "Z05194622U3QC4KFX487P"
+      DomainHostedZoneId: "Z0327971HK4YFVA2WVT9"
     prod:
       ReverseProxyDNS: "prod.pululapp.com"
       DomainName: "pululapp.com" 
-      DomainHostedZoneId: "Z05194622U3QC4KFX487P"
+      DomainHostedZoneId: "Z0327971HK4YFVA2WVT9"
   TopicsDefaultConfig:
     staging:
       ArchivePolicy: 5
@@ -65,6 +65,8 @@ Resources:
       AutoDeploy: true
       StageName: "$default"
 
+  ## HERE
+
   ApiGatewayCertificate:
     Type: AWS::CertificateManager::Certificate
     Properties:
@@ -108,8 +110,9 @@ Resources:
       Type: A
       AliasTarget:
         HostedZoneId: !GetAtt ApiGatewayCustomDomain.RegionalHostedZoneId
-        DNSName: !GetAtt ApiGatewayCustomDomain.RegionalDomainName
+        DNSName: !GetAtt ApiGatewayCustomDomain.ReverseProxyDNS
 
+  ## Up to here HERE
 
   ############################################################
   #
