@@ -76,7 +76,7 @@ Resources:
       SubjectAlternativeNames:
         - !FindInMap [SubnetConfig, !Ref PululappEnv, ReverseProxyDNS]
       DomainValidationOptions:
-        - DomainName: !FindInMap [SubnetConfig, !Ref PululappEnv, DomainName]
+        - DomainName: !FindInMap [SubnetConfig, !Ref PululappEnv, ReverseProxyDNS]
           HostedZoneId: !FindInMap [SubnetConfig, !Ref PululappEnv, DomainHostedZoneId]
 
   ApiGatewayCustomDomain:
@@ -110,7 +110,7 @@ Resources:
       Type: A
       AliasTarget:
         HostedZoneId: !GetAtt ApiGatewayCustomDomain.RegionalHostedZoneId
-        DNSName: !GetAtt ApiGatewayCustomDomain.ReverseProxyDNS
+        DNSName: !GetAtt ApiGatewayCustomDomain.RegionalDomainName
 
   ## Up to here HERE
 
