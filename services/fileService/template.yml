@@ -117,6 +117,7 @@ Resources:
                   - s3:*
                 Resource:
                   - !GetAtt FilesBucket.Arn
+                  - !Sub ${FilesBucket.Arn}/*
 
   ServiceLambda:
     Type: AWS::Lambda::Function
