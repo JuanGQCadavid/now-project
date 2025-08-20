@@ -137,9 +137,9 @@ Resources:
           bucket_name: !Ref FilesBucket
           spots_core_dns:
             Fn::Sub:
-              - "hptts://{DNS}"
+              - "hptts://${DNS}"
               - DNS:
-                Fn::ImportValue: !Sub ${PululappEnv}-central-gateway-url
+                  Fn::ImportValue: !Sub ${PululappEnv}-central-gateway-url
       FunctionName: !Sub ${ServiceName}-${PululappEnv}
       MemorySize: !FindInMap ['ServiceConfig', !Ref PululappEnv, 'RAM']
       PackageType: Image
